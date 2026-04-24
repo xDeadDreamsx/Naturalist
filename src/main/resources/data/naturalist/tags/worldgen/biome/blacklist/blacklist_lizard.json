@@ -1,0 +1,17 @@
+{
+    "replace": false,
+    "values": [
+        {
+            "id": "#c:icy",
+            "required": false
+          },
+          {
+            "id": "#c:snowy",
+            "required": false
+          },
+          {
+            "id": "#c:is_snowy",
+            "required": false
+          }
+    ]
+}

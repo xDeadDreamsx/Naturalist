@@ -1,0 +1,32 @@
+package com.starfish_studios.naturalist.client.renderer;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.starfish_studios.naturalist.client.model.CatfishModel;
+import com.starfish_studios.naturalist.server.entity.mob.Catfish;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
+
+@SuppressWarnings("unused")
+@OnlyIn(Dist.CLIENT)
+public class CatfishRenderer extends GeoEntityRenderer<Catfish> {
+    public CatfishRenderer(EntityRendererProvider.Context renderManager) {
+        super(renderManager, new CatfishModel());
+        this.shadowRadius = 0.4F;
+    }
+
+    @Override
+    public float getMotionAnimThreshold(Catfish animatable) {
+        return 0.000001f;
+    }
+
+   public RenderType getRenderType(Catfish entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
+        return RenderType.entityCutoutNoCull(textureLocation);
+    }
+}

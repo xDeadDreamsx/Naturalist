@@ -1,0 +1,14 @@
+{
+  "values": [
+    "minecraft:plains",
+    "minecraft:cherry_grove",
+    {
+      "id": "#c:is_plains",
+      "required": false
+    },
+    {
+      "id": "#c:plains",
+      "required": false
+    }
+  ]
+}

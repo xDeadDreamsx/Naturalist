@@ -1,0 +1,73 @@
+package com.starfish_studios.naturalist.client.model;
+
+import com.starfish_studios.naturalist.Naturalist;
+import com.starfish_studios.naturalist.server.entity.mob.Lion;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
+
+@OnlyIn(Dist.CLIENT)
+public class LionModel extends GeoModel<Lion> {
+    @Override
+    @SuppressWarnings("removal")
+    public @NotNull ResourceLocation getModelResource(Lion entity) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/lion.geo.json");
+    }
+
+    @Override
+    @SuppressWarnings("removal")
+    public ResourceLocation getTextureResource(Lion entity) {
+        return (entity.isSleeping() && entity.hasMane()) && !entity.isBaby() ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion_sleep.png") :
+                (!entity.hasMane() && entity.isSleeping() || entity.isBaby() && entity.isSleeping()) ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lioness_sleep.png") :
+                        (!entity.hasMane() && !entity.isAggressive() || entity.isBaby()) ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lioness.png") :
+                                (entity.isAggressive()) && !entity.isBaby() && entity.hasMane() ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion_angry.png") :
+                                        (!entity.hasMane() && entity.isAggressive()) || entity.isBaby() && entity.isAggressive() ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lioness_angry.png") :
+                                                ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion.png");
+    }
+
+    @SuppressWarnings("unused")
+    @Override
+    public ResourceLocation getAnimationResource(Lion entity) {
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/lion.animation.json");
+    }
+
+    @Override
+    public void setCustomAnimations(Lion entity, long instanceId, @Nullable AnimationState<Lion> animationState) {
+        super.setCustomAnimations(entity, instanceId, animationState);
+
+        if (animationState == null) return;
+
+        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        GeoBone head = this.getBone("head").orElse(null);
+        GeoBone mane = this.getBone("mane").orElse(null);
+
+        if (head != null) {
+            if (entity.isBaby()) {
+                head.setScaleX(1.4F);
+                head.setScaleY(1.4F);
+                head.setScaleZ(1.4F);
+            } else {
+                head.setScaleX(1.0F);
+                head.setScaleY(1.0F);
+                head.setScaleZ(1.0F);
+            }
+
+            if (!entity.isSleeping()) {
+                head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+                head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+            }
+        }
+
+        if (mane != null) {
+            mane.setHidden(!entity.hasMane() || entity.isBaby());
+        }
+    }
+}

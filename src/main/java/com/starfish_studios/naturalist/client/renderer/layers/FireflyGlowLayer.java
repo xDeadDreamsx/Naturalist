@@ -1,0 +1,33 @@
+package com.starfish_studios.naturalist.client.renderer.layers;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.starfish_studios.naturalist.Naturalist;
+import com.starfish_studios.naturalist.server.entity.mob.Firefly;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+
+@OnlyIn(Dist.CLIENT)
+public class FireflyGlowLayer extends GeoRenderLayer<Firefly> {
+    private static final ResourceLocation GLOW = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/firefly/glow.png");
+    private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/firefly.geo.json");
+
+    public FireflyGlowLayer(GeoRenderer<Firefly> entityRendererIn) {
+        super(entityRendererIn);
+    }
+
+    @SuppressWarnings("unused")
+    @Override
+    public void render(PoseStack poseStack, Firefly entity, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTicks, int packedLightIn, int packedOverlay) {
+        RenderType glow = entity.isGlowing() ? RenderType.eyes(GLOW) : RenderType.entityCutoutNoCull(GLOW);
+
+        getRenderer().reRender(getDefaultBakedModel(entity), poseStack, bufferSource, entity, glow, bufferSource.getBuffer(glow), partialTicks, packedLightIn, OverlayTexture.NO_OVERLAY, -1);
+    }
+}

@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.starfish_studios.naturalist.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "naturalist.refmap.json",
+  "client": [
+    "ClientLevelMixin",
+    "ClientPacketListenerMixin"
+  ],
+  "mixins": [
+    "BottleItemMixin",
+    "CreeperMixin",
+    "CropBlockMixin",
+    "MapItemMixin",
+    "MobMixin",
+    "MonsterMixin",
+    "ZombieMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
