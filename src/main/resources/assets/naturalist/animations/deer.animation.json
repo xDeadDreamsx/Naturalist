@@ -1,126 +1,11 @@
 {
-  "format_version": "1.8.0",
+  "format_version": "1.10.0",
   "animations": {
     "animation.sf_nba.deer.baby_transform": {
       "loop": true,
       "bones": {
-        "head": {
+        "skull": {
           "scale": 1.6
-        }
-      }
-    },
-    "animation.sf_nba.deer.baby_run": {
-      "loop": true,
-      "animation_length": 1,
-      "bones": {
-        "butt_pivot": {
-          "rotation": [
-            0,
-            0,
-            "Math.cos((query.anim_time - 0.2) * 720) * 4"
-          ]
-        },
-        "medallion": {
-          "rotation": [
-            "Math.sin((query.anim_time - 0.4) * 720) * 22.5",
-            0,
-            0
-          ]
-        },
-        "right_ear": {
-          "rotation": [
-            "Math.sin((query.anim_time - 0.1) * 720) * -12.5",
-            0,
-            0
-          ]
-        },
-        "left_ear": {
-          "rotation": [
-            "Math.sin((query.anim_time - 0.1) * 720) * -12.5",
-            0,
-            0
-          ]
-        },
-        "root": {
-          "position": [
-            0,
-            "2 + Math.clamp(Math.sin((query.anim_time - 0.2) * 720) * 4, -3, 5)",
-            0
-          ]
-        },
-        "neck": {
-          "rotation": [
-            "-Math.sin((query.anim_time - 0.6) * 720) * -12.5",
-            0,
-            0
-          ]
-        },
-        "left_arm": {
-          "rotation": [
-            "-Math.cos((query.anim_time - 0.2) * 720) * 45",
-            0,
-            0
-          ],
-          "position": [
-            0,
-            "Math.clamp(-Math.sin((query.anim_time - 0.2) * 720) * 1 , -0.2, 1) ",
-            "-1.25 - Math.cos((query.anim_time - 0.5) * 720) * -0.5"
-          ]
-        },
-        "right_leg": {
-          "rotation": [
-            "Math.cos((query.anim_time - 0.2) * 720) * 45",
-            0,
-            0
-          ],
-          "position": [
-            0,
-            "Math.clamp(Math.sin((query.anim_time - 0.2) * 720) * 1 , -0.2, 1) ",
-            "Math.cos((query.anim_time - 0.5) * 720) * -1"
-          ]
-        },
-        "left_leg": {
-          "rotation": [
-            "Math.cos((query.anim_time - 0.3) * 720) * 45",
-            0,
-            0
-          ],
-          "position": [
-            0,
-            "Math.clamp(Math.sin((query.anim_time - 0.3) * 720) * 1 , -0.2, 1) ",
-            "Math.cos((query.anim_time - 0.6) * 720) * -1"
-          ]
-        },
-        "right_arm": {
-          "rotation": [
-            "-Math.cos((query.anim_time - 0.3) * 720) * 45",
-            0,
-            0
-          ],
-          "position": [
-            0,
-            "Math.clamp(-Math.sin((query.anim_time - 0.3) * 720) * 1 , -0.2, 1) ",
-            "-1.25 - Math.cos((query.anim_time - 0.56) * 720) * -0.5"
-          ]
-        },
-        "body": {
-          "rotation": [
-            "Math.sin((query.anim_time - 0.6) * 720) * -12.5",
-            0,
-            0
-          ],
-          "position": [
-            0,
-            "-0.5+Math.clamp(Math.sin((query.anim_time - 0.35) * 720) * 1, -0.25, 3)",
-            0
-          ]
-        },
-        "tail": {
-          "rotation": [
-            "-12.5 + Math.sin((query.anim_time - 0.2) * 720) * -22.5",
-            0,
-            0
-          ]
         }
       }
     },
@@ -129,47 +14,47 @@
       "bones": {
         "tail": {
           "rotation": [
-            "Math.cos((query.anim_time - 0.2) * 180) * -3",
+            "Math.cos(( q.anim_time - 0.2 ) * 180 ) * -3",
             0,
             0
-          ]
-        },
-        "right_ear": {
-          "rotation": [
-            0,
-            0,
-            "Math.sin((query.anim_time - 0.2) * 180) * -1"
           ]
         },
         "left_ear": {
           "rotation": [
             0,
             0,
-            "Math.sin((query.anim_time - 0.2) * 180) * 1"
+            "Math.sin(( q.anim_time - 0.2 ) * 180 ) * 1"
           ]
         },
-        "left_arm": {
+        "right_ear": {
+          "rotation": [
+            0,
+            0,
+            "Math.sin(( q.anim_time - 0.2 ) * 180 ) * -1"
+          ]
+        },
+        "leftArm": {
           "rotation": [
             -2.99873,
             0.08532,
             2.97845
           ]
         },
-        "right_arm": {
+        "rightArm": {
           "rotation": [
             1,
             0,
             -3
           ]
         },
-        "left_leg": {
+        "leftLeg": {
           "rotation": [
             -0.99992,
             0.01112,
             1.99346
           ]
         },
-        "right_leg": {
+        "rightLeg": {
           "rotation": [
             0,
             0,
@@ -181,7 +66,7 @@
     "animation.sf_nba.deer.walk": {
       "loop": true,
       "animation_length": 1,
-      "anim_time_update": "query.anim_time + query.delta_time * v.anim_speed_multiplier * Math.min(1, q.modified_move_speed / v.anim_speed_movement_max)",
+      "anim_time_update": "q.anim_time + q.delta_time * v.anim_speed_multiplier * Math.min( 1, q.modified_move_speed / v.anim_speed_movement_max )",
       "bones": {
         "body": {
           "rotation": {
@@ -528,7 +413,7 @@
             ]
           }
         },
-        "left_arm": {
+        "leftArm": {
           "rotation": {
             "0.0": [
               -18,
@@ -594,7 +479,7 @@
             ]
           }
         },
-        "right_arm": {
+        "rightArm": {
           "rotation": {
             "0.0": [
               14.57,
@@ -665,7 +550,7 @@
             ]
           }
         },
-        "left_leg": {
+        "leftLeg": {
           "rotation": {
             "0.0": [
               -5,
@@ -746,7 +631,7 @@
             ]
           }
         },
-        "right_leg": {
+        "rightLeg": {
           "rotation": {
             "0.0": [
               10,
@@ -832,7 +717,7 @@
             ]
           }
         },
-        "neck": {
+        "skull": {
           "rotation": {
             "0.0": [
               -1,
@@ -940,12 +825,23 @@
               0
             ]
           }
-        },
-        "body2": {
+        }
+      }
+    },
+    "animation.sf_nba.deer.eat": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "skullRot": {
+          "rotation": [
+            "112.5 + Math.sin(( q.anim_time - 0.0 ) * 1440 ) * 6",
+            0,
+            0
+          ],
           "position": [
             0,
-            -0.5,
-            0
+            -4,
+            -1
           ]
         }
       }
@@ -955,16 +851,16 @@
       "bones": {
         "right_ear": {
           "rotation": [
-            "math.sin((q.anim_time - 0.2) * 1440) * 32",
+            "Math.sin(( q.anim_time - 0.2 ) * 1440 ) * 32",
             0,
-            "math.cos((q.anim_time - 0.4) * 1440) * 16"
+            "Math.cos(( q.anim_time - 0.4 ) * 1440 ) * 16"
           ]
         },
         "left_ear": {
           "rotation": [
-            "math.sin((q.anim_time - 0.2) * 1440) * 32",
+            "Math.sin(( q.anim_time - 0.2 ) * 1440 ) * 32",
             0,
-            "math.cos((q.anim_time - 0.4) * 1440) * -16"
+            "Math.cos(( q.anim_time - 0.4 ) * 1440 ) * -16"
           ]
         }
       }
@@ -972,7 +868,7 @@
     "animation.sf_nba.deer.run": {
       "loop": true,
       "animation_length": 1,
-      "anim_time_update": "query.anim_time + query.delta_time * v.anim_speed_multiplier * Math.min(1, q.modified_move_speed / v.anim_speed_movement_max)",
+      "anim_time_update": "q.anim_time + q.delta_time * v.anim_speed_multiplier * Math.min( 1, q.modified_move_speed / v.anim_speed_movement_max )",
       "bones": {
         "body": {
           "rotation": {
@@ -1230,235 +1126,7 @@
             ]
           }
         },
-        "tail": {
-          "rotation": {
-            "0.0": [
-              -18,
-              0,
-              0
-            ],
-            "0.0417": [
-              -20.18,
-              0,
-              0
-            ],
-            "0.0833": [
-              -23.63,
-              0,
-              0
-            ],
-            "0.125": [
-              -27.5,
-              0,
-              0
-            ],
-            "0.1667": [
-              -30.93,
-              0,
-              0
-            ],
-            "0.2083": [
-              -33.05,
-              0,
-              0
-            ],
-            "0.25": [
-              -33,
-              0,
-              0
-            ],
-            "0.2917": [
-              -30.16,
-              0,
-              0
-            ],
-            "0.3333": [
-              -25.07,
-              0,
-              0
-            ],
-            "0.375": [
-              -18.69,
-              0,
-              0
-            ],
-            "0.4167": [
-              -11.93,
-              0,
-              0
-            ],
-            "0.4583": [
-              -5.72,
-              0,
-              0
-            ],
-            "0.5": [
-              -1,
-              0,
-              0
-            ],
-            "0.5417": [
-              3.34,
-              0,
-              0
-            ],
-            "0.5833": [
-              7.21,
-              0,
-              0
-            ],
-            "0.625": [
-              10.11,
-              0,
-              0
-            ],
-            "0.6667": [
-              11.54,
-              0,
-              0
-            ],
-            "0.7083": [
-              11,
-              0,
-              0
-            ],
-            "0.75": [
-              5.95,
-              0,
-              0
-            ],
-            "0.7917": [
-              -2.75,
-              0,
-              0
-            ],
-            "0.8333": [
-              -11.83,
-              0,
-              0
-            ],
-            "0.875": [
-              -18,
-              0,
-              0
-            ]
-          }
-        },
-        "neck": {
-          "rotation": {
-            "0.0": [
-              8,
-              0,
-              0
-            ],
-            "0.0417": [
-              6.62,
-              0,
-              0
-            ],
-            "0.0833": [
-              4.55,
-              0,
-              0
-            ],
-            "0.125": [
-              2.21,
-              0,
-              0
-            ],
-            "0.1667": [
-              -0.26,
-              0,
-              0
-            ],
-            "0.2083": [
-              -2.72,
-              0,
-              0
-            ],
-            "0.25": [
-              -5.18,
-              0,
-              0
-            ],
-            "0.2917": [
-              -7.03,
-              0,
-              0
-            ],
-            "0.3333": [
-              -7.74,
-              0,
-              0
-            ],
-            "0.375": [
-              -8,
-              0,
-              0
-            ],
-            "0.4167": [
-              -6.91,
-              0,
-              0
-            ],
-            "0.4583": [
-              -5.02,
-              0,
-              0
-            ],
-            "0.5": [
-              -2.17,
-              0,
-              0
-            ],
-            "0.5417": [
-              0.68,
-              0,
-              0
-            ],
-            "0.5833": [
-              3.53,
-              0,
-              0
-            ],
-            "0.625": [
-              5.48,
-              0,
-              0
-            ],
-            "0.6667": [
-              7.15,
-              0,
-              0
-            ],
-            "0.7083": [
-              8.3,
-              0,
-              0
-            ],
-            "0.75": [
-              8.95,
-              0,
-              0
-            ],
-            "0.7917": [
-              9.27,
-              0,
-              0
-            ],
-            "0.8333": [
-              8.76,
-              0,
-              0
-            ],
-            "0.875": [
-              8,
-              0,
-              0
-            ]
-          }
-        },
-        "left_arm": {
+        "leftArm": {
           "rotation": {
             "0.0": [
               -3,
@@ -1714,7 +1382,7 @@
             ]
           }
         },
-        "right_arm": {
+        "rightArm": {
           "rotation": {
             "0.0": [
               -14.3,
@@ -1970,7 +1638,7 @@
             ]
           }
         },
-        "left_leg": {
+        "leftLeg": {
           "rotation": {
             "0.0": [
               3.56,
@@ -2226,7 +1894,7 @@
             ]
           }
         },
-        "right_leg": {
+        "rightLeg": {
           "rotation": {
             "0.0": [
               20.59,
@@ -2481,38 +2149,234 @@
               -0.58
             ]
           }
-        }
-      }
-    },
-    "animation.sf_nba.deer.eat": {
-      "loop": true,
-      "animation_length": 1,
-      "bones": {
-        "neck": {
-          "rotation": [
-            135,
-            0,
-            0
-          ]
         },
-        "head": {
-          "rotation": [
-            -90,
-            0,
-            0
-          ],
-          "position": [
-            0,
-            1,
-            -2
-          ]
+        "tail": {
+          "rotation": {
+            "0.0": [
+              -18,
+              0,
+              0
+            ],
+            "0.0417": [
+              -20.18,
+              0,
+              0
+            ],
+            "0.0833": [
+              -23.63,
+              0,
+              0
+            ],
+            "0.125": [
+              -27.5,
+              0,
+              0
+            ],
+            "0.1667": [
+              -30.93,
+              0,
+              0
+            ],
+            "0.2083": [
+              -33.05,
+              0,
+              0
+            ],
+            "0.25": [
+              -33,
+              0,
+              0
+            ],
+            "0.2917": [
+              -30.16,
+              0,
+              0
+            ],
+            "0.3333": [
+              -25.07,
+              0,
+              0
+            ],
+            "0.375": [
+              -18.69,
+              0,
+              0
+            ],
+            "0.4167": [
+              -11.93,
+              0,
+              0
+            ],
+            "0.4583": [
+              -5.72,
+              0,
+              0
+            ],
+            "0.5": [
+              -1,
+              0,
+              0
+            ],
+            "0.5417": [
+              3.34,
+              0,
+              0
+            ],
+            "0.5833": [
+              7.21,
+              0,
+              0
+            ],
+            "0.625": [
+              10.11,
+              0,
+              0
+            ],
+            "0.6667": [
+              11.54,
+              0,
+              0
+            ],
+            "0.7083": [
+              11,
+              0,
+              0
+            ],
+            "0.75": [
+              5.95,
+              0,
+              0
+            ],
+            "0.7917": [
+              -2.75,
+              0,
+              0
+            ],
+            "0.8333": [
+              -11.83,
+              0,
+              0
+            ],
+            "0.875": [
+              -18,
+              0,
+              0
+            ]
+          }
         },
-        "head_rot": {
-          "rotation": [
-            "Math.sin((query.anim_time - 0.0) * 1440) * 6",
-            0,
-            0
-          ]
+        "skull": {
+          "rotation": {
+            "0.0": [
+              8,
+              0,
+              0
+            ],
+            "0.0417": [
+              6.62,
+              0,
+              0
+            ],
+            "0.0833": [
+              4.55,
+              0,
+              0
+            ],
+            "0.125": [
+              2.21,
+              0,
+              0
+            ],
+            "0.1667": [
+              -0.26,
+              0,
+              0
+            ],
+            "0.2083": [
+              -2.72,
+              0,
+              0
+            ],
+            "0.25": [
+              -5.18,
+              0,
+              0
+            ],
+            "0.2917": [
+              -7.03,
+              0,
+              0
+            ],
+            "0.3333": [
+              -7.74,
+              0,
+              0
+            ],
+            "0.375": [
+              -8,
+              0,
+              0
+            ],
+            "0.4167": [
+              -6.91,
+              0,
+              0
+            ],
+            "0.4583": [
+              -5.02,
+              0,
+              0
+            ],
+            "0.5": [
+              -2.17,
+              0,
+              0
+            ],
+            "0.5417": [
+              0.68,
+              0,
+              0
+            ],
+            "0.5833": [
+              3.53,
+              0,
+              0
+            ],
+            "0.625": [
+              5.48,
+              0,
+              0
+            ],
+            "0.6667": [
+              7.15,
+              0,
+              0
+            ],
+            "0.7083": [
+              8.3,
+              0,
+              0
+            ],
+            "0.75": [
+              8.95,
+              0,
+              0
+            ],
+            "0.7917": [
+              9.27,
+              0,
+              0
+            ],
+            "0.8333": [
+              8.76,
+              0,
+              0
+            ],
+            "0.875": [
+              8,
+              0,
+              0
+            ]
+          }
         }
       }
     },
@@ -2545,7 +2409,7 @@
             0
           ]
         },
-        "head": {
+        "skull": {
           "rotation": [
             0,
             0,
@@ -3296,7 +3160,7 @@
             }
           }
         },
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               8,
@@ -3389,6 +3253,121 @@
               0
             ]
           }
+        }
+      }
+    },
+    "animation.sf_nba.deer.sleep": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "rotation": [
+            0,
+            0,
+            -90
+          ],
+          "position": [
+            10.7,
+            4.9,
+            0
+          ],
+          "scale": [
+            "1 + Math.sin(( q.anim_time - 0.0 ) * 45 ) * -0.03",
+            "1 + Math.sin(( q.anim_time - 0.0 ) * 45 ) * 0.015",
+            "1 + Math.sin(( q.anim_time - 0.0 ) * 45 ) * 0.015"
+          ]
+        },
+        "tail": {
+          "rotation": [
+            -110.6484,
+            -10.21235,
+            7.24677
+          ],
+          "position": [
+            0,
+            0.5,
+            0
+          ]
+        },
+        "skull": {
+          "rotation": [
+            -3,
+            6,
+            -5
+          ],
+          "position": [
+            0.3,
+            0,
+            0
+          ]
+        },
+        "rightArm": {
+          "rotation": [
+            -9,
+            0,
+            0
+          ],
+          "position": [
+            0,
+            1,
+            -3.9
+          ]
+        },
+        "leftLeg": {
+          "rotation": [
+            -5.83732,
+            -5.37589,
+            24.17487
+          ],
+          "position": [
+            -0.5,
+            1.6,
+            -0.6
+          ]
+        },
+        "rightLeg": {
+          "rotation": [
+            -34.5,
+            0,
+            0
+          ]
+        },
+        "leftArm": {
+          "rotation": [
+            -4.00334,
+            -6.6947,
+            23.04964
+          ],
+          "position": [
+            -2.2,
+            -1.7,
+            2.7
+          ]
+        },
+        "skullRot": {
+          "rotation": [
+            191.19557,
+            -59.14532,
+            -32.92436
+          ],
+          "position": [
+            0.3,
+            -1.5,
+            -0.6
+          ]
+        },
+        "left_ear": {
+          "rotation": [
+            "-3 - Math.cos(( q.anim_time - 0.0 ) * 90 ) * 2",
+            4,
+            "-5 + Math.sin(( q.anim_time - 0.0 ) * 90 ) * 2"
+          ]
+        },
+        "right_ear": {
+          "rotation": [
+            "-3 - Math.sin(( q.anim_time - 0.0 ) * 90 ) * 2",
+            3,
+            "-2 + Math.cos(( q.anim_time - 0.0 ) * 90 ) * 2"
+          ]
         }
       }
     }

@@ -1,10 +1,10 @@
 {
-  "format_version": "1.8.0",
+  "format_version": "1.10.0",
   "animations": {
     "animation.sf_nba.rhino.baby_transform": {
       "loop": true,
       "bones": {
-        "head": {
+        "skull": {
           "scale": 1.4
         }
       }
@@ -12,10 +12,10 @@
     "animation.sf_nba.rhino.look_at_target": {
       "loop": true,
       "bones": {
-        "head": {
+        "skull": {
           "rotation": [
             0,
-            "math.clamp(q.target_y_rotation, -50, 50)",
+            "Math.clamp( q.target_y_rotation, -50, 50 )",
             0
           ]
         }
@@ -26,14 +26,14 @@
       "bones": {
         "left_ear": {
           "rotation": [
-            "Math.sin((query.anim_time - 0.8) * 90) * -3",
+            "Math.sin(( q.anim_time - 0.8 ) * 90 ) * -3",
             0,
             0
           ]
         },
         "right_ear": {
           "rotation": [
-            "Math.sin((query.anim_time - 0.4) * 90) * -3",
+            "Math.sin(( q.anim_time - 0.4 ) * 90 ) * -3",
             0,
             0
           ]
@@ -41,6 +41,7 @@
       }
     },
     "animation.sf_nba.rhino.walk": {
+      "anim_time_update": "q.anim_time + q.delta_time * v.anim_speed_multiplier * Math.min( 1, q.modified_move_speed / Math.max( 0.001, v.anim_speed_movement_max ) )",
       "loop": true,
       "animation_length": 1.5,
       "bones": {
@@ -240,7 +241,7 @@
             ]
           }
         },
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               -0.01,
@@ -673,7 +674,7 @@
             ]
           }
         },
-        "head_rot": {
+        "skullRot": {
           "rotation": {
             "0.0": [
               -1.40182,
@@ -1153,6 +1154,7 @@
       }
     },
     "animation.sf_nba.rhino.run": {
+      "anim_time_update": "q.anim_time + q.delta_time * 0.8 * v.anim_speed_multiplier * Math.min( 1, q.modified_move_speed / Math.max( 0.001, v.anim_speed_movement_max ) )",
       "loop": true,
       "animation_length": 0.75,
       "bones": {
@@ -1352,7 +1354,7 @@
             ]
           }
         },
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               6.04,
@@ -2433,7 +2435,7 @@
     "animation.sf_nba.rhino.attack": {
       "animation_length": 0.5,
       "bones": {
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               45,
@@ -2525,7 +2527,7 @@
     "animation.sf_nba.rhino.foot": {
       "animation_length": 2,
       "bones": {
-        "head": {
+        "skull": {
           "rotation": [
             22.5,
             0,
@@ -2534,7 +2536,7 @@
         },
         "right_arm": {
           "rotation": [
-            "Math.cos((query.anim_time - 0.2) * 360) * -30",
+            "Math.cos(( q.anim_time - 0.2 ) * 360 ) * -30",
             0,
             0
           ],
@@ -2795,16 +2797,16 @@
         "body": {
           "rotation": [
             0,
-            "Math.sin((query.anim_time - 0.0) * 360 * 8)",
+            "Math.sin(( q.anim_time - 0.0 ) * 360 * 8 )",
             0
           ],
           "position": [
             0,
-            "-0.5+Math.sin((query.anim_time - 0.0) * 360 * 2) * 0.2",
+            "-0.5 + Math.sin(( q.anim_time - 0.0 ) * 360 * 2 ) * 0.2",
             0
           ]
         },
-        "head": {
+        "skull": {
           "rotation": [
             45,
             0,
@@ -2814,28 +2816,28 @@
         "left_arm": {
           "rotation": [
             0,
-            "Math.sin((query.anim_time - 0.0) * 360 * 8) * 2",
+            "Math.sin(( q.anim_time - 0.0 ) * 360 * 8 ) * 2",
             0
           ]
         },
         "right_arm": {
           "rotation": [
             0,
-            "Math.cos((query.anim_time - 0.0) * 360 * 8) * 2",
+            "Math.cos(( q.anim_time - 0.0 ) * 360 * 8 ) * 2",
             0
           ]
         },
         "left_leg": {
           "rotation": [
             0,
-            "Math.cos((query.anim_time - 0.0) * 360 * 8) * 2",
+            "Math.cos(( q.anim_time - 0.0 ) * 360 * 8 ) * 2",
             0
           ]
         },
         "right_leg": {
           "rotation": [
             0,
-            "Math.sin((query.anim_time - 0.0) * 360 * 8) * 2",
+            "Math.sin(( q.anim_time - 0.0 ) * 360 * 8 ) * 2",
             0
           ]
         },
@@ -3053,7 +3055,7 @@
             -0.7
           ]
         },
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               37.3095,
@@ -4598,7 +4600,7 @@
             ]
           }
         },
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               6.04,
@@ -5674,7 +5676,7 @@
             ]
           }
         },
-        "head_rot": {
+        "skullRot": {
           "rotation": [
             32.5,
             0,

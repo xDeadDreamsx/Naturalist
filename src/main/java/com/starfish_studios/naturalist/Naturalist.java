@@ -32,7 +32,16 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackSelectionConfig;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
@@ -40,6 +49,9 @@ import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+
+import java.nio.file.Path;
+import java.util.Optional;
 
 @Mod(Naturalist.MOD_ID)
 public class Naturalist {
@@ -52,6 +64,7 @@ public class Naturalist {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::createAttributes);
         modEventBus.addListener(this::registerSpawnPlacements);
+        modEventBus.addListener(this::addPackFinders);
 
         NeoForge.EVENT_BUS.addListener(this::registerBrewingRecipes);
         NeoForge.EVENT_BUS.addListener(Naturalist::onFinalizeSpawn);
@@ -60,6 +73,7 @@ public class Naturalist {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modEventBus.addListener(NaturalistClient::registerEntityRenderers);
             modEventBus.addListener(NaturalistClient::registerLayerDefinitions);
+            modEventBus.addListener(NaturalistClient::registerItemProperties);
         }
 
         NaturalistRegistry.BLOCKS.register(modEventBus);
@@ -71,6 +85,27 @@ public class Naturalist {
         NaturalistRecipes.RECIPE_SERIALIZERS.register(modEventBus);
         NaturalistBiomeModifiers.BIOME_MODIFIERS.register(modEventBus);
         NaturalistCreativeTab.CREATIVE_MODE_TABS.register(modEventBus);
+    }
+
+    private void addPackFinders(AddPackFindersEvent event) {
+        if (event.getPackType() == PackType.CLIENT_RESOURCES) {
+            Path resourcePath = ModList.get().getModFileById(MOD_ID).getFile().findResource("resourcepacks/custom_spawn_eggs");
+            event.addRepositorySource(consumer -> {
+                PackLocationInfo info = new PackLocationInfo(
+                        "naturalist:custom_spawn_eggs",
+                        Component.literal("Naturalist 1.21.5+ Spawn Eggs"),
+                        PackSource.BUILT_IN,
+                        Optional.empty()
+                );
+                Pack pack = Pack.readMetaAndCreate(
+                        info,
+                        new PathPackResources.PathResourcesSupplier(resourcePath),
+                        PackType.CLIENT_RESOURCES,
+                        new PackSelectionConfig(false, Pack.Position.TOP, false)
+                );
+                if (pack != null) consumer.accept(pack);
+            });
+        }
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

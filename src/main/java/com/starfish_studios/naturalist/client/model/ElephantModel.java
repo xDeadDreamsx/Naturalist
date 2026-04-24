@@ -24,7 +24,7 @@ public class ElephantModel extends GeoModel<Elephant> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Elephant elephant) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID,  "textures/entity/elephant.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/elephant/elephant.png");
     }
 
     @Override

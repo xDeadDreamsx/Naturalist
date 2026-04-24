@@ -17,9 +17,6 @@ public class DeerModel extends GeoModel<Deer> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Deer deer) {
-        if (deer.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/fawn.geo.json");
-        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/deer.geo.json");
     }
 
@@ -27,10 +24,10 @@ public class DeerModel extends GeoModel<Deer> {
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Deer deer) {
         if (deer.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/fawn.png");
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/deer/deer_baby.png");
         }
 
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/deer.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/deer/deer.png");
     }
 
     @Override

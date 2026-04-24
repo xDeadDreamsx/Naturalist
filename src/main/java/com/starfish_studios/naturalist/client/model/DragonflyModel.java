@@ -10,9 +10,9 @@ import software.bernie.geckolib.model.GeoModel;
 @OnlyIn(Dist.CLIENT)
 public class DragonflyModel extends GeoModel<Dragonfly> {
     public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[]{
-            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/dragonfly/blue.png"),
-            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/dragonfly/green.png"),
-            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/dragonfly/red.png")
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/dragonfly/blue_dragonfly.png"),
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/dragonfly/green_dragonfly.png"),
+            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/dragonfly/red_dragonfly.png")
     };
 
     @Override

@@ -25,7 +25,7 @@ public class HippoModel extends GeoModel<Hippo> {
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getTextureResource(Hippo hippo) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/hippo.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/hippo/hippo.png");
     }
 
     @Override

@@ -26,8 +26,6 @@ public class DuckModel extends GeoModel<Duck> {
     public ResourceLocation getTextureResource(Duck animal) {
         if (animal.getName().getString().equalsIgnoreCase("Queso")) {
             return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/queso.png");
-        } else if (animal.getName().getString().equalsIgnoreCase("Donald")) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/donald.png");
         }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/duck.png");
     }

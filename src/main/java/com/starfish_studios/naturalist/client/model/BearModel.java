@@ -27,14 +27,12 @@ public class BearModel extends GeoModel<Bear> {
     public ResourceLocation getTextureResource(@NotNull Bear bear) {
 
         if (bear.isAngry()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_angry.png");
-        } else if (bear.isSleeping()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_sleep.png");
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/black_bear_angry.png");
         } else if (bear.isEating()) {
             if (bear.getMainHandItem().is(Items.SWEET_BERRIES)) {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_berries.png");
+                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/black_bear_berries.png");
             } else if (bear.getMainHandItem().is(Items.HONEYCOMB)) {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_honey.png");
+                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/black_bear_honey.png");
             }
             return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear.png");
         }

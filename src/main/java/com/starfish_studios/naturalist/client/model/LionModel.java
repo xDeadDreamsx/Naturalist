@@ -25,12 +25,7 @@ public class LionModel extends GeoModel<Lion> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Lion entity) {
-        return (entity.isSleeping() && entity.hasMane()) && !entity.isBaby() ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion_sleep.png") :
-                (!entity.hasMane() && entity.isSleeping() || entity.isBaby() && entity.isSleeping()) ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lioness_sleep.png") :
-                        (!entity.hasMane() && !entity.isAggressive() || entity.isBaby()) ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lioness.png") :
-                                (entity.isAggressive()) && !entity.isBaby() && entity.hasMane() ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion_angry.png") :
-                                        (!entity.hasMane() && entity.isAggressive()) || entity.isBaby() && entity.isAggressive() ? ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lioness_angry.png") :
-                                                ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion.png");
     }
 
     @SuppressWarnings("unused")

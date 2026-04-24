@@ -1,7 +1,6 @@
 {
     "parent": "minecraft:item/generated",
     "textures": {
-        "layer0": "naturalist:item/lower_bucket",
-        "layer1": "naturalist:item/bucket_content/snail/black"
+        "layer0": "naturalist:item/bucket_black_snail"
     }
 }

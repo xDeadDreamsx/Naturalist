@@ -25,13 +25,11 @@ public class SnailModel extends GeoModel<Snail> {
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getTextureResource(@NotNull Snail snail) {
-        if (snail.getName().getString().contains("Gary")) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snail/gary.png");
-        } else if (snail.getSnailColor() != null) {
+        if (snail.getSnailColor() != null) {
             int color = snail.getSnailColor().getId();
             return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snail/" + DyeColor.byId(color).getName() + ".png");
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snail.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snail/snail.png");
     }
 
     @Override

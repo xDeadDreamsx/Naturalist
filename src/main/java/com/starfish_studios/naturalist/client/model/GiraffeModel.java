@@ -24,7 +24,7 @@ public class GiraffeModel extends GeoModel<Giraffe> {
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getTextureResource(Giraffe giraffe) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/giraffe.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/giraffe/giraffe.png");
     }
 
     @Override

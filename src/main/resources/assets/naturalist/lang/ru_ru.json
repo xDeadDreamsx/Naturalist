@@ -1,14 +1,13 @@
 {
   "itemGroup.naturalist.tab": "Естествовед",
 
-  "item.naturalist.bug_net": "Сачок",
+  "item.naturalist.capture_net": "Сачок",
 
   "entity.naturalist.butterfly": "Бабочка",
   "item.naturalist.butterfly": "Бабочка",
   "entity.naturalist.moth": "Мотылёк",
   "item.naturalist.moth": "Мотылёк",
 
-  "tooltip.naturalist.cabbage_white": "Белянка капустная",
   "tooltip.naturalist.monarch": "Монарх",
   "tooltip.naturalist.clouded_yellow": "Желтушка шафрановая",
   "tooltip.naturalist.swallowtail": "Парусник",
@@ -80,7 +79,7 @@
   "item.naturalist.antler": "Рога",
   "item.naturalist.snail_bucket": "Улитка в ведре",
   "block.naturalist.chrysalis": "Куколка",
-  "block.naturalist.teddy_bear": "Плюшевый мишка",
+  "block.naturalist.plush_bear": "Плюшевый мишка",
   "block.naturalist.alligator_egg": "Яйцо аллигатора",
   "block.naturalist.azure_froglass": "Лазурное лягушачье стекло",
   "block.naturalist.verdant_froglass": "Малахитовое лягушачье стекло",

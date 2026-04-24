@@ -14,7 +14,7 @@ public class NaturalistCreativeTab {
     @SuppressWarnings("unused")
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ITEM_GROUP = CREATIVE_MODE_TABS.register("item_group",
             () -> CreativeModeTab.builder()
-                    .icon(NaturalistRegistry.BUG_NET.get()::getDefaultInstance)
+                    .icon(NaturalistRegistry.CAPTURE_NET.get()::getDefaultInstance)
                     .title(Component.translatable("itemGroup.naturalist.tab"))
                     .displayItems((params, output) -> NaturalistRegistry.ITEMS.getEntries().forEach(entry -> output.accept(entry.get())))
                     .build()

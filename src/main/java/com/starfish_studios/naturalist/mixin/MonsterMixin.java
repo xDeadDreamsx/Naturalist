@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MonsterMixin {
     @Inject(method = "isPreventingPlayerRest", at = @At(value = "HEAD"), cancellable = true)
     private void onIsPreventingPlayerRest(Player player, CallbackInfoReturnable<Boolean> cir) {
-        if (player.isHolding(NaturalistRegistry.TEDDY_BEAR.get().asItem())) {
+        if (player.isHolding(NaturalistRegistry.PLUSH_BEAR.get().asItem())) {
             cir.setReturnValue(false);
         }
     }

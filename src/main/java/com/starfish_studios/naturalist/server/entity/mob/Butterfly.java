@@ -117,7 +117,7 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, 1);
+        builder.define(DATA_VARIANT, 0);
         builder.define(FROM_HAND, false);
         builder.define(HAS_NECTAR, false);
     }
@@ -315,11 +315,13 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     }
 
     public enum Variant {
-        CABBAGE_WHITE(0, "cabbage_white"),
-        MONARCH(1, "monarch"),
-        CLOUDED_YELLOW(2, "clouded_yellow"),
-        SWALLOWTAIL(3, "swallowtail"),
-        BLUE_MORPHO(4, "blue_morpho");
+        MONARCH(0, "monarch"),
+        CLOUDED_YELLOW(1, "clouded_yellow"),
+        SWALLOWTAIL(2, "swallowtail"),
+        BLUE_MORPHO(3, "blue_morpho"),
+        JADE_GREEN_SWALLOWTAIL(4, "jade_green_swallowtail"),
+        PURPLE_EMPEROR(5, "purple_emperor"),
+        RED_ADMIRAL(6, "red_admiral");
 
         public static final Butterfly.Variant[] BY_ID = Arrays.stream(values()).sorted(Comparator.comparingInt(Variant::getId)).toArray(Variant[]::new);
         private final int id;

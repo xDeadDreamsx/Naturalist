@@ -47,7 +47,7 @@ public class NoFluidMobBucketWithVariantsItem extends MobBucketItem {
             CompoundTag compoundnbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
             if (compoundnbt.contains("Color", 3)) {
                 Snail.Color color = Snail.Color.getTypeById(compoundnbt.getInt("Color"));
-                tooltip.add((Component.translatable(String.format("item.minecraft.firework_star.%s", color.toString().toLowerCase())).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY)));
+                tooltip.add((Component.translatable(String.format("item.minecraft.firework_star.%s", color.toString().toLowerCase())).withStyle(ChatFormatting.GRAY)));
             }
         }
     }

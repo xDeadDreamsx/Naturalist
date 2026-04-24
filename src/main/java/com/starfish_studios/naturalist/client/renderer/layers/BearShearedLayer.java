@@ -16,7 +16,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 @OnlyIn(Dist.CLIENT)
 public class BearShearedLayer extends GeoRenderLayer<Bear> {
-    private static final ResourceLocation LAYER = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_sheared.png");
+    private static final ResourceLocation LAYER = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear.png");
 
     public BearShearedLayer(GeoRenderer<Bear> entityRendererIn) {
         super(entityRendererIn);

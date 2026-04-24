@@ -1,10 +1,34 @@
 {
-  "format_version": "1.8.0",
+  "format_version": "1.10.0",
   "animations": {
+    "animation.sf_nba.giraffe.body_rotation": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "rotation": [
+            "v.body_rot_x",
+            "v.body_rot_y",
+            "v.body_rot_z"
+          ]
+        }
+      }
+    },
+    "animation.sf_nba.giraffe.look_at_target": {
+      "loop": true,
+      "bones": {
+        "skull": {
+          "rotation": [
+            "v.head_rot_x",
+            "v.head_rot_y",
+            0
+          ]
+        }
+      }
+    },
     "animation.sf_nba.giraffe.baby_transform": {
       "loop": true,
       "bones": {
-        "head": {
+        "skull": {
           "position": [
             0,
             -1,
@@ -99,7 +123,7 @@
     "animation.sf_nba.giraffe.walk": {
       "loop": true,
       "animation_length": 1.5,
-      "anim_time_update": "query.anim_time + query.delta_time * v.anim_speed_multiplier * Math.min(1, q.modified_move_speed / v.anim_speed_movement_max)",
+      "anim_time_update": "q.anim_time + q.delta_time * 1.7 * v.anim_speed_multiplier * Math.min( 1, q.modified_move_speed / v.anim_speed_movement_max )",
       "bones": {
         "body": {
           "rotation": {
@@ -297,7 +321,7 @@
             ]
           }
         },
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               0.95399,
@@ -913,7 +937,7 @@
     "animation.sf_nba.giraffe.walk_UB": {
       "loop": true,
       "animation_length": 1.5,
-      "anim_time_update": "query.anim_time + query.delta_time * v.anim_speed_multiplier * Math.min(1, q.modified_move_speed / v.anim_speed_movement_max)",
+      "anim_time_update": "q.anim_time + q.delta_time * v.anim_speed_multiplier * Math.min( 1, q.modified_move_speed / v.anim_speed_movement_max )",
       "bones": {
         "body": {
           "rotation": {
@@ -1519,6 +1543,7 @@
     "animation.sf_nba.giraffe.run": {
       "loop": true,
       "animation_length": 1,
+      "anim_time_update": "q.anim_time + q.delta_time * 1.4 * v.anim_speed_multiplier * Math.min( 1, q.modified_move_speed / v.anim_speed_movement_max )",
       "bones": {
         "body": {
           "rotation": {
@@ -1656,7 +1681,7 @@
             ]
           }
         },
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               13.9,
@@ -2241,17 +2266,20 @@
       "bones": {
         "snout": {
           "rotation": [
-            "Math.cos((query.anim_time - 1) * 1440) * 6",
+            "Math.cos(( q.anim_time - 1 ) * 1440 ) * 6",
             0,
             0
           ],
           "position": [
             0,
-            "-0.2 + Math.cos((query.anim_time - 0.0) * 1440) * -0.1",
+            "-0.2 + Math.cos(( q.anim_time - 0.0 ) * 1440 ) * -0.1",
             0.5
           ]
         }
       }
+    },
+    "animation.sf_nba.giraffe.sleep": {
+      "loop": true
     }
   }
 }

@@ -18,7 +18,7 @@ public class FireflyModel extends GeoModel<Firefly> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Firefly firefly) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/firefly/firefly.png");
+        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/firefly.png");
     }
 
     @Override

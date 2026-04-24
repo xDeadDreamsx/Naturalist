@@ -3,7 +3,13 @@ package com.starfish_studios.naturalist;
 import com.starfish_studios.naturalist.client.model.ZebraModel;
 import com.starfish_studios.naturalist.client.renderer.*;
 import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
+import com.starfish_studios.naturalist.registry.NaturalistRegistry;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.component.CustomData;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 public class NaturalistClient {
@@ -47,5 +53,29 @@ public class NaturalistClient {
 
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(ZebraRenderer.LAYER_LOCATION, ZebraModel::createBodyLayer);
+    }
+
+    public static void registerItemProperties(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            ItemProperties.register(NaturalistRegistry.BUTTERFLY.get(),
+                    ResourceLocation.withDefaultNamespace("variant"),
+                    (stack, level, entity, seed) -> {
+                        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                        if (customData != null) {
+                            return customData.copyTag().getInt("Variant") / 7.0f;
+                        }
+                        return 0.0f;
+                    });
+
+            ItemProperties.register(NaturalistRegistry.SNAIL_BUCKET.get(),
+                    ResourceLocation.withDefaultNamespace("color"),
+                    (stack, level, entity, seed) -> {
+                        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                        if (customData != null) {
+                            return customData.copyTag().getInt("Color") / 15.0f;
+                        }
+                        return 0.0f;
+                    });
+        });
     }
 }
