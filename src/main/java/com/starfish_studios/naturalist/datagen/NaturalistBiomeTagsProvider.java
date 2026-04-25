@@ -14,6 +14,7 @@ import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -21,25 +22,36 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
     private static final ResourceLocation ATMOSPHERIC_IS_RAINFOREST = ResourceLocation.fromNamespaceAndPath("atmospheric", "is_rainforest");
     private static final ResourceLocation ATMOSPHERIC_KOUSA_JUNGLE = ResourceLocation.fromNamespaceAndPath("atmospheric", "kousa_jungle");
 
+    private static ResourceLocation bop(String name) {
+        return ResourceLocation.fromNamespaceAndPath("biomesoplenty", name);
+    }
+
     public NaturalistBiomeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, Registries.BIOME, lookupProvider, Naturalist.MOD_ID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider provider) {
+    protected void addTags(HolderLookup.@NonNull Provider provider) {
         tag(NaturalistTags.Biomes.HAS_ALLIGATOR)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP).add(Biomes.RIVER)
                 .addOptionalTag(Tags.Biomes.IS_SWAMP)
-                .addOptionalTag(ATMOSPHERIC_IS_RAINFOREST);
+                .addOptionalTag(ATMOSPHERIC_IS_RAINFOREST)
+                .addOptional(bop("bayou"));
 
         tag(NaturalistTags.Biomes.HAS_BASS)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP)
                 .addTag(BiomeTags.IS_RIVER)
-                .addOptionalTag(Tags.Biomes.IS_SWAMP);
+                .addOptionalTag(Tags.Biomes.IS_SWAMP)
+                .addOptional(bop("bayou")).addOptional(bop("bog")).addOptional(bop("wetland"));
 
         tag(NaturalistTags.Biomes.HAS_BEAR)
                 .addTag(BiomeTags.IS_FOREST).addTag(BiomeTags.IS_TAIGA)
-                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_TAIGA);
+                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_TAIGA)
+                .addOptional(bop("coniferous_forest")).addOptional(bop("forested_field"))
+                .addOptional(bop("orchard")).addOptional(bop("pumpkin_patch"))
+                .addOptional(bop("seasonal_forest")).addOptional(bop("woodland"))
+                .addOptional(bop("snowy_coniferous_forest")).addOptional(bop("fir_clearing"))
+                .addOptional(bop("maple_woods")).addOptional(bop("snowy_maple_woods"));
 
         tag(NaturalistTags.Biomes.HAS_BLUEJAY)
                 .addTag(BiomeTags.IS_TAIGA).addTag(BiomeTags.IS_HILL)
@@ -47,68 +59,104 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptionalTag(Tags.Biomes.IS_SNOWY).addOptionalTag(Tags.Biomes.IS_MOUNTAIN)
                 .addOptionalTag(Tags.Biomes.IS_CONIFEROUS_TREE).addOptionalTag(Tags.Biomes.IS_TAIGA)
                 .addOptionalTag(Tags.Biomes.IS_ICY).addOptionalTag(Tags.Biomes.IS_HILL)
-                .addOptional(ATMOSPHERIC_KOUSA_JUNGLE);
+                .addOptional(ATMOSPHERIC_KOUSA_JUNGLE)
+                .addOptional(bop("snowy_coniferous_forest")).addOptional(bop("coniferous_forest"))
+                .addOptional(bop("highland")).addOptional(bop("jade_cliffs"))
+                .addOptional(bop("maple_woods")).addOptional(bop("snowy_maple_woods"))
+                .addOptional(bop("moor")).addOptional(bop("muskeg"));
 
         tag(NaturalistTags.Biomes.HAS_BOAR)
                 .addTag(BiomeTags.IS_SAVANNA).addTag(BiomeTags.IS_FOREST)
-                .addOptionalTag(Tags.Biomes.IS_SAVANNA);
+                .addOptionalTag(Tags.Biomes.IS_SAVANNA)
+                .addOptional(bop("prairie")).addOptional(bop("rocky_shrubland"))
+                .addOptional(bop("shrubland")).addOptional(bop("woodland"));
 
         tag(NaturalistTags.Biomes.HAS_BUTTERFLY)
                 .addTag(BiomeTags.IS_FOREST)
                 .add(Biomes.PLAINS).add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP)
                 .addOptionalTag(Tags.Biomes.IS_SWAMP)
-                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_PLAINS);
+                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_PLAINS)
+                .addOptional(bop("bayou")).addOptional(bop("field"))
+                .addOptional(bop("lavender_field")).addOptional(bop("mystic_grove"))
+                .addOptional(bop("overgrown_greens")).addOptional(bop("pasture"))
+                .addOptional(bop("prairie")).addOptional(bop("rocky_shrubland"))
+                .addOptional(bop("shrubland"));
 
         tag(NaturalistTags.Biomes.HAS_CANARY)
                 .addTag(BiomeTags.IS_HILL).addTag(BiomeTags.IS_MOUNTAIN)
-                .addOptionalTag(Tags.Biomes.IS_MOUNTAIN).addOptionalTag(Tags.Biomes.IS_HILL);
+                .addOptionalTag(Tags.Biomes.IS_MOUNTAIN).addOptionalTag(Tags.Biomes.IS_HILL)
+                .addOptional(bop("crag")).addOptional(bop("jade_cliffs")).addOptional(bop("moor"));
 
         tag(NaturalistTags.Biomes.HAS_CARDINAL)
                 .addTag(BiomeTags.IS_FOREST).addTag(BiomeTags.IS_SAVANNA)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP).add(Biomes.DESERT)
                 .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_SAVANNA)
                 .addOptionalTag(Tags.Biomes.IS_SWAMP).addOptionalTag(Tags.Biomes.IS_SANDY)
-                .addOptionalTag(Tags.Biomes.IS_DESERT);
+                .addOptionalTag(Tags.Biomes.IS_DESERT)
+                .addOptional(bop("bayou")).addOptional(bop("bog"))
+                .addOptional(bop("lavender_field")).addOptional(bop("maple_woods"))
+                .addOptional(bop("mystic_grove")).addOptional(bop("orchard"))
+                .addOptional(bop("overgrown_greens")).addOptional(bop("wetland"));
 
         tag(NaturalistTags.Biomes.HAS_CATFISH)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP)
-                .addOptionalTag(Tags.Biomes.IS_SWAMP);
+                .addOptionalTag(Tags.Biomes.IS_SWAMP)
+                .addOptional(bop("bayou")).addOptional(bop("bog")).addOptional(bop("wetland"));
 
         tag(NaturalistTags.Biomes.HAS_CORAL_SNAKE)
                 .addTag(BiomeTags.IS_JUNGLE).addTag(BiomeTags.IS_RIVER)
                 .add(Biomes.BEACH).add(Biomes.STONY_SHORE)
                 .addOptionalTag(Tags.Biomes.IS_BEACH).addOptionalTag(Tags.Biomes.IS_JUNGLE)
-                .addOptionalTag(Tags.Biomes.IS_RIVER);
+                .addOptionalTag(Tags.Biomes.IS_RIVER)
+                .addOptional(bop("rainforest"));
 
         tag(NaturalistTags.Biomes.HAS_DEER)
                 .addTag(BiomeTags.IS_FOREST).add(Biomes.CHERRY_GROVE)
-                .addOptionalTag(Tags.Biomes.IS_FOREST);
+                .addOptionalTag(Tags.Biomes.IS_FOREST)
+                .addOptional(bop("orchard")).addOptional(bop("pasture"))
+                .addOptional(bop("redwood_forest")).addOptional(bop("woodland"))
+                .addOptional(bop("snowy_coniferous_forest")).addOptional(bop("snowy_fir_clearing"))
+                .addOptional(bop("snowblossom_grove")).addOptional(bop("snowy_maple_woods"))
+                .addOptional(bop("lavender_field")).addOptional(bop("mystic_grove"));
 
         tag(NaturalistTags.Biomes.HAS_DRAGONFLY)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP)
-                .addOptionalTag(Tags.Biomes.IS_SWAMP);
+                .addOptionalTag(Tags.Biomes.IS_SWAMP)
+                .addOptional(bop("bayou"));
 
         tag(NaturalistTags.Biomes.HAS_DUCK)
                 .add(Biomes.SWAMP).addTag(BiomeTags.IS_RIVER)
-                .addOptionalTag(Tags.Biomes.IS_SWAMP);
+                .addOptionalTag(Tags.Biomes.IS_SWAMP)
+                .addOptional(bop("lavender_field")).addOptional(bop("mystic_grove"))
+                .addOptional(bop("orchard")).addOptional(bop("prairie"))
+                .addOptional(bop("rocky_shrubland")).addOptional(bop("shrubland"));
 
         tag(NaturalistTags.Biomes.HAS_ELEPHANT)
                 .addTag(BiomeTags.IS_SAVANNA)
-                .addOptionalTag(Tags.Biomes.IS_SAVANNA);
+                .addOptionalTag(Tags.Biomes.IS_SAVANNA)
+                .addOptional(bop("scrubland"));
 
         tag(NaturalistTags.Biomes.HAS_FINCH)
                 .addTag(BiomeTags.IS_SAVANNA).addTag(BiomeTags.IS_FOREST)
-                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_SAVANNA);
+                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_SAVANNA)
+                .addOptional(bop("lavender_field")).addOptional(bop("mediterranean_forest"))
+                .addOptional(bop("scrubland"));
 
         tag(NaturalistTags.Biomes.HAS_FIREFLY)
                 .addTag(BiomeTags.IS_FOREST)
                 .add(Biomes.PLAINS).add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP).add(Biomes.MUSHROOM_FIELDS)
                 .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_PLAINS)
-                .addOptionalTag(Tags.Biomes.IS_SWAMP).addOptionalTag(Tags.Biomes.IS_MUSHROOM);
+                .addOptionalTag(Tags.Biomes.IS_SWAMP).addOptionalTag(Tags.Biomes.IS_MUSHROOM)
+                .addOptional(bop("bayou")).addOptional(bop("bog"))
+                .addOptional(bop("lavender_field")).addOptional(bop("mystic_grove"))
+                .addOptional(bop("orchard")).addOptional(bop("pasture"))
+                .addOptional(bop("rocky_shrubland")).addOptional(bop("shrubland"))
+                .addOptional(bop("wetland"));
 
         tag(NaturalistTags.Biomes.HAS_GIRAFFE)
                 .addTag(BiomeTags.IS_SAVANNA)
-                .addOptionalTag(Tags.Biomes.IS_SAVANNA);
+                .addOptionalTag(Tags.Biomes.IS_SAVANNA)
+                .addOptional(bop("scrubland"));
 
         tag(NaturalistTags.Biomes.HAS_HIPPO)
                 .addTag(BiomeTags.IS_SAVANNA).addTag(BiomeTags.IS_JUNGLE)
@@ -117,28 +165,36 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
 
         tag(NaturalistTags.Biomes.HAS_LION)
                 .addTag(BiomeTags.IS_SAVANNA)
-                .addOptionalTag(Tags.Biomes.IS_SAVANNA);
+                .addOptionalTag(Tags.Biomes.IS_SAVANNA)
+                .addOptional(bop("scrubland"));
 
         tag(NaturalistTags.Biomes.HAS_LIZARD)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP).add(Biomes.DESERT)
                 .addTag(BiomeTags.IS_JUNGLE).addTag(BiomeTags.IS_FOREST).addTag(BiomeTags.IS_SAVANNA)
                 .addOptionalTag(Tags.Biomes.IS_SWAMP).addOptionalTag(Tags.Biomes.IS_DESERT)
                 .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_SAVANNA)
-                .addOptionalTag(Tags.Biomes.IS_JUNGLE);
+                .addOptionalTag(Tags.Biomes.IS_JUNGLE)
+                .addOptional(bop("field")).addOptional(bop("rainforest"));
 
         tag(NaturalistTags.Biomes.HAS_RATTLESNAKE)
                 .addTag(BiomeTags.IS_BADLANDS).addTag(BiomeTags.IS_SAVANNA)
                 .add(Biomes.DESERT)
-                .addOptionalTag(Tags.Biomes.IS_SANDY).addOptionalTag(Tags.Biomes.IS_SAVANNA).addOptionalTag(Tags.Biomes.IS_DESERT);
+                .addOptionalTag(Tags.Biomes.IS_SANDY).addOptionalTag(Tags.Biomes.IS_SAVANNA).addOptionalTag(Tags.Biomes.IS_DESERT)
+                .addOptional(bop("lush_desert"))
+                .addOptional(bop("scrubland"));
 
         tag(NaturalistTags.Biomes.HAS_RHINO)
                 .addTag(BiomeTags.IS_SAVANNA)
-                .addOptionalTag(Tags.Biomes.IS_SAVANNA);
+                .addOptionalTag(Tags.Biomes.IS_SAVANNA)
+                .addOptional(bop("scrubland"));
 
         tag(NaturalistTags.Biomes.HAS_ROBIN)
                 .addTag(BiomeTags.IS_FOREST).addTag(BiomeTags.IS_MOUNTAIN)
                 .add(Biomes.PLAINS).add(Biomes.CHERRY_GROVE)
-                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_MOUNTAIN).addOptionalTag(Tags.Biomes.IS_PLAINS);
+                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_MOUNTAIN).addOptionalTag(Tags.Biomes.IS_PLAINS)
+                .addOptional(bop("field")).addOptional(bop("orchard"))
+                .addOptional(bop("overgrown_greens")).addOptional(bop("pasture"))
+                .addOptional(bop("pumpkin_patch")).addOptional(bop("seasonal_forest"));
 
         tag(NaturalistTags.Biomes.HAS_SNAIL)
                 .addTag(BiomeTags.IS_FOREST).addTag(BiomeTags.IS_SAVANNA)
@@ -148,31 +204,44 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_SAVANNA)
                 .addOptionalTag(Tags.Biomes.IS_RIVER).addOptionalTag(Tags.Biomes.IS_HILL)
                 .addOptionalTag(Tags.Biomes.IS_MOUNTAIN).addOptionalTag(Tags.Biomes.IS_PLAINS)
-                .addOptionalTag(Tags.Biomes.IS_SWAMP).addOptionalTag(Tags.Biomes.IS_UNDERGROUND).addOptionalTag(Tags.Biomes.IS_MUSHROOM);
+                .addOptionalTag(Tags.Biomes.IS_SWAMP).addOptionalTag(Tags.Biomes.IS_UNDERGROUND).addOptionalTag(Tags.Biomes.IS_MUSHROOM)
+                .addOptional(bop("bayou")).addOptional(bop("bog"))
+                .addOptional(bop("orchard")).addOptional(bop("wetland"))
+                .addOptional(bop("woodland"));
 
         tag(NaturalistTags.Biomes.HAS_SNAKE)
                 .addTag(BiomeTags.IS_FOREST)
                 .add(Biomes.PLAINS).add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP)
-                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_PLAINS).addOptionalTag(Tags.Biomes.IS_SWAMP);
+                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_PLAINS).addOptionalTag(Tags.Biomes.IS_SWAMP)
+                .addOptional(bop("bayou")).addOptional(bop("bog"))
+                .addOptional(bop("wetland")).addOptional(bop("lavender_field"));
 
         tag(NaturalistTags.Biomes.HAS_SPARROW)
                 .add(Biomes.PLAINS).add(Biomes.CHERRY_GROVE)
-                .addOptionalTag(Tags.Biomes.IS_PLAINS);
+                .addOptionalTag(Tags.Biomes.IS_PLAINS)
+                .addOptional(bop("mystic_grove")).addOptional(bop("prairie"))
+                .addOptional(bop("rocky_shrubland")).addOptional(bop("shrubland"));
 
         tag(NaturalistTags.Biomes.HAS_TORTOISE)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP).add(Biomes.DESERT)
                 .addTag(BiomeTags.IS_JUNGLE)
                 .addOptionalTag(Tags.Biomes.IS_SWAMP).addOptionalTag(Tags.Biomes.IS_DESERT)
-                .addOptionalTag(Tags.Biomes.IS_JUNGLE);
+                .addOptionalTag(Tags.Biomes.IS_JUNGLE)
+                .addOptional(bop("lush_desert")).addOptional(bop("rainforest"))
+                .addOptional(bop("bayou"));
 
         tag(NaturalistTags.Biomes.HAS_VULTURE)
                 .addTag(BiomeTags.IS_SAVANNA).addTag(BiomeTags.IS_BADLANDS)
                 .add(Biomes.DESERT)
-                .addOptionalTag(Tags.Biomes.IS_SAVANNA).addOptionalTag(Tags.Biomes.IS_DESERT);
+                .addOptionalTag(Tags.Biomes.IS_SAVANNA).addOptionalTag(Tags.Biomes.IS_DESERT)
+                .addOptional(bop("dryland")).addOptional(bop("highland"))
+                .addOptional(bop("lush_desert")).addOptional(bop("lush_savanna"))
+                .addOptional(bop("scrubland"));
 
         tag(NaturalistTags.Biomes.HAS_ZEBRA)
                 .addTag(BiomeTags.IS_SAVANNA)
-                .addOptionalTag(Tags.Biomes.IS_SAVANNA);
+                .addOptionalTag(Tags.Biomes.IS_SAVANNA)
+                .addOptional(bop("scrubland"));
 
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_ALLIGATOR);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_BASS);

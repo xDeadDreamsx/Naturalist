@@ -4,6 +4,10 @@
     {
       "id": "#c:is_savanna",
       "required": false
+    },
+    {
+      "id": "biomesoplenty:scrubland",
+      "required": false
     }
   ]
 }

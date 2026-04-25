@@ -10,6 +10,10 @@
     {
       "id": "#atmospheric:is_rainforest",
       "required": false
+    },
+    {
+      "id": "biomesoplenty:bayou",
+      "required": false
     }
   ]
 }

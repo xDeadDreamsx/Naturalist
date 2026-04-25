@@ -5,6 +5,10 @@
     {
       "id": "#c:is_swamp",
       "required": false
+    },
+    {
+      "id": "biomesoplenty:bayou",
+      "required": false
     }
   ]
 }

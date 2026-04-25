@@ -9,6 +9,18 @@
     {
       "id": "#c:is_savanna",
       "required": false
+    },
+    {
+      "id": "biomesoplenty:lavender_field",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:mediterranean_forest",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:scrubland",
+      "required": false
     }
   ]
 }

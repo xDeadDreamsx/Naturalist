@@ -35,7 +35,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.Path;
@@ -89,7 +88,7 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
                 for (int y = -1; y <= 1; y++) {
                     for (int z = -16; z <= 16; z++) {
                         mutableBlockPos.setWithOffset(blockPos, x, y, z);
-                        if (levelAccessor.getChunk(SectionPos.blockToSectionCoord(mutableBlockPos.getX()), SectionPos.blockToSectionCoord(mutableBlockPos.getZ()), ChunkStatus.FULL, false) == null) {
+                        if (!levelAccessor.hasChunk(SectionPos.blockToSectionCoord(mutableBlockPos.getX()), SectionPos.blockToSectionCoord(mutableBlockPos.getZ()))) {
                             continue;
                         }
                         if (levelAccessor.getFluidState(mutableBlockPos).is(FluidTags.WATER)) {

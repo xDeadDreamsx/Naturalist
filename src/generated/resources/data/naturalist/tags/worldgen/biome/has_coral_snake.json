@@ -15,6 +15,10 @@
     {
       "id": "#c:is_river",
       "required": false
+    },
+    {
+      "id": "biomesoplenty:rainforest",
+      "required": false
     }
   ]
 }

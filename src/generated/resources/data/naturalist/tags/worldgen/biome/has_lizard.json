@@ -25,6 +25,14 @@
     {
       "id": "#c:is_jungle",
       "required": false
+    },
+    {
+      "id": "biomesoplenty:field",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:rainforest",
+      "required": false
     }
   ]
 }
