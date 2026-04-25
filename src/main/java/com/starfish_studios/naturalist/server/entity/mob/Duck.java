@@ -99,19 +99,19 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return NaturalistSoundEvents.DUCK_AMBIENT.get();
+        return this.isBaby() ? NaturalistSoundEvents.DUCK_AMBIENT_BABY.get() : NaturalistSoundEvents.DUCK_AMBIENT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return NaturalistSoundEvents.DUCK_HURT.get();
+        return this.isBaby() ? NaturalistSoundEvents.DUCK_HURT_BABY.get() : NaturalistSoundEvents.DUCK_HURT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
-        return NaturalistSoundEvents.DUCK_DEATH.get();
+        return this.isBaby() ? NaturalistSoundEvents.DUCK_DEATH_BABY.get() : NaturalistSoundEvents.DUCK_DEATH.get();
     }
 
     @Override

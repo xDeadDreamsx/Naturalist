@@ -6,6 +6,7 @@ import com.starfish_studios.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.starfish_studios.naturalist.server.entity.ai.goal.FlyingWanderGoal;
 import com.starfish_studios.naturalist.server.entity.base.Catchable;
 import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
+import com.starfish_studios.naturalist.registry.NaturalistSoundEvents;
 import com.starfish_studios.naturalist.registry.NaturalistRegistry;
 import com.starfish_studios.naturalist.registry.NaturalistTags;
 import net.minecraft.Util;
@@ -297,6 +298,18 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
 
     @Override
     protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return NaturalistSoundEvents.BUTTERFLY_AMBIENT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return NaturalistSoundEvents.BUTTERFLY_HURT.get();
     }
 
     @Override

@@ -205,6 +205,12 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
 
     @Nullable
     @Override
+    protected SoundEvent getAmbientSound() {
+        return NaturalistSoundEvents.FIREFLY_AMBIENT.get();
+    }
+
+    @Nullable
+    @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
         return NaturalistSoundEvents.FIREFLY_HURT.get();
     }

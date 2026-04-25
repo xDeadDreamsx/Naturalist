@@ -361,6 +361,18 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
 
     @Nullable
     @Override
+    protected SoundEvent getAmbientSound() {
+        return NaturalistSoundEvents.SNAIL_AMBIENT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return NaturalistSoundEvents.SNAIL_HURT.get();
+    }
+
+    @Nullable
+    @Override
     protected SoundEvent getDeathSound() {
         return NaturalistSoundEvents.SNAIL_CRUSH.get();
     }

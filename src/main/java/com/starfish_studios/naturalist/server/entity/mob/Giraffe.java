@@ -16,6 +16,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
@@ -360,7 +361,19 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return NaturalistSoundEvents.GIRAFFE_AMBIENT.get();
+        return this.isBaby() ? NaturalistSoundEvents.GIRAFFE_AMBIENT_BABY.get() : NaturalistSoundEvents.GIRAFFE_AMBIENT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return this.isBaby() ? NaturalistSoundEvents.GIRAFFE_HURT_BABY.get() : NaturalistSoundEvents.GIRAFFE_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return this.isBaby() ? NaturalistSoundEvents.GIRAFFE_DEATH_BABY.get() : NaturalistSoundEvents.GIRAFFE_DEATH.get();
     }
 
     public AnimatableInstanceCache getAnimatableInstanceCache() {

@@ -344,8 +344,20 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
 
     @Nullable
     @Override
+    protected SoundEvent getAmbientSound() {
+        return NaturalistSoundEvents.SNAKE_AMBIENT.get();
+    }
+
+    @Nullable
+    @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
         return NaturalistSoundEvents.SNAKE_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return NaturalistSoundEvents.SNAKE_DEATH.get();
     }
 
     public AnimatableInstanceCache getAnimatableInstanceCache() {

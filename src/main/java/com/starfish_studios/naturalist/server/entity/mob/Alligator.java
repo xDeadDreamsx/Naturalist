@@ -69,19 +69,15 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Nullable
     @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return this.isBaby() ? NaturalistSoundEvents.GATOR_AMBIENT_BABY.get() : NaturalistSoundEvents.GATOR_HURT.get();
+        return this.isBaby() ? NaturalistSoundEvents.GATOR_HURT_BABY.get() : NaturalistSoundEvents.GATOR_HURT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
-        return this.isBaby() ? NaturalistSoundEvents.GATOR_AMBIENT_BABY.get() : NaturalistSoundEvents.GATOR_DEATH.get();
+        return this.isBaby() ? NaturalistSoundEvents.GATOR_DEATH_BABY.get() : NaturalistSoundEvents.GATOR_DEATH.get();
     }
 
-    @Override
-    public float getVoicePitch() {
-        return this.isBaby() ? super.getVoicePitch() * 0.65F : super.getVoicePitch();
-    }
 
     @Nullable
     @Override

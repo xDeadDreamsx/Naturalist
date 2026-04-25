@@ -138,13 +138,19 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
     @Nullable
     @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return NaturalistSoundEvents.ELEPHANT_HURT.get();
+        return this.isBaby() ? NaturalistSoundEvents.ELEPHANT_HURT_BABY.get() : NaturalistSoundEvents.ELEPHANT_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return this.isBaby() ? NaturalistSoundEvents.ELEPHANT_DEATH_BABY.get() : NaturalistSoundEvents.ELEPHANT_DEATH.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return NaturalistSoundEvents.ELEPHANT_AMBIENT.get();
+        return this.isBaby() ? NaturalistSoundEvents.ELEPHANT_AMBIENT_BABY.get() : NaturalistSoundEvents.ELEPHANT_AMBIENT.get();
     }
 
     @Override

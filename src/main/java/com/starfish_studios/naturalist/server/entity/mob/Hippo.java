@@ -208,6 +208,12 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
 
     @Nullable
     @Override
+    protected SoundEvent getDeathSound() {
+        return NaturalistSoundEvents.HIPPO_DEATH.get();
+    }
+
+    @Nullable
+    @Override
     protected SoundEvent getAmbientSound() {
         return NaturalistSoundEvents.HIPPO_AMBIENT.get();
     }

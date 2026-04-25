@@ -87,12 +87,14 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
 
     @Nullable
     @Override
+    protected SoundEvent getDeathSound() {
+        return this.isBaby() ? NaturalistSoundEvents.DEER_DEATH_BABY.get() : NaturalistSoundEvents.DEER_DEATH.get();
+    }
+
+    @Nullable
+    @Override
     protected SoundEvent getAmbientSound() {
         return this.isBaby() ? NaturalistSoundEvents.DEER_AMBIENT_BABY.get() : NaturalistSoundEvents.DEER_AMBIENT.get();
-    }
-    @Override
-    public float getVoicePitch() {
-        return this.isBaby() ? super.getVoicePitch() * 0.65F : super.getVoicePitch();
     }
     @Override
     public boolean isFood(ItemStack stack) {

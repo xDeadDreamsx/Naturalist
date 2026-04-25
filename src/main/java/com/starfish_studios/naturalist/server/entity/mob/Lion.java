@@ -210,13 +210,19 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     @Nullable
     @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return NaturalistSoundEvents.LION_HURT.get();
+        return this.isBaby() ? NaturalistSoundEvents.LION_HURT_BABY.get() : NaturalistSoundEvents.LION_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return this.isBaby() ? NaturalistSoundEvents.LION_DEATH_BABY.get() : NaturalistSoundEvents.LION_DEATH.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return NaturalistSoundEvents.LION_AMBIENT.get();
+        return this.isBaby() ? NaturalistSoundEvents.LION_AMBIENT_BABY.get() : NaturalistSoundEvents.LION_AMBIENT.get();
     }
 
     @Override

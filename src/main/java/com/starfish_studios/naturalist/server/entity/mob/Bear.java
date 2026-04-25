@@ -439,7 +439,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
-        return NaturalistSoundEvents.BEAR_DEATH.get();
+        return this.isBaby() ? NaturalistSoundEvents.BEAR_DEATH_BABY.get() : NaturalistSoundEvents.BEAR_DEATH.get();
     }
 
     @Nullable
@@ -450,7 +450,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
 
     @Override
     public float getVoicePitch() {
-        return this.isSleeping() ? super.getVoicePitch() * 0.3F : this.isBaby() ? super.getVoicePitch() * 0.4F : super.getVoicePitch();
+        return this.isSleeping() ? super.getVoicePitch() * 0.3F : super.getVoicePitch();
     }
 
     @Override

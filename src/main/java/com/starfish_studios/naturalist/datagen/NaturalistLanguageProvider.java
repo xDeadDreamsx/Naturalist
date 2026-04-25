@@ -158,11 +158,15 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("advancements.husbandry.feed_bear_honeycomb.title", "Oh Bother");
         add("advancements.husbandry.feed_bear_honeycomb.description", "Feed a Honeycomb to a Bear");
 
+        add("naturalist.subtitles.entity.tortoise.ambient", "Tortoise grunts");
         add("naturalist.subtitles.entity.tortoise.hide", "Tortoise hides");
         add("naturalist.subtitles.entity.tortoise.thud", "Tortoise thuds");
         add("naturalist.subtitles.entity.tortoise.hurt", "Tortoise hurts");
         add("naturalist.subtitles.entity.tortoise.shell_block", "Tortoise shell blocks");
         add("naturalist.subtitles.entity.tortoise.death", "Tortoise dies");
+        add("naturalist.subtitles.entity.tortoise.ambient_baby", "Baby Tortoise grunts");
+        add("naturalist.subtitles.entity.tortoise.hurt_baby", "Baby Tortoise hurts");
+        add("naturalist.subtitles.entity.tortoise.death_baby", "Baby Tortoise dies");
 
         add("naturalist.subtitles.entity.bird.hurt", "Bird hurts");
         add("naturalist.subtitles.entity.bird.death", "Bird dies");
@@ -177,13 +181,20 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("naturalist.subtitles.entity.bird.ambient_sparrow", "Sparrow chirps");
 
         add("naturalist.subtitles.entity.deer.hurt", "Deer hurts");
+        add("naturalist.subtitles.entity.deer.death", "Deer dies");
         add("naturalist.subtitles.entity.deer.ambient", "Deer grunts");
         add("naturalist.subtitles.entity.deer.hurt_baby", "Fawn hurts");
         add("naturalist.subtitles.entity.deer.ambient_baby", "Fawn bleats");
+        add("naturalist.subtitles.entity.deer.death_baby", "Fawn dies");
 
         add("naturalist.subtitles.entity.elephant.hurt", "Elephant hurts");
+        add("naturalist.subtitles.entity.elephant.death", "Elephant dies");
         add("naturalist.subtitles.entity.elephant.ambient", "Elephant trumpets");
+        add("naturalist.subtitles.entity.elephant.ambient_baby", "Baby Elephant squeaks");
+        add("naturalist.subtitles.entity.elephant.hurt_baby", "Baby Elephant hurts");
+        add("naturalist.subtitles.entity.elephant.death_baby", "Baby Elephant dies");
 
+        add("naturalist.subtitles.entity.firefly.ambient", "Firefly buzzes");
         add("naturalist.subtitles.entity.firefly.hurt", "Firefly hurts");
         add("naturalist.subtitles.entity.firefly.death", "Firefly dies");
         add("naturalist.subtitles.entity.firefly.hide", "Firefly hides");
@@ -196,21 +207,32 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("naturalist.subtitles.entity.bear.sniff", "Brown Bear sniffs");
         add("naturalist.subtitles.entity.bear.spit", "Brown Bear spits");
         add("naturalist.subtitles.entity.bear.eat", "Brown Bear eats");
+        add("naturalist.subtitles.entity.bear.death_baby", "Brown Bear cub dies");
         add("naturalist.subtitles.entity.lion.hurt", "Lion hurts");
+        add("naturalist.subtitles.entity.lion.death", "Lion dies");
         add("naturalist.subtitles.entity.lion.ambient", "Lion growls");
         add("naturalist.subtitles.entity.lion.roar", "Lion roars");
+        add("naturalist.subtitles.entity.lion.ambient_baby", "Lion cub mews");
+        add("naturalist.subtitles.entity.lion.hurt_baby", "Lion cub hurts");
+        add("naturalist.subtitles.entity.lion.death_baby", "Lion cub dies");
 
         add("naturalist.subtitles.entity.rhino.scrape", "Rhino scrapes foot");
         add("naturalist.subtitles.entity.rhino.ambient", "Rhino growls");
         add("naturalist.subtitles.entity.rhino.ambient_baby", "Rhino baby coos");
+        add("naturalist.subtitles.entity.rhino.hurt", "Rhino hurts");
+        add("naturalist.subtitles.entity.rhino.death", "Rhino dies");
 
+        add("naturalist.subtitles.entity.snail.ambient", "Snail squelches");
+        add("naturalist.subtitles.entity.snail.hurt", "Snail hurts");
         add("naturalist.subtitles.entity.snail.crush", "Snail crushes");
         add("naturalist.subtitles.entity.snail.move", "Snail inches");
         add("naturalist.subtitles.item.bucket.fill_snail", "Snail scooped");
         add("naturalist.subtitles.item.bucket.empty_snail", "Bucket empties snail");
 
+        add("naturalist.subtitles.entity.snake.ambient", "Snake slithers");
         add("naturalist.subtitles.entity.snake.hiss", "Snake hisses");
         add("naturalist.subtitles.entity.snake.hurt", "Snake hurts");
+        add("naturalist.subtitles.entity.snake.death", "Snake dies");
         add("naturalist.subtitles.entity.snake.rattle", "Snake rattles");
 
         add("naturalist.subtitles.entity.zebra.ambient", "Zebra brays");
@@ -225,24 +247,37 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("naturalist.subtitles.entity.vulture.hurt", "Vulture hurts");
         add("naturalist.subtitles.entity.vulture.death", "Vulture dies");
 
-        add("naturalist.subtitles.entity.giraffe.ambient", "Giraffe breathes");
+        add("naturalist.subtitles.entity.giraffe.ambient", "Giraffe snorts");
+        add("naturalist.subtitles.entity.giraffe.hurt", "Giraffe hurts");
+        add("naturalist.subtitles.entity.giraffe.death", "Giraffe dies");
+        add("naturalist.subtitles.entity.giraffe.ambient_baby", "Baby Giraffe hums");
+        add("naturalist.subtitles.entity.giraffe.hurt_baby", "Baby Giraffe hurts");
+        add("naturalist.subtitles.entity.giraffe.death_baby", "Baby Giraffe dies");
 
-        add("naturalist.subtitles.entity.hippo.ambient", "Hippo growls");
+        add("naturalist.subtitles.entity.hippo.ambient", "Hippo grumbles");
         add("naturalist.subtitles.entity.hippo.hurt", "Hippo hurts");
+        add("naturalist.subtitles.entity.hippo.death", "Hippo dies");
 
         add("naturalist.subtitles.entity.alligator.hurt", "Alligator hurts");
         add("naturalist.subtitles.entity.alligator.death", "Alligator dies");
         add("naturalist.subtitles.entity.alligator.ambient", "Alligator bellows");
         add("naturalist.subtitles.entity.alligator.ambient_baby", "Alligator baby chirps");
+        add("naturalist.subtitles.entity.alligator.hurt_baby", "Alligator baby hurts");
+        add("naturalist.subtitles.entity.alligator.death_baby", "Alligator baby dies");
 
         add("naturalist.subtitles.entity.boar.ambient", "Boar grunts");
         add("naturalist.subtitles.entity.boar.hurt", "Boar hurts");
         add("naturalist.subtitles.entity.boar.death", "Boar dies");
+        add("naturalist.subtitles.entity.boar.ambient_baby", "Piglet squeals");
+        add("naturalist.subtitles.entity.boar.hurt_baby", "Piglet hurts");
+        add("naturalist.subtitles.entity.boar.death_baby", "Piglet dies");
 
         add("naturalist.subtitles.entity.catfish.flop", "Catfish flops");
         add("naturalist.subtitles.entity.bass.flop", "Bass flops");
 
         add("naturalist.subtitles.entity.dragonfly.loop", "Dragonfly buzzes");
+        add("naturalist.subtitles.entity.dragonfly.hurt", "Dragonfly hurts");
+        add("naturalist.subtitles.entity.dragonfly.death", "Dragonfly dies");
 
         add("naturalist.subtitles.entity.duck.ambient", "Duck quacks");
         add("naturalist.subtitles.entity.duck.hurt", "Duck hurts");
@@ -252,16 +287,6 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("naturalist.subtitles.entity.duck.hurt_baby", "Duckling hurts");
         add("naturalist.subtitles.entity.duck.death_baby", "Duckling dies");
 
-        add("naturalist.subtitles.entity.hyena.ambient", "Hyena laughs");
-        add("naturalist.subtitles.entity.hyena.hurt", "Hyena hurts");
-        add("naturalist.subtitles.entity.hyena.death", "Hyena dies");
-
-        add("naturalist.subtitles.entity.ostrich.ambient", "Ostrich warbles");
-        add("naturalist.subtitles.entity.ostrich.hurt", "Ostrich hurts");
-        add("naturalist.subtitles.entity.ostrich.death", "Ostrich dies");
-        add("naturalist.subtitles.entity.ostrich.egg_break", "Ostrich Egg breaks");
-        add("naturalist.subtitles.entity.ostrich.egg_crack", "Ostrich Egg cracks");
-        add("naturalist.subtitles.entity.ostrich.egg_hatch", "Ostrich Egg hatches");
         add("naturalist.subtitles.entity.tortoise.egg_break", "Tortoise egg breaks");
         add("naturalist.subtitles.entity.tortoise.egg_crack", "Tortoise egg cracks");
         add("naturalist.subtitles.entity.tortoise.egg_hatch", "Tortoise egg hatches");
@@ -269,6 +294,13 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("naturalist.subtitles.entity.alligator.egg_break", "Alligator egg breaks");
         add("naturalist.subtitles.entity.alligator.egg_crack", "Alligator egg cracks");
         add("naturalist.subtitles.entity.alligator.egg_hatch", "Alligator egg hatches");
+
+        add("naturalist.subtitles.entity.lizard.ambient", "Lizard chirps");
+        add("naturalist.subtitles.entity.lizard.hurt", "Lizard hurts");
+        add("naturalist.subtitles.entity.lizard.death", "Lizard dies");
+
+        add("naturalist.subtitles.entity.butterfly.ambient", "Butterfly flutters");
+        add("naturalist.subtitles.entity.butterfly.hurt", "Butterfly hurts");
 
         add("naturalist.configuration.disable_mobs", "Disable Mobs");
         add("naturalist.configuration.alligator_removed", "Remove Alligator");

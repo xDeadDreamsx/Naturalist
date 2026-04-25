@@ -127,19 +127,19 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return NaturalistSoundEvents.BOAR_AMBIENT.get();
+        return this.isBaby() ? NaturalistSoundEvents.BOAR_AMBIENT_BABY.get() : NaturalistSoundEvents.BOAR_AMBIENT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return NaturalistSoundEvents.BOAR_HURT.get();
+        return this.isBaby() ? NaturalistSoundEvents.BOAR_HURT_BABY.get() : NaturalistSoundEvents.BOAR_HURT.get();
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
-        return NaturalistSoundEvents.BOAR_DEATH.get();
+        return this.isBaby() ? NaturalistSoundEvents.BOAR_DEATH_BABY.get() : NaturalistSoundEvents.BOAR_DEATH.get();
     }
 
     @Override
@@ -149,7 +149,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
 
     @Override
     public float getVoicePitch() {
-        return this.isBaby() ? (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.75F : (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.5F;
+        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.5F;
     }
 
     @Override

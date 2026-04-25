@@ -82,8 +82,20 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
 
     @Nullable
     @Override
+    protected SoundEvent getAmbientSound() {
+        return this.isBaby() ? NaturalistSoundEvents.TORTOISE_AMBIENT_BABY.get() : NaturalistSoundEvents.TORTOISE_AMBIENT.get();
+    }
+
+    @Nullable
+    @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return SoundEvents.SHIELD_BLOCK;
+        return this.isBaby() ? NaturalistSoundEvents.TORTOISE_HURT_BABY.get() : NaturalistSoundEvents.TORTOISE_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return this.isBaby() ? NaturalistSoundEvents.TORTOISE_DEATH_BABY.get() : NaturalistSoundEvents.TORTOISE_DEATH.get();
     }
 
     @Nullable
