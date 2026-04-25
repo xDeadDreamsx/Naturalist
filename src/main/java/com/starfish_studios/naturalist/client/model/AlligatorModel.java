@@ -19,17 +19,26 @@ public class AlligatorModel extends GeoModel<Alligator> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Alligator alligator) {
+        if (alligator.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/alligator_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/alligator.geo.json");
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Alligator alligator) {
+        if (alligator.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/alligator/alligator_baby.png");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/alligator/alligator.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Alligator alligator) {
+        if (alligator.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/alligator_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/alligator.animation.json");
     }
 
@@ -40,19 +49,9 @@ public class AlligatorModel extends GeoModel<Alligator> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("head").orElse(null);
+        GeoBone head = this.getBone("neck").orElse(null);
 
         if (head != null) {
-            if (entity.isBaby()) {
-                head.setScaleX(1.5F);
-                head.setScaleY(1.5F);
-                head.setScaleZ(1.5F);
-            } else {
-                head.setScaleX(1.0F);
-                head.setScaleY(1.0F);
-                head.setScaleZ(1.0F);
-            }
-
             head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
             head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         }

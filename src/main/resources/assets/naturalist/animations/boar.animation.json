@@ -101,13 +101,6 @@
             0
           ]
         },
-        "skull": {
-          "rotation": [
-            0,
-            0,
-            "Math.cos(( q.anim_time - 0.0 ) * 360 ) * -2"
-          ]
-        },
         "rightEar": {
           "rotation": [
             "Math.cos(( q.anim_time - 0.0 ) * 360 ) * 5",
@@ -120,6 +113,13 @@
             "Math.cos(( q.anim_time - 0.1 ) * 360 ) * 5",
             0,
             "Math.cos(( q.anim_time - 0.1 ) * 360 ) * 5"
+          ]
+        },
+        "neck": {
+          "rotation": [
+            0,
+            0,
+            "Math.cos(( q.anim_time - 0.0 ) * 360 ) * -2"
           ]
         }
       }
@@ -204,18 +204,6 @@
             "Math.cos(( q.anim_time - 0.3 ) * 360 ) * -16"
           ]
         },
-        "skull": {
-          "rotation": [
-            "-Math.cos(( q.anim_time - 0.2 ) * 720 ) * 2",
-            0,
-            "-Math.cos(( q.anim_time - 0.0 ) * 360 ) * 2"
-          ],
-          "position": [
-            0,
-            "-Math.clamp( Math.sin( -60 + ( q.anim_time - 0.2 ) * 720 ) * 0.1, 0, 0.1 )",
-            0
-          ]
-        },
         "rightEar": {
           "rotation": [
             "Math.cos(( q.anim_time - 0.4 ) * 720 ) * 7",
@@ -228,6 +216,18 @@
             "Math.cos(( q.anim_time - 0.4 ) * 720 ) * 7",
             0,
             "Math.cos(( q.anim_time - 0.4 ) * 720 ) * 7"
+          ]
+        },
+        "neck": {
+          "rotation": [
+            "-Math.cos(( q.anim_time - 0.2 ) * 720 ) * 2",
+            0,
+            "-Math.cos(( q.anim_time - 0.0 ) * 360 ) * 2"
+          ],
+          "position": [
+            0,
+            "-Math.clamp( Math.sin( -60 + ( q.anim_time - 0.2 ) * 720 ) * 0.1, 0, 0.1 )",
+            0
           ]
         }
       }
@@ -260,7 +260,7 @@
             ]
           }
         },
-        "skull": {
+        "neck": {
           "rotation": {
             "0.0": {
               "post": [
@@ -335,7 +335,7 @@
     "animation.sf_nba.boar.look_at_target": {
       "loop": true,
       "bones": {
-        "skull": {
+        "neck": {
           "rotation": [
             "q.target_x_rotation",
             "q.target_y_rotation",
@@ -364,18 +364,6 @@
             0,
             -6.9,
             0
-          ]
-        },
-        "skull": {
-          "rotation": [
-            -36.01614,
-            -13.47586,
-            -8.35652
-          ],
-          "position": [
-            0,
-            0,
-            -2.7
           ]
         },
         "ear_right": {
@@ -443,6 +431,18 @@
             -2.1,
             -4.5,
             -1.3
+          ]
+        },
+        "neck": {
+          "rotation": [
+            -36.01614,
+            -13.47586,
+            -8.35652
+          ],
+          "position": [
+            0,
+            0,
+            -2.7
           ]
         }
       }

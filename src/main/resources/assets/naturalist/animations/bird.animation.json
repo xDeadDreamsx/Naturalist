@@ -119,7 +119,7 @@
             0
           ]
         },
-        "skull": {
+        "neck": {
           "rotation": [
             "-17.5 + Math.sin(( q.anim_time - 0.0 ) * 720 ) * 1",
             0,
@@ -194,7 +194,7 @@
             0
           ]
         },
-        "skull": {
+        "neck": {
           "position": [
             0,
             "Math.cos(( q.anim_time - 0.2 ) * 720 ) * -0.25",
@@ -240,18 +240,6 @@
             0
           ]
         },
-        "skull": {
-          "rotation": [
-            "67.5 + Math.sin(( q.anim_time - 0.4 ) * 1440 ) * 8",
-            0,
-            0
-          ],
-          "position": [
-            0,
-            "-1 + Math.cos(( q.anim_time - 0.1 ) * 1440 ) * 1",
-            "-1 + Math.cos(( q.anim_time - 0.1 ) * 1440 ) * 0.5"
-          ]
-        },
         "left_wing": {
           "rotation": [
             7.41742,
@@ -275,13 +263,25 @@
             0.75,
             -0.25
           ]
+        },
+        "neck": {
+          "rotation": [
+            "67.5 + Math.sin(( q.anim_time - 0.4 ) * 1440 ) * 8",
+            0,
+            0
+          ],
+          "position": [
+            0,
+            "-1 + Math.cos(( q.anim_time - 0.1 ) * 1440 ) * 1",
+            "-1 + Math.cos(( q.anim_time - 0.1 ) * 1440 ) * 0.5"
+          ]
         }
       }
     },
     "animation.sf_nba.bird.baby_transform": {
       "loop": true,
       "bones": {
-        "skull": {
+        "neck": {
           "scale": 1.4
         }
       }

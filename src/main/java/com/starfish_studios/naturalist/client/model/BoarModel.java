@@ -18,17 +18,26 @@ public class BoarModel extends GeoModel<Boar> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Boar boar) {
+        if (boar.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/boar_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/boar.geo.json");
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Boar boar) {
+        if (boar.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/boar_baby.png");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/boar.png");
     }
 
     @Override
     public @NotNull ResourceLocation getAnimationResource(Boar boar) {
+        if (boar.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/boar_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/boar.animation.json");
     }
 
@@ -39,21 +48,11 @@ public class BoarModel extends GeoModel<Boar> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("head").orElse(null);
+        GeoBone head = this.getBone("neck").orElse(null);
 
         if (head != null) {
-            if (entity.isBaby()) {
-                head.setScaleX(1.75F);
-                head.setScaleY(1.75F);
-                head.setScaleZ(1.75F);
-            } else {
-                head.setScaleX(1.0F);
-                head.setScaleY(1.0F);
-                head.setScaleZ(1.0F);
-            }
-
             head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-            head.setRotZ(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+            head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         }
     }
 }

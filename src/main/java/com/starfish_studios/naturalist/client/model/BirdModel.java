@@ -19,6 +19,22 @@ public class BirdModel extends GeoModel<Bird> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Bird bird) {
+        if (bird.isBaby()) {
+            if (bird.getType().equals(NaturalistEntityTypes.BLUEJAY.get())) {
+                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_blue_jay.png");
+            } else if (bird.getType().equals(NaturalistEntityTypes.CANARY.get())) {
+                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_canary.png");
+            } else if (bird.getType().equals(NaturalistEntityTypes.CARDINAL.get())) {
+                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_cardinal.png");
+            } else if (bird.getType().equals(NaturalistEntityTypes.FINCH.get())) {
+                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_finch.png");
+            } else if (bird.getType().equals(NaturalistEntityTypes.SPARROW.get())) {
+                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_sparrow.png");
+            } else {
+                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_robin.png");
+            }
+        }
+
         if (bird.getType().equals(NaturalistEntityTypes.BLUEJAY.get())) {
             return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bluejay.png");
         } else if (bird.getType().equals(NaturalistEntityTypes.CANARY.get())) {
@@ -37,11 +53,17 @@ public class BirdModel extends GeoModel<Bird> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Bird bird) {
+        if (bird.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/bird_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/bird.geo.json");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Bird bird) {
+        if (bird.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/bird_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/bird.animation.json");
     }
 
@@ -53,7 +75,7 @@ public class BirdModel extends GeoModel<Bird> {
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
 
-        this.getBone("head").ifPresent(head -> {
+        this.getBone("neck").ifPresent(head -> {
             head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
             head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         });

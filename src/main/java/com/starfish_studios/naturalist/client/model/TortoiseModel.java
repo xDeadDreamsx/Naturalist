@@ -19,12 +19,22 @@ public class TortoiseModel extends GeoModel<Tortoise> {
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getModelResource(Tortoise tortoise) {
+        if (tortoise.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/tortoise_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/tortoise.geo.json");
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(@NotNull Tortoise tortoise) {
+        if (tortoise.isBaby()) {
+            return switch (tortoise.getVariant()) {
+                case 1 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/green_baby.png");
+                case 2 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/black_baby.png");
+                default -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/brown_baby.png");
+            };
+        }
         return switch (tortoise.getVariant()) {
             case 1 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/green.png");
             case 2 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/black.png");
@@ -34,6 +44,9 @@ public class TortoiseModel extends GeoModel<Tortoise> {
 
     @Override
     public ResourceLocation getAnimationResource(Tortoise tortoise) {
+        if (tortoise.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/tortoise_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/tortoise.animation.json");
     }
 
@@ -44,21 +57,14 @@ public class TortoiseModel extends GeoModel<Tortoise> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("head").orElse(null);
+        GeoBone head = this.getBone("neck").orElse(null);
 
         if (head != null) {
-            if (entity.isBaby()) {
-                head.setScaleX(1.4F);
-                head.setScaleY(1.4F);
-                head.setScaleZ(1.4F);
-            } else {
-                head.setScaleX(1.0F);
-                head.setScaleY(1.0F);
-                head.setScaleZ(1.0F);
-            }
-
             head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
             head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         }
+
+        GeoBone asleep = this.getBone("asleep").orElse(null);
+        if (asleep != null) asleep.setHidden(true);
     }
 }

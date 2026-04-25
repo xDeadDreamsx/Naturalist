@@ -39,7 +39,7 @@ public class RhinoModel extends GeoModel<Rhino> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("head").orElse(null);
+        GeoBone head = this.getBone("neck").orElse(null);
         GeoBone bigHorn = this.getBone("big_horn").orElse(null);
         GeoBone smallHorn = this.getBone("small_horn").orElse(null);
         GeoBone babyHorn = this.getBone("baby_horn").orElse(null);

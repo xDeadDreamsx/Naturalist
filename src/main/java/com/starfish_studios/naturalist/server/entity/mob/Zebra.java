@@ -2,6 +2,7 @@ package com.starfish_studios.naturalist.server.entity.mob;
 
 import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.registry.NaturalistSoundEvents;
+import com.starfish_studios.naturalist.server.entity.base.NaturalistGeoEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -23,12 +24,25 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class Zebra extends AbstractChestedHorse {
+public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.WHEAT, Items.SUGAR, Blocks.HAY_BLOCK.asItem(), Items.APPLE, Items.GOLDEN_CARROT, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
+
+    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.zebra.idle");
+    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.zebra.walk");
+    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.zebra.run");
+    protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.zebra.sleep");
 
     public Zebra(@NotNull EntityType<? extends AbstractChestedHorse> entityType, @NotNull Level level) {
         super(entityType, level);
@@ -137,6 +151,32 @@ public class Zebra extends AbstractChestedHorse {
     @Override
     protected void playChestEquipsSound() {
         this.playSound(SoundEvents.MULE_CHEST, 1.0f, (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.0f);
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    protected <E extends Zebra> PlayState predicate(final @NotNull AnimationState<E> event) {
+        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+            if (this.isSprinting() || this.getDeltaMovement().horizontalDistanceSqr() > 0.01) {
+                event.getController().setAnimation(RUN);
+                event.getController().setAnimationSpeed(2.0D);
+            } else {
+                event.getController().setAnimation(WALK);
+                event.getController().setAnimationSpeed(1.0D);
+            }
+        } else {
+            event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
+        }
+        return PlayState.CONTINUE;
+    }
+
+    @Override
+    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
     }
 
     static class ZebraAvoidPlayersGoal extends AvoidEntityGoal<Player> {

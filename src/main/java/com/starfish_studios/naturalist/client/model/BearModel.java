@@ -9,7 +9,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
@@ -19,29 +18,26 @@ public class BearModel extends GeoModel<Bear> {
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getModelResource(Bear bear) {
+        if (bear.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/bear_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/bear.geo.json");
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(@NotNull Bear bear) {
-
-        if (bear.isAngry()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/black_bear_angry.png");
-        } else if (bear.isEating()) {
-            if (bear.getMainHandItem().is(Items.SWEET_BERRIES)) {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/black_bear_berries.png");
-            } else if (bear.getMainHandItem().is(Items.HONEYCOMB)) {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/black_bear_honey.png");
-            }
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear.png");
+        if (bear.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear_baby.png");
         }
-
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bear/bear.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Bear bear) {
+        if (bear.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/bear_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/bear.animation.json");
     }
 
@@ -52,23 +48,26 @@ public class BearModel extends GeoModel<Bear> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("head").orElse(null);
 
-        if (head != null) {
-            if (entity.isBaby()) {
-                head.setScaleX(1.8F);
-                head.setScaleY(1.8F);
-                head.setScaleZ(1.8F);
-            } else {
-                head.setScaleX(1.0F);
-                head.setScaleY(1.0F);
-                head.setScaleZ(1.0F);
-            }
-
+        this.getBone("neck").ifPresent(head -> {
             if (!entity.isSleeping() && !entity.isEating() && !entity.isSitting()) {
                 head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
                 head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
             }
-        }
+        });
+
+        boolean sleeping = entity.isSleeping();
+        this.getBone("awake").ifPresent(bone -> bone.setHidden(sleeping));
+        this.getBone("asleep").ifPresent(bone -> bone.setHidden(!sleeping));
+
+        boolean angry = entity.isAngry();
+        this.getBone("angry").ifPresent(bone -> bone.setHidden(!angry));
+        this.getBone("angrySnout").ifPresent(bone -> bone.setHidden(!angry));
+
+        boolean eatingBerries = entity.isEating() && entity.getMainHandItem().is(Items.SWEET_BERRIES);
+        this.getBone("berryArm").ifPresent(bone -> bone.setHidden(!eatingBerries));
+
+        boolean eatingHoney = entity.isEating() && entity.getMainHandItem().is(Items.HONEYCOMB);
+        this.getBone("honeyArm").ifPresent(bone -> bone.setHidden(!eatingHoney));
     }
 }

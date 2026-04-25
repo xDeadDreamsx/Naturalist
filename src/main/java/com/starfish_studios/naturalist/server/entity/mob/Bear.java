@@ -80,11 +80,13 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.INT);
     @Nullable
     private UUID persistentAngerTarget;
+    private boolean wasSitting;
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.bear.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.bear.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.bear.run");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.bear.sit");
+    protected static final RawAnimation SIT = RawAnimation.begin().thenPlay("animation.sf_nba.bear.sit");
+    protected static final RawAnimation UNSIT = RawAnimation.begin().thenPlay("animation.sf_nba.bear.unsit");
     protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.bear.sleep");
     protected static final RawAnimation SNIFF = RawAnimation.begin().thenLoop("animation.sf_nba.bear.sniff");
     protected static final RawAnimation EAT = RawAnimation.begin().thenLoop("animation.sf_nba.bear.eat");
@@ -266,7 +268,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         this.entityData.set(EAT_COUNTER, eat ? 1 : 0);
     }
 
-    private int getEatCounter() {
+    public int getEatCounter() {
         return this.entityData.get(EAT_COUNTER);
     }
 
@@ -301,33 +303,44 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     }
 
     private void handleEating() {
-        if (!this.isEating() && this.isSitting() && !this.isSleeping() && !this.getMainHandItem().isEmpty() && this.random.nextInt(80) == 1) {
-            this.eat(true);
-        } else if (this.getMainHandItem().isEmpty() || !this.isSitting()) {
-            this.eat(false);
-        }
-        if (this.isEating()) {
-            this.addEatingParticles();
-            if (!this.level().isClientSide && this.getEatCounter() > 40) {
-                if (this.isFood(this.getItemBySlot(EquipmentSlot.MAINHAND))) {
-                    if (!this.level().isClientSide) {
+        if (!this.level().isClientSide) {
+            if (!this.isEating() && this.isSitting() && !this.isSleeping() && !this.getMainHandItem().isEmpty() && this.random.nextInt(40) == 1) {
+                this.eat(true);
+            } else if (this.getMainHandItem().isEmpty() || !this.isSitting()) {
+                this.eat(false);
+            }
+            if (this.isEating()) {
+                if (this.getEatCounter() > 40) {
+                    if (this.isFood(this.getItemBySlot(EquipmentSlot.MAINHAND))) {
+                        boolean wasSalmon = this.getItemBySlot(EquipmentSlot.MAINHAND).is(Items.SALMON);
                         this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                         this.gameEvent(GameEvent.EAT);
                         this.setSheared(false);
+                        this.setSitting(false);
+                        if (wasSalmon) {
+                            double facing = Math.toRadians(this.yBodyRot);
+                            double spawnX = this.getX() - Math.sin(facing) * 1.5D;
+                            double spawnZ = this.getZ() + Math.cos(facing) * 1.5D;
+                            ItemEntity boneMeal = new ItemEntity(this.level(), spawnX, this.getY() + 0.5D, spawnZ, new ItemStack(Items.BONE_MEAL));
+                            boneMeal.setDefaultPickUpDelay();
+                            this.level().addFreshEntity(boneMeal);
+                        }
                     }
-                    this.setSitting(false);
+                    this.eat(false);
+                    return;
                 }
-                this.eat(false);
-                return;
+                this.setEatCounter(this.getEatCounter() + 1);
+                if (this.getEatCounter() % 5 == 0 || this.getEatCounter() == 1) {
+                    this.playSound(NaturalistSoundEvents.BEAR_EAT.get(), 0.5F + 0.5F * (float)this.random.nextInt(2), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                }
             }
-            this.setEatCounter(this.getEatCounter() + 1);
+        } else if (this.isEating()) {
+            this.addEatingParticles();
         }
     }
 
     private void addEatingParticles() {
-        if (this.getEatCounter() % 5 == 0 || this.getEatCounter() == 0) {
-            this.playSound(NaturalistSoundEvents.BEAR_EAT.get(), 0.5F + 0.5F * (float)this.random.nextInt(2), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-
+        if (this.getEatCounter() % 5 == 0 || this.getEatCounter() == 1) {
             for(int i = 0; i < 6; ++i) {
                 Vec3 speedVec = new Vec3(((double)this.random.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double)this.random.nextFloat() - 0.5D) * 0.1D);
                 speedVec  = speedVec .xRot(-this.getXRot() * ((float)Math.PI / 180F));
@@ -464,11 +477,23 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     }
 
     protected <E extends Bear> PlayState predicate(final AnimationState<E> event) {
+        boolean sitting = this.isSitting();
+
         if (this.isSleeping()) {
             event.getController().setAnimation(SLEEP);
+            this.wasSitting = sitting;
             return PlayState.CONTINUE;
-        } else if (this.isSitting()) {
+        } else if (sitting) {
             event.getController().setAnimation(SIT);
+            this.wasSitting = true;
+            return PlayState.CONTINUE;
+        } else if (this.wasSitting) {
+            this.wasSitting = false;
+            event.getController().setAnimation(UNSIT);
+            return PlayState.CONTINUE;
+        } else if (!event.getController().getAnimationState().equals(AnimationController.State.STOPPED)
+                && event.getController().getCurrentAnimation() != null
+                && event.getController().getCurrentAnimation().animation().name().equals("animation.sf_nba.bear.unsit")) {
             return PlayState.CONTINUE;
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {

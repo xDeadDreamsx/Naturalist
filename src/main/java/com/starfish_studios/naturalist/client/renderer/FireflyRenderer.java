@@ -29,6 +29,12 @@ public class FireflyRenderer extends GeoEntityRenderer<Firefly> {
         return 0.000001f;
     }
 
+    @Override
+    public void render(Firefly entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
+        this.shadowRadius = entity.isBaby() ? 0.2F : 0.4F;
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+    }
+
    public RenderType getRenderType(Firefly entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, @NotNull ResourceLocation textureLocation) {
         return RenderType.entityCutoutNoCull(textureLocation);
     }

@@ -33,6 +33,12 @@ public class VultureRenderer extends GeoEntityRenderer<Vulture> {
         return 0.000001f;
     }
 
+    @Override
+    public void render(Vulture entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
+        this.shadowRadius = entity.isBaby() ? 0.3F : 0.65F;
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+    }
+
    public RenderType getRenderType(Vulture entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
         return RenderType.entityCutoutNoCull(textureLocation);
     }

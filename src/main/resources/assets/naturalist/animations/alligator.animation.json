@@ -349,18 +349,18 @@
             ]
           }
         },
-        "skull": {
-          "rotation": [
-            0,
-            "Math.cos(( q.anim_time - 0.2 ) * 280 ) * 3",
-            "Math.cos(( q.anim_time - 0.0 ) * 280 ) * -4"
-          ]
-        },
         "tail2": {
           "rotation": [
             0,
             "Math.sin(( q.anim_time - 0.3 ) * 280 ) * -8",
             "Math.sin(( q.anim_time - 0.0 ) * 280 ) * -5"
+          ]
+        },
+        "neck": {
+          "rotation": [
+            0,
+            "Math.cos(( q.anim_time - 0.2 ) * 280 ) * 3",
+            "Math.cos(( q.anim_time - 0.0 ) * 280 ) * -4"
           ]
         }
       }
@@ -387,13 +387,6 @@
           "rotation": [
             0,
             "Math.sin(( q.anim_time - 0.2 ) * 360 ) * -22.5",
-            0
-          ]
-        },
-        "skull": {
-          "rotation": [
-            0,
-            "Math.sin(( q.anim_time - 0.8 ) * 360 ) * 12.5",
             0
           ]
         },
@@ -462,6 +455,13 @@
             0,
             0
           ]
+        },
+        "neck": {
+          "rotation": [
+            0,
+            "Math.sin(( q.anim_time - 0.8 ) * 360 ) * 12.5",
+            0
+          ]
         }
       }
     },
@@ -469,10 +469,10 @@
       "loop": "hold_on_last_frame",
       "animation_length": 0.125,
       "bones": {
-        "skull": {
+        "lower_jaw": {
           "rotation": {
             "0.0": [
-              -22.5,
+              67.5,
               0,
               0
             ],
@@ -483,10 +483,10 @@
             ]
           }
         },
-        "lower_jaw": {
+        "neck": {
           "rotation": {
             "0.0": [
-              67.5,
+              -22.5,
               0,
               0
             ],
@@ -502,7 +502,7 @@
     "animation.sf_nba.alligator.baby_transform": {
       "loop": true,
       "bones": {
-        "skull": {
+        "neck": {
           "scale": 1.5
         }
       }
@@ -533,18 +533,6 @@
           "rotation": [
             0,
             "34 - Math.cos( -40 + ( q.anim_time - 0.0 ) * 45 ) * 5",
-            0
-          ]
-        },
-        "skull": {
-          "rotation": [
-            0,
-            -10,
-            0
-          ],
-          "position": [
-            0,
-            -2,
             0
           ]
         },
@@ -641,6 +629,18 @@
           "position": [
             0.5,
             0.4,
+            0
+          ]
+        },
+        "neck": {
+          "rotation": [
+            0,
+            -10,
+            0
+          ],
+          "position": [
+            0,
+            -2,
             0
           ]
         }

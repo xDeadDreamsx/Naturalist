@@ -19,17 +19,26 @@ public class HippoModel extends GeoModel<Hippo> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Hippo hippo) {
+        if (hippo.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/hippo_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/hippo.geo.json");
     }
 
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getTextureResource(Hippo hippo) {
+        if (hippo.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/hippo/hippo_baby.png");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/hippo/hippo.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Hippo hippo) {
+        if (hippo.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/hippo_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/hippo.animation.json");
     }
 
@@ -40,19 +49,9 @@ public class HippoModel extends GeoModel<Hippo> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("head").orElse(null);
+        GeoBone head = this.getBone("neck").orElse(null);
 
         if (head != null) {
-            if (entity.isBaby()) {
-                head.setScaleX(1.75F);
-                head.setScaleY(1.75F);
-                head.setScaleZ(1.75F);
-            } else {
-                head.setScaleX(1.0F);
-                head.setScaleY(1.0F);
-                head.setScaleZ(1.0F);
-            }
-
             head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
             head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         }

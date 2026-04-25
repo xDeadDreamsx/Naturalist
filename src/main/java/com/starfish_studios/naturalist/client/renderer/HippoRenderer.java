@@ -34,11 +34,7 @@ public class HippoRenderer extends GeoEntityRenderer<Hippo> {
 
     @Override
     public void render(Hippo entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        if (entity.isBaby()) {
-            poseStack.scale(0.5F, 0.5F, 0.5F);
-        }else{
-            poseStack.scale(1.0F, 1.0F, 1.0F);
-        }
+        this.shadowRadius = entity.isBaby() ? 0.55F : 1.1F;
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 

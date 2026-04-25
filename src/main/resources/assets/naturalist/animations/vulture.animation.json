@@ -47,7 +47,7 @@
             "Math.sin(( q.anim_time - 0.1 ) * 360 ) * 30"
           ]
         },
-        "skull": {
+        "neck": {
           "rotation": [
             "Math.sin(( q.anim_time - 0.6 ) * 360 ) * -4",
             0,
@@ -110,7 +110,7 @@
             0
           ]
         },
-        "skull": {
+        "neck": {
           "rotation": [
             "Math.sin(( q.anim_time - 0.6 ) * 180 ) * -1",
             0,
@@ -167,28 +167,16 @@
           ]
         },
         "neck": {
-          "rotation": [
-            "Math.cos(( q.anim_time - 0.3 ) * 180 ) * 0.5",
-            0,
-            0
-          ],
           "position": [
             0,
-            "-1 + Math.cos(( q.anim_time - 0.4 ) * 180 ) * 0.2",
-            1
+            1,
+            0
           ]
         },
         "body": {
           "position": [
             0,
             -1,
-            0
-          ]
-        },
-        "skull": {
-          "position": [
-            0,
-            1,
             0
           ]
         },
@@ -229,7 +217,7 @@
     "animation.sf_nba.vulture.baby_transform": {
       "loop": true,
       "bones": {
-        "skull": {
+        "neck": {
           "scale": 1.5
         }
       }
@@ -259,13 +247,6 @@
             0,
             -1,
             -0.5
-          ]
-        },
-        "skull": {
-          "rotation": [
-            45,
-            0,
-            0
           ]
         },
         "right_wing": {
@@ -314,6 +295,13 @@
           ]
         },
         "rightFoot": {
+          "rotation": [
+            45,
+            0,
+            0
+          ]
+        },
+        "neck": {
           "rotation": [
             45,
             0,
@@ -378,23 +366,6 @@
             -0.5
           ]
         },
-        "skull": {
-          "rotation": [
-            154,
-            "-12 - Math.cos(( q.anim_time - 0.0 ) * 90 ) * 1",
-            21
-          ],
-          "position": [
-            0,
-            1,
-            0.4
-          ],
-          "scale": [
-            1,
-            1,
-            0.96
-          ]
-        },
         "right_wing": {
           "rotation": [
             -180,
@@ -431,6 +402,23 @@
             -4.8572,
             -24.55342,
             11.55757
+          ]
+        },
+        "neck": {
+          "rotation": [
+            154,
+            "-12 - Math.cos(( q.anim_time - 0.0 ) * 90 ) * 1",
+            21
+          ],
+          "position": [
+            0,
+            1,
+            0.4
+          ],
+          "scale": [
+            1,
+            1,
+            0.96
           ]
         }
       }

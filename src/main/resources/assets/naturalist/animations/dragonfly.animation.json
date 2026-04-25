@@ -50,7 +50,7 @@
     "animation.sf_nba.dragonfly.idle_event": {
       "animation_length": 2,
       "bones": {
-        "skull": {
+        "neck": {
           "rotation": {
             "0.25": [
               0,
@@ -96,18 +96,18 @@
             "v.root_tilt_z"
           ]
         },
-        "skull": {
-          "rotation": [
-            "-( v.head_tilt_x - v.body_tilt_x )",
-            0,
-            "v.head_tilt_z - v.body_tilt_z"
-          ]
-        },
         "body": {
           "rotation": [
             "-( v.body_tilt_x - v.root_tilt_x ) * 1",
             0,
             "v.body_tilt_z - v.root_tilt_z"
+          ]
+        },
+        "neck": {
+          "rotation": [
+            "-( v.head_tilt_x - v.body_tilt_x )",
+            0,
+            "v.head_tilt_z - v.body_tilt_z"
           ]
         }
       }

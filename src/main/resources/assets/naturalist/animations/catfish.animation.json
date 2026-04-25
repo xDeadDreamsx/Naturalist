@@ -19,13 +19,6 @@
             0
           ]
         },
-        "skull": {
-          "rotation": [
-            0,
-            "Math.cos(( q.anim_time - 0.2 ) * 360 ) * -6",
-            0
-          ]
-        },
         "left_fin": {
           "rotation": [
             0,
@@ -63,6 +56,13 @@
             0,
             0
           ]
+        },
+        "neck": {
+          "rotation": [
+            0,
+            "Math.cos(( q.anim_time - 0.2 ) * 360 ) * -6",
+            0
+          ]
         }
       }
     },
@@ -87,18 +87,6 @@
             0,
             "Math.cos(( q.anim_time - 0.0 ) * 720 ) * 16",
             0
-          ]
-        },
-        "skull": {
-          "rotation": [
-            0,
-            "Math.cos(( q.anim_time - 0.2 ) * 720 ) * -6",
-            0
-          ],
-          "position": [
-            0,
-            0.25,
-            0.25
           ]
         },
         "left_fin": {
@@ -190,6 +178,18 @@
               1
             ]
           }
+        },
+        "neck": {
+          "rotation": [
+            0,
+            "Math.cos(( q.anim_time - 0.2 ) * 720 ) * -6",
+            0
+          ],
+          "position": [
+            0,
+            0.25,
+            0.25
+          ]
         }
       }
     }

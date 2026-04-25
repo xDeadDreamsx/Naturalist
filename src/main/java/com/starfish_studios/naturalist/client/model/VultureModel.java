@@ -16,17 +16,26 @@ public class VultureModel extends GeoModel<Vulture> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Vulture vulture) {
+        if (vulture.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/vulture_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/vulture.geo.json");
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Vulture vulture) {
+        if (vulture.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/vulture/vulture_baby.png");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/vulture.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Vulture vulture) {
+        if (vulture.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/vulture_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/vulture.animation.json");
     }
 
@@ -38,7 +47,7 @@ public class VultureModel extends GeoModel<Vulture> {
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
 
-        this.getBone("head").ifPresent(head -> {
+        this.getBone("neck").ifPresent(head -> {
             head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
             head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         });

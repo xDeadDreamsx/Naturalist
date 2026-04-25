@@ -18,12 +18,18 @@ public class DuckModel extends GeoModel<Duck> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Duck animal) {
+        if (animal.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/duck_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/duck.geo.json");
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Duck animal) {
+        if (animal.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/duck_baby.png");
+        }
         if (animal.getName().getString().equalsIgnoreCase("Queso")) {
             return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/queso.png");
         }
@@ -33,6 +39,9 @@ public class DuckModel extends GeoModel<Duck> {
     @SuppressWarnings("unused")
     @Override
     public @NotNull ResourceLocation getAnimationResource(Duck animal) {
+        if (animal.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/duck_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/duck.animation.json");
     }
 
@@ -43,19 +52,9 @@ public class DuckModel extends GeoModel<Duck> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("head").orElse(null);
+        GeoBone head = this.getBone("neck").orElse(null);
 
         if (head != null) {
-            if (entity.isBaby()) {
-                head.setScaleX(1.7F);
-                head.setScaleY(1.7F);
-                head.setScaleZ(1.7F);
-            } else {
-                head.setScaleX(1.0F);
-                head.setScaleY(1.0F);
-                head.setScaleZ(1.0F);
-            }
-
             head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
             head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
         }

@@ -27,9 +27,9 @@ public class SnakeModel extends GeoModel<Snake> {
         if (snake.getType().equals(NaturalistEntityTypes.CORAL_SNAKE.get())) {
             return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snake/coral_snake.png");
         } else if (snake.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get())) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snake/rattlesnake.png");
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snake/rattle_snake.png");
         } else {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snake/snake.png");
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snake/green_snake.png");
         }
     }
 
@@ -46,7 +46,7 @@ public class SnakeModel extends GeoModel<Snake> {
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
 
-        this.getBone("head").ifPresent(head -> {
+        this.getBone("skull").ifPresent(head -> {
             if (!entity.isSleeping()) {
                 head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
                 head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
@@ -61,5 +61,10 @@ public class SnakeModel extends GeoModel<Snake> {
         });
 
         this.getBone("tail4").ifPresent(tail4 -> tail4.setHidden(!entity.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get())));
+
+        boolean sleeping = entity.isSleeping();
+        this.getBone("awake").ifPresent(bone -> bone.setHidden(sleeping));
+        this.getBone("asleep").ifPresent(bone -> bone.setHidden(!sleeping));
+        this.getBone("sleep").ifPresent(bone -> bone.setHidden(!sleeping));
     }
 }

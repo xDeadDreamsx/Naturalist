@@ -29,6 +29,7 @@ public class DeerRenderer extends GeoEntityRenderer<Deer> {
 
     @Override
     public void render(@NotNull Deer entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
+        this.shadowRadius = entity.isBaby() ? 0.4F : 0.8F;
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 

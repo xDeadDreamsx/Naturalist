@@ -19,18 +19,27 @@ public class LionModel extends GeoModel<Lion> {
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getModelResource(Lion entity) {
+        if (entity.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/lion_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/lion.geo.json");
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Lion entity) {
+        if (entity.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion_baby.png");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion.png");
     }
 
     @SuppressWarnings("unused")
     @Override
     public ResourceLocation getAnimationResource(Lion entity) {
+        if (entity.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/lion_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/lion.animation.json");
     }
 
@@ -41,20 +50,10 @@ public class LionModel extends GeoModel<Lion> {
         if (animationState == null) return;
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("head").orElse(null);
+        GeoBone head = this.getBone("neck").orElse(null);
         GeoBone mane = this.getBone("mane").orElse(null);
 
         if (head != null) {
-            if (entity.isBaby()) {
-                head.setScaleX(1.4F);
-                head.setScaleY(1.4F);
-                head.setScaleZ(1.4F);
-            } else {
-                head.setScaleX(1.0F);
-                head.setScaleY(1.0F);
-                head.setScaleZ(1.0F);
-            }
-
             if (!entity.isSleeping()) {
                 head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
                 head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
@@ -62,7 +61,12 @@ public class LionModel extends GeoModel<Lion> {
         }
 
         if (mane != null) {
-            mane.setHidden(!entity.hasMane() || entity.isBaby());
+            mane.setHidden(!entity.hasMane());
         }
+
+        GeoBone awake = this.getBone("awake").orElse(null);
+        GeoBone asleep = this.getBone("asleep").orElse(null);
+        if (awake != null) awake.setHidden(entity.isSleeping());
+        if (asleep != null) asleep.setHidden(!entity.isSleeping());
     }
 }

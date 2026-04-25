@@ -17,6 +17,9 @@ public class DeerModel extends GeoModel<Deer> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Deer deer) {
+        if (deer.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/deer_baby.geo.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/deer.geo.json");
     }
 
@@ -32,6 +35,9 @@ public class DeerModel extends GeoModel<Deer> {
 
     @Override
     public ResourceLocation getAnimationResource(Deer deer) {
+        if (deer.isBaby()) {
+            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/deer_baby.animation.json");
+        }
         return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/deer.animation.json");
     }
 
@@ -43,12 +49,15 @@ public class DeerModel extends GeoModel<Deer> {
 
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
 
-        this.getBone("head").ifPresent(head -> {
+        this.getBone("neck").ifPresent(head -> {
             if (!entity.isEating()) {
                 head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
                 head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
             }
         });
+
+        this.getBone("sleep").ifPresent(bone -> bone.setHidden(true));
+        this.getBone("saddle").ifPresent(bone -> bone.setHidden(true));
     }
 
 }

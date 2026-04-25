@@ -4,7 +4,7 @@
     "animation.sf_nba.hippo.baby_transform": {
       "loop": true,
       "bones": {
-        "skull": {
+        "neck": {
           "scale": 1.4
         }
       }
@@ -12,13 +12,6 @@
     "animation.sf_nba.hippo.look_at_target": {
       "loop": true,
       "bones": {
-        "skull": {
-          "rotation": [
-            0,
-            "q.target_y_rotation",
-            0
-          ]
-        },
         "melon": {
           "position": [
             0,
@@ -26,6 +19,13 @@
             -23.4
           ],
           "scale": 0.675
+        },
+        "neck": {
+          "rotation": [
+            0,
+            "q.target_y_rotation",
+            0
+          ]
         }
       }
     },
@@ -149,13 +149,6 @@
             0
           ]
         },
-        "skull": {
-          "rotation": [
-            0,
-            0,
-            "Math.sin(( q.anim_time - 0.0 ) * 360 ) * -2"
-          ]
-        },
         "left_arm": {
           "rotation": [
             "Math.sin(( q.anim_time - 0.0 ) * 360 ) * 20",
@@ -263,6 +256,13 @@
             0,
             0
           ]
+        },
+        "neck": {
+          "rotation": [
+            0,
+            0,
+            "Math.sin(( q.anim_time - 0.0 ) * 360 ) * -2"
+          ]
         }
       }
     },
@@ -322,18 +322,6 @@
           "position": [
             0,
             "-1 + Math.sin(( q.anim_time - 0.3 ) * 360 ) * -0.5",
-            0
-          ]
-        },
-        "skull": {
-          "rotation": [
-            "Math.cos(( q.anim_time - 0.2 ) * 360 ) * 1",
-            0,
-            "Math.cos(( q.anim_time - 0.2 ) * 360 ) * 1"
-          ],
-          "position": [
-            0,
-            "-0.5 + Math.sin(( q.anim_time - 0.3 ) * 360 ) * -0.5",
             0
           ]
         },
@@ -459,6 +447,18 @@
             -0.75,
             0
           ]
+        },
+        "neck": {
+          "rotation": [
+            "Math.cos(( q.anim_time - 0.2 ) * 360 ) * 1",
+            0,
+            "Math.cos(( q.anim_time - 0.2 ) * 360 ) * 1"
+          ],
+          "position": [
+            0,
+            "-0.5 + Math.sin(( q.anim_time - 0.3 ) * 360 ) * -0.5",
+            0
+          ]
         }
       }
     },
@@ -510,18 +510,6 @@
           "position": [
             0,
             "-0.5 + Math.sin(( q.anim_time - 0.0 ) * 360 ) * 0.5",
-            0
-          ]
-        },
-        "skull": {
-          "rotation": [
-            -5,
-            0,
-            "Math.cos(( q.anim_time - 0.2 ) * 360 ) * 0.5"
-          ],
-          "position": [
-            0,
-            "-0.5 + Math.sin(( q.anim_time - 0.3 ) * 360 ) * 0.25",
             0
           ]
         },
@@ -632,6 +620,18 @@
             "Math.sin(( q.anim_time - 0.2 ) * 360 ) * 0.5",
             0
           ]
+        },
+        "neck": {
+          "rotation": [
+            -5,
+            0,
+            "Math.cos(( q.anim_time - 0.2 ) * 360 ) * 0.5"
+          ],
+          "position": [
+            0,
+            "-0.5 + Math.sin(( q.anim_time - 0.3 ) * 360 ) * 0.25",
+            0
+          ]
         }
       }
     },
@@ -686,7 +686,14 @@
             0
           ]
         },
-        "skull": {
+        "root": {
+          "position": [
+            0,
+            "Math.sin(( q.anim_time - 0.2 ) * 180 ) * 0.1",
+            0
+          ]
+        },
+        "neck": {
           "rotation": [
             -2.62681,
             0,
@@ -697,20 +704,32 @@
             "0 + Math.sin(( q.anim_time - 0.3 ) * 180 ) * 0.1",
             0
           ]
-        },
-        "root": {
-          "position": [
-            0,
-            "Math.sin(( q.anim_time - 0.2 ) * 180 ) * 0.1",
-            0
-          ]
         }
       }
     },
     "animation.sf_nba.hippo.bite": {
       "animation_length": 1,
       "bones": {
-        "skull": {
+        "botJaw": {
+          "rotation": {
+            "0.0": [
+              67.5,
+              0,
+              0
+            ],
+            "0.0417": [
+              87.5,
+              0,
+              0
+            ],
+            "0.1667": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "neck": {
           "rotation": {
             "0.0": [
               -22.5,
@@ -765,25 +784,6 @@
               0
             ],
             "0.2917": [
-              0,
-              0,
-              0
-            ]
-          }
-        },
-        "botJaw": {
-          "rotation": {
-            "0.0": [
-              67.5,
-              0,
-              0
-            ],
-            "0.0417": [
-              87.5,
-              0,
-              0
-            ],
-            "0.1667": [
               0,
               0,
               0

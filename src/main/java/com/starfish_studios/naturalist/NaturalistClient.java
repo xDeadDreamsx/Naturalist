@@ -1,6 +1,5 @@
 package com.starfish_studios.naturalist;
 
-import com.starfish_studios.naturalist.client.model.ZebraModel;
 import com.starfish_studios.naturalist.client.renderer.*;
 import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
 import com.starfish_studios.naturalist.registry.NaturalistRegistry;
@@ -52,7 +51,6 @@ public class NaturalistClient {
     }
 
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(ZebraRenderer.LAYER_LOCATION, ZebraModel::createBodyLayer);
     }
 
     public static void registerItemProperties(FMLClientSetupEvent event) {
