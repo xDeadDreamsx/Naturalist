@@ -133,6 +133,13 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
         return this.entityData.get(GLOW_START_TICK);
     }
 
+    public int getGlowLuminance() {
+        if (!isGlowing()) return 0;
+        int elapsed = this.tickCount - this.getGlowStartTick();
+        if (elapsed >= 30) return 0;
+        return Math.max(1, (int) (10.0 * Math.min(1.0, 1.5 * Math.sin(elapsed * Math.PI / 30.0))));
+    }
+
     private void setGlowTicks(int ticks) {
         this.entityData.set(GLOW_TICKS_REMAINING, ticks);
     }

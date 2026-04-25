@@ -34,3 +34,13 @@ config="naturalist.mixins.json"
     versionRange="[4.7,)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="lambdynlights_api"
+    type="optional"
+    versionRange="[4.0.0,)"
+    ordering="AFTER"
+    side="CLIENT"
+
+[modproperties.${mod_id}."yumi:entrypoints"]
+    "lambdynlights:initializer" = ["com.starfish_studios.naturalist.client.compat.LambDynamicLightsCompat"]
