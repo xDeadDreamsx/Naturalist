@@ -77,7 +77,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.2, FOOD_ITEMS, false));
         this.goalSelector.addGoal(3, new BoarAvoidPlayerGoal(this, Player.class, 16.0f, 1.5D, 1.5D, entity -> !entity.isHolding(FOOD_ITEMS)));
         this.goalSelector.addGoal(4, new BoarMeleeAttackGoal(this, 1.2, false));
-        this.goalSelector.addGoal(5, new BabyPanicGoal(this, 1.4));
+        this.goalSelector.addGoal(5, new BabyPanicGoal(this, 1.25));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0f));

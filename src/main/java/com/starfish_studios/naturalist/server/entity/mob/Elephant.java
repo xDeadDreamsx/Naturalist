@@ -119,7 +119,7 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Bee.class, 8.0f, 1.3, 1.3));
         this.goalSelector.addGoal(2, new ElephantMeleeAttackGoal(this, 1.2D, true));
-        this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.3D));
+        this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.2D, 24.0D, 6.0D, 12.0D));
 
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8));
@@ -133,6 +133,16 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
     @Override
     public int getMaxHeadYRot() {
         return 35;
+    }
+
+    @Override
+    public void knockback(double strength, double x, double z) {
+        if (this.isBaby()) {
+            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
+        } else {
+            super.knockback(strength, x, z);
+        }
     }
 
     @Nullable

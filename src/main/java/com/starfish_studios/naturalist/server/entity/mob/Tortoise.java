@@ -172,7 +172,12 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
 
     @Override
     public void knockback(double strength, double x, double z) {
-        super.knockback(this.isInSittingPose() || this.canHide() ? strength / 4 : strength, x, z);
+        if (this.isBaby()) {
+            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
+        } else {
+            super.knockback(this.isInSittingPose() || this.canHide() ? strength / 4 : strength, x, z);
+        }
     }
 
     @Override

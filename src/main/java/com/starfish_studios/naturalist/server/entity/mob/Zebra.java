@@ -95,7 +95,7 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new PanicGoal(this, 1.6));
+        this.goalSelector.addGoal(1, new PanicGoal(this, 1.25));
         this.goalSelector.addGoal(1, new RunAroundLikeCrazyGoal(this, 1.6));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0, AbstractHorse.class));
         this.goalSelector.addGoal(3, new ZebraTemptGoal(this, 1.25, FOOD_ITEMS, true));

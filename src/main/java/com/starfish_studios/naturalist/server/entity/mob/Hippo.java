@@ -114,7 +114,7 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(3, new HippoAttackBoatsGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.25D, true));
-        this.goalSelector.addGoal(5, new BabyPanicGoal(this, 2.0D));
+        this.goalSelector.addGoal(5, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(6, new DistancedFollowParentGoal(this, 1.25D, 8.0D, 2.0D, 5.0D));
         this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 1.0D, 10));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -161,6 +161,16 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
             }
         }
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public void knockback(double strength, double x, double z) {
+        if (this.isBaby()) {
+            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
+        } else {
+            super.knockback(strength, x, z);
+        }
     }
 
     @Override

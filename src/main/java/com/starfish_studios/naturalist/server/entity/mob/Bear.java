@@ -144,7 +144,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         this.goalSelector.addGoal(2, new BearMeleeAttackGoal(this, 1.25D, true));
         this.goalSelector.addGoal(3, new BearSleepGoal(this));
         this.goalSelector.addGoal(4, new BearTemptGoal(this, 1.0D, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(4, new BabyPanicGoal(this, 2.0D));
+        this.goalSelector.addGoal(4, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(5, new DistancedFollowParentGoal(this, 1.25D, 48.0D, 8.0D, 12.0D));
         this.goalSelector.addGoal(5, new SearchForItemsGoal(this, 1.2F, FOOD_ITEMS, 8, 2));
         this.goalSelector.addGoal(6, new BearHarvestFoodGoal(this, 1.2F, 12, 3));
@@ -436,6 +436,16 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
             this.setZza(0.0F);
             this.getNavigation().stop();
             this.setSitting(true);
+        }
+    }
+
+    @Override
+    public void knockback(double strength, double x, double z) {
+        if (this.isBaby()) {
+            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
+        } else {
+            super.knockback(strength, x, z);
         }
     }
 

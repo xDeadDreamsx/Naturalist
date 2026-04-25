@@ -97,7 +97,7 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(2, new RhinoPrepareChargeGoal(this));
         this.goalSelector.addGoal(3, new RhinoChargeGoal(this, 2.5F));
 
-        this.goalSelector.addGoal(3, new BabyPanicGoal(this, 2.0D));
+        this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
@@ -227,6 +227,16 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     public boolean isPushable() {
         return this.canBePushed;
+    }
+
+    @Override
+    public void knockback(double strength, double x, double z) {
+        if (this.isBaby()) {
+            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
+        } else {
+            super.knockback(strength, x, z);
+        }
     }
 
     @Override

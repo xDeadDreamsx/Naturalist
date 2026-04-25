@@ -103,7 +103,7 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.6D, true));
-        this.goalSelector.addGoal(2, new BabyPanicGoal(this, 2.0D));
+        this.goalSelector.addGoal(2, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
         this.goalSelector.addGoal(4, new LionFollowParentGoal(this, 1.1));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6));
