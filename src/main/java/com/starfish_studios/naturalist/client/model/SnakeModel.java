@@ -48,8 +48,9 @@ public class SnakeModel extends GeoModel<Snake> {
 
         this.getBone("skull").ifPresent(head -> {
             if (!entity.isSleeping()) {
-                head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-                head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                head.setRotX(head.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+                head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                head.resetStateChanges();
             }
         });
 
@@ -57,7 +58,11 @@ public class SnakeModel extends GeoModel<Snake> {
             if (!entity.getMainHandItem().isEmpty()) {
                 tail2.setScaleX(1.5F);
                 tail2.setScaleY(1.5F);
+            } else {
+                tail2.setScaleX(1.0F);
+                tail2.setScaleY(1.0F);
             }
+            tail2.resetStateChanges();
         });
 
         this.getBone("tail4").ifPresent(tail4 -> tail4.setHidden(!entity.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get())));

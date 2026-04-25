@@ -48,6 +48,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class Firefly extends NaturalistAnimal implements FlyingAnimal, NaturalistGeoEntity {
 
     private static final EntityDataAccessor<Integer> GLOW_TICKS_REMAINING = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> GLOW_START_TICK = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> SUN_TICKS = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -116,6 +117,7 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(GLOW_TICKS_REMAINING, 0);
+        builder.define(GLOW_START_TICK, 0);
         builder.define(SUN_TICKS, 0);
     }
 
@@ -125,6 +127,10 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
 
     public int getGlowTicksRemaining() {
         return this.entityData.get(GLOW_TICKS_REMAINING);
+    }
+
+    public int getGlowStartTick() {
+        return this.entityData.get(GLOW_START_TICK);
     }
 
     private void setGlowTicks(int ticks) {
@@ -149,6 +155,7 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
         if (this.canGlow()) {
             if (this.random.nextFloat() <= 0.01 && !this.isGlowing()) {
                 this.setGlowTicks(40 + this.random.nextInt(20));
+                this.entityData.set(GLOW_START_TICK, this.tickCount);
             }
         }
         if (this.isSunBurnTick()) {

@@ -47,8 +47,9 @@ public class LizardModel extends GeoModel<Lizard> {
         EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
 
         this.getBone("neck").ifPresent(head -> {
-            head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-            head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+            head.setRotX(head.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+            head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+            head.resetStateChanges();
         });
 
         this.getBone("tail").ifPresent(tail -> tail.setHidden(!entity.hasTail()));

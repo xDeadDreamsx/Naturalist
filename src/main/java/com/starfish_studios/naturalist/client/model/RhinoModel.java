@@ -58,8 +58,9 @@ public class RhinoModel extends GeoModel<Rhino> {
             }
 
             if (!entity.isSprinting()) {
-                head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
             }
+            head.resetStateChanges();
         }
 
         if (leftEar != null) {
@@ -72,6 +73,7 @@ public class RhinoModel extends GeoModel<Rhino> {
                 leftEar.setScaleY(1.0F);
                 leftEar.setScaleZ(1.0F);
             }
+            leftEar.resetStateChanges();
         }
 
         if (rightEar != null) {
@@ -84,6 +86,7 @@ public class RhinoModel extends GeoModel<Rhino> {
                 rightEar.setScaleY(1.0F);
                 rightEar.setScaleZ(1.0F);
             }
+            rightEar.resetStateChanges();
         }
 
         if (bigHorn != null) bigHorn.setHidden(entity.isBaby());

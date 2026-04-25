@@ -51,8 +51,9 @@ public class ElephantModel extends GeoModel<Elephant> {
         GeoBone head = this.getBone("neck").orElse(null);
 
         if (head != null) {
-            head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-            head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+            head.setRotX(head.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+            head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+            head.resetStateChanges();
         }
 
         this.getBone("saddle").ifPresent(saddle -> saddle.setHidden(true));

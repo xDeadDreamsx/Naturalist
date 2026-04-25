@@ -55,16 +55,19 @@ public class SnailModel extends GeoModel<Snail> {
                 eyes.setScaleY(1.0F);
                 eyes.setScaleZ(1.0F);
             }
+            eyes.resetStateChanges();
         });
 
         if (!animatable.isClimbing() || !animatable.canHide()) {
             this.getBone("left_eye").ifPresent(leftEye -> {
-                leftEye.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-                leftEye.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                leftEye.setRotX(leftEye.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+                leftEye.setRotY(leftEye.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                leftEye.resetStateChanges();
             });
             this.getBone("right_eye").ifPresent(rightEye -> {
-                rightEye.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-                rightEye.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                rightEye.setRotX(rightEye.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+                rightEye.setRotY(rightEye.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                rightEye.resetStateChanges();
             });
         }
     }

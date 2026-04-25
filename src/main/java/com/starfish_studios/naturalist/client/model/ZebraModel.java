@@ -51,8 +51,9 @@ public class ZebraModel extends GeoModel<Zebra> {
         GeoBone neck = this.getBone("neck").orElse(null);
 
         if (neck != null) {
-            neck.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-            neck.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+            neck.setRotX(neck.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+            neck.setRotY(neck.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+            neck.resetStateChanges();
         }
 
         GeoBone saddle = this.getBone("saddle").orElse(null);

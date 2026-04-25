@@ -51,8 +51,9 @@ public class DeerModel extends GeoModel<Deer> {
 
         this.getBone("neck").ifPresent(head -> {
             if (!entity.isEating()) {
-                head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-                head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                head.setRotX(head.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+                head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                head.resetStateChanges();
             }
         });
 

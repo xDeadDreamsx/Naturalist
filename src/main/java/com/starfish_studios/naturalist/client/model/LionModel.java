@@ -55,8 +55,9 @@ public class LionModel extends GeoModel<Lion> {
 
         if (head != null) {
             if (!entity.isSleeping()) {
-                head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-                head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                head.setRotX(head.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+                head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                head.resetStateChanges();
             }
         }
 

@@ -51,8 +51,9 @@ public class BearModel extends GeoModel<Bear> {
 
         this.getBone("neck").ifPresent(head -> {
             if (!entity.isSleeping() && !entity.isEating() && !entity.isSitting()) {
-                head.setRotX(extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-                head.setRotY(extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                head.setRotX(head.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
+                head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
+                head.resetStateChanges();
             }
         });
 
