@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'net.neoforged.moddev' version '2.0.105'
+    id 'me.modmuss50.mod-publish-plugin' version '0.8.4'
     id 'idea'
 }
 
@@ -12,7 +13,11 @@ version = mod_version
 group = mod_group_id
 
 base {
-    archivesName = mod_id
+    archivesName = "${mod_id}-${mod_version}-neoforge-${minecraft_version}"
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = ''
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -99,6 +104,28 @@ neoForge.ideSyncTask generateModMetadata
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-Xmaxerrs' << '2000' << '-Xlint:deprecation'
+}
+
+publishMods {
+    file = tasks.named('jar').flatMap { it.archiveFile }
+    type = STABLE
+    displayName = "${mod_name} ${mod_version}"
+    version = "${mod_version}"
+    modLoaders.add("neoforge")
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = curseforge
+        minecraftVersions.add(minecraft_version)
+        requires("geckolib")
+    }
+
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = modrinth
+        minecraftVersions.add(minecraft_version)
+        requires("geckolib")
+    }
 }
 
 idea {
