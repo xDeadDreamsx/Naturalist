@@ -23,6 +23,8 @@ public class NaturalistTags {
         public static final TagKey<Block> CATTAIL_PLACEABLE = tag("cattail_placeable");
         public static final TagKey<Block> ALLIGATOR_EGG_LAYABLE_ON = tag("alligator_egg_layable_on");
         public static final TagKey<Block> TORTOISE_EGG_LAYABLE_ON = tag("tortoise_egg_layable_on");
+        public static final TagKey<Block> SHELLSTONE = tag("shellstone");
+        public static final TagKey<Block> MOTHS_ATTRACTED_TO = tag("moths_attracted_to");
 
         private static TagKey<Block> tag(@NotNull String name) {
             return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
@@ -49,6 +51,9 @@ public class NaturalistTags {
         public static final TagKey<Item> LIZARD_TEMPT_ITEMS = tag("lizard_tempt_items");
         public static final TagKey<Item> TORTOISE_TEMPT_ITEMS = tag("tortoise_tempt_items");
         public static final TagKey<Item> DUCK_FOOD_ITEMS = tag("duck_food_items");
+        public static final TagKey<Item> SHEARS = tag("shears");
+        public static final TagKey<Item> EGGS = tag("eggs");
+        public static final TagKey<Item> BEAR_FURS = tag("bear_furs");
 
         private static TagKey<Item> tag(String name) {
             return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
@@ -135,6 +140,8 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_TORTOISE = tag("blacklist/blacklist_tortoise");
         public static final TagKey<Biome> BLACKLIST_VULTURE = tag("blacklist/blacklist_vulture");
         public static final TagKey<Biome> BLACKLIST_ZEBRA = tag("blacklist/blacklist_zebra");
+        public static final TagKey<Biome> BLACKLIST_FOREST_FOXES = tag("blacklist/blacklist_forest_foxes");
+        public static final TagKey<Biome> BLACKLIST_FOREST_RABBITS = tag("blacklist/blacklist_forest_rabbits");
 
         private static @NotNull TagKey<Biome> tag(String name) {
             return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));

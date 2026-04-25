@@ -1,0 +1,14 @@
+{
+  "values": [
+    "#minecraft:is_hill",
+    "#minecraft:is_mountain",
+    {
+      "id": "#c:is_mountain",
+      "required": false
+    },
+    {
+      "id": "#c:is_hill",
+      "required": false
+    }
+  ]
+}

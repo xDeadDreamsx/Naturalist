@@ -1,0 +1,15 @@
+{
+  "values": [
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp",
+    "minecraft:river",
+    {
+      "id": "#c:is_swamp",
+      "required": false
+    },
+    {
+      "id": "#atmospheric:is_rainforest",
+      "required": false
+    }
+  ]
+}

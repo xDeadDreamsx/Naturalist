@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "naturalist:block/crimson_froglass"
-  },
-  "render_type": "minecraft:translucent"
-}

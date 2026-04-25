@@ -1,0 +1,50 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "naturalist:item/monarch",
+      "predicate": {
+        "minecraft:variant": 0.0
+      }
+    },
+    {
+      "model": "naturalist:item/clouded_yellow",
+      "predicate": {
+        "minecraft:variant": 0.14285715
+      }
+    },
+    {
+      "model": "naturalist:item/swallowtail",
+      "predicate": {
+        "minecraft:variant": 0.2857143
+      }
+    },
+    {
+      "model": "naturalist:item/blue_morpho",
+      "predicate": {
+        "minecraft:variant": 0.42857143
+      }
+    },
+    {
+      "model": "naturalist:item/jade_green_swallowtail",
+      "predicate": {
+        "minecraft:variant": 0.5714286
+      }
+    },
+    {
+      "model": "naturalist:item/purple_emperor",
+      "predicate": {
+        "minecraft:variant": 0.71428573
+      }
+    },
+    {
+      "model": "naturalist:item/red_admiral",
+      "predicate": {
+        "minecraft:variant": 0.85714287
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "naturalist:item/butterfly_monarch"
+  }
+}

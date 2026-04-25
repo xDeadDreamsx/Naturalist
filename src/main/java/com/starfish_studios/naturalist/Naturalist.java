@@ -1,6 +1,7 @@
 package com.starfish_studios.naturalist;
 
 import com.mojang.logging.LogUtils;
+import com.starfish_studios.naturalist.datagen.NaturalistDataGenerators;
 import com.starfish_studios.naturalist.server.entity.mob.*;
 import com.starfish_studios.naturalist.registry.*;
 import net.minecraft.core.BlockPos;
@@ -32,6 +33,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackSelectionConfig;
@@ -65,12 +68,14 @@ public class Naturalist {
         modEventBus.addListener(this::createAttributes);
         modEventBus.addListener(this::registerSpawnPlacements);
         modEventBus.addListener(this::addPackFinders);
+        modEventBus.addListener(NaturalistDataGenerators::gatherData);
 
         NeoForge.EVENT_BUS.addListener(this::registerBrewingRecipes);
         NeoForge.EVENT_BUS.addListener(Naturalist::onFinalizeSpawn);
         NeoForge.EVENT_BUS.addListener(Naturalist::onMobEffectApplicable);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
+            modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
             modEventBus.addListener(NaturalistClient::registerEntityRenderers);
             modEventBus.addListener(NaturalistClient::registerLayerDefinitions);
             modEventBus.addListener(NaturalistClient::registerItemProperties);
