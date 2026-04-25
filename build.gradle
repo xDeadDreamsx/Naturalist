@@ -130,6 +130,7 @@ tasks.withType(JavaCompile).configureEach {
 
 publishMods {
     file = tasks.named('jar').flatMap { it.archiveFile }
+    changelog = rootProject.file("CHANGELOG.md").text
     type = STABLE
     displayName = "${mod_name} ${mod_version}"
     version = "${mod_version}"
