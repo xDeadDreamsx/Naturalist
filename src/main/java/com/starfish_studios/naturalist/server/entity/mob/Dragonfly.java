@@ -17,7 +17,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -63,7 +62,7 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
     }
 
     public static boolean checkDragonflySpawnRules(EntityType<? extends Dragonfly> type, ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
-        return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.DRAGONFLIES_SPAWNABLE_ON) && Animal.isBrightEnoughToSpawn(level, pos);
+        return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.DRAGONFLIES_SPAWNABLE_ON) && level.getRawBrightness(pos, 0) > 8;
     }
 
     public int getVariant() {

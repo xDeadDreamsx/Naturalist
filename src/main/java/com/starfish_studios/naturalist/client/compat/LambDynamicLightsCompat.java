@@ -6,6 +6,7 @@ import dev.lambdaurora.lambdynlights.api.DynamicLightsContext;
 import dev.lambdaurora.lambdynlights.api.DynamicLightsInitializer;
 import dev.lambdaurora.lambdynlights.api.item.ItemLightSourceManager;
 import net.minecraft.resources.ResourceLocation;
+import org.jspecify.annotations.NonNull;
 
 public class LambDynamicLightsCompat implements DynamicLightsInitializer {
     @Override
@@ -20,7 +21,6 @@ public class LambDynamicLightsCompat implements DynamicLightsInitializer {
                 );
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void onInitializeDynamicLights(ItemLightSourceManager itemLightSourceManager) {}
+    public void onInitializeDynamicLights(@NonNull ItemLightSourceManager itemLightSourceManager) {}
 }
