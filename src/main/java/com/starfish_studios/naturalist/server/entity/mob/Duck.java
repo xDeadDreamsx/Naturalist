@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -93,7 +94,7 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     public static boolean checkDuckSpawnRules(EntityType<? extends Duck> type, @NotNull ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
-        return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.DUCKS_SPAWNABLE_ON) || level.getBlockState(pos.below()).getFluidState().is(FluidTags.WATER);
+        return (level.getBlockState(pos.below()).is(BlockTags.DIRT) || level.getBlockState(pos.below()).getFluidState().is(FluidTags.WATER)) && isBrightEnoughToSpawn(level, pos);
     }
 
     @Nullable

@@ -225,7 +225,7 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     }
 
     public static boolean checkButterflySpawnRules(EntityType<? extends Butterfly> type, ServerLevelAccessor level, MobSpawnType reason, @NotNull BlockPos pos, RandomSource random) {
-        return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.BUTTERFLIES_SPAWNABLE_ON);
+        return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.BUTTERFLIES_SPAWNABLE_ON) && isBrightEnoughToSpawn(level, pos);
     }
 
     @Override

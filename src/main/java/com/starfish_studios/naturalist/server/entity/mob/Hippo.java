@@ -83,7 +83,7 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
 
     public static boolean checkHippoSpawnRules(EntityType<? extends NaturalistAnimal> entityType, LevelAccessor levelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-        if (levelAccessor.getBlockState(blockPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && Animal.isBrightEnoughToSpawn(levelAccessor, blockPos)) {
+        if (levelAccessor.getBlockState(blockPos.below()).is(BlockTags.DIRT) && Animal.isBrightEnoughToSpawn(levelAccessor, blockPos)) {
             for (int x = -16; x <= 16; x++) {
                 for (int y = -1; y <= 1; y++) {
                     for (int z = -16; z <= 16; z++) {
