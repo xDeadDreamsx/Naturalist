@@ -58,7 +58,7 @@ public class SnailModel extends GeoModel<Snail> {
             eyes.resetStateChanges();
         });
 
-        if (!animatable.isClimbing() || !animatable.canHide()) {
+        if (!animatable.isNaturalistClimbing() || !animatable.canHide()) {
             this.getBone("left_eye").ifPresent(leftEye -> {
                 leftEye.setRotX(leftEye.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
                 leftEye.setRotY(leftEye.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);

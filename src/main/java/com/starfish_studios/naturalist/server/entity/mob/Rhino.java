@@ -298,14 +298,12 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     private <E extends Rhino> PlayState attackPredicate(final AnimationState<E> event) {
-
-        if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            event.setAnimation(ATTACK);
-            event.getController().setAnimationSpeed(1.3F);
+        if (this.swinging) {
             event.getController().forceAnimationReset();
+            event.getController().setAnimationSpeed(1.3F);
+            event.getController().setAnimation(ATTACK);
+            this.swinging = false;
         }
-        this.swinging = false;
-
         return PlayState.CONTINUE;
     }
 

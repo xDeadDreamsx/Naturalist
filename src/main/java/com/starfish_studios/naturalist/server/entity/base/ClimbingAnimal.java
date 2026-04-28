@@ -33,7 +33,7 @@ public abstract class ClimbingAnimal extends NaturalistAnimal {
     public void tick() {
         super.tick();
         if (!this.level().isClientSide) {
-            this.setClimbing(this.horizontalCollision);
+            this.setNaturalistClimbing(this.horizontalCollision);
         }
         if (this.horizontalCollision && this.onClimbable()) {
             this.setDeltaMovement(this.getDeltaMovement().x, this.getDeltaMovement().y * this.getClimbSpeedMultiplier(), this.getDeltaMovement().z);
@@ -42,14 +42,14 @@ public abstract class ClimbingAnimal extends NaturalistAnimal {
 
     @Override
     public boolean onClimbable() {
-        return this.isClimbing();
+        return this.isNaturalistClimbing();
     }
 
-    public boolean isClimbing() {
+    public boolean isNaturalistClimbing() {
         return (this.entityData.get(CLIMB_FLAG) & 1) != 0;
     }
 
-    public void setClimbing(boolean climbing) {
+    public void setNaturalistClimbing(boolean climbing) {
         byte flag = this.entityData.get(CLIMB_FLAG);
         if (climbing) {
             flag = (byte)(flag | 1);

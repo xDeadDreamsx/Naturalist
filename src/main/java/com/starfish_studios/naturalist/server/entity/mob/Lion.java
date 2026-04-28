@@ -59,7 +59,7 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.lion.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.lion.run");
     protected static final RawAnimation PREY = RawAnimation.begin().thenLoop("animation.sf_nba.lion.prey");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenLoop("animation.sf_nba.lion.swing");
+    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.lion.attack");
     protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.lion.sleep");
     protected static final RawAnimation SLEEP2 = RawAnimation.begin().thenLoop("animation.sf_nba.lion.sleep2");
 
@@ -258,10 +258,9 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     }
 
     private <E extends Lion> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
+        if (this.swinging) {
             event.getController().forceAnimationReset();
-
-            event.getController().setAnimation(RawAnimation.begin().thenPlay("attack"));
+            event.getController().setAnimation(ATTACK);
             this.swinging = false;
         }
         return PlayState.CONTINUE;

@@ -533,12 +533,10 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     }
 
     protected <E extends Bear> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
+        if (this.swinging) {
             event.getController().forceAnimationReset();
-
             event.getController().setAnimationSpeed(1.3F);
-            event.setAnimation(ATTACK);
-
+            event.getController().setAnimation(ATTACK);
             this.swinging = false;
         }
         return PlayState.CONTINUE;

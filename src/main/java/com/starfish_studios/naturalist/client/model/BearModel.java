@@ -57,11 +57,10 @@ public class BearModel extends GeoModel<Bear> {
             }
         });
 
-        boolean sleeping = entity.isSleeping();
-        this.getBone("awake").ifPresent(bone -> bone.setHidden(sleeping));
+        boolean angry = entity.isAngry() || entity.isAggressive();
+        boolean sleeping = entity.isSleeping() && !angry;
+        this.getBone("awake").ifPresent(bone -> bone.setHidden(sleeping || angry));
         this.getBone("asleep").ifPresent(bone -> bone.setHidden(!sleeping));
-
-        boolean angry = entity.isAngry();
         this.getBone("angry").ifPresent(bone -> bone.setHidden(!angry));
         this.getBone("angrySnout").ifPresent(bone -> bone.setHidden(!angry));
 

@@ -65,9 +65,12 @@ public class LionModel extends GeoModel<Lion> {
             mane.setHidden(!entity.hasMane());
         }
 
+        boolean angry = entity.isAggressive();
+        boolean sleeping = entity.isSleeping() && !angry;
         GeoBone awake = this.getBone("awake").orElse(null);
         GeoBone asleep = this.getBone("asleep").orElse(null);
-        if (awake != null) awake.setHidden(entity.isSleeping());
-        if (asleep != null) asleep.setHidden(!entity.isSleeping());
+        if (awake != null) awake.setHidden(sleeping || angry);
+        if (asleep != null) asleep.setHidden(!sleeping);
+        this.getBone("angry").ifPresent(bone -> bone.setHidden(!angry));
     }
 }

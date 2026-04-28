@@ -255,9 +255,8 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     private <E extends Hippo> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
+        if (this.swinging) {
             event.getController().forceAnimationReset();
-
             event.getController().setAnimation(BITE);
             this.swinging = false;
         }

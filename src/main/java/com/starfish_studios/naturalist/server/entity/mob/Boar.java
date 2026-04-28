@@ -54,7 +54,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.boar.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.boar.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.boar.run");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenLoop("animation.sf_nba.boar.attack");
+    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.boar.attack");
 
     public Boar(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
@@ -216,10 +216,19 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         return PlayState.CONTINUE;
     }
 
+    private <E extends Boar> PlayState attackPredicate(final AnimationState<E> event) {
+        if (this.swinging) {
+            event.getController().forceAnimationReset();
+            event.getController().setAnimation(ATTACK);
+            this.swinging = false;
+        }
+        return PlayState.CONTINUE;
+    }
+
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-
         controllers.add(new AnimationController<>(this, "controller", 10, this::predicate));
+        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
     }
 
     static class BoarMeleeAttackGoal extends MeleeAttackGoal {

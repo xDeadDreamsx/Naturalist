@@ -1,1 +1,5 @@
-- Fixed Snakes having missing textures when sleeping
+- Fixed "isClimbing" conflict
+- Fixed mob attack animations
+- Fixed Elephant running animation
+- Removed log spam from models and animations
+- Fixed Bear/Lion anger visuals
