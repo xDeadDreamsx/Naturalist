@@ -124,7 +124,9 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
             spawnData = new AgeableMobGroupData(1.0F);
         }
 
-        return super.finalizeSpawn(level, difficulty, reason, spawnData);
+        SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData);
+        this.setCanPickUpLoot(true);
+        return data;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
