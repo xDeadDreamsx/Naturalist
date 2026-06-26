@@ -1,6 +1,5 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
@@ -26,6 +25,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -53,7 +54,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
+public class Hippo extends TamableAnimal implements NaturalistGeoEntity {
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.run");
@@ -65,7 +66,7 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Blocks.MELON.asItem());
     private int eatingTicks;
 
-    public Hippo(EntityType<? extends NaturalistAnimal> entityType, Level level) {
+    public Hippo(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
         this.setPathfindingMalus(PathType.WATER, 0.0f);
     }
@@ -80,7 +81,7 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
                 .add(Attributes.STEP_HEIGHT, 1.0D);
     }
 
-    public static boolean checkHippoSpawnRules(EntityType<? extends NaturalistAnimal> entityType, LevelAccessor levelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
+    public static boolean checkHippoSpawnRules(EntityType<? extends Animal> entityType, LevelAccessor levelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         if (levelAccessor.getBlockState(blockPos.below()).is(BlockTags.DIRT) && Animal.isBrightEnoughToSpawn(levelAccessor, blockPos)) {
             for (int x = -16; x <= 16; x++) {
@@ -108,17 +109,21 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new SmoothFloatGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(3, new HippoAttackBoatsGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.25D, true));
         this.goalSelector.addGoal(5, new BabyPanicGoal(this, 1.25D));
+        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.25D, 10.0F, 5.0F));
         this.goalSelector.addGoal(6, new DistancedFollowParentGoal(this, 1.25D, 8.0D, 2.0D, 5.0D));
         this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 1.0D, 10));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity) -> !this.isBaby() && entity.isInWater()));
+        this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(3, new OwnerHurtTargetGoal(this));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity) -> !this.isBaby() && entity.isInWater() && !this.isOwnedBy(entity)));
     }
 
     @Override
@@ -134,9 +139,27 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
+        if (this.level().isClientSide) {
+            boolean canInteract = this.isOwnedBy(player) || this.isTame() || this.isFood(itemStack);
+            return canInteract ? InteractionResult.CONSUME : InteractionResult.PASS;
+        }
         if (this.isFood(itemStack)) {
+            if (!this.isTame() && this.isBaby()) {
+                this.usePlayerItem(player, hand, itemStack);
+                this.tame(player);
+                this.setOrderedToSit(true);
+                this.navigation.stop();
+                this.setTarget(null);
+                this.level().broadcastEntityEvent(this, (byte) 7);
+                return InteractionResult.SUCCESS;
+            }
+            if (this.isTame() && this.getHealth() < this.getMaxHealth()) {
+                this.usePlayerItem(player, hand, itemStack);
+                this.heal(4.0F);
+                return InteractionResult.SUCCESS;
+            }
             int age = this.getAge();
-            if (!this.level().isClientSide && age == 0 && this.canFallInLove()) {
+            if (age == 0 && this.canFallInLove()) {
                 this.eatingTicks = 10;
                 this.setItemSlot(EquipmentSlot.MAINHAND, itemStack.copy());
                 this.swing(InteractionHand.MAIN_HAND);
@@ -152,11 +175,16 @@ public class Hippo extends NaturalistAnimal implements NaturalistGeoEntity {
             if (this.isBaby()) {
                 this.usePlayerItem(player, hand, itemStack);
                 this.ageUp(Animal.getSpeedUpSecondsWhenFeeding(-age), true);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
-            if (this.level().isClientSide) {
-                return InteractionResult.CONSUME;
-            }
+            return InteractionResult.CONSUME;
+        }
+        if (this.isTame() && this.isOwnedBy(player)) {
+            this.setOrderedToSit(!this.isOrderedToSit());
+            this.jumping = false;
+            this.navigation.stop();
+            this.setTarget(null);
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }

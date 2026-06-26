@@ -6,13 +6,19 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:random_chance",
+              "chance": 0.4
+            }
+          ],
           "functions": [
             {
               "add": false,
               "count": {
                 "type": "minecraft:uniform",
                 "max": 2.0,
-                "min": 0.0
+                "min": 1.0
               },
               "function": "minecraft:set_count"
             },
@@ -26,37 +32,7 @@
               "function": "minecraft:enchanted_count_increase"
             }
           ],
-          "name": "minecraft:feather"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 0.0
-              },
-              "function": "minecraft:set_count"
-            },
-            {
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 0.0
-              },
-              "enchantment": "minecraft:looting",
-              "function": "minecraft:enchanted_count_increase"
-            }
-          ],
-          "name": "minecraft:rotten_flesh"
+          "name": "naturalist:tooth"
         }
       ],
       "rolls": 1.0
@@ -92,5 +68,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "naturalist:entities/vulture"
+  "random_sequence": "naturalist:entities/coral_snake"
 }

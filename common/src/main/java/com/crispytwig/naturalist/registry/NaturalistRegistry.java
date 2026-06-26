@@ -34,6 +34,10 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, Item> BUSHMEAT = ITEMS.register("bushmeat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build())));
     public static final DeferredHolder<Item, Item> COOKED_BUSHMEAT = ITEMS.register("cooked_bushmeat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.8F).build())));
     public static final DeferredHolder<Item, Item> FUR = ITEMS.register("fur", () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> TOOTH = ITEMS.register("tooth", () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> FAT = ITEMS.register("fat", () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> HIDE = ITEMS.register("hide", () -> new Item(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> MORSEL = ITEMS.register("morsel", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.3F).build())));
 
     public static final DeferredHolder<Block, AlligatorEggBlock> ALLIGATOR_EGG = registerBlock("alligator_egg", () -> new AlligatorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
     public static final DeferredHolder<Item, DuckEggItem> DUCK_EGG = ITEMS.register("duck_egg", () -> new DuckEggItem(new Item.Properties()));
