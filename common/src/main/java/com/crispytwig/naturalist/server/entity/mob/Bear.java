@@ -148,6 +148,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         this.goalSelector.addGoal(5, new DistancedFollowParentGoal(this, 1.25D, 48.0D, 8.0D, 12.0D));
         this.goalSelector.addGoal(5, new SearchForItemsGoal(this, 1.2F, FOOD_ITEMS, 8, 2));
         this.goalSelector.addGoal(6, new BearHarvestFoodGoal(this, 1.2F, 12, 3));
+        this.goalSelector.addGoal(6, new BabyBearSniffFlowersGoal(this, 1.2F, 12, 3));
         this.goalSelector.addGoal(7, new BearPickupFoodAndSitGoal(this));
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -731,6 +732,32 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
                 mutable.move(Direction.DOWN);
             }
             return mutable;
+        }
+    }
+
+    static class BabyBearSniffFlowersGoal extends BabySniffFlowersGoal {
+        private final Bear bear;
+
+        public BabyBearSniffFlowersGoal(@NotNull Bear bear, double speedModifier, int searchRange, int verticalSearchRange) {
+            super(bear, speedModifier, searchRange, verticalSearchRange, NaturalistSoundEvents.BEAR_SNIFF.get());
+            this.bear = bear;
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.bear.getMainHandItem().isEmpty() && super.canUse();
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            this.bear.setSniffing(this.isReachedTarget());
+        }
+
+        @Override
+        public void stop() {
+            super.stop();
+            this.bear.setSniffing(false);
         }
     }
 

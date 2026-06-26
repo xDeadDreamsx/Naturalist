@@ -10,6 +10,7 @@ import java.util.Map;
 public final class NeoForgeNaturalistConfig implements IConfigHelper {
     public static final ModConfigSpec SPEC;
     private static final Map<String, ModConfigSpec.BooleanValue> VALUES = new HashMap<>();
+    private static final ModConfigSpec.BooleanValue SNAIL_CRUSHING;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -19,6 +20,14 @@ public final class NeoForgeNaturalistConfig implements IConfigHelper {
             VALUES.put(key, builder.translation("naturalist.configuration." + name).define(name, false));
         }
         builder.pop();
+
+        builder.translation("naturalist.configuration.behavior").push("behavior");
+        SNAIL_CRUSHING = builder
+                .translation("naturalist.configuration." + NaturalistConfig.SNAIL_CRUSHING_KEY)
+                .comment("Unnamed Snails will be crushed when falling on them if not wearing Feather Falling boots.")
+                .define(NaturalistConfig.SNAIL_CRUSHING_KEY, false);
+        builder.pop();
+
         SPEC = builder.build();
     }
 
@@ -26,5 +35,10 @@ public final class NeoForgeNaturalistConfig implements IConfigHelper {
     public boolean isMobRemoved(String canonicalKey) {
         ModConfigSpec.BooleanValue value = VALUES.get(canonicalKey);
         return value != null && value.get();
+    }
+
+    @Override
+    public boolean isSnailCrushingEnabled() {
+        return SNAIL_CRUSHING.get();
     }
 }

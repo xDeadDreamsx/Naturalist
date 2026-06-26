@@ -303,6 +303,8 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("naturalist.subtitles.entity.butterfly.hurt", "Butterfly hurts");
 
         add("naturalist.configuration.disable_mobs", "Disable Mobs");
+        add("naturalist.configuration.behavior", "Behavior");
+        add("naturalist.configuration.snail_crushing", "Crushable Snails");
         add("naturalist.configuration.alligator_removed", "Remove Alligator");
         add("naturalist.configuration.bass_removed", "Remove Bass");
         add("naturalist.configuration.bear_removed", "Remove Bear");

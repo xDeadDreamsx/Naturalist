@@ -14,6 +14,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
@@ -111,8 +112,9 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(8, new BabySniffFlowersGoal(this, 1.0D, 16, 4, SoundEvents.FOX_SNIFF));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity) -> !this.isBaby() && entity.isInWater()));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity) -> !this.isBaby() && (entity.isInWater() || this.isDefensive() || !this.level().isDay())));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity) -> {
             if(entity instanceof Alligator) return false;
             Iterable<BlockPos> list = BlockPos.betweenClosed(entity.blockPosition().offset(-2, -2, -2), entity.blockPosition().offset(2, 2, 2));
@@ -131,6 +133,10 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
         return FOOD_ITEMS.test(stack);
+    }
+
+    public boolean isDefensive() {
+        return this.hasEgg() || this.isLayingEgg();
     }
 
     @Override

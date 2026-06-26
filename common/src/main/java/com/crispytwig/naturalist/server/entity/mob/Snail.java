@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.NaturalistConfig;
 import com.crispytwig.naturalist.server.entity.base.*;
 import com.crispytwig.naturalist.server.entity.ai.goal.EggLayingBreedGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.LayEggGoal;
@@ -8,7 +9,9 @@ import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -32,6 +35,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
@@ -175,7 +181,26 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
             this.xxa = 0.0F;
             this.zza = 0.0F;
         }
+        this.checkCrush();
+    }
 
+    private void checkCrush() {
+        if (this.level().isClientSide || !NaturalistConfig.isSnailCrushingEnabled()
+                || !this.onGround() || this.hasCustomName() || this.fromBucket() || this.isPersistenceRequired()) {
+            return;
+        }
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(0.2D, 0.5D, 0.2D),
+                player -> !player.isSpectator() && !player.onGround() && player.getY() > this.getY() && !hasFeatherFalling(player));
+        if (!players.isEmpty()) {
+            this.hurt(this.damageSources().playerAttack(players.getFirst()), this.getMaxHealth() * 2.0F);
+        }
+    }
+
+    private static boolean hasFeatherFalling(Player player) {
+        Holder<Enchantment> featherFalling = player.level().registryAccess()
+                .lookupOrThrow(Registries.ENCHANTMENT)
+                .getOrThrow(Enchantments.FEATHER_FALLING);
+        return EnchantmentHelper.getEnchantmentLevel(featherFalling, player) > 0;
     }
 
     @Override

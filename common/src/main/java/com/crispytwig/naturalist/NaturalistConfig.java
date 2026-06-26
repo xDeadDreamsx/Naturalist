@@ -23,6 +23,8 @@ public final class NaturalistConfig {
             "rattlesnake", "snake"
     );
 
+    public static final String SNAIL_CRUSHING_KEY = "snail_crushing";
+
     private NaturalistConfig() {}
 
     public static String canonicalKey(String mobName) {
@@ -43,5 +45,9 @@ public final class NaturalistConfig {
 
     public static boolean isRemoved(String mobName) {
         return Services.CONFIG.isMobRemoved(canonicalKey(mobName));
+    }
+
+    public static boolean isSnailCrushingEnabled() {
+        return Services.CONFIG.isSnailCrushingEnabled();
     }
 }

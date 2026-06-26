@@ -16,6 +16,7 @@ import java.util.Properties;
 
 public final class FabricNaturalistConfig implements IConfigHelper {
     private static final Map<String, Boolean> VALUES = new HashMap<>();
+    private static boolean snailCrushing = false;
 
     public static void load() {
         Path path = FabricLoader.getInstance().getConfigDir().resolve("naturalist-server.properties");
@@ -23,6 +24,7 @@ public final class FabricNaturalistConfig implements IConfigHelper {
         for (String key : NaturalistConfig.MOB_KEYS) {
             properties.setProperty(NaturalistConfig.configKey(key), "false");
         }
+        properties.setProperty(NaturalistConfig.SNAIL_CRUSHING_KEY, "false");
 
         if (Files.exists(path)) {
             try (Reader reader = Files.newBufferedReader(path)) {
@@ -35,6 +37,7 @@ public final class FabricNaturalistConfig implements IConfigHelper {
         for (String key : NaturalistConfig.MOB_KEYS) {
             VALUES.put(key, Boolean.parseBoolean(properties.getProperty(NaturalistConfig.configKey(key), "false")));
         }
+        snailCrushing = Boolean.parseBoolean(properties.getProperty(NaturalistConfig.SNAIL_CRUSHING_KEY, "false"));
 
         try (Writer writer = Files.newBufferedWriter(path)) {
             properties.store(writer, "Naturalist server config. Set (mob)_removed=true to disable a mob.");
@@ -46,5 +49,10 @@ public final class FabricNaturalistConfig implements IConfigHelper {
     @Override
     public boolean isMobRemoved(String canonicalKey) {
         return VALUES.getOrDefault(canonicalKey, false);
+    }
+
+    @Override
+    public boolean isSnailCrushingEnabled() {
+        return snailCrushing;
     }
 }
