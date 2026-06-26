@@ -57,6 +57,10 @@ public class BearModel extends GeoModel<Bear> {
             }
         });
 
+        boolean sheared = entity.isSheared();
+        this.getBone("normalBody").ifPresent(bone -> bone.setHidden(sheared));
+        this.getBone("shearedBody").ifPresent(bone -> bone.setHidden(!sheared));
+
         boolean angry = entity.isAngry() || entity.isAggressive();
         boolean sleeping = entity.isSleeping() && !angry;
         this.getBone("awake").ifPresent(bone -> bone.setHidden(sleeping || angry));

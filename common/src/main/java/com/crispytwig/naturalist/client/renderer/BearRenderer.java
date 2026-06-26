@@ -2,7 +2,6 @@ package com.crispytwig.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.crispytwig.naturalist.client.model.BearModel;
-import com.crispytwig.naturalist.client.renderer.layers.BearShearedLayer;
 import com.crispytwig.naturalist.server.entity.mob.Bear;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,7 +21,6 @@ public class BearRenderer extends GeoEntityRenderer<Bear> {
     public BearRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new BearModel());
         this.shadowRadius = 0.9F;
-        this.addRenderLayer(new BearShearedLayer(this));
         this.addRenderLayer(new BlockAndItemGeoLayer<>(this) {
             @Nullable
             @Override
