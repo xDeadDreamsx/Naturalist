@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
-issueTrackerURL="https://github.com/starfish-studios/Naturalist/issues"
+issueTrackerURL="https://github.com/crispytwig/Naturalist/issues"
 
 [[mods]]
 modId="${mod_id}"
@@ -43,4 +43,4 @@ config="naturalist.mixins.json"
     side="CLIENT"
 
 [modproperties.${mod_id}."yumi:entrypoints"]
-    "lambdynlights:initializer" = ["com.starfish_studios.naturalist.client.compat.LambDynamicLightsCompat"]
+    "lambdynlights:initializer" = ["com.crispytwig.naturalist.client.compat.LambDynamicLightsCompat"]

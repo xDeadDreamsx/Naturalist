@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.starfish_studios.naturalist.mixin",
+  "package": "com.crispytwig.naturalist.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ClientLevelMixin",
