@@ -1,159 +1,59 @@
 plugins {
-    id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.105'
-    id 'me.modmuss50.mod-publish-plugin' version '0.8.4'
-    id 'idea'
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "1.14.476" apply false
 }
 
-tasks.named('wrapper', Wrapper).configure {
-    distributionType = Wrapper.DistributionType.BIN
+architectury {
+    minecraft = project.minecraft_version
 }
 
-version = mod_version
-group = mod_group_id
-
-base {
-    archivesName = "${mod_id}-${mod_version}-neoforge-${minecraft_version}"
+allprojects {
+    group = project.mod_group_id
+    version = project.mod_version
 }
 
-tasks.withType(AbstractArchiveTask).configureEach {
-    archiveVersion = ''
-}
+subprojects {
+    apply plugin: "dev.architectury.loom"
+    apply plugin: "architectury-plugin"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-
-neoForge {
-    version = project.neo_version
-
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
+    base {
+        archivesName = "${project.mod_id}-${project.name}-${project.minecraft_version}"
     }
 
-    runs {
-        client {
-            client()
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    repositories {
+        mavenLocal()
+        maven { url "https://maven.neoforged.net/releases/" }
+        maven { url "https://maven.fabricmc.net/" }
+        maven { url "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
+        maven { url "https://maven.blamejared.com/" }
+        maven { url "https://api.modrinth.com/maven" }
+        maven {
+            name = "ParchmentMC"
+            url = "https://maven.parchmentmc.org"
         }
-
-        server {
-            server()
-            programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        data {
-            data()
-            programArguments.addAll '--mod', project.mod_id, '--all',
-                    '--output', file('src/generated/resources/').getAbsolutePath(),
-                    '--existing', file('src/main/resources/').getAbsolutePath()
-        }
-
-        configureEach {
-            systemProperty 'forge.logging.markers', 'REGISTRIES'
-            logLevel = org.slf4j.event.Level.DEBUG
+        maven {
+            name = "Gegy"
+            url = "https://maven.gegy.dev"
         }
     }
 
-    mods {
-        "${mod_id}" {
-            sourceSet(sourceSets.main)
-        }
-    }
-}
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
-}
-
-repositories {
-    mavenLocal()
-    maven { url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
-    maven { url = "https://maven.blamejared.com/" }
-    maven { url = "https://api.modrinth.com/maven" }
-    maven { url = "https://maven.minecraftforge.net/" }
-    maven {
-        name = "Gegy"
-        url = uri("https://maven.gegy.dev")
-    }
-}
-
-def mappingsAttribute = Attribute.of("net.minecraft.mappings", String)
-
-dependencies {
-    attributesSchema {
-        attribute(mappingsAttribute)
-    }
-
-    implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:4.7.3"
-
-    compileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:4.8.8+1.21.1") {
-        attributes {
-            attribute(mappingsAttribute, "mojmap")
+    dependencies {
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        mappings loom.layered {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-${project.parchment_minecraft_version}:${project.parchment_mappings_version}@zip")
         }
     }
 
-    localRuntime("dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:4.8.8+1.21.1") {
-        attributes {
-            attribute(mappingsAttribute, "mojmap")
-        }
-    }
-}
-
-var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
-    var replaceProperties = [
-            minecraft_version      : minecraft_version,
-            minecraft_version_range: minecraft_version_range,
-            neo_version            : neo_version,
-            loader_version_range   : loader_version_range,
-            mod_id                 : mod_id,
-            mod_name               : mod_name,
-            mod_license            : mod_license,
-            mod_version            : mod_version,
-            mod_authors            : mod_authors,
-            mod_description        : mod_description
-    ]
-    inputs.properties replaceProperties
-    expand replaceProperties
-    from "src/main/templates"
-    into "build/generated/sources/modMetadata"
-}
-sourceSets.main.resources.srcDir generateModMetadata
-neoForge.ideSyncTask generateModMetadata
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << '-Xmaxerrs' << '2000' << '-Xlint:deprecation'
-}
-
-publishMods {
-    file = tasks.named('jar').flatMap { it.archiveFile }
-    changelog = rootProject.file("CHANGELOG.md").text
-    type = STABLE
-    displayName = "${mod_name} ${mod_version}"
-    version = "${mod_version}"
-    modLoaders.add("neoforge")
-
-    curseforge {
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        projectId = curseforge
-        minecraftVersions.add(minecraft_version)
-        requires("geckolib")
+    java {
+        withSourcesJar()
+        toolchain.languageVersion = JavaLanguageVersion.of(21)
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
-    modrinth {
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        projectId = modrinth
-        minecraftVersions.add(minecraft_version)
-        requires("geckolib")
-    }
-}
-
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = "UTF-8"
+        options.release = 21
     }
 }

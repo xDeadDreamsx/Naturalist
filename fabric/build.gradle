@@ -1,0 +1,81 @@
+plugins {
+    id "com.gradleup.shadow" version "8.3.5"
+}
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+
+    runs {
+        client {
+            client()
+            ideConfigGenerated true
+            runDir "run"
+        }
+        server {
+            server()
+            ideConfigGenerated true
+            runDir "run"
+        }
+    }
+}
+
+configurations {
+    common
+    shadowBundle
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    modImplementation "software.bernie.geckolib:geckolib-fabric-${project.minecraft_version}:${project.geckolib_version}"
+
+    modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${project.lambdynamiclights_version}")
+    modLocalRuntime("dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:${project.lambdynamiclights_version}")
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowBundle project(path: ":common", configuration: "transformProductionFabric")
+}
+
+processResources {
+    def expandProps = [
+            "version"                : project.version,
+            "mod_id"                 : project.mod_id,
+            "mod_name"               : project.mod_name,
+            "mod_license"            : project.mod_license,
+            "mod_description"        : project.mod_description,
+            "mod_authors"            : project.mod_authors,
+            "minecraft_version"      : project.minecraft_version,
+            "fabric_loader_version"  : project.fabric_loader_version,
+            "geckolib_version"       : project.geckolib_version
+    ]
+
+    filesMatching("fabric.mod.json") {
+        expand expandProps
+    }
+    inputs.properties(expandProps)
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = "dev-shadow"
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+remapJar {
+    input.set shadowJar.archiveFile
+    archiveClassifier = null
+}
+
+jar {
+    archiveClassifier = "dev"
+}

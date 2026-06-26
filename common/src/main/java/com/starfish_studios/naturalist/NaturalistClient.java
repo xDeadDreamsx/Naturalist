@@ -1,0 +1,83 @@
+package com.starfish_studios.naturalist;
+
+import com.starfish_studios.naturalist.client.renderer.*;
+import com.starfish_studios.naturalist.registry.NaturalistEntityTypes;
+import com.starfish_studios.naturalist.registry.NaturalistRegistry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.component.CustomData;
+
+@Environment(EnvType.CLIENT)
+public final class NaturalistClient {
+    private NaturalistClient() {
+    }
+
+    @FunctionalInterface
+    public interface RendererRegistrar {
+        <T extends Entity> void register(EntityType<? extends T> type, EntityRendererProvider<T> provider);
+    }
+
+    public static void registerRenderers(RendererRegistrar r) {
+        r.register(NaturalistEntityTypes.SNAIL.get(), SnailRenderer::new);
+        r.register(NaturalistEntityTypes.BEAR.get(), BearRenderer::new);
+        r.register(NaturalistEntityTypes.BUTTERFLY.get(), ButterflyRenderer::new);
+        r.register(NaturalistEntityTypes.FIREFLY.get(), FireflyRenderer::new);
+        r.register(NaturalistEntityTypes.SNAKE.get(), SnakeRenderer::new);
+        r.register(NaturalistEntityTypes.CORAL_SNAKE.get(), SnakeRenderer::new);
+        r.register(NaturalistEntityTypes.RATTLESNAKE.get(), SnakeRenderer::new);
+        r.register(NaturalistEntityTypes.DEER.get(), DeerRenderer::new);
+        r.register(NaturalistEntityTypes.BLUEJAY.get(), BirdRenderer::new);
+        r.register(NaturalistEntityTypes.CARDINAL.get(), BirdRenderer::new);
+        r.register(NaturalistEntityTypes.CANARY.get(), BirdRenderer::new);
+        r.register(NaturalistEntityTypes.ROBIN.get(), BirdRenderer::new);
+        r.register(NaturalistEntityTypes.FINCH.get(), BirdRenderer::new);
+        r.register(NaturalistEntityTypes.SPARROW.get(), BirdRenderer::new);
+        r.register(NaturalistEntityTypes.CATERPILLAR.get(), CaterpillarRenderer::new);
+        r.register(NaturalistEntityTypes.RHINO.get(), RhinoRenderer::new);
+        r.register(NaturalistEntityTypes.LION.get(), LionRenderer::new);
+        r.register(NaturalistEntityTypes.ELEPHANT.get(), ElephantRenderer::new);
+        r.register(NaturalistEntityTypes.ZEBRA.get(), ZebraRenderer::new);
+        r.register(NaturalistEntityTypes.GIRAFFE.get(), GiraffeRenderer::new);
+        r.register(NaturalistEntityTypes.HIPPO.get(), HippoRenderer::new);
+        r.register(NaturalistEntityTypes.VULTURE.get(), VultureRenderer::new);
+        r.register(NaturalistEntityTypes.BOAR.get(), BoarRenderer::new);
+        r.register(NaturalistEntityTypes.DRAGONFLY.get(), DragonflyRenderer::new);
+        r.register(NaturalistEntityTypes.CATFISH.get(), CatfishRenderer::new);
+        r.register(NaturalistEntityTypes.ALLIGATOR.get(), AlligatorRenderer::new);
+        r.register(NaturalistEntityTypes.BASS.get(), BassRenderer::new);
+        r.register(NaturalistEntityTypes.LIZARD.get(), LizardRenderer::new);
+        r.register(NaturalistEntityTypes.LIZARD_TAIL.get(), LizardTailRenderer::new);
+        r.register(NaturalistEntityTypes.TORTOISE.get(), TortoiseRenderer::new);
+        r.register(NaturalistEntityTypes.DUCK.get(), DuckRenderer::new);
+        r.register(NaturalistEntityTypes.DUCK_EGG.get(), ThrownItemRenderer::new);
+    }
+
+    public static void registerItemProperties() {
+        ItemProperties.register(NaturalistRegistry.BUTTERFLY.get(),
+                ResourceLocation.withDefaultNamespace("variant"),
+                (stack, level, entity, seed) -> {
+                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                    if (customData != null) {
+                        return customData.copyTag().getInt("Variant") / 7.0f;
+                    }
+                    return 0.0f;
+                });
+
+        ItemProperties.register(NaturalistRegistry.SNAIL_BUCKET.get(),
+                ResourceLocation.withDefaultNamespace("color"),
+                (stack, level, entity, seed) -> {
+                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                    if (customData != null) {
+                        return customData.copyTag().getInt("Color") / 15.0f;
+                    }
+                    return 0.0f;
+                });
+    }
+}
