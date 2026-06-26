@@ -241,7 +241,7 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     }
 
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return false;
+        return !this.hasCustomName();
     }
 
     public ItemStack getCaughtItemStack() {
