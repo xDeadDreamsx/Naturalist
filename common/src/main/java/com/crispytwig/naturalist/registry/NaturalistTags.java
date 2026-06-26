@@ -45,6 +45,7 @@ public class NaturalistTags {
         public static final TagKey<Item> SNAKE_TAME_ITEMS = tag("snake_tame_items");
         public static final TagKey<Item> BIRD_FOOD_ITEMS = tag("bird_food_items");
         public static final TagKey<Item> GIRAFFE_FOOD_ITEMS = tag("giraffe_food_items");
+        public static final TagKey<Item> LION_FOOD_ITEMS = tag("lion_food_items");
         public static final TagKey<Item> BOAR_FOOD_ITEMS = tag("boar_food_items");
         public static final TagKey<Item> ALLIGATOR_FOOD_ITEMS = tag("alligator_food_items");
         public static final TagKey<Item> LIZARD_TEMPT_ITEMS = tag("lizard_tempt_items");

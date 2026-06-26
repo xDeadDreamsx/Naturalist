@@ -1,6 +1,5 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
@@ -8,6 +7,7 @@ import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -19,15 +19,20 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -50,10 +55,13 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, SleepingAnimal {
+public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_MANE = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.LION_FOOD_ITEMS);
+    private static final ResourceLocation BABY_SPEED_BOOST_ID = ResourceLocation.fromNamespaceAndPath("naturalist", "baby_speed_boost");
+    private static final AttributeModifier BABY_SPEED_BOOST = new AttributeModifier(BABY_SPEED_BOOST_ID, 0.05D, AttributeModifier.Operation.ADD_VALUE);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.lion.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.lion.walk");
@@ -62,14 +70,18 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.lion.attack");
     protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.lion.sleep");
     protected static final RawAnimation SLEEP2 = RawAnimation.begin().thenLoop("animation.sf_nba.lion.sleep2");
+    protected static final RawAnimation SIT = RawAnimation.begin().thenPlay("animation.sf_nba.lion.sit").thenLoop("animation.sf_nba.lion.sit_idle");
+    protected static final RawAnimation UNSIT = RawAnimation.begin().thenPlay("animation.sf_nba.lion.unsit");
 
-    public Lion(@NotNull EntityType<? extends NaturalistAnimal> entityType, Level level) {
+    private boolean wasSitting;
+
+    public Lion(@NotNull EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 24.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.2F)
+                .add(Attributes.MOVEMENT_SPEED, 0.25F)
                 .add(Attributes.ATTACK_DAMAGE, 6.0D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.STEP_HEIGHT, 1.0D);
@@ -102,23 +114,82 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.6D, true));
         this.goalSelector.addGoal(2, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new LionFollowParentGoal(this, 1.1));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.3D, 7.0F, 2.0F));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(6, new LionFollowLeaderGoal(this, 1.1D, 8.0F, 24.0F));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
+        this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(3, new OwnerHurtTargetGoal(this));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
                 entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby()
                         && !this.isSleeping() && !this.isBaby() && this.level().isNight()));
     }
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return false;
+        return FOOD_ITEMS.test(stack);
+    }
+
+    @Override
+    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (this.isTame() && this.isBaby() && this.isFood(stack)) {
+            this.ageUp(getSpeedUpSecondsWhenFeeding(-this.getAge()), true);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+        if (this.level().isClientSide) {
+            boolean canInteract = this.isOwnedBy(player) || this.isTame()
+                    || (this.isBaby() && this.isFood(stack) && !this.isTame());
+            return canInteract ? InteractionResult.CONSUME : InteractionResult.PASS;
+        }
+        if (this.isTame()) {
+            if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                this.heal(stack.has(DataComponents.FOOD)
+                        ? Objects.requireNonNull(stack.get(DataComponents.FOOD)).nutrition()
+                        : 4.0F);
+                return InteractionResult.SUCCESS;
+            }
+            InteractionResult interactionResult = super.mobInteract(player, hand);
+            if ((!interactionResult.consumesAction() || this.isBaby()) && this.isOwnedBy(player)) {
+                this.setOrderedToSit(!this.isOrderedToSit());
+                this.jumping = false;
+                this.navigation.stop();
+                this.setTarget(null);
+                return InteractionResult.SUCCESS;
+            }
+            return interactionResult;
+        }
+        if (this.isBaby() && this.isFood(stack)) {
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            if (this.random.nextInt(3) == 0) {
+                this.tame(player);
+                this.navigation.stop();
+                this.setTarget(null);
+                this.setOrderedToSit(true);
+                this.level().broadcastEntityEvent(this, (byte) 7);
+            } else {
+                this.level().broadcastEntityEvent(this, (byte) 6);
+            }
+            return InteractionResult.SUCCESS;
+        }
+        return super.mobInteract(player, hand);
     }
 
     @Override
@@ -159,19 +230,36 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     @Override
     public boolean canSleep() {
         long dayTime = this.level().getDayTime();
-        if (this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
+        if (this.isTame() || this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
             return false;
         } else {
             return dayTime > 6000 && dayTime < 13000;
         }
     }
 
+    private void updateBabySpeed() {
+        AttributeInstance speed = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speed == null) {
+            return;
+        }
+        boolean hasBoost = speed.hasModifier(BABY_SPEED_BOOST_ID);
+        if (this.isBaby()) {
+            if (!hasBoost) {
+                speed.addTransientModifier(BABY_SPEED_BOOST);
+            }
+        } else if (hasBoost) {
+            speed.removeModifier(BABY_SPEED_BOOST_ID);
+        }
+    }
+
     @Override
     public void customServerAiStep() {
+        this.updateBabySpeed();
         if (this.getMoveControl().hasWanted()) {
             double speedModifier = this.getMoveControl().getSpeedModifier();
+            double sprintThreshold = 1.05D;
 
-                if (speedModifier >= 1.25D && this.onGround()) {
+                if (speedModifier >= sprintThreshold && this.onGround()) {
                 this.setPose(Pose.STANDING);
                 this.setSprinting(true);
             } else {
@@ -235,6 +323,22 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
     }
 
     private <E extends Lion> PlayState predicate(final AnimationState<E> event) {
+        if (this.isBaby() && (this.isInSittingPose() || this.wasSitting)) {
+            if (this.isInSittingPose()) {
+                event.getController().setAnimation(SIT);
+                this.wasSitting = true;
+            } else {
+                event.getController().setAnimation(UNSIT);
+                if (event.getController().hasAnimationFinished()) {
+                    this.wasSitting = false;
+                }
+            }
+            return PlayState.CONTINUE;
+        }
+        if (!this.isBaby() && this.isInSittingPose()) {
+            event.getController().setAnimation(this.hasMane() ? SLEEP2 : SLEEP);
+            return PlayState.CONTINUE;
+        }
         if (this.isSleeping() && this.hasMane()) {
             event.getController().setAnimation(SLEEP2);
         } else if (this.isSleeping() && !this.hasMane()) {
@@ -504,12 +608,12 @@ public class Lion extends NaturalistAnimal implements NaturalistGeoEntity, Sleep
 
         @Override
         public boolean canUse() {
-            return !this.lion.isSleeping() && super.canUse();
+            return !this.lion.isSleeping() && !this.lion.isTame() && super.canUse();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return !this.lion.isSleeping() && super.canContinueToUse();
+            return !this.lion.isSleeping() && !this.lion.isTame() && super.canContinueToUse();
         }
     }
 }
