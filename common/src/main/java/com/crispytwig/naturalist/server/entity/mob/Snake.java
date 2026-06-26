@@ -1,8 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.crispytwig.naturalist.server.entity.base.ClimbingAnimal;
-import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
+import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SearchForItemsGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
@@ -30,11 +29,15 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -59,7 +62,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity {
+public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
     private static final Ingredient TAME_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS);
@@ -77,7 +80,7 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
     protected static final RawAnimation TONGUE = RawAnimation.begin().thenPlay("animation.sf_nba.snake.tongue");
     protected static final RawAnimation RATTLE = RawAnimation.begin().thenLoop("animation.sf_nba.snake.rattle");
 
-    public Snake(EntityType<? extends NaturalistAnimal> entityType, Level level) {
+    public Snake(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
         this.setCanPickUpLoot(true);
     }
@@ -90,17 +93,21 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new SnakeMeleeAttackGoal(this, 1.75D, true));
         this.goalSelector.addGoal(2, new SearchForItemsGoal(this, 1.2F, FOOD_ITEMS, 8.0D, 8.0D));
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.2D, 10.0F, 2.0F));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, livingEntity -> livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny())));
-        this.targetSelector.addGoal(4, new ResetUniversalAngerTargetGoal<>(this, false));
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, livingEntity -> livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny())));
+        this.targetSelector.addGoal(6, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
     @Nullable
@@ -150,6 +157,49 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
     }
 
     @Override
+    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (this.level().isClientSide) {
+            boolean canInteract = this.isOwnedBy(player) || this.isTame() || (this.isTameFood(stack) && !this.isTame());
+            return canInteract ? InteractionResult.CONSUME : InteractionResult.PASS;
+        }
+        if (this.isTame()) {
+            if (this.isTameFood(stack) && this.getHealth() < this.getMaxHealth()) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                this.heal(4.0F);
+                return InteractionResult.SUCCESS;
+            }
+            if (this.isOwnedBy(player) && !this.isTameFood(stack)) {
+                this.setOrderedToSit(!this.isOrderedToSit());
+                this.jumping = false;
+                this.navigation.stop();
+                this.setTarget(null);
+                return InteractionResult.SUCCESS;
+            }
+            return super.mobInteract(player, hand);
+        }
+        if (this.isTameFood(stack)) {
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            if (this.random.nextInt(2) == 0) {
+                this.tame(player);
+                this.setOrderedToSit(true);
+                this.navigation.stop();
+                this.setTarget(null);
+                this.stopBeingAngry();
+                this.level().broadcastEntityEvent(this, (byte) 7);
+            } else {
+                this.level().broadcastEntityEvent(this, (byte) 6);
+            }
+            return InteractionResult.SUCCESS;
+        }
+        return super.mobInteract(player, hand);
+    }
+
+    @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(SLEEPING, false);
@@ -191,7 +241,7 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
         if (!this.level().isClientSide) {
             this.updatePersistentAnger((ServerLevel)this.level(), true);
         }
-        if (this.isSleeping() || this.isImmobile()) {
+        if (this.isSleeping() || this.isImmobile() || this.isInSittingPose()) {
             this.jumping = false;
             this.xxa = 0.0F;
             this.zza = 0.0F;
@@ -365,7 +415,7 @@ public class Snake extends ClimbingAnimal implements SleepingAnimal, NeutralMob,
     }
 
     private <E extends Snake> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.isSleeping()) {
+        if (this.isSleeping() || this.isInSittingPose()) {
             event.getController().setAnimation(SLEEP);
             return PlayState.CONTINUE;
         } else if (this.isNaturalistClimbing()) {

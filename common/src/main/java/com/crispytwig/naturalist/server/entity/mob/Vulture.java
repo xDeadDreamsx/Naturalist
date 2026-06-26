@@ -18,6 +18,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier.Builder;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,6 +29,8 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
@@ -36,6 +41,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.pathfinder.PathType;
@@ -52,15 +59,22 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public class Vulture extends PathfinderMob implements NaturalistGeoEntity, FlyingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.ROTTEN_FLESH);
+    private static final EntityDataAccessor<Boolean> PERCHED = SynchedEntityData.defineId(Vulture.class, EntityDataSerializers.BOOLEAN);
     private int ticksSinceEaten;
+    private int perchCooldown;
+    @Nullable
+    private BlockPos perchTarget;
 
     protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.vulture.fly");
+    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.vulture.sit");
 
     @Override
     public boolean canBeAffected(MobEffectInstance effect) {
@@ -83,6 +97,12 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         this.setPathfindingMalus(PathType.DAMAGE_OTHER, 0.0F);
     }
 
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(PERCHED, false);
+    }
+
     public static Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0F).add(Attributes.FLYING_SPEED, 0.6F).add(Attributes.MOVEMENT_SPEED, 0.3F).add(Attributes.ATTACK_DAMAGE, 4.0F);
     }
@@ -91,8 +111,10 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new VultureFleePlayerGoal(this, 16.0F, 1.4D));
         this.goalSelector.addGoal(1, new VultureAttackGoal(this, 1.2F, true));
         this.goalSelector.addGoal(2, new VultureSearchForFoodGoal(this, 1.2F, FOOD_ITEMS, 12, 24));
+        this.goalSelector.addGoal(2, new VulturePerchOnCactusGoal(this, 1.0D, 32, 32));
         this.goalSelector.addGoal(3, new HighAltitudeFlyingWanderGoal(this));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
@@ -122,6 +144,27 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     @Override
     public boolean isFlying() {
         return !this.onGround();
+    }
+
+    @Nullable
+    public BlockPos getPerchTarget() {
+        return this.perchTarget;
+    }
+
+    public void setPerchTarget(@Nullable BlockPos pos) {
+        this.perchTarget = pos;
+    }
+
+    public boolean isPerched() {
+        return this.entityData.get(PERCHED);
+    }
+
+    public void setPerched(boolean perched) {
+        this.entityData.set(PERCHED, perched);
+    }
+
+    public boolean canPerch() {
+        return this.perchCooldown <= 0;
     }
 
     @Override
@@ -165,6 +208,34 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         return source.equals(this.damageSources().cactus()) || super.isInvulnerableTo(source);
     }
 
+    private static final int PERCH_COOLDOWN_AFTER_HURT = 200;
+
+    @Override
+    public boolean hurt(@NotNull DamageSource source, float amount) {
+        boolean hurt = super.hurt(source, amount);
+        if (hurt && !this.level().isClientSide) {
+            this.startle(source.getSourcePosition());
+        }
+        return hurt;
+    }
+
+    public void startle(@Nullable Vec3 fleeFrom) {
+        this.perchCooldown = PERCH_COOLDOWN_AFTER_HURT;
+        this.setPerched(false);
+        double dx = 0.0D;
+        double dz = 0.0D;
+        if (fleeFrom != null) {
+            Vec3 away = new Vec3(this.getX() - fleeFrom.x, 0.0D, this.getZ() - fleeFrom.z);
+            if (away.lengthSqr() > 1.0E-4D) {
+                away = away.normalize();
+                dx = away.x * 0.4D;
+                dz = away.z * 0.4D;
+            }
+        }
+        this.setDeltaMovement(dx, 0.5D, dz);
+        this.hasImpulse = true;
+    }
+
     @Override
     public boolean doHurtTarget(Entity target) {
         boolean shouldHurt = true;
@@ -194,6 +265,9 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         this.level().getProfiler().pop();
         if (!this.level().isClientSide && this.isAlive() && this.isEffectiveAi()) {
             ++this.ticksSinceEaten;
+            if (this.perchCooldown > 0) {
+                --this.perchCooldown;
+            }
             ItemStack stack = this.getItemBySlot(EquipmentSlot.MAINHAND);
             if (stack.get(DataComponents.FOOD) != null) {
                 if (this.ticksSinceEaten > 600) {
@@ -273,7 +347,7 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     }
 
     private <E extends Vulture> PlayState predicate(final AnimationState<E> event) {
-        event.getController().setAnimation(FLY);
+        event.getController().setAnimation(this.isPerched() ? SIT : FLY);
         return PlayState.CONTINUE;
     }
 
@@ -339,6 +413,75 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         }
     }
 
+    static class VultureFleePlayerGoal extends Goal {
+        private final Vulture vulture;
+        private final double speedModifier;
+        private final float detectRange;
+        private final TargetingConditions fleeConditions;
+        @Nullable
+        private Player toAvoid;
+        private int recalcTimer;
+        private static final int RECALC_INTERVAL = 20;
+
+        public VultureFleePlayerGoal(@NotNull Vulture vulture, float detectRange, double speedModifier) {
+            this.vulture = vulture;
+            this.detectRange = detectRange;
+            this.speedModifier = speedModifier;
+            this.fleeConditions = TargetingConditions.forNonCombat().range(detectRange).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
+            this.setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (this.vulture.getTarget() != null) {
+                return false;
+            }
+            this.toAvoid = this.vulture.level().getNearestPlayer(this.fleeConditions, this.vulture);
+            return this.toAvoid != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.toAvoid != null && this.toAvoid.isAlive()
+                    && this.vulture.distanceToSqr(this.toAvoid) < (double) (this.detectRange * this.detectRange);
+        }
+
+        @Override
+        public void start() {
+            this.vulture.startle(this.toAvoid.position());
+            this.recalcTimer = RECALC_INTERVAL;
+            this.fleeAway();
+        }
+
+        @Override
+        public void tick() {
+            if (--this.recalcTimer <= 0) {
+                this.recalcTimer = RECALC_INTERVAL;
+                this.fleeAway();
+            }
+        }
+
+        @Override
+        public void stop() {
+            this.toAvoid = null;
+        }
+
+        private void fleeAway() {
+            Vec3 fleeTo = DefaultRandomPos.getPosAway(this.vulture, 16, 7, this.toAvoid.position());
+            if (fleeTo != null && this.toAvoid.distanceToSqr(fleeTo) >= this.toAvoid.distanceToSqr(this.vulture)
+                    && this.vulture.getNavigation().moveTo(fleeTo.x, fleeTo.y, fleeTo.z, this.speedModifier)) {
+                return;
+            }
+            Vec3 away = new Vec3(this.vulture.getX() - this.toAvoid.getX(), 0.0D, this.vulture.getZ() - this.toAvoid.getZ());
+            away = away.lengthSqr() < 1.0E-4D ? this.vulture.getViewVector(1.0F) : away.normalize();
+            this.vulture.getMoveControl().setWantedPosition(
+                    this.vulture.getX() + away.x * 12.0D,
+                    this.vulture.getY() + 8.0D,
+                    this.vulture.getZ() + away.z * 12.0D,
+                    this.speedModifier);
+        }
+    }
+
     static class VultureSearchForFoodGoal extends Goal {
         private final Vulture mob;
         private final double speedModifier;
@@ -378,6 +521,93 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
             List<ItemEntity> list = mob.level().getEntitiesOfClass(ItemEntity.class, mob.getBoundingBox().inflate(horizontalSearchRange, verticalSearchRange, horizontalSearchRange), itemEntity -> ingredient.test(itemEntity.getItem()));
             if (!list.isEmpty()) {
                 mob.getNavigation().moveTo(list.getFirst(), speedModifier);
+            }
+        }
+    }
+
+    static class VulturePerchOnCactusGoal extends MoveToBlockGoal {
+        private final Vulture vulture;
+        private final int horizontalRange;
+        private final int verticalRange;
+        private int perchTime;
+        private static final int MAX_PERCH_TIME = 300;
+        private static final int MAX_INITIAL_DELAY = 1200;
+        private static final double SNAP_DISTANCE_SQR = 0.04D;
+        private final Set<BlockPos> reservedByOthers = new HashSet<>();
+
+        public VulturePerchOnCactusGoal(@NotNull Vulture vulture, double speedModifier, int searchRange, int verticalSearchRange) {
+            super(vulture, speedModifier, searchRange, verticalSearchRange);
+            this.vulture = vulture;
+            this.horizontalRange = searchRange;
+            this.verticalRange = verticalSearchRange;
+            this.nextStartTick = vulture.getRandom().nextInt(MAX_INITIAL_DELAY);
+        }
+
+        @Override
+        protected boolean isValidTarget(@NotNull LevelReader level, @NotNull BlockPos pos) {
+            if (this.reservedByOthers.contains(pos)) {
+                return false;
+            }
+            return level.getBlockState(pos).is(Blocks.CACTUS) && level.getBlockState(pos.above()).isAir();
+        }
+
+        @Override
+        public boolean canUse() {
+            if (this.vulture.getTarget() != null || !this.vulture.canPerch() || Vulture.FOOD_ITEMS.test(this.vulture.getMainHandItem())) {
+                return false;
+            }
+            if (this.nextStartTick <= 0) {
+                this.refreshReservations();
+            }
+            return super.canUse();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.perchTime < MAX_PERCH_TIME && this.vulture.getTarget() == null && this.vulture.canPerch() && super.canContinueToUse();
+        }
+
+        @Override
+        public void start() {
+            super.start();
+            this.perchTime = 0;
+            this.vulture.setPerchTarget(this.blockPos.immutable());
+        }
+
+        @Override
+        public void stop() {
+            super.stop();
+            this.perchTime = 0;
+            this.vulture.setPerchTarget(null);
+            this.vulture.setPerched(false);
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            boolean reached = this.isReachedTarget();
+            this.vulture.setPerched(reached);
+            if (reached) {
+                Vec3 perch = new Vec3(this.blockPos.getX() + 0.5D, this.blockPos.getY() + 1, this.blockPos.getZ() + 0.5D);
+                Vec3 offset = perch.subtract(this.vulture.position());
+                this.vulture.getNavigation().stop();
+                if (offset.lengthSqr() > SNAP_DISTANCE_SQR) {
+                    this.vulture.setDeltaMovement(offset.scale(0.25D));
+                } else {
+                    this.vulture.setPos(perch.x, perch.y, perch.z);
+                    this.vulture.setDeltaMovement(Vec3.ZERO);
+                }
+                ++this.perchTime;
+            }
+        }
+
+        private void refreshReservations() {
+            this.reservedByOthers.clear();
+            List<Vulture> others = this.vulture.level().getEntitiesOfClass(Vulture.class,
+                    this.vulture.getBoundingBox().inflate(this.horizontalRange * 2.0D, this.verticalRange * 2.0D, this.horizontalRange * 2.0D),
+                    other -> other != this.vulture && other.getPerchTarget() != null);
+            for (Vulture other : others) {
+                this.reservedByOthers.add(other.getPerchTarget());
             }
         }
     }
