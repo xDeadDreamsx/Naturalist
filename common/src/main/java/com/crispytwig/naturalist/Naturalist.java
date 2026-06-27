@@ -47,6 +47,7 @@ public final class Naturalist {
         touch(NaturalistSoundEvents.SOUND_EVENTS);
         touch(NaturalistEntityTypes.ENTITY_TYPES);
         NaturalistRegistry.init();
+        touch(NaturalistMenus.MENUS);
         touch(NaturalistPotions.POTIONS);
         touch(NaturalistRecipes.RECIPE_TYPES);
         touch(NaturalistRecipes.RECIPE_SERIALIZERS);

@@ -7,6 +7,7 @@ import com.crispytwig.naturalist.server.entity.mob.Snail;
 import com.crispytwig.naturalist.server.item.BugNetItem;
 import com.crispytwig.naturalist.server.item.DuckEggItem;
 import com.crispytwig.naturalist.server.item.KnapsackItem;
+import com.crispytwig.naturalist.server.item.NoFluidMobBucketItem;
 import com.crispytwig.naturalist.server.item.WhistleItem;
 import com.crispytwig.naturalist.server.item.GlowGoopItem;
 import com.crispytwig.naturalist.server.item.CaughtMobItem;
@@ -59,6 +60,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, Item> COOKED_LIZARD_TAIL = ITEMS.register("cooked_lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.6F).build())));
     public static final DeferredHolder<Item, MobBucketItem> CATFISH_BUCKET = ITEMS.register("catfish_bucket", () -> new MobBucketItem(NaturalistEntityTypes.CATFISH.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, MobBucketItem> BASS_BUCKET = ITEMS.register("bass_bucket", () -> new MobBucketItem(NaturalistEntityTypes.BASS.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, NoFluidMobBucketItem> DUCK_BUCKET = ITEMS.register("duck_bucket", () -> new NoFluidMobBucketItem(NaturalistEntityTypes.DUCK.get(), Fluids.EMPTY, SoundEvents.BUCKET_EMPTY, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> CATFISH = ITEMS.register("catfish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.1F).build())));
     public static final DeferredHolder<Item, Item> COOKED_CATFISH = ITEMS.register("cooked_catfish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.8F).build())));
     public static final DeferredHolder<Item, Item> BASS = ITEMS.register("bass", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.1F).build())));

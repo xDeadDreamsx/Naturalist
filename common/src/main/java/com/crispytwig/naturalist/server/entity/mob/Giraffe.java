@@ -1,32 +1,20 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BigPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
-import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
-import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -36,10 +24,8 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,16 +39,12 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, FollowingPet {
+public class Giraffe extends TamableAnimal implements NaturalistGeoEntity {
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.run");
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final EntityDataAccessor<Boolean> CHESTED = SynchedEntityData.defineId(Giraffe.class, EntityDataSerializers.BOOLEAN);
-    private static final int INVENTORY_SIZE = 27;
-    private final SimpleContainer inventory = new SimpleContainer(INVENTORY_SIZE);
-    private boolean followingOwner = true;
 
     public Giraffe(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -80,12 +62,10 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, Follo
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new BigPanicGoal(this, 1.4));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.0, 16.0, 8.0, 5.0));
-        this.goalSelector.addGoal(4, new PetFollowOwnerGoal(this, 1.0, 12.0F, 6.0F));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.7));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
@@ -113,78 +93,6 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, Follo
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(CHESTED, false);
-    }
-
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putBoolean("Chested", this.isChested());
-        FollowingPet.save(this, compound);
-        NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
-        for (int i = 0; i < items.size(); i++) {
-            items.set(i, this.inventory.getItem(i));
-        }
-        ContainerHelper.saveAllItems(compound, items, this.registryAccess());
-    }
-
-    @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.setChested(compound.getBoolean("Chested"));
-        FollowingPet.load(this, compound);
-        NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(compound, items, this.registryAccess());
-        for (int i = 0; i < items.size(); i++) {
-            this.inventory.setItem(i, items.get(i));
-        }
-    }
-
-    @Override
-    public boolean isFollowingOwner() {
-        return this.followingOwner;
-    }
-
-    @Override
-    public void setFollowingOwner(boolean following) {
-        this.followingOwner = following;
-    }
-
-    public boolean isChested() {
-        return this.entityData.get(CHESTED);
-    }
-
-    public void setChested(boolean chested) {
-        this.entityData.set(CHESTED, chested);
-    }
-
-    private void openCustomInventory(Player player) {
-        if (!this.level().isClientSide && this.isTame()) {
-            player.openMenu(new SimpleMenuProvider((id, inv, p) -> ChestMenu.threeRows(id, inv, this.inventory), this.getDisplayName()));
-        }
-    }
-
-    @Override
-    protected void dropEquipment() {
-        super.dropEquipment();
-        if (this.isChested()) {
-            this.setChested(false);
-            if (!this.level().isClientSide) {
-                this.spawnAtLocation(Items.CHEST);
-                for (int i = 0; i < this.inventory.getContainerSize(); i++) {
-                    ItemStack stack = this.inventory.getItem(i);
-                    if (!stack.isEmpty()) {
-                        this.spawnAtLocation(stack);
-                    }
-                }
-                this.inventory.clearContent();
-            }
-        }
-    }
-
-    @Override
     public boolean isPushable() {
         return !this.isVehicle();
     }
@@ -200,10 +108,6 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, Follo
     @Override
     public @NotNull InteractionResult mobInteract(Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
-        if (whistle != null) {
-            return whistle;
-        }
         if (!this.isBaby() && this.isVehicle()) {
             return super.mobInteract(player, hand);
         }
@@ -242,20 +146,6 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, Follo
                 }
                 this.heal(4.0F);
                 this.playSound(SoundEvents.HORSE_EAT, 1.0F, 1.0F);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-            }
-            if (!this.isBaby() && !this.isChested() && stack.is(Items.CHEST)) {
-                if (!this.level().isClientSide) {
-                    this.setChested(true);
-                    if (!player.getAbilities().instabuild) {
-                        stack.shrink(1);
-                    }
-                    this.playSound(SoundEvents.MULE_CHEST, 1.0F, 1.0F);
-                }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-            }
-            if (!this.isBaby() && player.isSecondaryUseActive()) {
-                this.openCustomInventory(player);
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
             if (!this.isBaby() && stack.isEmpty()) {

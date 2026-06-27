@@ -65,6 +65,8 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     protected static final RawAnimation BITE = RawAnimation.begin().thenPlay("animation.sf_nba.hippo.bite");
     protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.swim");
     protected static final RawAnimation SWIM_IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.swim_idle");
+    protected static final RawAnimation SIT = RawAnimation.begin().thenPlay("animation.sf_nba.hippo.sit").thenLoop("animation.sf_nba.hippo.sit_idle");
+    protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.sleep");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Blocks.MELON.asItem());
@@ -178,54 +180,59 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
         if (whistle != null) {
             return whistle;
         }
-        if (this.level().isClientSide) {
-            boolean canInteract = this.isOwnedBy(player) || this.isTame() || this.isFood(itemStack);
-            return canInteract ? InteractionResult.CONSUME : InteractionResult.PASS;
-        }
         if (this.isFood(itemStack)) {
             if (!this.isTame() && this.isBaby()) {
-                this.usePlayerItem(player, hand, itemStack);
-                this.tame(player);
-                this.setOrderedToSit(true);
-                this.navigation.stop();
-                this.setTarget(null);
-                this.level().broadcastEntityEvent(this, (byte) 7);
-                return InteractionResult.SUCCESS;
+                if (!this.level().isClientSide) {
+                    this.usePlayerItem(player, hand, itemStack);
+                    this.tame(player);
+                    this.setOrderedToSit(true);
+                    this.navigation.stop();
+                    this.setTarget(null);
+                    this.level().broadcastEntityEvent(this, (byte) 7);
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
             if (this.isTame() && this.getHealth() < this.getMaxHealth()) {
-                this.usePlayerItem(player, hand, itemStack);
-                this.heal(4.0F);
-                return InteractionResult.SUCCESS;
+                if (!this.level().isClientSide) {
+                    this.usePlayerItem(player, hand, itemStack);
+                    this.heal(4.0F);
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
             int age = this.getAge();
             if (age == 0 && this.canFallInLove()) {
-                this.eatingTicks = 10;
-                this.setItemSlot(EquipmentSlot.MAINHAND, itemStack.copy());
-                this.swing(InteractionHand.MAIN_HAND);
-                float yRot = (this.getYRot() + 90) * Mth.DEG_TO_RAD;
-                ((ServerLevel)level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MELON.defaultBlockState()), this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100, this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
-                ((ServerLevel)level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.MELON_SLICE)), this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100, this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
-                this.playSound(SoundEvents.HORSE_EAT);
-                this.playSound(SoundEvents.WOOD_BREAK);
-                this.usePlayerItem(player, hand, itemStack);
-                this.setInLove(player);
-                return InteractionResult.SUCCESS;
+                if (!this.level().isClientSide) {
+                    this.eatingTicks = 10;
+                    this.setItemSlot(EquipmentSlot.MAINHAND, itemStack.copy());
+                    this.swing(InteractionHand.MAIN_HAND);
+                    float yRot = (this.getYRot() + 90) * Mth.DEG_TO_RAD;
+                    ((ServerLevel)level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MELON.defaultBlockState()), this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100, this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
+                    ((ServerLevel)level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.MELON_SLICE)), this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100, this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
+                    this.playSound(SoundEvents.HORSE_EAT);
+                    this.playSound(SoundEvents.WOOD_BREAK);
+                    this.usePlayerItem(player, hand, itemStack);
+                    this.setInLove(player);
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
             if (this.isBaby()) {
-                this.usePlayerItem(player, hand, itemStack);
-                this.ageUp(Animal.getSpeedUpSecondsWhenFeeding(-age), true);
-                return InteractionResult.SUCCESS;
+                if (!this.level().isClientSide) {
+                    this.usePlayerItem(player, hand, itemStack);
+                    this.ageUp(Animal.getSpeedUpSecondsWhenFeeding(-age), true);
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
-            return InteractionResult.CONSUME;
         }
-        if (this.isTame() && this.isOwnedBy(player)) {
-            this.setOrderedToSit(!this.isOrderedToSit());
-            this.jumping = false;
-            this.navigation.stop();
-            this.setTarget(null);
-            return InteractionResult.SUCCESS;
+        if (this.isTame() && this.isOwnedBy(player) && itemStack.isEmpty() && player.isSecondaryUseActive()) {
+            if (!this.level().isClientSide) {
+                this.setOrderedToSit(!this.isOrderedToSit());
+                this.jumping = false;
+                this.navigation.stop();
+                this.setTarget(null);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
-        return InteractionResult.PASS;
+        return super.mobInteract(player, hand);
     }
 
     @Override
@@ -298,6 +305,10 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     }
 
     private <E extends Hippo> PlayState predicate(final @NotNull AnimationState<E> event) {
+        if (this.isInSittingPose()) {
+            event.getController().setAnimation(this.isBaby() ? SIT : SLEEP);
+            return PlayState.CONTINUE;
+        }
         event.getController().setAnimationSpeed(0.8D + event.getLimbSwingAmount());
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (!this.isInWater()) {

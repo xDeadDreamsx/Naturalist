@@ -56,7 +56,6 @@ public class GiraffeModel extends GeoModel<Giraffe> {
             head.resetStateChanges();
         }
 
-        boolean geared = entity.isTame() || entity.isChested();
-        this.getBone("saddle").ifPresent(saddle -> saddle.setHidden(!geared));
+        this.getBone("saddle").ifPresent(saddle -> saddle.setHidden(!entity.isTame()));
     }
 }

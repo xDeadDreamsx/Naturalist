@@ -1,18 +1,25 @@
 package com.crispytwig.naturalist;
 
+import com.crispytwig.naturalist.client.gui.screens.ElephantInventoryScreen;
 import com.crispytwig.naturalist.client.renderer.*;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
+import com.crispytwig.naturalist.registry.NaturalistMenus;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.server.item.KnapsackItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.component.CustomData;
 
 @Environment(EnvType.CLIENT)
@@ -58,6 +65,15 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.TORTOISE.get(), TortoiseRenderer::new);
         r.register(NaturalistEntityTypes.DUCK.get(), DuckRenderer::new);
         r.register(NaturalistEntityTypes.DUCK_EGG.get(), ThrownItemRenderer::new);
+    }
+
+    @FunctionalInterface
+    public interface MenuScreenRegistrar {
+        <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void register(MenuType<? extends M> type, MenuScreens.ScreenConstructor<M, U> factory);
+    }
+
+    public static void registerMenuScreens(MenuScreenRegistrar r) {
+        r.register(NaturalistMenus.ELEPHANT.get(), ElephantInventoryScreen::new);
     }
 
     public static void registerItemProperties() {

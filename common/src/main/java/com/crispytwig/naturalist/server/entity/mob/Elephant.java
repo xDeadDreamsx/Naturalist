@@ -1,9 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
-import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
@@ -40,15 +38,17 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.DismountHelper;
-import net.minecraft.world.inventory.ChestMenu;
+import com.crispytwig.naturalist.server.inventory.ElephantInventoryMenu;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
@@ -66,9 +66,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, FollowingPet {
+public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeoEntity {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.MELON_SLICE);
-    private boolean followingOwner = true;
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.walk");
      protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.run");
@@ -122,10 +121,6 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
-        if (whistle != null) {
-            return whistle;
-        }
         if (!this.isBaby() && this.isVehicle()) {
             return super.mobInteract(player, hand);
         }
@@ -154,6 +149,34 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
                 this.heal(4.0F);
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
+            if (!this.isBaby() && stack.is(Items.SHEARS)) {
+                if (this.isChested()) {
+                    if (!this.level().isClientSide) {
+                        this.popItem(new ItemStack(Items.CHEST));
+                        for (int i = 0; i < ElephantInventoryMenu.CHEST_SIZE; i++) {
+                            this.popItem(this.inventory.getItem(i));
+                            this.inventory.setItem(i, ItemStack.EMPTY);
+                        }
+                        this.setChested(false);
+                        stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+                        this.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
+                        this.gameEvent(GameEvent.SHEAR, player);
+                    }
+                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                }
+                if (this.isSaddled()) {
+                    if (!this.level().isClientSide) {
+                        ItemStack saddleStack = this.inventory.getItem(ElephantInventoryMenu.SADDLE_SLOT);
+                        this.popItem(saddleStack.isEmpty() ? new ItemStack(Items.SADDLE) : saddleStack.copy());
+                        this.inventory.setItem(ElephantInventoryMenu.SADDLE_SLOT, ItemStack.EMPTY);
+                        this.setSaddled(false);
+                        stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+                        this.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
+                        this.gameEvent(GameEvent.SHEAR, player);
+                    }
+                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                }
+            }
             if (!this.isBaby() && !this.isChested() && stack.is(Items.CHEST)) {
                 if (!this.level().isClientSide) {
                     this.setChested(true);
@@ -164,12 +187,13 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
                 }
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
-            if (!this.isBaby() && !this.isSaddled() && stack.is(Items.SADDLE)) {
+            if (!this.isBaby() && stack.is(Items.SADDLE) && !this.isSaddled()) {
                 if (!this.level().isClientSide) {
-                    this.setSaddled(true);
+                    this.inventory.setItem(ElephantInventoryMenu.SADDLE_SLOT, stack.copyWithCount(1));
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
+                    this.setSaddled(true);
                     this.playSound(SoundEvents.HORSE_SADDLE, 1.0F, 1.0F);
                 }
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -222,7 +246,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
         float f = livingEntity.xxa * 0.5f;
         float g = livingEntity.zza;
         if (this.isControlledByLocalInstance()) {
-            this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED));
+            this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.5F);
             super.travel(new Vec3(f, travelVector.y, g));
         } else if (livingEntity instanceof Player) {
             this.setDeltaMovement(Vec3.ZERO);
@@ -290,24 +314,26 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     @Override
     protected void dropEquipment() {
         super.dropEquipment();
-        if (this.isSaddled()) {
-            this.setSaddled(false);
-            if (!this.level().isClientSide) {
-                this.spawnAtLocation(Items.SADDLE);
+        if (!this.level().isClientSide) {
+            if (this.isChested()) {
+                this.popItem(new ItemStack(Items.CHEST));
             }
+            for (int i = 0; i < this.inventory.getContainerSize(); i++) {
+                this.popItem(this.inventory.getItem(i));
+            }
+            this.inventory.clearContent();
         }
-        if (this.isChested()) {
-            this.setChested(false);
-            if (!this.level().isClientSide) {
-                this.spawnAtLocation(Items.CHEST);
-                for (int i = 0; i < this.inventory.getContainerSize(); i++) {
-                    ItemStack stack = this.inventory.getItem(i);
-                    if (!stack.isEmpty()) {
-                        this.spawnAtLocation(stack);
-                    }
-                }
-                this.inventory.clearContent();
-            }
+        this.setSaddled(false);
+        this.setChested(false);
+    }
+
+    private void popItem(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return;
+        }
+        ItemEntity item = this.spawnAtLocation(stack, this.getBbHeight());
+        if (item != null) {
+            item.setDeltaMovement(item.getDeltaMovement().add(0.0, 0.15, 0.0));
         }
     }
 
@@ -320,7 +346,10 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     @Override
     public void customServerAiStep() {
         super.customServerAiStep();
-        if (this.getMoveControl().hasWanted()) {
+        this.setSaddled(!this.inventory.getItem(ElephantInventoryMenu.SADDLE_SLOT).isEmpty());
+        if (this.isVehicle()) {
+            this.setSprinting(false);
+        } else if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() > 1.0D);
         } else {
             this.setSprinting(false);
@@ -331,12 +360,10 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Bee.class, 8.0f, 1.3, 1.3));
         this.goalSelector.addGoal(2, new ElephantMeleeAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.2D, 24.0D, 6.0D, 12.0D));
-        this.goalSelector.addGoal(5, new PetFollowOwnerGoal(this, 1.0D, 12.0F, 6.0F));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0f));
@@ -409,7 +436,6 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.addPersistentAngerSaveData(compound);
-        FollowingPet.save(this, compound);
         compound.putBoolean("Saddled", this.isSaddled());
         compound.putBoolean("Chested", this.isChested());
         NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
@@ -423,7 +449,6 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
-        FollowingPet.load(this, compound);
         this.setSaddled(compound.getBoolean("Saddled"));
         this.setChested(compound.getBoolean("Chested"));
         NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
@@ -439,16 +464,6 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
 
     public void setSaddled(boolean saddled) {
         this.entityData.set(SADDLED, saddled);
-    }
-
-    @Override
-    public boolean isFollowingOwner() {
-        return this.followingOwner;
-    }
-
-    @Override
-    public void setFollowingOwner(boolean following) {
-        this.followingOwner = following;
     }
 
     @Override
@@ -469,8 +484,12 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     }
 
     private void openCustomInventory(Player player) {
-        if (!this.level().isClientSide && this.isTame()) {
-            player.openMenu(new SimpleMenuProvider((id, inv, p) -> ChestMenu.threeRows(id, inv, this.inventory), this.getDisplayName()));
+        if (this.level().isClientSide) {
+            ElephantInventoryMenu.clientOpenEntityId = this.getId();
+            return;
+        }
+        if (this.isTame()) {
+            player.openMenu(new SimpleMenuProvider((id, inv, p) -> new ElephantInventoryMenu(id, inv, this.inventory, this), this.getDisplayName()));
         }
     }
 
@@ -513,7 +532,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
         return this.geoCache;
     }
     private <E extends Elephant> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.isBaby() || this.getTarget() != null) {
+        if (this.isBaby() || this.getTarget() != null || this.isVehicle()) {
             event.setControllerSpeed(1.3f + event.getLimbSwingAmount());
         }
         if (event.isMoving()) {

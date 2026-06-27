@@ -8,12 +8,15 @@ import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
@@ -28,8 +31,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -50,9 +57,10 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet {
+public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet, Bucketable {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.BOOLEAN);
     private boolean followingOwner = true;
     public float flap;
     public float flapSpeed;
@@ -68,6 +76,8 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.duck.walk");
     protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.duck.swim");
     protected static final RawAnimation FLAP = RawAnimation.begin().thenLoop("animation.sf_nba.duck.flap");
+    protected static final RawAnimation SIT = RawAnimation.begin().thenPlay("animation.sf_nba.duck.sit").thenLoop("animation.sf_nba.duck.sit_idle");
+    protected static final RawAnimation SIT_ADULT = RawAnimation.begin().thenLoop("animation.sf_nba.duck.sit");
 
     public Duck(@NotNull EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -101,6 +111,46 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_DYE, -1);
+        builder.define(FROM_BUCKET, false);
+    }
+
+    @Override
+    public boolean fromBucket() {
+        return this.entityData.get(FROM_BUCKET);
+    }
+
+    @Override
+    public void setFromBucket(boolean fromBucket) {
+        this.entityData.set(FROM_BUCKET, fromBucket);
+    }
+
+    @Override
+    public void saveToBucketTag(@NotNull ItemStack stack) {
+        Bucketable.saveDefaultDataToBucketTag(this, stack);
+        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag -> tag.putInt("Age", this.getAge()));
+    }
+
+    @Override
+    public void loadFromBucketTag(@NotNull CompoundTag tag) {
+        Bucketable.loadDefaultDataFromBucketTag(this, tag);
+        if (tag.contains("Age")) {
+            this.setAge(tag.getInt("Age"));
+        }
+    }
+
+    @Override
+    public @NotNull ItemStack getBucketItemStack() {
+        return new ItemStack(NaturalistRegistry.DUCK_BUCKET.get());
+    }
+
+    @Override
+    public @NotNull SoundEvent getPickupSound() {
+        return SoundEvents.BUCKET_FILL;
+    }
+
+    @Override
+    public boolean requiresCustomPersistence() {
+        return super.requiresCustomPersistence() || this.fromBucket();
     }
 
     @Nullable
@@ -139,6 +189,18 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
             return dyeResult.get();
         }
         ItemStack stack = player.getItemInHand(hand);
+        if (stack.is(Items.BUCKET) && this.isAlive() && this.isBaby() && (!this.isTame() || this.isOwnedBy(player))) {
+            this.playSound(this.getPickupSound(), 1.0F, 1.0F);
+            ItemStack bucketStack = this.getBucketItemStack();
+            this.saveToBucketTag(bucketStack);
+            ItemStack resultStack = ItemUtils.createFilledResult(stack, player, bucketStack, false);
+            player.setItemInHand(hand, resultStack);
+            if (!this.level().isClientSide) {
+                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer) player, bucketStack);
+            }
+            this.discard();
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
         if (!this.isTame()) {
             if (this.isBaby() && this.isFood(stack)) {
                 if (!this.level().isClientSide) {
@@ -291,6 +353,10 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     }
 
     protected <E extends Duck> PlayState predicate(final AnimationState<E> event) {
+        if (this.isInSittingPose()) {
+            event.getController().setAnimation(this.isBaby() ? SIT : SIT_ADULT);
+            return PlayState.CONTINUE;
+        }
         if (this.isInWater()) {
             event.getController().setAnimation(SWIM);
             event.getController().setAnimationSpeed(1.0D);

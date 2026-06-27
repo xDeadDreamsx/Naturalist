@@ -38,7 +38,7 @@
 				},
 				{
 					"name": "chests",
-					"parent": "saddle",
+					"parent": "body",
 					"pivot": [0, 8.25, 1]
 				},
 				{
