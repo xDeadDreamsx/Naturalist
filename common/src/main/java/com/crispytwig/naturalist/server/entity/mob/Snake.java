@@ -1,7 +1,9 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SearchForItemsGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
@@ -62,8 +64,9 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity {
+public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity, FollowingPet {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private boolean followingOwner = true;
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
     private static final Ingredient TAME_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
@@ -97,7 +100,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         this.goalSelector.addGoal(1, new SnakeMeleeAttackGoal(this, 1.75D, true));
         this.goalSelector.addGoal(2, new SearchForItemsGoal(this, 1.2F, FOOD_ITEMS, 8.0D, 8.0D));
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
-        this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.2D, 10.0F, 2.0F));
+        this.goalSelector.addGoal(4, new PetFollowOwnerGoal(this, 1.2D, 10.0F, 2.0F));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
@@ -157,8 +160,31 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     }
 
     @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public boolean canAttack(@NotNull LivingEntity target) {
+        if (this.isTame() && this.getOwnerUUID() != null && target instanceof OwnableEntity ownable
+                && this.getOwnerUUID().equals(ownable.getOwnerUUID())) {
+            return false;
+        }
+        return super.canAttack(target);
+    }
+
+    @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
         if (this.level().isClientSide) {
             boolean canInteract = this.isOwnedBy(player) || this.isTame() || (this.isTameFood(stack) && !this.isTame());
             return canInteract ? InteractionResult.CONSUME : InteractionResult.PASS;
@@ -211,12 +237,14 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
+        FollowingPet.load(this, compound);
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.addPersistentAngerSaveData(compound);
+        FollowingPet.save(this, compound);
     }
 
     public boolean isEating() {

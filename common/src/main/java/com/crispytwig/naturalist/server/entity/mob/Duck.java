@@ -1,12 +1,18 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
+import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -14,16 +20,21 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+
+import java.util.Optional;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
@@ -39,8 +50,10 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
+public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
+    private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.INT);
+    private boolean followingOwner = true;
     public float flap;
     public float flapSpeed;
     public float oFlapSpeed;
@@ -56,17 +69,19 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
     protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.duck.swim");
     protected static final RawAnimation FLAP = RawAnimation.begin().thenLoop("animation.sf_nba.duck.flap");
 
-    public Duck(@NotNull EntityType<? extends NaturalistAnimal> entityType, Level level) {
+    public Duck(@NotNull EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
         this.eggTime = this.random.nextInt(6000) + 6000;
     }
 
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.25));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
+        this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.1, 16.0, 8.0, 5.0));
+        this.goalSelector.addGoal(4, new PetFollowOwnerGoal(this, 1.1, 10.0F, 2.0F));
         this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0, 10));
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -80,6 +95,83 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
         return FOOD_ITEMS.test(stack);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_DYE, -1);
+    }
+
+    @Nullable
+    @Override
+    public DyeColor getDyeColor() {
+        int id = this.entityData.get(DATA_DYE);
+        return id < 0 ? null : DyeColor.byId(id);
+    }
+
+    @Override
+    public void setDyeColor(@Nullable DyeColor color) {
+        this.entityData.set(DATA_DYE, color == null ? -1 : color.getId());
+    }
+
+    @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
+        Optional<InteractionResult> dyeResult = DyeableAnimal.tryClearDye(this, player, hand);
+        if (dyeResult.isEmpty()) {
+            dyeResult = DyeableAnimal.tryDye(this, player, hand);
+        }
+        if (dyeResult.isPresent()) {
+            return dyeResult.get();
+        }
+        ItemStack stack = player.getItemInHand(hand);
+        if (!this.isTame()) {
+            if (this.isBaby() && this.isFood(stack)) {
+                if (!this.level().isClientSide) {
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                    if (this.random.nextInt(3) == 0) {
+                        this.tame(player);
+                        this.level().broadcastEntityEvent(this, (byte) 7);
+                    } else {
+                        this.level().broadcastEntityEvent(this, (byte) 6);
+                    }
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            return super.mobInteract(player, hand);
+        }
+        if (this.isOwnedBy(player)) {
+            if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                this.heal(2.0F);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (stack.isEmpty()) {
+                this.setOrderedToSit(!this.isOrderedToSit());
+                this.jumping = false;
+                this.navigation.stop();
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+        }
+        return super.mobInteract(player, hand);
     }
 
     @Override
@@ -181,13 +273,16 @@ public class Duck extends NaturalistAnimal implements NaturalistGeoEntity {
         if (compound.contains("EggLayTime")) {
             this.eggTime = compound.getInt("EggLayTime");
         }
-
+        DyeableAnimal.loadDye(this, compound);
+        FollowingPet.load(this, compound);
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("EggLayTime", this.eggTime);
+        DyeableAnimal.saveDye(this, compound);
+        FollowingPet.save(this, compound);
     }
 
     @Override

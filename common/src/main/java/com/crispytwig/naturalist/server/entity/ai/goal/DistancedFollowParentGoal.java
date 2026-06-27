@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.ai.goal;
 
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Animal;
 
@@ -25,9 +26,13 @@ public class DistancedFollowParentGoal extends Goal {
         this.followDistanceThreshold = followDistanceThreshold;
     }
 
+    private boolean isTamed() {
+        return this.animal instanceof TamableAnimal tamable && tamable.isTame();
+    }
+
     @Override
     public boolean canUse() {
-        if (this.animal.getAge() >= 0) {
+        if (this.animal.getAge() >= 0 || this.isTamed()) {
             return false;
         } else {
             List<? extends Animal> adults = this.animal.level().getEntitiesOfClass(this.animal.getClass(), this.animal.getBoundingBox().inflate(horizontalScanRange, verticalScanRange, horizontalScanRange));
@@ -57,7 +62,7 @@ public class DistancedFollowParentGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        if (this.animal.getAge() >= 0) {
+        if (this.animal.getAge() >= 0 || this.isTamed()) {
             return false;
         } else {
             assert this.parent != null;

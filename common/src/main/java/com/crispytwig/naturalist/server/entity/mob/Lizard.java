@@ -40,12 +40,19 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Objects;
+import java.util.Optional;
+
+import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 
 @SuppressWarnings("unused")
-public class Lizard extends TamableAnimal implements NaturalistGeoEntity {
+public class Lizard extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet {
+    private boolean followingOwner = true;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_TAIL = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.INT);
     private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS);
     private LizardAvoidEntityGoal<Player> avoidPlayersGoal;
     private int tailRegrowCooldown = 0;
@@ -73,7 +80,7 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new LizardTemptGoal(this, 0.6, TEMPT_INGREDIENT, true));
-        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0, 10.0f, 2.0f));
+        this.goalSelector.addGoal(6, new PetFollowOwnerGoal(this, 1.0, 10.0f, 2.0f));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
@@ -94,6 +101,17 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity {
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
+        Optional<InteractionResult> dyeResult = DyeableAnimal.tryClearDye(this, player, hand);
+        if (dyeResult.isEmpty()) {
+            dyeResult = DyeableAnimal.tryDye(this, player, hand);
+        }
+        if (dyeResult.isPresent()) {
+            return dyeResult.get();
+        }
         if (this.level().isClientSide) {
             boolean bl = this.isOwnedBy(player) || this.isTame() || TEMPT_INGREDIENT.test(stack) && !this.isTame();
             return bl ? InteractionResult.CONSUME : InteractionResult.PASS;
@@ -157,10 +175,33 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity {
     }
 
     @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Nullable
+    @Override
+    public DyeColor getDyeColor() {
+        int id = this.entityData.get(DATA_DYE);
+        return id < 0 ? null : DyeColor.byId(id);
+    }
+
+    @Override
+    public void setDyeColor(@Nullable DyeColor color) {
+        this.entityData.set(DATA_DYE, color == null ? -1 : color.getId());
+    }
+
+    @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(VARIANT_ID, 0);
         builder.define(HAS_TAIL, true);
+        builder.define(DATA_DYE, -1);
     }
 
     @Override
@@ -168,6 +209,8 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity {
         super.addAdditionalSaveData(compound);
         compound.putInt("Variant", this.getVariant());
         compound.putBoolean("HasTail", this.hasTail());
+        DyeableAnimal.saveDye(this, compound);
+        FollowingPet.save(this, compound);
     }
 
     @Override
@@ -175,6 +218,8 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity {
         super.readAdditionalSaveData(compound);
         this.setVariant(compound.getInt("Variant"));
         this.setHasTail(compound.getBoolean("HasTail"));
+        DyeableAnimal.loadDye(this, compound);
+        FollowingPet.load(this, compound);
     }
 
     @Override

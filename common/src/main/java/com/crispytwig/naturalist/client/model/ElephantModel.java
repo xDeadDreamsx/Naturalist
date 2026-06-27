@@ -56,7 +56,14 @@ public class ElephantModel extends GeoModel<Elephant> {
             head.resetStateChanges();
         }
 
-        this.getBone("saddle").ifPresent(saddle -> saddle.setHidden(true));
+        boolean saddled = entity.isSaddled();
+        this.getBone("saddle").ifPresent(saddle -> saddle.setHidden(!saddled));
+        this.getBone("saddleFront").ifPresent(saddle -> saddle.setHidden(!saddled));
+
+        boolean chested = entity.isChested();
+        this.getBone("chests").ifPresent(chest -> chest.setHidden(!chested));
+        this.getBone("leftChest").ifPresent(chest -> chest.setHidden(!chested));
+        this.getBone("rightChest").ifPresent(chest -> chest.setHidden(!chested));
 
         GeoBone awake = this.getBone("awake").orElse(null);
         GeoBone asleep = this.getBone("asleep").orElse(null);

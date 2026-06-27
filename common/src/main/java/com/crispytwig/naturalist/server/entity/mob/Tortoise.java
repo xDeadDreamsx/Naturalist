@@ -1,7 +1,9 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.server.entity.base.EggLayingAnimal;
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.HidingAnimal;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.EggLayingBreedGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.HideGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.LayEggGoal;
@@ -56,8 +58,9 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, HidingAnimal, EggLayingAnimal {
+public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, HidingAnimal, EggLayingAnimal, FollowingPet {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private boolean followingOwner = true;
     private static final Ingredient TEMPT_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS);
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
@@ -148,7 +151,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new HideGoal<>(this));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.0, TEMPT_ITEMS, false));
-        this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.0, 10.0f, 5.0f));
+        this.goalSelector.addGoal(3, new PetFollowOwnerGoal(this, 1.0, 10.0f, 5.0f));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10.0f));
@@ -171,6 +174,16 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     }
 
     @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
     public void knockback(double strength, double x, double z) {
         if (this.isBaby()) {
             double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
@@ -189,6 +202,10 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     public @NotNull InteractionResult mobInteract(Player player, @NotNull InteractionHand hand) {
         InteractionResult interactionResult;
         ItemStack itemStack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
         if (this.level().isClientSide) {
             if (this.isTame() && this.isOwnedBy(player)) {
                 return InteractionResult.SUCCESS;
@@ -270,6 +287,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         super.addAdditionalSaveData(compound);
         compound.putInt("Variant", this.getVariant());
         compound.putBoolean("HasEgg", this.hasEgg());
+        FollowingPet.save(this, compound);
     }
 
     @Override
@@ -277,6 +295,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         super.readAdditionalSaveData(compound);
         this.setVariant(compound.getInt("Variant"));
         this.setHasEgg(compound.getBoolean("HasEgg"));
+        FollowingPet.load(this, compound);
     }
 
     @Override

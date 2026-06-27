@@ -2,7 +2,9 @@ package com.crispytwig.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.client.model.BirdModel;
+import com.crispytwig.naturalist.client.renderer.layers.DyeOverlayLayer;
 import com.crispytwig.naturalist.server.entity.mob.Bird;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,6 +22,7 @@ public class BirdRenderer extends GeoEntityRenderer<Bird> {
     public BirdRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new BirdModel());
         this.shadowRadius = 0.3F;
+        this.addRenderLayer(new DyeOverlayLayer<>(this, "bird"));
     }
 
     @Override

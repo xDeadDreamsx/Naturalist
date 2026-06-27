@@ -58,6 +58,9 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> BEAR_SLEEP = register("entity.bear.sleep");
     public static final DeferredHolder<SoundEvent, SoundEvent> BEAR_SNIFF = register("entity.bear.sniff");
     public static final DeferredHolder<SoundEvent, SoundEvent> BEAR_SPIT = register("entity.bear.spit");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WHISTLE = register("item.whistle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KNAPSACK_PICKUP = register("item.knapsack.pickup");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KNAPSACK_PLACE = register("item.knapsack.place");
     public static final DeferredHolder<SoundEvent, SoundEvent> BEAR_EAT = register("entity.bear.eat");
     public static final DeferredHolder<SoundEvent, SoundEvent> DEER_AMBIENT = register("entity.deer.ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> DEER_HURT = register("entity.deer.hurt");

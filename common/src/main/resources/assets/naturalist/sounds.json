@@ -274,6 +274,24 @@
     ],
     "subtitle": "naturalist.subtitles.entity.bear.sniff"
   },
+  "item.whistle": {
+    "sounds": [
+      "naturalist:item/whistle/whistle"
+    ],
+    "subtitle": "naturalist.subtitles.item.whistle"
+  },
+  "item.knapsack.pickup": {
+    "sounds": [
+      "naturalist:item/knapsack/pickup"
+    ],
+    "subtitle": "naturalist.subtitles.item.knapsack.pickup"
+  },
+  "item.knapsack.place": {
+    "sounds": [
+      "naturalist:item/knapsack/place"
+    ],
+    "subtitle": "naturalist.subtitles.item.knapsack.place"
+  },
   "entity.bear.spit": {
     "sounds": [
       "minecraft:mob/fox/spit1",

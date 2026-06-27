@@ -2,7 +2,9 @@ package com.crispytwig.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.client.model.DuckModel;
+import com.crispytwig.naturalist.client.renderer.layers.DyeOverlayLayer;
 import com.crispytwig.naturalist.server.entity.mob.Duck;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,6 +22,7 @@ public class DuckRenderer extends GeoEntityRenderer<Duck> {
     public DuckRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new DuckModel());
         this.shadowRadius = 0.3F;
+        this.addRenderLayer(new DyeOverlayLayer<>(this, "duck"));
     }
 
     @Override

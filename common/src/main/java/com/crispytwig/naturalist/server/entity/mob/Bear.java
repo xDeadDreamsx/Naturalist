@@ -1,8 +1,11 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.*;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
@@ -32,9 +35,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -62,11 +68,13 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoEntity, SleepingAnimal {
+public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, SleepingAnimal, DyeableAnimal, FollowingPet {
+    private boolean followingOwner = true;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.BOOLEAN);
@@ -74,6 +82,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     private static final EntityDataAccessor<Boolean> SITTING = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SHEARED = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> EAT_COUNTER = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.INT);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.INT);
     @Nullable
@@ -90,7 +99,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     protected static final RawAnimation EAT = RawAnimation.begin().thenLoop("animation.sf_nba.bear.eat");
     protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.bear.attack");
 
-    public Bear(@NotNull EntityType<? extends NaturalistAnimal> entityType, Level level) {
+    public Bear(@NotNull EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
         this.setCanPickUpLoot(true);
     }
@@ -140,8 +149,10 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new BearFloatGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(2, new BearMeleeAttackGoal(this, 1.25D, true));
+        this.goalSelector.addGoal(5, new PetFollowOwnerGoal(this, 1.25D, 10.0F, 6.0F));
         this.goalSelector.addGoal(3, new BearSleepGoal(this));
         this.goalSelector.addGoal(4, new BearTemptGoal(this, 1.0D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(4, new BabyPanicGoal(this, 1.25D));
@@ -154,6 +165,8 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(2, new BearAttackPlayerNearBabiesGoal(this, Player.class, 20, false, true, null));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby()));
@@ -203,6 +216,19 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         builder.define(SHEARED, false);
         builder.define(EAT_COUNTER, 0);
         builder.define(REMAINING_ANGER_TIME, 0);
+        builder.define(DATA_DYE, -1);
+    }
+
+    @Nullable
+    @Override
+    public DyeColor getDyeColor() {
+        int id = this.entityData.get(DATA_DYE);
+        return id < 0 ? null : DyeColor.byId(id);
+    }
+
+    @Override
+    public void setDyeColor(@Nullable DyeColor color) {
+        this.entityData.set(DATA_DYE, color == null ? -1 : color.getId());
     }
 
     @Override
@@ -212,6 +238,8 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         if (compound.contains("Sheared")) {
             this.setSheared(compound.getBoolean("Sheared"));
         }
+        DyeableAnimal.loadDye(this, compound);
+        FollowingPet.load(this, compound);
     }
 
     @Override
@@ -219,6 +247,8 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         super.addAdditionalSaveData(compound);
         this.addPersistentAngerSaveData(compound);
         compound.putBoolean("Sheared", this.isSheared());
+        DyeableAnimal.saveDye(this, compound);
+        FollowingPet.save(this, compound);
     }
 
     @Override
@@ -393,6 +423,14 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
+        Optional<InteractionResult> dyeClear = DyeableAnimal.tryClearDye(this, player, hand);
+        if (dyeClear.isPresent()) {
+            return dyeClear.get();
+        }
         if (itemStack.is(Items.SHEARS) && this.isShearable(player, itemStack, this.level(), this.blockPosition())) {
             if (!this.isSleeping()) {
                 this.setLastHurtByMob(player);
@@ -407,7 +445,59 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
             this.gameEvent(GameEvent.SHEAR, player);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
+        Optional<InteractionResult> dye = DyeableAnimal.tryDye(this, player, hand);
+        if (dye.isPresent()) {
+            return dye.get();
+        }
+        if (!this.isTame() && this.isBaby() && this.isFood(itemStack)) {
+            if (!this.level().isClientSide) {
+                if (!player.getAbilities().instabuild) {
+                    itemStack.shrink(1);
+                }
+                if (this.random.nextInt(3) == 0) {
+                    this.tame(player);
+                    this.level().broadcastEntityEvent(this, (byte) 7);
+                } else {
+                    this.level().broadcastEntityEvent(this, (byte) 6);
+                }
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+        if (this.isTame() && this.isOwnedBy(player)) {
+            if (this.isFood(itemStack) && this.getHealth() < this.getMaxHealth()) {
+                if (!player.getAbilities().instabuild) {
+                    itemStack.shrink(1);
+                }
+                this.heal(4.0F);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (itemStack.isEmpty() && player.isSecondaryUseActive()) {
+                this.setOrderedToSit(!this.isOrderedToSit());
+                this.jumping = false;
+                this.navigation.stop();
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+        }
         return super.mobInteract(player, hand);
+    }
+
+    @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public boolean canAttack(@NotNull LivingEntity target) {
+        if (this.isTame() && this.getOwnerUUID() != null && target instanceof OwnableEntity ownable
+                && this.getOwnerUUID().equals(ownable.getOwnerUUID())) {
+            return false;
+        }
+        return super.canAttack(target);
     }
 
     public boolean isShearable(@Nullable Player player, @NotNull ItemStack item, @NotNull Level level, @NotNull BlockPos pos) {
@@ -495,7 +585,7 @@ public class Bear extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     }
 
     protected <E extends Bear> PlayState predicate(final AnimationState<E> event) {
-        boolean sitting = this.isSitting();
+        boolean sitting = this.isSitting() || this.isInSittingPose();
 
         if (this.isSleeping()) {
             event.getController().setAnimation(SLEEP);

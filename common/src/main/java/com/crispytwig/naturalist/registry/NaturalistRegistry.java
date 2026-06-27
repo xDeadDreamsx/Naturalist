@@ -6,6 +6,8 @@ import com.crispytwig.naturalist.server.entity.mob.Butterfly;
 import com.crispytwig.naturalist.server.entity.mob.Snail;
 import com.crispytwig.naturalist.server.item.BugNetItem;
 import com.crispytwig.naturalist.server.item.DuckEggItem;
+import com.crispytwig.naturalist.server.item.KnapsackItem;
+import com.crispytwig.naturalist.server.item.WhistleItem;
 import com.crispytwig.naturalist.server.item.GlowGoopItem;
 import com.crispytwig.naturalist.server.item.CaughtMobItem;
 import com.crispytwig.naturalist.server.item.CaughtMobWithVariantsItem;
@@ -62,6 +64,8 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, Item> BASS = ITEMS.register("bass", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.1F).build())));
     public static final DeferredHolder<Item, Item> COOKED_BASS = ITEMS.register("cooked_bass", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.6F).build())));
     public static final DeferredHolder<Item, BugNetItem> CAPTURE_NET = ITEMS.register("capture_net", () -> new BugNetItem(new Item.Properties().durability(64)));
+    public static final DeferredHolder<Item, KnapsackItem> KNAPSACK = ITEMS.register("knapsack", () -> new KnapsackItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, WhistleItem> WHISTLE = ITEMS.register("whistle", () -> new WhistleItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Block, ChrysalisBlock> CHRYSALIS_BLOCK = registerBlockOnly("chrysalis", () -> new ChrysalisBlock(BlockBehaviour.Properties.of().randomTicks().strength(0.2F, 3.0F).sound(SoundType.GRASS).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)));
     public static final DeferredHolder<Item, BlockItem> CHRYSALIS = ITEMS.register("chrysalis", () -> new BlockItem(CHRYSALIS_BLOCK.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobItem> CATERPILLAR = ITEMS.register("caterpillar", () -> new CaughtMobItem(NaturalistEntityTypes.CATERPILLAR, () -> Fluids.EMPTY, NaturalistSoundEvents.SNAIL_FORWARD, new Item.Properties().stacksTo(1)));

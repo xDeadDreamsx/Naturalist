@@ -2,7 +2,9 @@ package com.crispytwig.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.client.model.LizardModel;
+import com.crispytwig.naturalist.client.renderer.layers.DyeOverlayLayer;
 import com.crispytwig.naturalist.server.entity.mob.Lizard;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,6 +22,7 @@ public class LizardRenderer extends GeoEntityRenderer<Lizard> {
     public LizardRenderer(EntityRendererProvider.@NotNull Context renderManager) {
         super(renderManager, new LizardModel());
         this.shadowRadius = 0.4F;
+        this.addRenderLayer(new DyeOverlayLayer<>(this, "lizard"));
     }
 
     @Override

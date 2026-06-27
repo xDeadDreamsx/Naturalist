@@ -1,7 +1,9 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
@@ -55,8 +57,9 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal {
+public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private boolean followingOwner = true;
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_MANE = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.LION_FOOD_ITEMS);
@@ -121,7 +124,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new LionFollowParentGoal(this, 1.1));
-        this.goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.3D, 7.0F, 2.0F));
+        this.goalSelector.addGoal(5, new PetFollowOwnerGoal(this, 1.3D, 7.0F, 2.0F));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(6, new LionFollowLeaderGoal(this, 1.1D, 8.0F, 24.0F));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
@@ -140,8 +143,31 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     }
 
     @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public boolean canAttack(@NotNull LivingEntity target) {
+        if (this.isTame() && this.getOwnerUUID() != null && target instanceof OwnableEntity ownable
+                && this.getOwnerUUID().equals(ownable.getOwnerUUID())) {
+            return false;
+        }
+        return super.canAttack(target);
+    }
+
+    @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
         if (this.isTame() && this.isBaby() && this.isFood(stack)) {
             this.ageUp(getSpeedUpSecondsWhenFeeding(-this.getAge()), true);
             if (!player.getAbilities().instabuild) {
@@ -203,12 +229,14 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Mane", this.hasMane());
+        FollowingPet.save(this, compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setHasMane(compound.getBoolean("Mane"));
+        FollowingPet.load(this, compound);
     }
 
     @Override

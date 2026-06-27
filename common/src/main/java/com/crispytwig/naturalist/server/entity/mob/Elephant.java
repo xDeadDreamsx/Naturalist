@@ -1,11 +1,16 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -17,8 +22,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -26,12 +35,19 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.DismountHelper;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -50,19 +66,25 @@ import java.util.Objects;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class Elephant extends NaturalistAnimal implements NeutralMob, NaturalistGeoEntity {
+public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, FollowingPet {
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.MELON_SLICE);
+    private boolean followingOwner = true;
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.walk");
      protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.run");
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     private static final EntityDataAccessor<Boolean> DRINKING = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> CHESTED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
+    private static final int INVENTORY_SIZE = 27;
+    private final SimpleContainer inventory = new SimpleContainer(INVENTORY_SIZE);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
     @Nullable
     private UUID persistentAngerTarget;
 
-    public Elephant(EntityType<? extends NaturalistAnimal> entityType, Level level) {
+    public Elephant(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -94,7 +116,199 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return false;
+        return FOOD_ITEMS.test(stack);
+    }
+
+    @Override
+    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
+        if (!this.isBaby() && this.isVehicle()) {
+            return super.mobInteract(player, hand);
+        }
+        if (!this.isTame()) {
+            if (this.isBaby() && this.isFood(stack)) {
+                if (!this.level().isClientSide) {
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                    if (this.random.nextInt(3) == 0) {
+                        this.tame(player);
+                        this.level().broadcastEntityEvent(this, (byte) 7);
+                    } else {
+                        this.level().broadcastEntityEvent(this, (byte) 6);
+                    }
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            return super.mobInteract(player, hand);
+        }
+        if (this.isOwnedBy(player)) {
+            if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                this.heal(4.0F);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (!this.isBaby() && !this.isChested() && stack.is(Items.CHEST)) {
+                if (!this.level().isClientSide) {
+                    this.setChested(true);
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                    this.playSound(SoundEvents.MULE_CHEST, 1.0F, 1.0F);
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (!this.isBaby() && !this.isSaddled() && stack.is(Items.SADDLE)) {
+                if (!this.level().isClientSide) {
+                    this.setSaddled(true);
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                    this.playSound(SoundEvents.HORSE_SADDLE, 1.0F, 1.0F);
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (!this.isBaby() && player.isSecondaryUseActive()) {
+                this.openCustomInventory(player);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (!this.isBaby() && this.isSaddled() && stack.isEmpty()) {
+                this.doPlayerRide(player);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+        }
+        return super.mobInteract(player, hand);
+    }
+
+    protected void doPlayerRide(@NotNull Player player) {
+        if (!this.level().isClientSide) {
+            player.setYRot(this.getYRot());
+            player.setXRot(this.getXRot());
+            player.startRiding(this);
+        }
+    }
+
+    @Override
+    public boolean isPushable() {
+        return !this.isVehicle();
+    }
+
+    @Override
+    protected boolean isImmobile() {
+        return super.isImmobile() && this.isVehicle();
+    }
+
+    @Override
+    public void travel(@NotNull Vec3 travelVector) {
+        if (!this.isAlive()) {
+            return;
+        }
+        LivingEntity livingEntity = this.getControllingPassenger();
+        if (!this.isVehicle() || livingEntity == null) {
+            super.travel(travelVector);
+            return;
+        }
+        this.setYRot(livingEntity.getYRot());
+        this.yRotO = this.getYRot();
+        this.setXRot(livingEntity.getXRot() * 0.5f);
+        this.setRot(this.getYRot(), this.getXRot());
+        this.yHeadRot = this.yBodyRot = this.getYRot();
+        float f = livingEntity.xxa * 0.5f;
+        float g = livingEntity.zza;
+        if (this.isControlledByLocalInstance()) {
+            this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED));
+            super.travel(new Vec3(f, travelVector.y, g));
+        } else if (livingEntity instanceof Player) {
+            this.setDeltaMovement(Vec3.ZERO);
+        }
+        this.calculateEntityAnimation(false);
+        this.tryCheckInsideBlocks();
+    }
+
+    @Nullable
+    @Override
+    public LivingEntity getControllingPassenger() {
+        Entity entity = this.getFirstPassenger();
+        return entity instanceof LivingEntity livingEntity ? livingEntity : null;
+    }
+
+    @Override
+    protected void positionRider(@NotNull Entity passenger, Entity.@NotNull MoveFunction callback) {
+        super.positionRider(passenger, callback);
+        if (passenger instanceof LivingEntity livingEntity) {
+            livingEntity.yBodyRot = this.yBodyRot;
+        }
+    }
+
+    @Override
+    protected @NotNull Vec3 getPassengerAttachmentPoint(@NotNull Entity entity, @NotNull EntityDimensions dimensions, float partialTick) {
+        return new Vec3(0.0, this.getBbHeight() * 0.92, -0.1);
+    }
+
+    @Nullable
+    private Vec3 getDismountLocationInDirection(Vec3 direction, LivingEntity passenger) {
+        double d = this.getX() + direction.x;
+        double e = this.getBoundingBox().minY;
+        double f = this.getZ() + direction.z;
+        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+        block0:
+        for (Pose pose : passenger.getDismountPoses()) {
+            mutableBlockPos.set(d, e, f);
+            double g = this.getBoundingBox().maxY + 0.75;
+            do {
+                Vec3 vec3;
+                double h = this.level().getBlockFloorHeight(mutableBlockPos);
+                if ((double) mutableBlockPos.getY() + h > g) continue block0;
+                if (DismountHelper.isBlockFloorValid(h) && DismountHelper.canDismountTo(this.level(), passenger, passenger.getLocalBoundsForPose(pose).move(vec3 = new Vec3(d, (double) mutableBlockPos.getY() + h, f)))) {
+                    passenger.setPose(pose);
+                    return vec3;
+                }
+                mutableBlockPos.move(Direction.UP);
+            } while ((double) mutableBlockPos.getY() < g);
+        }
+        return null;
+    }
+
+    @Override
+    public @NotNull Vec3 getDismountLocationForPassenger(@NotNull LivingEntity passenger) {
+        Vec3 vec3 = AbstractHorse.getCollisionHorizontalEscapeVector(this.getBbWidth(), passenger.getBbWidth(), this.getYRot() + (passenger.getMainArm() == HumanoidArm.RIGHT ? 90.0f : -90.0f));
+        Vec3 vec32 = this.getDismountLocationInDirection(vec3, passenger);
+        if (vec32 != null) {
+            return vec32;
+        }
+        Vec3 vec33 = AbstractHorse.getCollisionHorizontalEscapeVector(this.getBbWidth(), passenger.getBbWidth(), this.getYRot() + (passenger.getMainArm() == HumanoidArm.LEFT ? 90.0f : -90.0f));
+        Vec3 vec34 = this.getDismountLocationInDirection(vec33, passenger);
+        return vec34 != null ? vec34 : this.position();
+    }
+
+    @Override
+    protected void dropEquipment() {
+        super.dropEquipment();
+        if (this.isSaddled()) {
+            this.setSaddled(false);
+            if (!this.level().isClientSide) {
+                this.spawnAtLocation(Items.SADDLE);
+            }
+        }
+        if (this.isChested()) {
+            this.setChested(false);
+            if (!this.level().isClientSide) {
+                this.spawnAtLocation(Items.CHEST);
+                for (int i = 0; i < this.inventory.getContainerSize(); i++) {
+                    ItemStack stack = this.inventory.getItem(i);
+                    if (!stack.isEmpty()) {
+                        this.spawnAtLocation(stack);
+                    }
+                }
+                this.inventory.clearContent();
+            }
+        }
     }
 
     @Nullable
@@ -117,15 +331,19 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Bee.class, 8.0f, 1.3, 1.3));
         this.goalSelector.addGoal(2, new ElephantMeleeAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.2D, 24.0D, 6.0D, 12.0D));
-
+        this.goalSelector.addGoal(5, new PetFollowOwnerGoal(this, 1.0D, 12.0F, 6.0F));
+        this.goalSelector.addGoal(6, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
     }
@@ -183,20 +401,77 @@ public class Elephant extends NaturalistAnimal implements NeutralMob, Naturalist
 
         builder.define(REMAINING_ANGER_TIME, 0);
         builder.define(DRINKING, false);
+        builder.define(SADDLED, false);
+        builder.define(CHESTED, false);
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.addPersistentAngerSaveData(compound);
-
+        FollowingPet.save(this, compound);
+        compound.putBoolean("Saddled", this.isSaddled());
+        compound.putBoolean("Chested", this.isChested());
+        NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
+        for (int i = 0; i < items.size(); i++) {
+            items.set(i, this.inventory.getItem(i));
+        }
+        ContainerHelper.saveAllItems(compound, items, this.registryAccess());
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
+        FollowingPet.load(this, compound);
+        this.setSaddled(compound.getBoolean("Saddled"));
+        this.setChested(compound.getBoolean("Chested"));
+        NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(compound, items, this.registryAccess());
+        for (int i = 0; i < items.size(); i++) {
+            this.inventory.setItem(i, items.get(i));
+        }
+    }
 
+    public boolean isSaddled() {
+        return this.entityData.get(SADDLED);
+    }
+
+    public void setSaddled(boolean saddled) {
+        this.entityData.set(SADDLED, saddled);
+    }
+
+    @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public boolean canAttack(@NotNull LivingEntity target) {
+        if (this.isTame() && this.getOwnerUUID() != null && target instanceof OwnableEntity ownable
+                && this.getOwnerUUID().equals(ownable.getOwnerUUID())) {
+            return false;
+        }
+        return super.canAttack(target);
+    }
+
+    public boolean isChested() {
+        return this.entityData.get(CHESTED);
+    }
+
+    public void setChested(boolean chested) {
+        this.entityData.set(CHESTED, chested);
+    }
+
+    private void openCustomInventory(Player player) {
+        if (!this.level().isClientSide && this.isTame()) {
+            player.openMenu(new SimpleMenuProvider((id, inv, p) -> ChestMenu.threeRows(id, inv, this.inventory), this.getDisplayName()));
+        }
     }
 
     @Override

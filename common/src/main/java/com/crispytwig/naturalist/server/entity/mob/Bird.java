@@ -1,11 +1,17 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.ai.goal.FollowAdultGoal;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -29,9 +35,12 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+
+import java.util.Optional;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,10 +57,12 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Bird extends ShoulderRidingEntity implements FlyingAnimal, NaturalistGeoEntity {
+public class Bird extends ShoulderRidingEntity implements FlyingAnimal, NaturalistGeoEntity, DyeableAnimal, FollowingPet {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private boolean followingOwner = true;
     private BirdAvoidEntityGoal<Player> avoidPlayersGoal;
     private static final Ingredient TAME_FOOD = Ingredient.of(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS);
+    private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.INT);
 
     public float flap;
     public float flapSpeed;
@@ -77,7 +88,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BirdTemptGoal(this, 1.0D, TAME_FOOD, true));
         this.goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.5D, 5.0F, 1.0F));
+        this.goalSelector.addGoal(3, new PetFollowOwnerGoal(this, 1.5D, 5.0F, 1.0F));
         this.goalSelector.addGoal(4, new BirdWanderGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new BirdFlockGoal(this, 1.0D, 6.0F, 12.0F));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -110,6 +121,17 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
+        Optional<InteractionResult> dyeResult = DyeableAnimal.tryClearDye(this, player, hand);
+        if (dyeResult.isEmpty()) {
+            dyeResult = DyeableAnimal.tryDye(this, player, hand);
+        }
+        if (dyeResult.isPresent()) {
+            return dyeResult.get();
+        }
         if (!this.isTame() && TAME_FOOD.test(stack)) {
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
@@ -241,7 +263,43 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_DYE, -1);
+    }
 
+    @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Nullable
+    @Override
+    public DyeColor getDyeColor() {
+        int id = this.entityData.get(DATA_DYE);
+        return id < 0 ? null : DyeColor.byId(id);
+    }
+
+    @Override
+    public void setDyeColor(@Nullable DyeColor color) {
+        this.entityData.set(DATA_DYE, color == null ? -1 : color.getId());
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        DyeableAnimal.saveDye(this, compound);
+        FollowingPet.save(this, compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        DyeableAnimal.loadDye(this, compound);
+        FollowingPet.load(this, compound);
     }
 
     @Nullable

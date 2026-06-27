@@ -1,12 +1,15 @@
 package com.crispytwig.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.client.model.BearModel;
+import com.crispytwig.naturalist.client.renderer.layers.DyeOverlayLayer;
 import com.crispytwig.naturalist.server.entity.mob.Bear;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import com.mojang.math.Axis;
@@ -42,6 +45,7 @@ public class BearRenderer extends GeoEntityRenderer<Bear> {
                 super.renderStackForBone(poseStack, bone, stack, animatable, bufferSource, partialTick, packedLight, packedOverlay);
             }
         });
+        this.addRenderLayer(new DyeOverlayLayer<>(this, "bear"));
     }
 
     @SuppressWarnings("unused")

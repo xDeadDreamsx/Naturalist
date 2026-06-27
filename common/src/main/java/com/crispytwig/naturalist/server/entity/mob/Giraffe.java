@@ -2,11 +2,15 @@ package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BigPanicGoal;
+import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
@@ -16,9 +20,13 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -45,15 +53,18 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
+public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, FollowingPet {
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.run");
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final EntityDataAccessor<Integer> TAME_TICKS = SynchedEntityData.defineId(Giraffe.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> CHESTED = SynchedEntityData.defineId(Giraffe.class, EntityDataSerializers.BOOLEAN);
+    private static final int INVENTORY_SIZE = 27;
+    private final SimpleContainer inventory = new SimpleContainer(INVENTORY_SIZE);
+    private boolean followingOwner = true;
 
-    public Giraffe(EntityType<? extends NaturalistAnimal> entityType, Level level) {
+    public Giraffe(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -69,10 +80,12 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new BigPanicGoal(this, 1.4));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.0));
+        this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.0, 16.0, 8.0, 5.0));
+        this.goalSelector.addGoal(4, new PetFollowOwnerGoal(this, 1.0, 12.0F, 6.0F));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.7));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
@@ -102,50 +115,78 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(TAME_TICKS, 0);
+        builder.define(CHESTED, false);
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("TameTicks", this.getTameTicks());
+        compound.putBoolean("Chested", this.isChested());
+        FollowingPet.save(this, compound);
+        NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
+        for (int i = 0; i < items.size(); i++) {
+            items.set(i, this.inventory.getItem(i));
+        }
+        ContainerHelper.saveAllItems(compound, items, this.registryAccess());
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setTameTicks(compound.getInt("TameTicks"));
+        this.setChested(compound.getBoolean("Chested"));
+        FollowingPet.load(this, compound);
+        NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(compound, items, this.registryAccess());
+        for (int i = 0; i < items.size(); i++) {
+            this.inventory.setItem(i, items.get(i));
+        }
     }
 
-    public void setTameTicks(int ticks) {
-        this.entityData.set(TAME_TICKS, ticks);
+    @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
     }
 
-    public int getTameTicks() {
-        return this.entityData.get(TAME_TICKS);
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
     }
 
-    public boolean isTame() {
-        return this.getTameTicks() > 0;
+    public boolean isChested() {
+        return this.entityData.get(CHESTED);
+    }
+
+    public void setChested(boolean chested) {
+        this.entityData.set(CHESTED, chested);
+    }
+
+    private void openCustomInventory(Player player) {
+        if (!this.level().isClientSide && this.isTame()) {
+            player.openMenu(new SimpleMenuProvider((id, inv, p) -> ChestMenu.threeRows(id, inv, this.inventory), this.getDisplayName()));
+        }
+    }
+
+    @Override
+    protected void dropEquipment() {
+        super.dropEquipment();
+        if (this.isChested()) {
+            this.setChested(false);
+            if (!this.level().isClientSide) {
+                this.spawnAtLocation(Items.CHEST);
+                for (int i = 0; i < this.inventory.getContainerSize(); i++) {
+                    ItemStack stack = this.inventory.getItem(i);
+                    if (!stack.isEmpty()) {
+                        this.spawnAtLocation(stack);
+                    }
+                }
+                this.inventory.clearContent();
+            }
+        }
     }
 
     @Override
     public boolean isPushable() {
         return !this.isVehicle();
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
-        if (!this.level().isClientSide()) {
-            if ( this.getControllingPassenger() != null) {
-                this.setTameTicks(Math.max(0, this.getTameTicks() - 1));
-                if (!this.isTame()) {
-                    this.getControllingPassenger().stopRiding();
-                    this.playSound(SoundEvents.LLAMA_ANGRY, this.getSoundVolume(), this.getVoicePitch());
-                }
-            }
-        }
     }
 
     protected void doPlayerRide(@NotNull Player player) {
@@ -159,71 +200,70 @@ public class Giraffe extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     public @NotNull InteractionResult mobInteract(Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
         if (!this.isBaby() && this.isVehicle()) {
             return super.mobInteract(player, hand);
         }
-        if (!stack.isEmpty()) {
-            if (this.isFood(stack)) {
-                if (this.handleEating(player, stack)) {
+        if (!this.isTame()) {
+            if (this.isBaby() && this.isFood(stack)) {
+                if (!this.level().isClientSide) {
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
-                } else {
-                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.LLAMA_ANGRY, this.getSoundSource(), 1.0f, 1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
+                    this.playSound(SoundEvents.HORSE_EAT, 1.0F, 1.0F);
+                    if (this.random.nextInt(3) == 0) {
+                        this.tame(player);
+                        this.level().broadcastEntityEvent(this, (byte) 7);
+                    } else {
+                        this.level().broadcastEntityEvent(this, (byte) 6);
+                    }
                 }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-        }
-        if (this.isBaby()) {
+            if (!this.isBaby() && this.isFood(stack) && this.getAge() == 0 && this.canFallInLove()) {
+                if (!this.level().isClientSide) {
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                    this.setInLove(player);
+                    this.playSound(SoundEvents.HORSE_EAT, 1.0F, 1.0F);
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
             return super.mobInteract(player, hand);
         }
-        if (this.isTame()) {
-            this.doPlayerRide(player);
-        }
-        return InteractionResult.sidedSuccess(this.level().isClientSide);
-    }
-
-    protected boolean handleEating(Player player, @NotNull ItemStack stack) {
-        boolean shouldEat = false;
-        float foodHealAmount = 0.0f;
-        int ageUpAmount = 0;
-        if (stack.is(Items.HAY_BLOCK)) {
-            foodHealAmount = 20.0f;
-            ageUpAmount = 180;
-            if (!this.level().isClientSide() && this.getAge() == 0 && !this.isInLove()) {
-                shouldEat = true;
-                this.setInLove(player);
-            }
-        } else if (FOOD_ITEMS.test(stack)) {
-            foodHealAmount = 2.0f;
-            ageUpAmount = 20;
-            if (!this.level().isClientSide()) {
-                if (this.getTameTicks() > 0) {
-                    this.level().broadcastEntityEvent(this, (byte)6);
-                } else {
-                    shouldEat = true;
-                    this.setTameTicks(600);
-                    this.level().broadcastEntityEvent(this, (byte)7);
+        if (this.isOwnedBy(player)) {
+            if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
                 }
+                this.heal(4.0F);
+                this.playSound(SoundEvents.HORSE_EAT, 1.0F, 1.0F);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (!this.isBaby() && !this.isChested() && stack.is(Items.CHEST)) {
+                if (!this.level().isClientSide) {
+                    this.setChested(true);
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                    this.playSound(SoundEvents.MULE_CHEST, 1.0F, 1.0F);
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (!this.isBaby() && player.isSecondaryUseActive()) {
+                this.openCustomInventory(player);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+            if (!this.isBaby() && stack.isEmpty()) {
+                this.doPlayerRide(player);
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
         }
-        if (this.getHealth() < this.getMaxHealth() && foodHealAmount > 0) {
-            this.heal(foodHealAmount);
-            shouldEat = true;
-        }
-        if (this.isBaby() && ageUpAmount > 0) {
-            this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), 0.0, 0.0, 0.0);
-            if (!this.level().isClientSide) {
-                this.ageUp(ageUpAmount);
-            }
-            shouldEat = true;
-        }
-        if (shouldEat) {
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.HORSE_EAT, this.getSoundSource(), 1.0f, 1.0f + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f);
-            this.swing(InteractionHand.MAIN_HAND);
-            this.gameEvent(GameEvent.EAT);
-        }
-        return shouldEat;
+        return super.mobInteract(player, hand);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.crispytwig.naturalist;
 import com.crispytwig.naturalist.client.renderer.*;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
+import com.crispytwig.naturalist.server.item.KnapsackItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -79,5 +80,9 @@ public final class NaturalistClient {
                     }
                     return 0.0f;
                 });
+
+        ItemProperties.register(NaturalistRegistry.KNAPSACK.get(),
+                ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "filled"),
+                (stack, level, entity, seed) -> KnapsackItem.isFilled(stack) ? 1.0f : 0.0f);
     }
 }

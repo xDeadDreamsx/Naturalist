@@ -3,7 +3,10 @@ package com.crispytwig.naturalist.server.entity.mob;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SmoothFloatGoal;
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import net.minecraft.nbt.CompoundTag;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import net.minecraft.core.BlockPos;
@@ -54,7 +57,8 @@ import java.util.EnumSet;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Hippo extends TamableAnimal implements NaturalistGeoEntity {
+public class Hippo extends TamableAnimal implements NaturalistGeoEntity, FollowingPet {
+    private boolean followingOwner = true;
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.run");
@@ -107,6 +111,37 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity {
     }
 
     @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public boolean canAttack(@NotNull LivingEntity target) {
+        if (this.isTame() && this.getOwnerUUID() != null && target instanceof OwnableEntity ownable
+                && this.getOwnerUUID().equals(ownable.getOwnerUUID())) {
+            return false;
+        }
+        return super.canAttack(target);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        FollowingPet.save(this, compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        FollowingPet.load(this, compound);
+    }
+
+    @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new SmoothFloatGoal(this));
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
@@ -115,7 +150,7 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity {
         this.goalSelector.addGoal(3, new HippoAttackBoatsGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.25D, true));
         this.goalSelector.addGoal(5, new BabyPanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.25D, 10.0F, 5.0F));
+        this.goalSelector.addGoal(6, new PetFollowOwnerGoal(this, 1.25D, 10.0F, 5.0F));
         this.goalSelector.addGoal(6, new DistancedFollowParentGoal(this, 1.25D, 8.0D, 2.0D, 5.0D));
         this.goalSelector.addGoal(7, new RandomSwimmingGoal(this, 1.0D, 10));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -139,6 +174,10 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity {
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
         if (this.level().isClientSide) {
             boolean canInteract = this.isOwnedBy(player) || this.isTame() || this.isFood(itemStack);
             return canInteract ? InteractionResult.CONSUME : InteractionResult.PASS;
