@@ -1,6 +1,5 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
@@ -51,6 +50,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import com.crispytwig.naturalist.server.entity.base.IKMount;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.util.TerrainLegSolver;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -67,7 +67,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeoEntity {
+public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, IKMount {
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.MELON_SLICE);
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.walk");
@@ -87,6 +87,16 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
 
     public Elephant(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    public float getRenderPitch() {
+        return this.legSolver.renderPitch;
+    }
+
+    @Override
+    public float getRenderRoll() {
+        return this.legSolver.renderRoll;
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {

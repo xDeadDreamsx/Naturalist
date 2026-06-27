@@ -19,6 +19,9 @@ public class TerrainLegSolver {
 
     public final Leg[] legs;
 
+    public float renderPitch;
+    public float renderRoll;
+
     public TerrainLegSolver(float forward, float side, float range) {
         this.legs = new Leg[]{
                 new Leg(-forward, side, range),

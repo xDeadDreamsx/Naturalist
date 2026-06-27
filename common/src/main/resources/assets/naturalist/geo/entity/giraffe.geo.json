@@ -37,6 +37,11 @@
 					}
 				},
 				{
+					"name": "seat",
+					"parent": "body",
+					"pivot": [0, 49, -4]
+				},
+				{
 					"name": "neck",
 					"parent": "body",
 					"pivot": [0, 43.85212, -4.07548],

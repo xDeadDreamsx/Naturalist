@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ClientLevelMixin",
-    "ClientPacketListenerMixin"
+    "ClientPacketListenerMixin",
+    "EntityRenderDispatcherMixin",
+    "HumanoidModelMixin"
   ],
   "mixins": [
     "BottleItemMixin",

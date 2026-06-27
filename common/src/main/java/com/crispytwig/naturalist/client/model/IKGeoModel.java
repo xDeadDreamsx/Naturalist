@@ -46,6 +46,9 @@ public abstract class IKGeoModel<T extends GeoAnimatable> extends GeoModel<T> {
         float pitch = (float) Math.atan2(frontAvg - backAvg, 2F * solver.frontLeft.forward) * pitchStrength();
         float roll = (float) Math.atan2(leftAvg - rightAvg, 2F * solver.frontLeft.side) * rollStrength();
 
+        solver.renderPitch = pitch;
+        solver.renderRoll = roll;
+
         this.getBone(bodyBone()).ifPresent(b -> {
             b.setPosY(b.getPosY() - avg * 16F * legStrength());
             b.setRotX(b.getRotX() - pitch);

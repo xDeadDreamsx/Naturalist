@@ -24,6 +24,11 @@
 					]
 				},
 				{
+					"name": "seat",
+					"parent": "body",
+					"pivot": [0, 52, -2]
+				},
+				{
 					"name": "saddle",
 					"parent": "body",
 					"pivot": [0, 39, 0],
