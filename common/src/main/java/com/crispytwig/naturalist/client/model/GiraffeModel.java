@@ -2,6 +2,7 @@ package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.mob.Giraffe;
+import com.crispytwig.naturalist.server.entity.util.TerrainLegSolver;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -10,11 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class GiraffeModel extends GeoModel<Giraffe> {
+public class GiraffeModel extends IKGeoModel<Giraffe> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Giraffe giraffe) {
@@ -57,5 +57,25 @@ public class GiraffeModel extends GeoModel<Giraffe> {
         }
 
         this.getBone("saddle").ifPresent(saddle -> saddle.setHidden(!entity.isTame()));
+
+        articulateLegs(entity, animationState.getPartialTick());
+    }
+
+    @Override
+    protected TerrainLegSolver getLegSolver(Giraffe entity) {
+        return entity.legSolver;
+    }
+
+    @Override
+    protected String headBone() {
+        return "head";
+    }
+
+    @Override
+    protected String[] legBones(Giraffe entity) {
+        if (entity.isBaby()) {
+            return new String[]{"leftLeg", "rightLeg", "leftArm", "rightArm"};
+        }
+        return new String[]{"leftFoot", "rightFoot", "leftHand", "rightHand"};
     }
 }

@@ -2,6 +2,7 @@ package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.mob.Elephant;
+import com.crispytwig.naturalist.server.entity.util.TerrainLegSolver;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -10,11 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
-public class ElephantModel extends GeoModel<Elephant> {
+public class ElephantModel extends IKGeoModel<Elephant> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Elephant elephant) {
@@ -65,9 +65,24 @@ public class ElephantModel extends GeoModel<Elephant> {
         this.getBone("leftChest").ifPresent(chest -> chest.setHidden(!chested));
         this.getBone("rightChest").ifPresent(chest -> chest.setHidden(!chested));
 
-        GeoBone awake = this.getBone("awake").orElse(null);
-        GeoBone asleep = this.getBone("asleep").orElse(null);
-        if (awake != null) awake.setHidden(false);
-        if (asleep != null) asleep.setHidden(true);
+        this.getBone("awake").ifPresent(awake -> awake.setHidden(false));
+        this.getBone("asleep").ifPresent(asleep -> asleep.setHidden(true));
+
+        articulateLegs(entity, animationState.getPartialTick());
+    }
+
+    @Override
+    protected TerrainLegSolver getLegSolver(Elephant entity) {
+        return entity.legSolver;
+    }
+
+    @Override
+    protected String headBone() {
+        return "neck";
+    }
+
+    @Override
+    protected String[] legBones(Elephant entity) {
+        return new String[]{"leftLeg", "rightLeg", "leftArm", "rightArm"};
     }
 }

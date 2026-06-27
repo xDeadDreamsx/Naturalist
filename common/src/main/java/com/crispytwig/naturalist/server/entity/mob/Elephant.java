@@ -52,6 +52,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.TerrainLegSolver;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -72,6 +73,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.walk");
      protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.elephant.run");
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    public final TerrainLegSolver legSolver = new TerrainLegSolver(1.0F, 0.5F, 0.9F);
 
     private static final EntityDataAccessor<Boolean> DRINKING = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
@@ -500,6 +502,14 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
             this.updatePersistentAnger((ServerLevel)this.level(), true);
         }
 
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.legSolver.update(this, this.getScale() * (this.isBaby() ? 0.5F : 1.0F));
+        }
     }
 
     @Override

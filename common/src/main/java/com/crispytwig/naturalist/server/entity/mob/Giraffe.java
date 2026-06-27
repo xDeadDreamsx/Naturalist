@@ -30,6 +30,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.TerrainLegSolver;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -45,9 +46,18 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity {
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.run");
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    public final TerrainLegSolver legSolver = new TerrainLegSolver(0.75F, 0.4F, 1.3F);
 
     public Giraffe(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.legSolver.update(this, this.getScale() * (this.isBaby() ? 0.5F : 1.0F));
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
