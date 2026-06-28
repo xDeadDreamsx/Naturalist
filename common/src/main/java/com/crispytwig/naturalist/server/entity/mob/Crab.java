@@ -1,0 +1,667 @@
+package com.crispytwig.naturalist.server.entity.mob;
+
+import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
+import com.crispytwig.naturalist.registry.NaturalistRegistry;
+import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
+import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
+import com.crispytwig.naturalist.server.entity.base.Catchable;
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.base.HidingAnimal;
+import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.JukeboxBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+
+@SuppressWarnings("unused")
+public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAnimal, FollowingPet, Catchable {
+
+    //region Data
+    public static final int VARIANTS = 5;
+    private static final String[] VARIANT_NAMES = {"blue", "brown", "orange", "red", "yellow"};
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.CRAB_FOOD);
+    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
+
+    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.crab.idle");
+    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.crab.walk");
+    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.crab.sit_loop");
+    protected static final RawAnimation DANCE = RawAnimation.begin().thenLoop("animation.sf_nba.crab.dance");
+    protected static final RawAnimation HIDE_INTRO = RawAnimation.begin().thenPlay("animation.sf_nba.crab.hide").thenLoop("animation.sf_nba.crab.hide_loop");
+    protected static final RawAnimation HIDE_LOOP = RawAnimation.begin().thenLoop("animation.sf_nba.crab.hide_loop");
+    protected static final RawAnimation PEEK = RawAnimation.begin().thenPlay("animation.sf_nba.crab.hide_peek").thenLoop("animation.sf_nba.crab.hide_loop");
+    protected static final RawAnimation UNHIDE = RawAnimation.begin().thenPlay("animation.sf_nba.crab.unhide");
+    protected static final RawAnimation SWING = RawAnimation.begin().thenPlay("animation.sf_nba.crab.swing_right");
+    protected static final RawAnimation HOLDING_WEAPON = RawAnimation.begin().thenLoop("animation.sf_nba.crab.holding_weapon");
+    protected static final RawAnimation BABY_IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.crab_baby.idle");
+    protected static final RawAnimation BABY_WALK = RawAnimation.begin().thenLoop("animation.sf_nba.crab_baby.walk");
+    protected static final RawAnimation BABY_SIT = RawAnimation.begin().thenLoop("animation.sf_nba.crab_baby.sit_idle");
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private boolean followingOwner = true;
+    private boolean wasHiding;
+    private int unhideAnimTicks;
+    private int hideElapsed;
+    private int peekTicksLeft;
+    private int peekCooldown = 50;
+    private boolean hideCache;
+    private long hideCacheTick = -1L;
+
+    public Crab(@NotNull EntityType<? extends TamableAnimal> type, Level level) {
+        super(type, level);
+        this.setCanPickUpLoot(true);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, 0);
+        builder.define(DATA_DANCING, false);
+        builder.define(FROM_HAND, false);
+    }
+
+    public static String getVariantName(int id) {
+        return VARIANT_NAMES[Math.floorMod(id, VARIANT_NAMES.length)];
+    }
+
+    public int getVariant() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    public void setVariant(int variant) {
+        this.entityData.set(DATA_VARIANT, variant);
+    }
+
+    public boolean isDancing() {
+        return this.entityData.get(DATA_DANCING);
+    }
+
+    public void setDancing(boolean dancing) {
+        this.entityData.set(DATA_DANCING, dancing);
+    }
+
+    @Override
+    public boolean fromHand() {
+        return this.entityData.get(FROM_HAND);
+    }
+
+    @Override
+    public void setFromHand(boolean fromHand) {
+        this.entityData.set(FROM_HAND, fromHand);
+    }
+
+    @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt("Variant", this.getVariant());
+        compound.putBoolean("FromHand", this.fromHand());
+        FollowingPet.save(this, compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.setVariant(compound.getInt("Variant"));
+        this.setFromHand(compound.getBoolean("FromHand"));
+        FollowingPet.load(this, compound);
+    }
+
+    @Override
+    public void saveToHandTag(@NotNull ItemStack stack) {
+        Catchable.saveDefaultDataToHandTag(this, stack);
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        tag.putInt("Variant", this.getVariant());
+        tag.putInt("Age", this.getAge());
+        ItemStack held = this.getMainHandItem();
+        if (!held.isEmpty()) {
+            tag.put("HeldItem", held.save(this.level().registryAccess()));
+        }
+        if (this.isTame() && this.getOwnerUUID() != null) {
+            tag.putBoolean("Tame", true);
+            tag.putUUID("Owner", this.getOwnerUUID());
+            tag.putBoolean("FollowingOwner", this.isFollowingOwner());
+            tag.putBoolean("Sitting", this.isOrderedToSit());
+        }
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+    }
+
+    @Override
+    public void loadFromHandTag(@NotNull CompoundTag tag) {
+        Catchable.loadDefaultDataFromHandTag(this, tag);
+        this.setVariant(tag.getInt("Variant"));
+        if (tag.contains("Age")) {
+            this.setAge(tag.getInt("Age"));
+        }
+        if (tag.contains("HeldItem")) {
+            ItemStack held = ItemStack.parse(this.level().registryAccess(), tag.getCompound("HeldItem")).orElse(ItemStack.EMPTY);
+            this.setItemSlot(EquipmentSlot.MAINHAND, held);
+            this.setDropChance(EquipmentSlot.MAINHAND, 2.0F);
+        }
+        if (tag.getBoolean("Tame") && tag.hasUUID("Owner")) {
+            this.setOwnerUUID(tag.getUUID("Owner"));
+            this.setTame(true, true);
+            this.setFollowingOwner(tag.getBoolean("FollowingOwner"));
+            this.setOrderedToSit(tag.getBoolean("Sitting"));
+        }
+    }
+
+    @Override
+    public ItemStack getCaughtItemStack() {
+        return new ItemStack(NaturalistRegistry.CRAB.get());
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getPickupSound() {
+        return null;
+    }
+
+    @Override
+    public boolean requiresCustomPersistence() {
+        return super.requiresCustomPersistence() || this.fromHand();
+    }
+    //endregion
+
+    //region Spawning / Misc.
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 6.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.15D)
+                .add(Attributes.ATTACK_DAMAGE, 1.0D);
+    }
+
+    public static boolean checkCrabSpawnRules(EntityType<Crab> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        BlockState below = level.getBlockState(pos.below());
+        boolean validGround = below.is(BlockTags.SAND) || below.is(BlockTags.DIRT) || below.is(Blocks.GRAVEL) || below.is(Blocks.STONE);
+        return validGround && isBrightEnoughToSpawn(level, pos);
+    }
+
+    @Override
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.setCanPickUpLoot(true);
+        if (spawnType != MobSpawnType.BUCKET) {
+            this.setVariant(this.random.nextInt(VARIANTS));
+        }
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    @Override
+    public boolean isFood(@NotNull ItemStack stack) {
+        return FOOD_ITEMS.test(stack);
+    }
+
+    @Override
+    public boolean canMate(@NotNull Animal otherAnimal) {
+        if (otherAnimal == this || !(otherAnimal instanceof Crab)) {
+            return false;
+        }
+        return this.isInLove() && otherAnimal.isInLove();
+    }
+
+    @Nullable
+    @Override
+    public Crab getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
+        Crab baby = NaturalistEntityTypes.CRAB.get().create(serverLevel);
+        if (baby != null) {
+            int variant = this.random.nextBoolean() ? this.getVariant()
+                    : (ageableMob instanceof Crab other ? other.getVariant() : this.getVariant());
+            baby.setVariant(variant);
+            if (this.isTame()) {
+                baby.setOwnerUUID(this.getOwnerUUID());
+                baby.setTame(true, true);
+            }
+        }
+        return baby;
+    }
+    //endregion
+
+    //region Behavior
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.65D, true));
+        this.goalSelector.addGoal(3, new PanicGoal(this, 1.5D));
+        this.goalSelector.addGoal(4, new GrabWeaponGoal(this));
+        this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new TemptGoal(this, 1.2D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(7, new PetFollowOwnerGoal(this, 1.5D, 5.0F, 1.0F));
+        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this) {
+            @Override
+            public boolean canUse() {
+                return !Crab.this.getMainHandItem().isEmpty() && super.canUse();
+            }
+        });
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this) {
+            @Override
+            public boolean canUse() {
+                return !Crab.this.getMainHandItem().isEmpty() && super.canUse();
+            }
+        });
+        this.targetSelector.addGoal(3, new HurtByTargetGoal(this) {
+            @Override
+            public boolean canUse() {
+                if (Crab.this.getMainHandItem().isEmpty()) {
+                    return false;
+                }
+                LivingEntity attacker = Crab.this.getLastHurtByMob();
+                if (Crab.this.isTame() && attacker != null && attacker == Crab.this.getOwner()) {
+                    return false;
+                }
+                return super.canUse();
+            }
+        });
+    }
+
+    @Override
+    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        InteractionResult whistle = FollowingPet.tryWhistle(this, player, hand);
+        if (whistle != null) {
+            return whistle;
+        }
+
+        Optional<InteractionResult> caught = Catchable.catchAnimal(player, hand, this, true);
+        if (caught.isPresent()) {
+            return caught.get();
+        }
+
+        if (this.isTame() && this.isOwnedBy(player)) {
+            if (this.isFood(stack)) {
+                if (this.getHealth() < this.getMaxHealth()) {
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                    this.heal(2.0F);
+                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                }
+            } else {
+                if (!this.level().isClientSide) {
+                    this.setOrderedToSit(!this.isOrderedToSit());
+                }
+                return InteractionResult.sidedSuccess(this.level().isClientSide);
+            }
+        } else if (!this.isTame() && this.isFood(stack)) {
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            if (!this.level().isClientSide) {
+                if (this.random.nextInt(3) == 0) {
+                    this.tame(player);
+                    this.setFollowingOwner(true);
+                    this.setTarget(null);
+                    this.level().broadcastEntityEvent(this, (byte) 7);
+                } else {
+                    this.level().broadcastEntityEvent(this, (byte) 6);
+                }
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        return super.mobInteract(player, hand);
+    }
+
+    @Override
+    public boolean wantsToPickUp(@NotNull ItemStack stack) {
+        return this.getMainHandItem().isEmpty() && isWeapon(stack);
+    }
+
+    private static boolean isWeapon(ItemStack stack) {
+        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem;
+    }
+
+    @Override
+    public boolean doHurtTarget(@NotNull Entity target) {
+        boolean hurt = super.doHurtTarget(target);
+        if (hurt) {
+            this.swing(InteractionHand.MAIN_HAND);
+            this.playSound(NaturalistSoundEvents.CRAB_PINCER.get(), 1.0F, 1.0F);
+            ItemStack weapon = this.getMainHandItem();
+            if (!weapon.isEmpty() && weapon.isDamageableItem()) {
+                weapon.hurtAndBreak(1, this, EquipmentSlot.MAINHAND);
+            }
+        }
+        return hurt;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        boolean hide = this.canHide();
+        if (!hide && this.wasHiding) {
+            this.unhideAnimTicks = 10;
+        }
+        if (hide) {
+            this.unhideAnimTicks = 0;
+        }
+        this.wasHiding = hide;
+        if (this.unhideAnimTicks > 0) {
+            this.unhideAnimTicks--;
+        }
+
+        if (hide) {
+            this.hideElapsed++;
+            if (this.hideElapsed > 38) {
+                if (this.peekTicksLeft > 0) {
+                    this.peekTicksLeft--;
+                } else if (--this.peekCooldown <= 0) {
+                    this.peekTicksLeft = 23;
+                    this.peekCooldown = 60 + this.random.nextInt(100);
+                }
+            }
+        } else {
+            this.hideElapsed = 0;
+            this.peekTicksLeft = 0;
+            this.peekCooldown = 50;
+        }
+
+        if (!this.level().isClientSide && this.tickCount % 20 == 0) {
+            this.setDancing(this.isTame() && !this.isOrderedToSit() && this.isJukeboxNearby());
+        }
+    }
+
+    private boolean isJukeboxNearby() {
+        BlockPos pos = this.blockPosition();
+        for (BlockPos p : BlockPos.betweenClosed(pos.offset(-3, -1, -3), pos.offset(3, 1, 3))) {
+            BlockState st = this.level().getBlockState(p);
+            if (st.is(Blocks.JUKEBOX) && st.hasProperty(JukeboxBlock.HAS_RECORD) && st.getValue(JukeboxBlock.HAS_RECORD)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canHide() {
+        long t = this.level().getGameTime();
+        if (t != this.hideCacheTick) {
+            this.hideCacheTick = t;
+            this.hideCache = this.thinkCanHide();
+        }
+        return this.hideCache;
+    }
+
+    private boolean thinkCanHide() {
+        if (this.isBaby() || this.isTame() || !this.getMainHandItem().isEmpty()) {
+            return false;
+        }
+        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
+        boolean playerNear = false;
+        for (Player player : players) {
+            if (!player.isCrouching() && !FOOD_ITEMS.test(player.getMainHandItem()) && !FOOD_ITEMS.test(player.getOffhandItem())) {
+                playerNear = true;
+                break;
+            }
+        }
+        return playerNear && this.findNearbyWeapon() == null;
+    }
+
+    @Nullable
+    private ItemEntity findNearbyWeapon() {
+        List<ItemEntity> items = this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(8.0D),
+                e -> e.isAlive() && !e.hasPickUpDelay() && isWeapon(e.getItem()));
+        if (items.isEmpty()) {
+            return null;
+        }
+        items.sort(Comparator.comparingDouble(this::distanceToSqr));
+        return items.getFirst();
+    }
+
+    @Override
+    public void knockback(double strength, double x, double z) {
+        super.knockback(this.canHide() ? strength / 4 : strength, x, z);
+    }
+
+    @Override
+    public boolean hurt(@NotNull DamageSource source, float amount) {
+        return super.hurt(source, this.canHide() ? amount * 0.8F : amount);
+    }
+
+    private boolean isImmobilized() {
+        return this.canHide() || this.isDancing();
+    }
+
+    @Override
+    public void travel(@NotNull Vec3 vec3) {
+        if (this.isImmobilized()) {
+            this.setDeltaMovement(this.getDeltaMovement().multiply(0.0D, 1.0D, 0.0D));
+            super.travel(Vec3.ZERO);
+            return;
+        }
+        super.travel(vec3);
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (this.isImmobilized()) {
+            this.jumping = false;
+            this.xxa = 0.0F;
+            this.zza = 0.0F;
+            this.getNavigation().stop();
+        }
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return NaturalistSoundEvents.CRAB_AMBIENT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return NaturalistSoundEvents.CRAB_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return NaturalistSoundEvents.CRAB_DEATH.get();
+    }
+
+    static class GrabWeaponGoal extends Goal {
+        private final Crab crab;
+        @Nullable
+        private ItemEntity target;
+
+        GrabWeaponGoal(Crab crab) {
+            this.crab = crab;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (crab.isInSittingPose() || !crab.getMainHandItem().isEmpty()) {
+                return false;
+            }
+            this.target = crab.findNearbyWeapon();
+            return this.target != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.target != null && this.target.isAlive() && !this.target.hasPickUpDelay()
+                    && crab.getMainHandItem().isEmpty();
+        }
+
+        @Override
+        public void start() {
+            if (this.target != null) {
+                crab.getNavigation().moveTo(this.target, 1.3D);
+            }
+        }
+
+        @Override
+        public void stop() {
+            this.target = null;
+            crab.getNavigation().stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.target != null) {
+                crab.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
+                if (crab.getNavigation().isDone()) {
+                    crab.getNavigation().moveTo(this.target, 1.3D);
+                }
+            }
+        }
+    }
+    //endregion
+
+    //region Animation
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Crab> PlayState predicate(final @NotNull AnimationState<E> event) {
+        if (this.isDancing()) {
+            event.getController().setAnimation(DANCE);
+        } else if (this.isInSittingPose()) {
+            event.getController().setAnimation(this.isBaby() ? BABY_SIT : SIT);
+        } else if (event.isMoving()) {
+            event.getController().setAnimation(this.isBaby() ? BABY_WALK : WALK);
+        } else {
+            event.getController().setAnimation(this.isBaby() ? BABY_IDLE : IDLE);
+        }
+        return PlayState.CONTINUE;
+    }
+
+    private <E extends Crab> PlayState hidePredicate(final @NotNull AnimationState<E> event) {
+        if (this.canHide()) {
+            if (this.peekTicksLeft > 0) {
+                event.getController().setAnimation(PEEK);
+            } else if (this.hideElapsed > 38) {
+                event.getController().setAnimation(HIDE_LOOP);
+            } else {
+                event.getController().setAnimation(HIDE_INTRO);
+            }
+            return PlayState.CONTINUE;
+        }
+        if (this.unhideAnimTicks > 0) {
+            event.getController().setAnimation(UNHIDE);
+            return PlayState.CONTINUE;
+        }
+        event.getController().forceAnimationReset();
+        return PlayState.STOP;
+    }
+
+    private <E extends Crab> PlayState weaponPredicate(final @NotNull AnimationState<E> event) {
+        if (!this.getMainHandItem().isEmpty() && !this.isDancing()) {
+            event.getController().setAnimation(HOLDING_WEAPON);
+            return PlayState.CONTINUE;
+        }
+        event.getController().forceAnimationReset();
+        return PlayState.STOP;
+    }
+
+    private <E extends Crab> PlayState swingPredicate(final @NotNull AnimationState<E> event) {
+        if (this.swinging && !this.isDancing()) {
+            event.getController().setAnimation(SWING);
+            return PlayState.CONTINUE;
+        }
+        event.getController().forceAnimationReset();
+        return PlayState.STOP;
+    }
+
+    private void soundListener(@NotNull SoundKeyframeEvent<Crab> event) {
+        Crab crab = event.getAnimatable();
+        if (crab.level().isClientSide && "step".equals(event.getKeyframeData().getSound())) {
+            crab.level().playLocalSound(crab.getX(), crab.getY(), crab.getZ(), NaturalistSoundEvents.CRAB_STEP.get(), crab.getSoundSource(), 0.3F, 1.0F, false);
+        }
+    }
+
+    @Override
+    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
+        controllers.add(new AnimationController<>(this, "hideController", 0, this::hidePredicate));
+        controllers.add(new AnimationController<>(this, "weaponController", 0, this::weaponPredicate));
+        controllers.add(new AnimationController<>(this, "swingController", 0, this::swingPredicate));
+    }
+    //endregion
+}

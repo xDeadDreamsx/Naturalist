@@ -40,6 +40,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.SNAKE.get(), SnakeRenderer::new);
         r.register(NaturalistEntityTypes.CORAL_SNAKE.get(), SnakeRenderer::new);
         r.register(NaturalistEntityTypes.RATTLESNAKE.get(), SnakeRenderer::new);
+        r.register(NaturalistEntityTypes.CRAB.get(), CrabRenderer::new);
         r.register(NaturalistEntityTypes.DEER.get(), DeerRenderer::new);
         r.register(NaturalistEntityTypes.BLUEJAY.get(), BirdRenderer::new);
         r.register(NaturalistEntityTypes.CARDINAL.get(), BirdRenderer::new);
@@ -83,6 +84,16 @@ public final class NaturalistClient {
                     CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
                     if (customData != null) {
                         return customData.copyTag().getInt("Variant") / 7.0f;
+                    }
+                    return 0.0f;
+                });
+
+        ItemProperties.register(NaturalistRegistry.CRAB.get(),
+                ResourceLocation.withDefaultNamespace("variant"),
+                (stack, level, entity, seed) -> {
+                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                    if (customData != null) {
+                        return customData.copyTag().getInt("Variant") / 5.0f;
                     }
                     return 0.0f;
                 });

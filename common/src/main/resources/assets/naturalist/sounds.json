@@ -1,4 +1,42 @@
 {
+  "entity.crab.ambient": {
+    "sounds": [
+      "naturalist:mob/crab/idle1",
+      "naturalist:mob/crab/idle2",
+      "naturalist:mob/crab/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.crab.ambient"
+  },
+  "entity.crab.hurt": {
+    "sounds": [
+      "naturalist:mob/crab/hurt1",
+      "naturalist:mob/crab/hurt2",
+      "naturalist:mob/crab/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.crab.hurt"
+  },
+  "entity.crab.death": {
+    "sounds": [
+      "naturalist:mob/crab/death1",
+      "naturalist:mob/crab/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.crab.death"
+  },
+  "entity.crab.step": {
+    "sounds": [
+      "naturalist:mob/crab/run1",
+      "naturalist:mob/crab/run2",
+      "naturalist:mob/crab/run3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.crab.step"
+  },
+  "entity.crab.pincer": {
+    "sounds": [
+      "naturalist:mob/crab/pincer1",
+      "naturalist:mob/crab/pincer2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.crab.pincer"
+  },
   "entity.tortoise.hide": {
     "sounds": [
       "naturalist:mob/tortoise/hide1",

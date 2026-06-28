@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.item;
 
 import com.crispytwig.naturalist.server.entity.mob.Butterfly;
+import com.crispytwig.naturalist.server.entity.mob.Crab;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import net.minecraft.ChatFormatting;
@@ -55,6 +56,12 @@ public class CaughtMobItem extends NoFluidMobBucketItem {
             if (compoundnbt.contains("Variant", 3)) {
                 Butterfly.Variant variant = Butterfly.Variant.getTypeById(compoundnbt.getInt("Variant"));
                 tooltip.add((Component.translatable(String.format("tooltip.naturalist.%s", variant.toString().toLowerCase())).withStyle(ChatFormatting.GRAY)));
+            }
+        } else if (this.type() == NaturalistEntityTypes.CRAB.get()) {
+            CompoundTag compoundnbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            if (compoundnbt.contains("Variant", 3)) {
+                String variant = Crab.getVariantName(compoundnbt.getInt("Variant"));
+                tooltip.add(Component.translatable(String.format("tooltip.naturalist.crab_%s", variant)).withStyle(ChatFormatting.GRAY));
             }
         }
     }

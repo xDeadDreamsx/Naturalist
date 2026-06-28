@@ -127,6 +127,11 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> GATOR_HURT_BABY = register("entity.alligator.hurt_baby");
     public static final DeferredHolder<SoundEvent, SoundEvent> GATOR_DEATH = register("entity.alligator.death");
     public static final DeferredHolder<SoundEvent, SoundEvent> GATOR_DEATH_BABY = register("entity.alligator.death_baby");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRAB_AMBIENT = register("entity.crab.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRAB_HURT = register("entity.crab.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRAB_DEATH = register("entity.crab.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRAB_STEP = register("entity.crab.step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRAB_PINCER = register("entity.crab.pincer");
     public static final DeferredHolder<SoundEvent, SoundEvent> CATFISH_FLOP = register("entity.catfish.flop");
     public static final DeferredHolder<SoundEvent, SoundEvent> BASS_FLOP = register("entity.bass.flop");
     public static final DeferredHolder<SoundEvent, SoundEvent> DRAGONFLY_LOOP = register("entity.dragonfly.loop");

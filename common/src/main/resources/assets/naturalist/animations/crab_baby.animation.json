@@ -1,0 +1,129 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.sf_nba.crab_baby.idle": {
+      "loop": true,
+      "anim_time_update": "q.anim_time + q.delta_time",
+      "bones": {
+        "crabBody": {
+          "rotation": [
+            "-Math.sin( -20 + ( q.anim_time - 0.0 ) * 90 ) * 2",
+            0,
+            0
+          ],
+          "position": [
+            0,
+            "-0.1 + Math.cos(( q.anim_time - 0.0 ) * 90 ) * 0.1",
+            0
+          ]
+        },
+        "leftClaw": {
+          "rotation": [
+            "-Math.sin(( q.anim_time - 0.0 ) * 90 ) * 7",
+            0,
+            "Math.sin( -60 + ( q.anim_time - 0.0 ) * 90 ) * 4"
+          ],
+          "position": [0, "Math.cos(( q.anim_time - 0.0 ) * 90 ) * 0.2", 0]
+        },
+        "rightClaw": {
+          "rotation": [
+            "-Math.sin( -40 + ( q.anim_time - 0.0 ) * 90 ) * 7",
+            0,
+            "Math.sin( -60 + ( q.anim_time - 0.0 ) * 90 ) * -4"
+          ],
+          "position": [
+            0,
+            "Math.cos( -40 + ( q.anim_time - 0.0 ) * 90 ) * 0.2",
+            0
+          ]
+        },
+        "crabLeftArm": {
+          "rotation": [0, 0, "Math.sin( -40 + ( q.anim_time - 0.0 ) * 90 ) * -3"],
+          "position": [0, "Math.sin( -40 + ( q.anim_time - 0.0 ) * 90 ) * -0.1", 0]
+        },
+        "crabRightArm": {
+          "rotation": [0, 0, "Math.sin( -40 + ( q.anim_time - 0.0 ) * 90 ) * 3"],
+          "position": [0, "Math.sin( -40 + ( q.anim_time - 0.0 ) * 90 ) * -0.1", 0]
+        },
+        "crabLeftLeg": {
+          "rotation": [0, 0, "Math.sin( -40 + ( q.anim_time - 0.0 ) * 90 ) * -3"],
+          "position": [0, "Math.sin( -40 + ( q.anim_time - 0.0 ) * 90 ) * -0.1", 0]
+        },
+        "crabRightLeg": {
+          "rotation": [0, 0, "Math.sin( -40 + ( q.anim_time - 0.0 ) * 90 ) * 3"],
+          "position": [0, "Math.sin( -40 + ( q.anim_time - 0.0 ) * 90 ) * -0.1", 0]
+        }
+      }
+    },
+    "animation.sf_nba.crab_baby.walk": {
+      "loop": true,
+      "animation_length": 1,
+      "bones": {
+        "crabLeftArm": {
+          "rotation": {
+            "0.0": [0, 0, 15.86], "0.125": [0, 0, 1.8], "0.25": [0, 0, -13.31],
+            "0.375": [0, 0, -20.62], "0.5": [0, 0, -15.86], "0.625": [0, 0, -1.8],
+            "0.75": [0, 0, 13.31], "0.875": [0, 0, 20.62], "1.0": [0, 0, 15.86]
+          },
+          "position": {
+            "0.0": [0, 0.89, 0], "0.25": [0, 0.79, 0], "0.5": [0, 0.36, 0],
+            "0.75": [0, 0.34, 0], "1.0": [0, 0.89, 0]
+          }
+        },
+        "crabLeftLeg": {
+          "rotation": {
+            "0.0": [0, 0, -15.86], "0.125": [0, 0, -1.8], "0.25": [0, 0, 13.31],
+            "0.375": [0, 0, 20.62], "0.5": [0, 0, 15.86], "0.625": [0, 0, 1.8],
+            "0.75": [0, 0, -13.31], "0.875": [0, 0, -20.62], "1.0": [0, 0, -15.86]
+          },
+          "position": {
+            "0.0": [0, 0.36, 0], "0.25": [0, 0.34, 0], "0.5": [0, 0.89, 0],
+            "0.75": [0, 0.79, 0], "1.0": [0, 0.36, 0]
+          }
+        },
+        "crabRightLeg": {
+          "rotation": {
+            "0.0": [0, 0, 4.5], "0.125": [0, 0, -0.48], "0.25": [0, 0, -12.5],
+            "0.375": [0, 0, -24.52], "0.5": [0, 0, -29.5], "0.625": [0, 0, -24.52],
+            "0.75": [0, 0, -12.5], "0.875": [0, 0, -0.48], "1.0": [0, 0, 4.5]
+          },
+          "position": {
+            "0.0": [0, 0.25, 0], "0.25": [0, 1.04, 0], "0.5": [0, 0.84, 0],
+            "0.75": [0, 0.21, 0], "1.0": [0, 0.25, 0]
+          }
+        },
+        "crabRightArm": {
+          "rotation": {
+            "0.0": [0, 0, -29.5], "0.125": [0, 0, -24.52], "0.25": [0, 0, -12.5],
+            "0.375": [0, 0, -0.48], "0.5": [0, 0, 4.5], "0.625": [0, 0, -0.48],
+            "0.75": [0, 0, -12.5], "0.875": [0, 0, -24.52], "1.0": [0, 0, -29.5]
+          },
+          "position": {
+            "0.0": [0, 0.84, 0], "0.25": [0, 0.21, 0], "0.5": [0, 0.25, 0],
+            "0.75": [0, 1.04, 0], "1.0": [0, 0.84, 0]
+          }
+        },
+        "crabBody": {
+          "rotation": [0, 0, "Math.sin(( q.anim_time - 0.0 ) * 360 ) * -1"],
+          "position": [0, "0.05 + Math.cos(( q.anim_time - 0.0 ) * 720 ) * 0.1", 0]
+        },
+        "shell": {
+          "rotation": [0, 0, "Math.sin( -80 + ( q.anim_time - 0.0 ) * 360 ) * -0.5"]
+        }
+      }
+    },
+    "animation.sf_nba.crab_baby.sit_idle": {
+      "loop": true,
+      "bones": {
+        "crabBody": { "rotation": [-18, 0, 0], "position": [0, -0.2, 0] },
+        "leftClaw": { "rotation": [36.94947, 12.08655, 8.95037], "position": [0, -0.2, 0.6] },
+        "rightClaw": { "rotation": [36.94947, -12.08655, -8.95037], "position": [0.3, -0.2, 0.6] },
+        "leftEye": { "rotation": [15, 0, 0] },
+        "crabLeftArm": { "rotation": [0, 0, 21], "position": [0, 0.6, 0] },
+        "crabRightArm": { "rotation": [0, 0, -21], "position": [0, 0.6, 0] },
+        "crabLeftLeg": { "rotation": [0, 0, 22], "position": [0, 0.4, -0.3] },
+        "crabRightLeg": { "rotation": [0, 0, -22], "position": [0, 0.4, -0.3] }
+      }
+    }
+  }
+}

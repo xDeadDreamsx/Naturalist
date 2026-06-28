@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.crispytwig.naturalist.registry.*;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.mob.*;
+import com.crispytwig.naturalist.server.item.CaughtMobItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -80,6 +81,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.SNAKE.get(), Snake.createAttributes());
         r.register(NaturalistEntityTypes.CORAL_SNAKE.get(), Snake.createAttributes());
         r.register(NaturalistEntityTypes.RATTLESNAKE.get(), Snake.createAttributes());
+        r.register(NaturalistEntityTypes.CRAB.get(), Crab.createAttributes());
         r.register(NaturalistEntityTypes.DEER.get(), Deer.createAttributes());
         r.register(NaturalistEntityTypes.BLUEJAY.get(), Bird.createAttributes());
         r.register(NaturalistEntityTypes.CANARY.get(), Bird.createAttributes());
@@ -114,6 +116,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.SNAKE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
         r.register(NaturalistEntityTypes.CORAL_SNAKE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
         r.register(NaturalistEntityTypes.RATTLESNAKE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
+        r.register(NaturalistEntityTypes.CRAB.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Crab::checkCrabSpawnRules);
         r.register(NaturalistEntityTypes.DEER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.BLUEJAY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
         r.register(NaturalistEntityTypes.CANARY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Bird::checkBirdSpawnRules);
@@ -194,6 +197,19 @@ public final class Naturalist {
                 EntityType<Butterfly> entityType = NaturalistEntityTypes.BUTTERFLY.get();
                 Butterfly butterfly = entityType.spawn(serverLevel, blockPos, MobSpawnType.DISPENSER);
                 if (butterfly != null) {
+                    stack.shrink(1);
+                }
+                return stack;
+            }
+        });
+
+        DispenserBlock.registerBehavior(NaturalistRegistry.CRAB.get(), new DefaultDispenseItemBehavior() {
+            public @NotNull ItemStack execute(@NotNull BlockSource source, @NotNull ItemStack stack) {
+                Direction direction = source.state().getValue(DispenserBlock.FACING);
+                BlockPos blockPos = source.pos().relative(direction);
+                Level level = source.level();
+                if (stack.getItem() instanceof CaughtMobItem caughtMobItem) {
+                    caughtMobItem.checkExtraContent(null, level, stack, blockPos);
                     stack.shrink(1);
                 }
                 return stack;

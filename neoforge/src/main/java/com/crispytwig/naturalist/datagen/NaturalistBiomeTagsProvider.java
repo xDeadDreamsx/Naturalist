@@ -208,6 +208,10 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptional(terralith("tropical_jungle"))
                 .addOptional(terralith("warm_river"));
 
+        tag(NaturalistTags.Biomes.HAS_CRAB)
+                .add(Biomes.BEACH).add(Biomes.STONY_SHORE)
+                .addOptionalTag(Tags.Biomes.IS_BEACH);
+
         tag(NaturalistTags.Biomes.HAS_DEER)
                 .addTag(BiomeTags.IS_FOREST).add(Biomes.CHERRY_GROVE)
                 .addOptionalTag(Tags.Biomes.IS_FOREST)
@@ -515,6 +519,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_CARDINAL);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_CATFISH);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_CORAL_SNAKE);
+        coldBlacklist(NaturalistTags.Biomes.BLACKLIST_CRAB);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_DEER);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_DRAGONFLY);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_DUCK);
