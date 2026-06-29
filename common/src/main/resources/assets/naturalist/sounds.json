@@ -1,4 +1,31 @@
 {
+  "entity.clam.ambient": {
+    "sounds": [
+      "naturalist:mob/clam/idle1",
+      "naturalist:mob/clam/idle2",
+      "naturalist:mob/clam/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.clam.ambient"
+  },
+  "entity.clam.hurt": {
+    "sounds": [
+      "naturalist:mob/clam/hurt1",
+      "naturalist:mob/clam/hurt2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.clam.hurt"
+  },
+  "entity.clam.death": {
+    "sounds": [
+      "naturalist:mob/clam/death1"
+    ],
+    "subtitle": "naturalist.subtitles.entity.clam.death"
+  },
+  "entity.clam.launch": {
+    "sounds": [
+      "naturalist:mob/clam/launch1"
+    ],
+    "subtitle": "naturalist.subtitles.entity.clam.launch"
+  },
   "entity.crab.ambient": {
     "sounds": [
       "naturalist:mob/crab/idle1",

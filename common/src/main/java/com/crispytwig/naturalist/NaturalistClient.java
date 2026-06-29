@@ -67,6 +67,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.DUCK.get(), DuckRenderer::new);
         r.register(NaturalistEntityTypes.DUCK_EGG.get(), ThrownItemRenderer::new);
         r.register(NaturalistEntityTypes.STARFISH.get(), StarfishRenderer::new);
+        r.register(NaturalistEntityTypes.CLAM.get(), ClamRenderer::new);
     }
 
     @FunctionalInterface

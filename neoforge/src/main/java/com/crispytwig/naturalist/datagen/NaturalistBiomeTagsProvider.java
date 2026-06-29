@@ -469,6 +469,10 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addTag(BiomeTags.IS_OCEAN)
                 .addOptionalTag(Tags.Biomes.IS_OCEAN);
 
+        tag(NaturalistTags.Biomes.HAS_CLAM)
+                .addTag(BiomeTags.IS_OCEAN)
+                .addOptionalTag(Tags.Biomes.IS_OCEAN);
+
         tag(NaturalistTags.Biomes.HAS_TORTOISE)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP).add(Biomes.DESERT)
                 .addTag(BiomeTags.IS_JUNGLE)
@@ -522,6 +526,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_CANARY);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_CARDINAL);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_CATFISH);
+        coldBlacklist(NaturalistTags.Biomes.BLACKLIST_CLAM);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_CORAL_SNAKE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_CRAB);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_DEER);
