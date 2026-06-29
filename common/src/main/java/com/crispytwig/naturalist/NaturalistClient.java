@@ -66,6 +66,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.TORTOISE.get(), TortoiseRenderer::new);
         r.register(NaturalistEntityTypes.DUCK.get(), DuckRenderer::new);
         r.register(NaturalistEntityTypes.DUCK_EGG.get(), ThrownItemRenderer::new);
+        r.register(NaturalistEntityTypes.STARFISH.get(), StarfishRenderer::new);
     }
 
     @FunctionalInterface
@@ -104,6 +105,16 @@ public final class NaturalistClient {
                     CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
                     if (customData != null) {
                         return customData.copyTag().getInt("Color") / 15.0f;
+                    }
+                    return 0.0f;
+                });
+
+        ItemProperties.register(NaturalistRegistry.STARFISH_BUCKET.get(),
+                ResourceLocation.withDefaultNamespace("variant"),
+                (stack, level, entity, seed) -> {
+                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                    if (customData != null) {
+                        return customData.copyTag().getInt("Variant") / 3.0f;
                     }
                     return 0.0f;
                 });

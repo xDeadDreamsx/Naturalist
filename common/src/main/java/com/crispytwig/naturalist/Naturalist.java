@@ -106,6 +106,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.LIZARD_TAIL.get(), LizardTail.createAttributes());
         r.register(NaturalistEntityTypes.TORTOISE.get(), Tortoise.createAttributes());
         r.register(NaturalistEntityTypes.DUCK.get(), Duck.createAttributes());
+        r.register(NaturalistEntityTypes.STARFISH.get(), Starfish.createAttributes());
     }
 
     public static void registerSpawnPlacements(SpawnPlacementRegistrar r) {
@@ -139,6 +140,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.LIZARD.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.TORTOISE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.DUCK.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Duck::checkDuckSpawnRules);
+        r.register(NaturalistEntityTypes.STARFISH.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Starfish::checkStarfishSpawnRules);
     }
 
     public static void registerPotionMixes(BrewingRegistrar r) {
@@ -171,6 +173,7 @@ public final class Naturalist {
         };
         DispenserBlock.registerBehavior(NaturalistRegistry.BASS_BUCKET.get(), bucketDispenseBehavior);
         DispenserBlock.registerBehavior(NaturalistRegistry.CATFISH_BUCKET.get(), bucketDispenseBehavior);
+        DispenserBlock.registerBehavior(NaturalistRegistry.STARFISH_BUCKET.get(), bucketDispenseBehavior);
 
         DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET.get(), new DefaultDispenseItemBehavior() {
             public @NotNull ItemStack execute(@NotNull BlockSource source, @NotNull ItemStack stack) {

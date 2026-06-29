@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "naturalist:item/starfish_bucket/orange",
+      "predicate": {
+        "variant": 0.0
+      }
+    },
+    {
+      "model": "naturalist:item/starfish_bucket/purple",
+      "predicate": {
+        "variant": 0.33333334
+      }
+    },
+    {
+      "model": "naturalist:item/starfish_bucket/blue",
+      "predicate": {
+        "variant": 0.6666667
+      }
+    },
+    {
+      "model": "naturalist:item/starfish_bucket/red",
+      "predicate": {
+        "variant": 1.0
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "naturalist:item/bucket_orange_starfish"
+  }
+}

@@ -465,6 +465,10 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptional(terralith("sakura_valley"))
                 .addOptional(terralith("shrubland"));
 
+        tag(NaturalistTags.Biomes.HAS_STARFISH)
+                .addTag(BiomeTags.IS_OCEAN)
+                .addOptionalTag(Tags.Biomes.IS_OCEAN);
+
         tag(NaturalistTags.Biomes.HAS_TORTOISE)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP).add(Biomes.DESERT)
                 .addTag(BiomeTags.IS_JUNGLE)
@@ -538,6 +542,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_SNAIL);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_SNAKE);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_SPARROW);
+        coldBlacklist(NaturalistTags.Biomes.BLACKLIST_STARFISH);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_TORTOISE);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_VULTURE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_ZEBRA);
