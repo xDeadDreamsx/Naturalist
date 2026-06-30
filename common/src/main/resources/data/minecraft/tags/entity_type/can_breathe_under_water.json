@@ -1,9 +1,5 @@
 {
-  "replace": false,
   "values": [
-    "naturalist:alligator",
-    "naturalist:hippo",
-    "naturalist:snail",
-    "naturalist:tortoise"
+    "naturalist:giant_isopod"
   ]
 }

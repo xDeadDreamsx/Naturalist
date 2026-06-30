@@ -1,4 +1,12 @@
 {
+  "entity.giant_isopod.roll": {
+    "sounds": [
+      "naturalist:mob/giant_isopod/hide1",
+      "naturalist:mob/giant_isopod/hide2",
+      "naturalist:mob/giant_isopod/hide3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.giant_isopod.roll"
+  },
   "entity.clam.ambient": {
     "sounds": [
       "naturalist:mob/clam/idle1",

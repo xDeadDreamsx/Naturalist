@@ -305,6 +305,10 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptional(terralith("shrubland"))
                 .addOptional(terralith("wintry_forest"));
 
+        tag(NaturalistTags.Biomes.HAS_GIANT_ISOPOD)
+                .addTag(BiomeTags.IS_OCEAN)
+                .addOptionalTag(Tags.Biomes.IS_OCEAN);
+
         tag(NaturalistTags.Biomes.HAS_GIRAFFE)
                 .addTag(BiomeTags.IS_SAVANNA)
                 .addOptionalTag(Tags.Biomes.IS_SAVANNA)
@@ -537,6 +541,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_FIREFLY);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_FOREST_FOXES);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_FOREST_RABBITS);
+        coldBlacklist(NaturalistTags.Biomes.BLACKLIST_GIANT_ISOPOD);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_GIRAFFE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_HIPPO);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_LION);

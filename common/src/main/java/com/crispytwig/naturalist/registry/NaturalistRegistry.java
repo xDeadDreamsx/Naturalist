@@ -16,6 +16,7 @@ import com.crispytwig.naturalist.server.item.CaughtMobWithVariantsItem;
 import com.crispytwig.naturalist.server.item.NoFluidMobBucketWithVariantsItem;
 import com.crispytwig.naturalist.server.item.MobBucketWithVariantsItem;
 import com.crispytwig.naturalist.server.entity.mob.Starfish;
+import com.crispytwig.naturalist.server.entity.mob.GiantIsopod;
 import com.crispytwig.naturalist.server.block.StarfishBlock;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
@@ -84,6 +85,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, Item> SNAIL_SHELL = ITEMS.register("snail_shell", () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, NoFluidMobBucketWithVariantsItem> SNAIL_BUCKET = ITEMS.register("snail_bucket", () -> new NoFluidMobBucketWithVariantsItem(NaturalistEntityTypes.SNAIL, () -> Fluids.EMPTY, NaturalistSoundEvents.BUCKET_EMPTY_SNAIL, new Item.Properties().stacksTo(1), Snail.Color.values().length));
     public static final DeferredHolder<Item, MobBucketWithVariantsItem> STARFISH_BUCKET = ITEMS.register("starfish_bucket", () -> new MobBucketWithVariantsItem(NaturalistEntityTypes.STARFISH, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1), "color.minecraft.", Starfish.VARIANT_NAMES));
+    public static final DeferredHolder<Item, MobBucketWithVariantsItem> GIANT_ISOPOD_BUCKET = ITEMS.register("giant_isopod_bucket", () -> new MobBucketWithVariantsItem(NaturalistEntityTypes.GIANT_ISOPOD, () -> Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1), "tooltip.naturalist.giant_isopod_", GiantIsopod.VARIANT_NAMES));
     public static final DeferredHolder<Block, StarfishBlock> RED_STARFISH = registerStarfishBlock("red_starfish");
     public static final DeferredHolder<Block, StarfishBlock> ORANGE_STARFISH = registerStarfishBlock("orange_starfish");
     public static final DeferredHolder<Block, StarfishBlock> BLUE_STARFISH = registerStarfishBlock("blue_starfish");
@@ -131,6 +133,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, SpawnEggItem> ELEPHANT_SPAWN_EGG = ITEMS.register("elephant_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.ELEPHANT, 9539213, 6643034, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> FINCH_SPAWN_EGG = ITEMS.register("finch_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.FINCH, 12013877, 6576975, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> FIREFLY_SPAWN_EGG = ITEMS.register("firefly_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.FIREFLY, 6764577, 16768800, new Item.Properties()));
+    public static final DeferredHolder<Item, SpawnEggItem> GIANT_ISOPOD_SPAWN_EGG = ITEMS.register("giant_isopod_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.GIANT_ISOPOD, 7362632, 10125426, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> GIRAFFE_SPAWN_EGG = ITEMS.register("giraffe_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.GIRAFFE, 14329967, 7619616, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> HIPPO_SPAWN_EGG = ITEMS.register("hippo_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.HIPPO, 15702682, 9004386, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> LION_SPAWN_EGG = ITEMS.register("lion_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.LION, 14990722, 6699537, new Item.Properties()));
