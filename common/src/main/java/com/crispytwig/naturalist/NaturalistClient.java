@@ -69,6 +69,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.STARFISH.get(), StarfishRenderer::new);
         r.register(NaturalistEntityTypes.CLAM.get(), ClamRenderer::new);
         r.register(NaturalistEntityTypes.GIANT_ISOPOD.get(), GiantIsopodRenderer::new);
+        r.register(NaturalistEntityTypes.JELLYFISH.get(), JellyfishRenderer::new);
     }
 
     @FunctionalInterface
@@ -127,6 +128,16 @@ public final class NaturalistClient {
                     CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
                     if (customData != null) {
                         return customData.copyTag().getInt("Variant");
+                    }
+                    return 0.0f;
+                });
+
+        ItemProperties.register(NaturalistRegistry.JELLYFISH_BUCKET.get(),
+                ResourceLocation.withDefaultNamespace("variant"),
+                (stack, level, entity, seed) -> {
+                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                    if (customData != null) {
+                        return customData.copyTag().getInt("Variant") / 4.0f;
                     }
                     return 0.0f;
                 });

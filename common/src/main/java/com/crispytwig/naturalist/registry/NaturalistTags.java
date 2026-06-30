@@ -103,6 +103,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_GIANT_ISOPOD = tag("has_giant_isopod");
         public static final TagKey<Biome> HAS_GIRAFFE = tag("has_giraffe");
         public static final TagKey<Biome> HAS_HIPPO = tag("has_hippo");
+        public static final TagKey<Biome> HAS_JELLYFISH = tag("has_jellyfish");
         public static final TagKey<Biome> HAS_LION = tag("has_lion");
         public static final TagKey<Biome> HAS_LIZARD = tag("has_lizard");
         public static final TagKey<Biome> HAS_RATTLESNAKE = tag("has_rattlesnake");
@@ -137,6 +138,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_GIANT_ISOPOD = tag("blacklist/blacklist_giant_isopod");
         public static final TagKey<Biome> BLACKLIST_GIRAFFE = tag("blacklist/blacklist_giraffe");
         public static final TagKey<Biome> BLACKLIST_HIPPO = tag("blacklist/blacklist_hippo");
+        public static final TagKey<Biome> BLACKLIST_JELLYFISH = tag("blacklist/blacklist_jellyfish");
         public static final TagKey<Biome> BLACKLIST_LION = tag("blacklist/blacklist_lion");
         public static final TagKey<Biome> BLACKLIST_LIZARD = tag("blacklist/blacklist_lizard");
         public static final TagKey<Biome> BLACKLIST_RATTLESNAKE = tag("blacklist/blacklist_rattlesnake");

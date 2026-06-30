@@ -7,6 +7,35 @@
     ],
     "subtitle": "naturalist.subtitles.entity.giant_isopod.roll"
   },
+  "entity.jellyfish.idle": {
+    "sounds": [
+      "naturalist:mob/jellyfish/idle1",
+      "naturalist:mob/jellyfish/idle2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.jellyfish.idle"
+  },
+  "entity.jellyfish.swim": {
+    "sounds": [
+      "naturalist:mob/jellyfish/swim1",
+      "naturalist:mob/jellyfish/swim2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.jellyfish.swim"
+  },
+  "entity.jellyfish.hurt": {
+    "sounds": [
+      "naturalist:mob/jellyfish/hurt1",
+      "naturalist:mob/jellyfish/hurt2",
+      "naturalist:mob/jellyfish/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.jellyfish.hurt"
+  },
+  "entity.jellyfish.death": {
+    "sounds": [
+      "naturalist:mob/jellyfish/death1",
+      "naturalist:mob/jellyfish/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.jellyfish.death"
+  },
   "entity.clam.ambient": {
     "sounds": [
       "naturalist:mob/clam/idle1",
