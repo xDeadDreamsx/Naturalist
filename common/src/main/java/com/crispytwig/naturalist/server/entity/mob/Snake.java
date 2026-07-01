@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
@@ -64,9 +65,10 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity, FollowingPet {
+public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity, FollowingPet, HuntingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private boolean followingOwner = true;
+    private int huntingCooldown;
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
     private static final Ingredient TAME_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
@@ -109,7 +111,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, livingEntity -> livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny())));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, livingEntity -> this.hasHuntingCooldown() && (livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny()))));
         this.targetSelector.addGoal(6, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
@@ -238,6 +240,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         super.readAdditionalSaveData(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
         FollowingPet.load(this, compound);
+        this.readHuntingCooldownSaveData(compound);
     }
 
     @Override
@@ -245,6 +248,26 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         super.addAdditionalSaveData(compound);
         this.addPersistentAngerSaveData(compound);
         FollowingPet.save(this, compound);
+        this.addHuntingCooldownSaveData(compound);
+    }
+
+    @Override
+    public int getHuntingCooldown() {
+        return this.huntingCooldown;
+    }
+
+    @Override
+    public void setHuntingCooldown(int ticks) {
+        this.huntingCooldown = ticks;
+    }
+
+    @Override
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
+        boolean result = super.killedEntity(level, killed);
+        if (result) {
+            this.startHuntingCooldown();
+        }
+        return result;
     }
 
     public boolean isEating() {
@@ -268,6 +291,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         super.aiStep();
         if (!this.level().isClientSide) {
             this.updatePersistentAnger((ServerLevel)this.level(), true);
+            this.tickHuntingCooldown();
         }
         if (this.isSleeping() || this.isImmobile() || this.isInSittingPose()) {
             this.jumping = false;

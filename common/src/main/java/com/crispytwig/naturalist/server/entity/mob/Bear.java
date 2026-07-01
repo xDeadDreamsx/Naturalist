@@ -2,7 +2,7 @@ package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
-import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
+import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
@@ -73,8 +73,9 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, SleepingAnimal, DyeableAnimal, FollowingPet {
+public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal {
     private boolean followingOwner = true;
+    private int huntingCooldown;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.BOOLEAN);
@@ -107,6 +108,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
     @Override
     public void customServerAiStep() {
         super.customServerAiStep();
+        this.tickHuntingCooldown();
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.25D);
         } else {
@@ -169,7 +171,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
         this.targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(2, new BearAttackPlayerNearBabiesGoal(this, Player.class, 20, false, true, null));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby()));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby() && this.hasHuntingCooldown()));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
@@ -240,6 +242,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
         }
         DyeableAnimal.loadDye(this, compound);
         FollowingPet.load(this, compound);
+        this.readHuntingCooldownSaveData(compound);
     }
 
     @Override
@@ -249,6 +252,26 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
         compound.putBoolean("Sheared", this.isSheared());
         DyeableAnimal.saveDye(this, compound);
         FollowingPet.save(this, compound);
+        this.addHuntingCooldownSaveData(compound);
+    }
+
+    @Override
+    public int getHuntingCooldown() {
+        return this.huntingCooldown;
+    }
+
+    @Override
+    public void setHuntingCooldown(int ticks) {
+        this.huntingCooldown = ticks;
+    }
+
+    @Override
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
+        boolean result = super.killedEntity(level, killed);
+        if (result) {
+            this.startHuntingCooldown();
+        }
+        return result;
     }
 
     @Override

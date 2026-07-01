@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.server.entity.base.EggLayingAnimal;
+import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.*;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
@@ -44,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
-public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, EggLayingAnimal {
+public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, EggLayingAnimal, HuntingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.ALLIGATOR_FOOD_ITEMS);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.BOOLEAN);
@@ -56,6 +57,7 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     protected static final RawAnimation BITE = RawAnimation.begin().thenPlay("animation.sf_nba.alligator.bite");
 
     int layEggCounter;
+    private int huntingCooldown;
 
     public Alligator(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
@@ -127,7 +129,7 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
             }
             return !this.isBaby() && isEntityNearAlligatorEggs;
         }));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity) -> !this.isBaby() && entity.getType().is(NaturalistTags.EntityTypes.ALLIGATOR_HOSTILES)));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity) -> !this.isBaby() && this.hasHuntingCooldown() && entity.getType().is(NaturalistTags.EntityTypes.ALLIGATOR_HOSTILES)));
     }
 
     @Override
@@ -201,12 +203,33 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("HasEgg", this.hasEgg());
+        this.addHuntingCooldownSaveData(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setHasEgg(compound.getBoolean("HasEgg"));
+        this.readHuntingCooldownSaveData(compound);
+    }
+
+    @Override
+    public int getHuntingCooldown() {
+        return this.huntingCooldown;
+    }
+
+    @Override
+    public void setHuntingCooldown(int ticks) {
+        this.huntingCooldown = ticks;
+    }
+
+    @Override
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
+        boolean result = super.killedEntity(level, killed);
+        if (result) {
+            this.startHuntingCooldown();
+        }
+        return result;
     }
 
     @Override
@@ -227,6 +250,9 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     public void aiStep() {
         super.aiStep();
+        if (!this.level().isClientSide) {
+            this.tickHuntingCooldown();
+        }
 
         BlockPos pos = this.blockPosition();
         if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {

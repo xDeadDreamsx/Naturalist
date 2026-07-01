@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
@@ -57,9 +58,10 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet {
+public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private boolean followingOwner = true;
+    private int huntingCooldown;
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_MANE = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.LION_FOOD_ITEMS);
@@ -134,7 +136,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         this.targetSelector.addGoal(3, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
                 entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby()
-                        && !this.isSleeping() && !this.isBaby() && this.level().isNight()));
+                        && !this.isSleeping() && !this.isBaby() && this.level().isNight() && this.hasHuntingCooldown()));
     }
 
     @Override
@@ -230,6 +232,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Mane", this.hasMane());
         FollowingPet.save(this, compound);
+        this.addHuntingCooldownSaveData(compound);
     }
 
     @Override
@@ -237,6 +240,26 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         super.readAdditionalSaveData(compound);
         this.setHasMane(compound.getBoolean("Mane"));
         FollowingPet.load(this, compound);
+        this.readHuntingCooldownSaveData(compound);
+    }
+
+    @Override
+    public int getHuntingCooldown() {
+        return this.huntingCooldown;
+    }
+
+    @Override
+    public void setHuntingCooldown(int ticks) {
+        this.huntingCooldown = ticks;
+    }
+
+    @Override
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
+        boolean result = super.killedEntity(level, killed);
+        if (result) {
+            this.startHuntingCooldown();
+        }
+        return result;
     }
 
     @Override
@@ -282,6 +305,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
 
     @Override
     public void customServerAiStep() {
+        this.tickHuntingCooldown();
         this.updateBabySpeed();
         if (this.getMoveControl().hasWanted()) {
             double speedModifier = this.getMoveControl().getSpeedModifier();

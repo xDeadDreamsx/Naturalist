@@ -1,17 +1,17 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -34,9 +34,9 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Catfish extends AbstractFish implements NaturalistGeoEntity {
+public class Catfish extends AbstractFish implements NaturalistGeoEntity, HuntingAnimal {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private static final EntityDataAccessor<Integer> KILL_COOLDOWN = SynchedEntityData.defineId(Catfish.class, EntityDataSerializers.INT);
+    private int huntingCooldown;
 
     protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.catfish.swim");
     protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.catfish.flop");
@@ -57,41 +57,49 @@ public class Catfish extends AbstractFish implements NaturalistGeoEntity {
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false)
         {
             public boolean canUse() {
-                return super.canUse() && !isBaby() && getKillCooldown() == 0;
-            }
-
-            public void stop() {
-                super.stop();
-                setKillCooldown(2400);
+                return super.canUse() && !isBaby();
             }
         });
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
-    }
-
-    @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(KILL_COOLDOWN, 0);
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> this.hasHuntingCooldown() && entity.getType().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("KillCooldown", this.getKillCooldown());
+        this.addHuntingCooldownSaveData(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setKillCooldown(compound.getInt("KillCooldown"));
+        this.readHuntingCooldownSaveData(compound);
     }
 
-    public void setKillCooldown(int ticks) {
-        this.entityData.set(KILL_COOLDOWN, ticks);
+    @Override
+    public int getHuntingCooldown() {
+        return this.huntingCooldown;
     }
 
-    public int getKillCooldown() {
-        return this.entityData.get(KILL_COOLDOWN);
+    @Override
+    public void setHuntingCooldown(int ticks) {
+        this.huntingCooldown = ticks;
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (!this.level().isClientSide) {
+            this.tickHuntingCooldown();
+        }
+    }
+
+    @Override
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
+        boolean result = super.killedEntity(level, killed);
+        if (result) {
+            this.startHuntingCooldown();
+        }
+        return result;
     }
 
     @Override

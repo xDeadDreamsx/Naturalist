@@ -3,10 +3,12 @@ package com.crispytwig.naturalist.server.entity.mob;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -23,6 +25,8 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -47,7 +51,7 @@ import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Anglerfish extends AbstractFish implements NaturalistGeoEntity {
+public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, HuntingAnimal {
     //region Data
     public static final int VARIANTS = 2;
     public static final String[] VARIANT_NAMES = {"red", "glow"};
@@ -56,6 +60,7 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity {
     private static final EntityDataAccessor<Boolean> DATA_HAS_TARGET = SynchedEntityData.defineId(Anglerfish.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private int huntingCooldown;
 
     public float xBodyRot;
     public float xBodyRotO;
@@ -68,10 +73,12 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity {
 
     public Anglerfish(EntityType<? extends AbstractFish> entityType, Level level) {
         super(entityType, level);
+        this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.1F, 0.5F, false);
+        this.lookControl = new SmoothSwimmingLookControl(this, 10);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.ATTACK_DAMAGE, 2.0D);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.ATTACK_DAMAGE, 2.0D).add(Attributes.MOVEMENT_SPEED, 1.2D);
     }
 
     @Override
@@ -105,12 +112,33 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity {
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("Variant", this.getVariant());
+        this.addHuntingCooldownSaveData(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setVariant(compound.getInt("Variant"));
+        this.readHuntingCooldownSaveData(compound);
+    }
+
+    @Override
+    public int getHuntingCooldown() {
+        return this.huntingCooldown;
+    }
+
+    @Override
+    public void setHuntingCooldown(int ticks) {
+        this.huntingCooldown = ticks;
+    }
+
+    @Override
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
+        boolean result = super.killedEntity(level, killed);
+        if (result) {
+            this.startHuntingCooldown();
+        }
+        return result;
     }
 
     @Override
@@ -178,11 +206,19 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity {
     //region Behavior
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.5D, true));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 2.2D, true) {
+            @Override
+            protected void checkAndPerformAttack(@NotNull LivingEntity target) {
+                if (this.isTimeToAttack() && this.mob.getBoundingBox().inflate(0.75D).intersects(target.getBoundingBox())) {
+                    this.resetAttackCooldown();
+                    this.mob.doHurtTarget(target);
+                }
+            }
+        });
         this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0D, 20));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false,
-                entity -> entity.getType().is(NaturalistTags.EntityTypes.ANGLERFISH_HOSTILES)));
+                entity -> this.hasHuntingCooldown() && entity.getType().is(NaturalistTags.EntityTypes.ANGLERFISH_HOSTILES)));
     }
 
     @Override
@@ -208,6 +244,7 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity {
         super.aiStep();
         if (!this.level().isClientSide) {
             this.entityData.set(DATA_HAS_TARGET, this.getTarget() != null);
+            this.tickHuntingCooldown();
         }
 
         this.xBodyRotO = this.xBodyRot;
