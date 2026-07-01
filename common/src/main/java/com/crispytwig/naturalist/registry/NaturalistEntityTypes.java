@@ -15,6 +15,7 @@ public class NaturalistEntityTypes {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, Naturalist.MOD_ID);
 
     public static final DeferredHolder<EntityType<?>, EntityType<Alligator>> ALLIGATOR = register("alligator", EntityType.Builder.of(Alligator::new, MobCategory.CREATURE).sized(1.8F, 0.8F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<Anglerfish>> ANGLERFISH = register("anglerfish", EntityType.Builder.of(Anglerfish::new, MobCategory.WATER_AMBIENT).sized(0.9F, 0.8F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Bass>> BASS = register("bass", EntityType.Builder.of(Bass::new, MobCategory.WATER_AMBIENT).sized(0.7F, 0.4F).clientTrackingRange(4));
     public static final DeferredHolder<EntityType<?>, EntityType<Bear>> BEAR = register("bear", EntityType.Builder.of(Bear::new, MobCategory.CREATURE).sized(1.4F, 1.7F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Bird>> BLUEJAY = register("bluejay", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));

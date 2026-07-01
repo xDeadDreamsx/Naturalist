@@ -18,6 +18,7 @@ public class NaturalistCreativeTab {
 
     private static final int[] STARFISH_TAB_ORDER = {3, 0, 2, 1};
     private static final int[] JELLYFISH_TAB_ORDER = {0, 1, 2, 3, 4};
+    private static final int[] ANGLERFISH_TAB_ORDER = {0, 1};
 
     @SuppressWarnings("unused")
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ITEM_GROUP = CREATIVE_MODE_TABS.register("item_group",
@@ -30,6 +31,8 @@ public class NaturalistCreativeTab {
                             acceptVariants(output, item, STARFISH_TAB_ORDER);
                         } else if (item == NaturalistRegistry.JELLYFISH_BUCKET.get()) {
                             acceptVariants(output, item, JELLYFISH_TAB_ORDER);
+                        } else if (item == NaturalistRegistry.ANGLERFISH_BUCKET.get()) {
+                            acceptVariants(output, item, ANGLERFISH_TAB_ORDER);
                         } else {
                             output.accept(item);
                         }

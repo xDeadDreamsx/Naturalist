@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class CaughtMobItem extends NoFluidMobBucketItem {
+public class CaughtMobItem extends NaturalistBucketItem {
     private final Supplier<? extends EntityType<?>> typeSup;
 
     private EntityType<?> type() {

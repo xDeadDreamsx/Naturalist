@@ -70,6 +70,7 @@ public class NaturalistTags {
         public static final TagKey<EntityType<?>> LION_HOSTILES = tag("lion_hostiles");
         public static final TagKey<EntityType<?>> VULTURE_HOSTILES = tag("vulture_hostiles");
         public static final TagKey<EntityType<?>> CATFISH_HOSTILES = tag("catfish_hostiles");
+        public static final TagKey<EntityType<?>> ANGLERFISH_HOSTILES = tag("anglerfish_hostiles");
         public static final TagKey<EntityType<?>> ALLIGATOR_HOSTILES = tag("alligator_hostiles");
         public static final TagKey<EntityType<?>> BOAR_HOSTILES = tag("boar_hostiles");
         public static final TagKey<EntityType<?>> ANIMAL_CRATE_BLACKLISTED = tag("animal_crate_blacklist");
@@ -83,6 +84,7 @@ public class NaturalistTags {
 
     public static class Biomes {
         public static final TagKey<Biome> HAS_ALLIGATOR = tag("has_alligator");
+        public static final TagKey<Biome> HAS_ANGLERFISH = tag("has_anglerfish");
         public static final TagKey<Biome> HAS_BASS = tag("has_bass");
         public static final TagKey<Biome> HAS_BEAR = tag("has_bear");
         public static final TagKey<Biome> HAS_BLUEJAY = tag("has_bluejay");
@@ -118,6 +120,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_ZEBRA = tag("has_zebra");
 
         public static final TagKey<Biome> BLACKLIST_ALLIGATOR = tag("blacklist/blacklist_alligator");
+        public static final TagKey<Biome> BLACKLIST_ANGLERFISH = tag("blacklist/blacklist_anglerfish");
         public static final TagKey<Biome> BLACKLIST_BASS = tag("blacklist/blacklist_bass");
         public static final TagKey<Biome> BLACKLIST_BEAR = tag("blacklist/blacklist_bear");
         public static final TagKey<Biome> BLACKLIST_BLUEJAY = tag("blacklist/blacklist_bluejay");

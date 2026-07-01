@@ -41,6 +41,10 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(EntityType.TADPOLE)
                 .add(NaturalistEntityTypes.BASS.get());
 
+        tag(NaturalistTags.EntityTypes.ANGLERFISH_HOSTILES)
+                .add(EntityType.TROPICAL_FISH)
+                .add(EntityType.COD);
+
         tag(NaturalistTags.EntityTypes.DEER_PREDATORS)
                 .add(NaturalistEntityTypes.BEAR.get())
                 .addOptional(ResourceLocation.fromNamespaceAndPath("alexsmobs", "grizzly_bear"))

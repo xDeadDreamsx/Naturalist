@@ -36,6 +36,39 @@
     ],
     "subtitle": "naturalist.subtitles.entity.jellyfish.death"
   },
+  "entity.anglerfish.idle": {
+    "sounds": [
+      "naturalist:mob/anglerfish/idle1",
+      "naturalist:mob/anglerfish/idle2",
+      "naturalist:mob/anglerfish/idle3",
+      "naturalist:mob/anglerfish/idle4",
+      "naturalist:mob/anglerfish/idle5"
+    ],
+    "subtitle": "naturalist.subtitles.entity.anglerfish.idle"
+  },
+  "entity.anglerfish.swim": {
+    "sounds": [
+      "naturalist:mob/anglerfish/swim1",
+      "naturalist:mob/anglerfish/swim2",
+      "naturalist:mob/anglerfish/swim3",
+      "naturalist:mob/anglerfish/swim4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.anglerfish.swim"
+  },
+  "entity.anglerfish.hurt": {
+    "sounds": [
+      "naturalist:mob/anglerfish/hurt1",
+      "naturalist:mob/anglerfish/hurt2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.anglerfish.hurt"
+  },
+  "entity.anglerfish.death": {
+    "sounds": [
+      "naturalist:mob/anglerfish/death1",
+      "naturalist:mob/anglerfish/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.anglerfish.death"
+  },
   "entity.clam.ambient": {
     "sounds": [
       "naturalist:mob/clam/idle1",
