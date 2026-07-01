@@ -18,6 +18,7 @@ import com.crispytwig.naturalist.server.entity.mob.Starfish;
 import com.crispytwig.naturalist.server.entity.mob.GiantIsopod;
 import com.crispytwig.naturalist.server.entity.mob.Jellyfish;
 import com.crispytwig.naturalist.server.entity.mob.Anglerfish;
+import com.crispytwig.naturalist.server.entity.mob.Ray;
 import com.crispytwig.naturalist.server.block.StarfishBlock;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
@@ -91,6 +92,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, NaturalistBucketItem> GIANT_ISOPOD_BUCKET = ITEMS.register("giant_isopod_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.GIANT_ISOPOD.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1), false, "tooltip.naturalist.giant_isopod_", GiantIsopod.VARIANT_NAMES));
     public static final DeferredHolder<Item, NaturalistBucketItem> ANGLERFISH_BUCKET = ITEMS.register("anglerfish_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.ANGLERFISH.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1), true, "tooltip.naturalist.anglerfish_", Anglerfish.VARIANT_NAMES));
     public static final DeferredHolder<Item, NaturalistBucketItem> JELLYFISH_BUCKET = ITEMS.register("jellyfish_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.JELLYFISH.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1), true, "color.minecraft.", Jellyfish.VARIANT_NAMES));
+    public static final DeferredHolder<Item, NaturalistBucketItem> RAY_BUCKET = ITEMS.register("ray_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.RAY.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1), true, "tooltip.naturalist.ray_", Ray.VARIANT_NAMES));
     public static final DeferredHolder<Block, StarfishBlock> RED_STARFISH = registerStarfishBlock("red_starfish");
     public static final DeferredHolder<Block, StarfishBlock> ORANGE_STARFISH = registerStarfishBlock("orange_starfish");
     public static final DeferredHolder<Block, StarfishBlock> BLUE_STARFISH = registerStarfishBlock("blue_starfish");
@@ -121,6 +123,7 @@ public class NaturalistRegistry {
 
     public static final DeferredHolder<Item, SpawnEggItem> ALLIGATOR_SPAWN_EGG = ITEMS.register("alligator_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.ALLIGATOR, 6184228, 13810273, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> ANGLERFISH_SPAWN_EGG = ITEMS.register("anglerfish_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.ANGLERFISH, 3029818, 15132298, new Item.Properties()));
+    public static final DeferredHolder<Item, SpawnEggItem> RAY_SPAWN_EGG = ITEMS.register("ray_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.RAY, 4873579, 12568015, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> BASS_SPAWN_EGG = ITEMS.register("bass_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.BASS, 8159273, 14729339, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> BEAR_SPAWN_EGG = ITEMS.register("bear_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.BEAR, 6569255, 13150577, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> BLUEJAY_SPAWN_EGG = ITEMS.register("bluejay_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.BLUEJAY, 2830129, 4289464, new Item.Properties()));

@@ -101,6 +101,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.DRAGONFLY.get(), Dragonfly.createAttributes());
         r.register(NaturalistEntityTypes.CATFISH.get(), Catfish.createAttributes());
         r.register(NaturalistEntityTypes.ANGLERFISH.get(), Anglerfish.createAttributes());
+        r.register(NaturalistEntityTypes.RAY.get(), Ray.createAttributes());
         r.register(NaturalistEntityTypes.ALLIGATOR.get(), Alligator.createAttributes());
         r.register(NaturalistEntityTypes.BASS.get(), Mob.createMobAttributes());
         r.register(NaturalistEntityTypes.LIZARD.get(), Lizard.createAttributes());
@@ -140,6 +141,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.DRAGONFLY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Dragonfly::checkDragonflySpawnRules);
         r.register(NaturalistEntityTypes.CATFISH.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
         r.register(NaturalistEntityTypes.ANGLERFISH.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Anglerfish::checkAnglerfishSpawnRules);
+        r.register(NaturalistEntityTypes.RAY.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
         r.register(NaturalistEntityTypes.ALLIGATOR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Alligator::checkAlligatorSpawnRules);
         r.register(NaturalistEntityTypes.BASS.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
         r.register(NaturalistEntityTypes.LIZARD.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
@@ -185,6 +187,7 @@ public final class Naturalist {
         DispenserBlock.registerBehavior(NaturalistRegistry.GIANT_ISOPOD_BUCKET.get(), bucketDispenseBehavior);
         DispenserBlock.registerBehavior(NaturalistRegistry.JELLYFISH_BUCKET.get(), bucketDispenseBehavior);
         DispenserBlock.registerBehavior(NaturalistRegistry.ANGLERFISH_BUCKET.get(), bucketDispenseBehavior);
+        DispenserBlock.registerBehavior(NaturalistRegistry.RAY_BUCKET.get(), bucketDispenseBehavior);
 
         DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET.get(), new DefaultDispenseItemBehavior() {
             public @NotNull ItemStack execute(@NotNull BlockSource source, @NotNull ItemStack stack) {
