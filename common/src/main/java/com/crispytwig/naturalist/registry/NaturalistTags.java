@@ -86,6 +86,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_ALLIGATOR = tag("has_alligator");
         public static final TagKey<Biome> HAS_ANGLERFISH = tag("has_anglerfish");
         public static final TagKey<Biome> HAS_RAY = tag("has_ray");
+        public static final TagKey<Biome> HAS_BLOBFISH = tag("has_blobfish");
         public static final TagKey<Biome> HAS_BASS = tag("has_bass");
         public static final TagKey<Biome> HAS_BEAR = tag("has_bear");
         public static final TagKey<Biome> HAS_BLUEJAY = tag("has_bluejay");
@@ -123,6 +124,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_ALLIGATOR = tag("blacklist/blacklist_alligator");
         public static final TagKey<Biome> BLACKLIST_ANGLERFISH = tag("blacklist/blacklist_anglerfish");
         public static final TagKey<Biome> BLACKLIST_RAY = tag("blacklist/blacklist_ray");
+        public static final TagKey<Biome> BLACKLIST_BLOBFISH = tag("blacklist/blacklist_blobfish");
         public static final TagKey<Biome> BLACKLIST_BASS = tag("blacklist/blacklist_bass");
         public static final TagKey<Biome> BLACKLIST_BEAR = tag("blacklist/blacklist_bear");
         public static final TagKey<Biome> BLACKLIST_BLUEJAY = tag("blacklist/blacklist_bluejay");

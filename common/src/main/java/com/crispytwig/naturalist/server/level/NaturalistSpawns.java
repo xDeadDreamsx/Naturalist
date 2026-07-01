@@ -22,6 +22,7 @@ public final class NaturalistSpawns {
         c.accept(NaturalistTags.Biomes.HAS_ALLIGATOR, NaturalistTags.Biomes.BLACKLIST_ALLIGATOR, MobCategory.CREATURE, NaturalistEntityTypes.ALLIGATOR.get(), 10, 2, 3);
         c.accept(NaturalistTags.Biomes.HAS_ANGLERFISH, NaturalistTags.Biomes.BLACKLIST_ANGLERFISH, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.ANGLERFISH.get(), 10, 1, 1);
         c.accept(NaturalistTags.Biomes.HAS_RAY, NaturalistTags.Biomes.BLACKLIST_RAY, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.RAY.get(), 8, 1, 2);
+        c.accept(NaturalistTags.Biomes.HAS_BLOBFISH, NaturalistTags.Biomes.BLACKLIST_BLOBFISH, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.BLOBFISH.get(), 6, 1, 1);
         c.accept(NaturalistTags.Biomes.HAS_BASS, NaturalistTags.Biomes.BLACKLIST_BASS, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.BASS.get(), 10, 3, 6);
         c.accept(NaturalistTags.Biomes.HAS_BEAR, NaturalistTags.Biomes.BLACKLIST_BEAR, MobCategory.CREATURE, NaturalistEntityTypes.BEAR.get(), 10, 1, 2);
         c.accept(NaturalistTags.Biomes.HAS_BLUEJAY, NaturalistTags.Biomes.BLACKLIST_BLUEJAY, MobCategory.CREATURE, NaturalistEntityTypes.BLUEJAY.get(), 10, 3, 4);

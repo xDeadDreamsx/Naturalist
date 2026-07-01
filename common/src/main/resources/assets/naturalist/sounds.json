@@ -100,6 +100,50 @@
     ],
     "subtitle": "naturalist.subtitles.entity.ray.death"
   },
+  "entity.blobfish.flop": {
+    "sounds": [
+      {
+        "name": "minecraft:entity/pufferfish/flop1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:entity/pufferfish/flop2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:entity/pufferfish/flop3",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:entity/pufferfish/flop4",
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "naturalist.subtitles.entity.blobfish.flop"
+  },
+  "entity.blobfish.swim": {
+    "sounds": [
+      "naturalist:mob/blobfish/swim1",
+      "naturalist:mob/blobfish/swim2",
+      "naturalist:mob/blobfish/swim3",
+      "naturalist:mob/blobfish/swim4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.blobfish.swim"
+  },
+  "entity.blobfish.hurt": {
+    "sounds": [
+      "naturalist:mob/blobfish/hurt1",
+      "naturalist:mob/blobfish/hurt2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.blobfish.hurt"
+  },
+  "entity.blobfish.death": {
+    "sounds": [
+      "naturalist:mob/blobfish/death1",
+      "naturalist:mob/blobfish/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.blobfish.death"
+  },
   "entity.clam.ambient": {
     "sounds": [
       "naturalist:mob/clam/idle1",

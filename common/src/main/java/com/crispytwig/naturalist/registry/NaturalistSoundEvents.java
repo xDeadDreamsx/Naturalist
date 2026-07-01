@@ -140,6 +140,10 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_SWIM = register("entity.ray.swim");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_HURT = register("entity.ray.hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_DEATH = register("entity.ray.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOBFISH_FLOP = register("entity.blobfish.flop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOBFISH_SWIM = register("entity.blobfish.swim");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOBFISH_HURT = register("entity.blobfish.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOBFISH_DEATH = register("entity.blobfish.death");
     public static final DeferredHolder<SoundEvent, SoundEvent> CLAM_AMBIENT = register("entity.clam.ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> CLAM_HURT = register("entity.clam.hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> CLAM_DEATH = register("entity.clam.death");
