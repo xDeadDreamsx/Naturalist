@@ -47,8 +47,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
 public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, Catchable {
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    //region Data
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Caterpillar.class, EntityDataSerializers.BOOLEAN);
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.caterpillar.idle");
     protected static final RawAnimation CRAWL = RawAnimation.begin().thenLoop("animation.sf_nba.caterpillar.crawl");
@@ -62,74 +64,25 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
     }
 
     @Override
-    protected void registerGoals() {
-        super.registerGoals();
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new CocoonGoal(this, 1.0F, 5, 2));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0F));
-    }
-
-    @Override
-    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.setAge(0);
-        return super.finalizeSpawn(level, difficulty, reason, spawnData);
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return null;
-    }
-
-    @Override
-    protected float getClimbSpeedMultiplier() {
-        return 0.5F;
-    }
-
-    @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return this.isBaby() && stack.is(ItemTags.FLOWERS);
-    }
-
-    @Override
-    public float getScale() {
-        return 1.0f;
-    }
-
-    @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
-        return false;
-    }
-
-    @Override
-    protected void checkFallDamage(double y, boolean onGround, @NotNull BlockState state, @NotNull BlockPos pos) {
-    }
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Caterpillar> PlayState predicate(final AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            {
-                event.getController().setAnimation(CRAWL);
-                return PlayState.CONTINUE;
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            return PlayState.CONTINUE;
-        }
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-    }
-
-    @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(FROM_HAND, false);
+    }
+
+    public boolean fromHand() {
+        return this.entityData.get(FROM_HAND);
+    }
+
+    public void setFromHand(boolean fromHand) {
+        this.entityData.set(FROM_HAND, fromHand);
+    }
+
+    public boolean requiresCustomPersistence() {
+        return super.requiresCustomPersistence() || this.fromHand();
+    }
+
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return !this.hasCustomName();
     }
 
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
@@ -157,26 +110,6 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
         }
     }
 
-    public boolean fromHand() {
-        return this.entityData.get(FROM_HAND);
-    }
-
-    public void setFromHand(boolean fromHand) {
-        this.entityData.set(FROM_HAND, fromHand);
-    }
-
-    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
-        return Catchable.catchAnimal(player, hand, this, true).orElse(super.mobInteract(player, hand));
-    }
-
-    public boolean requiresCustomPersistence() {
-        return super.requiresCustomPersistence() || this.fromHand();
-    }
-
-    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.hasCustomName();
-    }
-
     public ItemStack getCaughtItemStack() {
         return new ItemStack(NaturalistRegistry.CATERPILLAR.get());
     }
@@ -184,6 +117,58 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
     @Override
     public SoundEvent getPickupSound() {
         return null;
+    }
+    //endregion
+
+    //region Spawning
+    @Override
+    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        this.setAge(0);
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
+    }
+
+    @Override
+    public boolean isFood(@NotNull ItemStack stack) {
+        return this.isBaby() && stack.is(ItemTags.FLOWERS);
+    }
+
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
+        return null;
+    }
+    //endregion
+
+    //region Behavior
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new CocoonGoal(this, 1.0F, 5, 2));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0F));
+    }
+
+    @Override
+    protected float getClimbSpeedMultiplier() {
+        return 0.5F;
+    }
+
+    @Override
+    public float getScale() {
+        return 1.0f;
+    }
+
+    @Override
+    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+        return false;
+    }
+
+    @Override
+    protected void checkFallDamage(double y, boolean onGround, @NotNull BlockState state, @NotNull BlockPos pos) {
+    }
+
+    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
+        return Catchable.catchAnimal(player, hand, this, true).orElse(super.mobInteract(player, hand));
     }
 
     private static class CocoonGoal extends MoveToBlockGoal {
@@ -249,4 +234,29 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
             return logPos.above();
         }
     }
+    //endregion
+
+    //region Animation
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    protected <E extends Caterpillar> PlayState predicate(final AnimationState<E> event) {
+        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+            {
+                event.getController().setAnimation(CRAWL);
+                return PlayState.CONTINUE;
+            }
+        } else {
+            event.getController().setAnimation(IDLE);
+            return PlayState.CONTINUE;
+        }
+    }
+
+    @Override
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+    }
+    //endregion
 }

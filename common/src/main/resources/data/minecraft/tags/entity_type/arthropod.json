@@ -3,7 +3,9 @@
   "values": [
     "naturalist:butterfly",
     "naturalist:caterpillar",
+    "naturalist:crab",
     "naturalist:dragonfly",
-    "naturalist:firefly"
+    "naturalist:firefly",
+    "naturalist:giant_isopod"
   ]
 }

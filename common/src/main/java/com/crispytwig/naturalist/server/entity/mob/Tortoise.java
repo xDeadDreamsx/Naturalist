@@ -19,7 +19,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -41,7 +40,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
@@ -59,14 +57,17 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, HidingAnimal, EggLayingAnimal, FollowingPet {
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private boolean followingOwner = true;
+    //region Data
     private static final Ingredient TEMPT_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS);
+
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
+
+    private boolean followingOwner = true;
     int layEggCounter;
-    boolean isDigging;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.tortoise.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.tortoise.walk");
@@ -83,22 +84,122 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.17f).add(Attributes.MAX_HEALTH, 20.0).add(Attributes.ATTACK_DAMAGE, 2.0).add(Attributes.KNOCKBACK_RESISTANCE, 0.6);
     }
 
-    @Nullable
     @Override
-    protected SoundEvent getAmbientSound() {
-        return this.isBaby() ? NaturalistSoundEvents.TORTOISE_AMBIENT_BABY.get() : NaturalistSoundEvents.TORTOISE_AMBIENT.get();
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(VARIANT_ID, 0);
+        builder.define(HAS_EGG, false);
+        builder.define(LAYING_EGG, false);
     }
 
-    @Nullable
-    @Override
-    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return this.isBaby() ? NaturalistSoundEvents.TORTOISE_HURT_BABY.get() : NaturalistSoundEvents.TORTOISE_HURT.get();
+    public int getVariant() {
+        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 2);
     }
 
-    @Nullable
+    public void setVariant(int variant) {
+        this.entityData.set(VARIANT_ID, variant);
+    }
+
     @Override
-    protected SoundEvent getDeathSound() {
-        return this.isBaby() ? NaturalistSoundEvents.TORTOISE_DEATH_BABY.get() : NaturalistSoundEvents.TORTOISE_DEATH.get();
+    public boolean hasEgg() {
+        return this.entityData.get(HAS_EGG);
+    }
+
+    @Override
+    public void setHasEgg(boolean hasEgg) {
+        this.entityData.set(HAS_EGG, hasEgg);
+    }
+
+    @Override
+    public boolean isLayingEgg() {
+        return this.entityData.get(LAYING_EGG);
+    }
+
+    @Override
+    public void setLayingEgg(boolean isLayingEgg) {
+        this.entityData.set(LAYING_EGG, isLayingEgg);
+    }
+
+    @Override
+    public int getLayEggCounter() {
+        return this.layEggCounter;
+    }
+
+    @Override
+    public void setLayEggCounter(int layEggCounter) {
+        this.layEggCounter = layEggCounter;
+    }
+
+    @Override
+    public Block getEggBlock() {
+        return NaturalistRegistry.TORTOISE_EGG.get();
+    }
+
+    @Override
+    public TagKey<Block> getEggLayableBlockTag() {
+        return NaturalistTags.BlockTags.TORTOISE_EGG_LAYABLE_ON;
+    }
+
+    @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt("Variant", this.getVariant());
+        compound.putBoolean("HasEgg", this.hasEgg());
+        FollowingPet.save(this, compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.setVariant(compound.getInt("Variant"));
+        this.setHasEgg(compound.getBoolean("HasEgg"));
+        FollowingPet.load(this, compound);
+    }
+    //endregion
+
+    //region Spawning
+    @Override
+    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        Holder<Biome> holder = level.getBiome(this.blockPosition());
+        if (holder.is(Biomes.SWAMP) || holder.is(Biomes.MANGROVE_SWAMP)) {
+            this.setVariant(1);
+        } else if (holder.is(BiomeTags.IS_JUNGLE) || holder.is(Biomes.DARK_FOREST)) {
+            this.setVariant(2);
+        } else {
+            this.setVariant(0);
+        }
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
+    }
+
+    @Override
+    public boolean isFood(@NotNull ItemStack stack) {
+        return TEMPT_ITEMS.test(stack);
+    }
+
+    @Override
+    public boolean canMate(@NotNull Animal otherAnimal) {
+        if (!this.isTame()) {
+            return false;
+        }
+        if (!(otherAnimal instanceof Tortoise tortoise)) {
+            return false;
+        }
+        return tortoise.isTame() && super.canMate(otherAnimal);
+    }
+
+    @Override
+    public boolean canFallInLove() {
+        return super.canFallInLove() && !this.hasEgg();
     }
 
     @Nullable
@@ -116,32 +217,9 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         }
         return tortoise;
     }
+    //endregion
 
-    @Override
-    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        Holder<Biome> holder = level.getBiome(this.blockPosition());
-        if (holder.is(Biomes.SWAMP) || holder.is(Biomes.MANGROVE_SWAMP)) {
-            this.setVariant(1);
-        } else if (holder.is(BiomeTags.IS_JUNGLE) || holder.is(Biomes.DARK_FOREST)) {
-            this.setVariant(2);
-        } else {
-            this.setVariant(0);
-        }
-        return super.finalizeSpawn(level, difficulty, reason, spawnData);
-    }
-
-    @Override
-    public void setTame(boolean tamed, boolean applyTameEffects) {
-        super.setTame(tamed, applyTameEffects);
-        if (tamed) {
-            Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(30.0);
-            this.setHealth(30.0f);
-        } else {
-            Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20.0);
-        }
-        Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(4.0);
-    }
-
+    //region Behavior
     @Override
     protected void registerGoals() {
         super.registerGoals();
@@ -158,29 +236,22 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     }
 
     @Override
-    public boolean canMate(@NotNull Animal otherAnimal) {
-        if (!this.isTame()) {
+    protected float getWaterSlowDown() {
+        return 0.96f;
+    }
+
+    @Override
+    public double getFluidJumpThreshold() {
+        return 0.4;
+    }
+
+    @Override
+    public boolean canHide() {
+        if (this.isTame()) {
             return false;
         }
-        if (!(otherAnimal instanceof Tortoise tortoise)) {
-            return false;
-        }
-        return tortoise.isTame() && super.canMate(otherAnimal);
-    }
-
-    @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return TEMPT_ITEMS.test(stack);
-    }
-
-    @Override
-    public boolean isFollowingOwner() {
-        return this.followingOwner;
-    }
-
-    @Override
-    public void setFollowingOwner(boolean following) {
-        this.followingOwner = following;
+        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector(livingEntity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity) && !livingEntity.isDiscrete() && !livingEntity.isHolding(TEMPT_ITEMS)), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
+        return !players.isEmpty();
     }
 
     @Override
@@ -196,6 +267,18 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
         return super.hurt(source, this.canHide() ? amount * 0.8F : amount);
+    }
+
+    @Override
+    public void setTame(boolean tamed, boolean applyTameEffects) {
+        super.setTame(tamed, applyTameEffects);
+        if (tamed) {
+            Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(30.0);
+            this.setHealth(30.0f);
+        } else {
+            Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20.0);
+        }
+        Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(4.0);
     }
 
     @Override
@@ -248,61 +331,34 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     }
 
     @Override
-    public boolean canHide() {
-        if (this.isTame()) {
-            return false;
+    public void aiStep() {
+        super.aiStep();
+        BlockPos pos = this.blockPosition();
+        if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
+            this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
         }
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector(livingEntity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity) && !livingEntity.isDiscrete() && !livingEntity.isHolding(TEMPT_ITEMS)), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
-        return !players.isEmpty();
     }
 
+    @Nullable
     @Override
-    protected float getWaterSlowDown() {
-        return 0.96f;
+    protected SoundEvent getAmbientSound() {
+        return this.isBaby() ? NaturalistSoundEvents.TORTOISE_AMBIENT_BABY.get() : NaturalistSoundEvents.TORTOISE_AMBIENT.get();
     }
 
+    @Nullable
     @Override
-    public double getFluidJumpThreshold() {
-        return 0.4;
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return this.isBaby() ? NaturalistSoundEvents.TORTOISE_HURT_BABY.get() : NaturalistSoundEvents.TORTOISE_HURT.get();
     }
 
-    public int getVariant() {
-        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 2);
-    }
-
-    public void setVariant(int variant) {
-        this.entityData.set(VARIANT_ID, variant);
-    }
-
+    @Nullable
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(VARIANT_ID, 0);
-        builder.define(HAS_EGG, false);
-        builder.define(LAYING_EGG, false);
+    protected SoundEvent getDeathSound() {
+        return this.isBaby() ? NaturalistSoundEvents.TORTOISE_DEATH_BABY.get() : NaturalistSoundEvents.TORTOISE_DEATH.get();
     }
+    //endregion
 
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
-        compound.putBoolean("HasEgg", this.hasEgg());
-        FollowingPet.save(this, compound);
-    }
-
-    @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
-        this.setHasEgg(compound.getBoolean("HasEgg"));
-        FollowingPet.load(this, compound);
-    }
-
-    @Override
-    protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
-        super.playStepSound(pos, state);
-    }
-
+    //region Animation
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
@@ -348,13 +404,6 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         return PlayState.STOP;
     }
 
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "hurtController", 5, this::hurtPredicate));
-        controllers.add(new AnimationController<>(this, "hideController", 0, this::hidePredicate).setSoundKeyframeHandler(this::soundListener));
-    }
-
     private void soundListener(SoundKeyframeEvent<Tortoise> event) {
         Tortoise animatable = event.getAnimatable();
         if (animatable.level().isClientSide) {
@@ -368,56 +417,10 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     }
 
     @Override
-    public boolean hasEgg() {
-        return this.entityData.get(HAS_EGG);
+    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new AnimationController<>(this, "hurtController", 5, this::hurtPredicate));
+        controllers.add(new AnimationController<>(this, "hideController", 0, this::hidePredicate).setSoundKeyframeHandler(this::soundListener));
     }
-
-    @Override
-    public void setHasEgg(boolean hasEgg) {
-        this.entityData.set(HAS_EGG, hasEgg);
-    }
-
-    @Override
-    public boolean isLayingEgg() {
-        return this.entityData.get(LAYING_EGG);
-    }
-
-    @Override
-    public void setLayingEgg(boolean isLayingEgg) {
-        this.entityData.set(LAYING_EGG, isLayingEgg);
-    }
-
-    @Override
-    public int getLayEggCounter() {
-        return this.layEggCounter;
-    }
-
-    @Override
-    public void setLayEggCounter(int layEggCounter) {
-        this.layEggCounter = layEggCounter;
-    }
-
-    @Override
-    public Block getEggBlock() {
-        return NaturalistRegistry.TORTOISE_EGG.get();
-    }
-
-    @Override
-    public TagKey<Block> getEggLayableBlockTag() {
-        return NaturalistTags.BlockTags.TORTOISE_EGG_LAYABLE_ON;
-    }
-
-    @Override
-    public boolean canFallInLove() {
-        return super.canFallInLove() && !this.hasEgg();
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
-        BlockPos pos = this.blockPosition();
-        if (this.isAlive() && this.isLayingEgg() && this.layEggCounter >= 1 && this.layEggCounter % 5 == 0 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
-            this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
-        }
-    }
+    //endregion
 }

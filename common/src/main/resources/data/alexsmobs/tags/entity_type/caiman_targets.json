@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "naturalist:bass",
+    "naturalist:bluejay",
+    "naturalist:canary",
+    "naturalist:cardinal",
+    "naturalist:duck",
+    "naturalist:finch",
+    "naturalist:piranha",
+    "naturalist:robin",
+    "naturalist:snail",
+    "naturalist:sparrow"
+  ]
+}

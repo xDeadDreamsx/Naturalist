@@ -46,9 +46,11 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
 public class Firefly extends NaturalistAnimal implements FlyingAnimal, NaturalistGeoEntity {
+    //region Data
     private static final EntityDataAccessor<Integer> GLOW_TICKS_REMAINING = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> GLOW_START_TICK = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> SUN_TICKS = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
+
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.firefly.fly");
@@ -63,53 +65,8 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
         this.setPathfindingMalus(PathType.FENCE, -1.0F);
     }
 
-    @Override
-    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
-        FlyingPathNavigation navigation = new FlyingPathNavigation(this, level) {
-            public boolean isStableDestination(BlockPos pos) {
-                return !level().getBlockState(pos.below()).isAir();
-            }
-        };
-        navigation.setCanOpenDoors(false);
-        navigation.setCanFloat(false);
-        navigation.setCanPassDoors(true);
-        return navigation;
-    }
-
-    @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
-        return false;
-    }
-
-    @Override
-    protected void checkFallDamage(double y, boolean onGround, @NotNull BlockState state, @NotNull BlockPos pos) {
-    }
-
-    @Override
-    protected void registerGoals() {
-        super.registerGoals();
-        this.goalSelector.addGoal(1, new FireflyHideInGrassGoal(this, 1.2F, 10, 4));
-        this.goalSelector.addGoal(2, new FlyingWanderGoal(this));
-        this.goalSelector.addGoal(3, new FloatGoal(this));
-    }
-
     public static AttributeSupplier.@NotNull Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0D).add(Attributes.FLYING_SPEED, 0.6F).add(Attributes.MOVEMENT_SPEED, 0.3F);
-    }
-
-    public static boolean checkFireflySpawnRules(EntityType<? extends Firefly> type, ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
-        return Monster.isDarkEnoughToSpawn(level, pos, random) && level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.FIREFLIES_SPAWNABLE_ON);
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return null;
-    }
-
-    @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return false;
     }
 
     @Override
@@ -149,6 +106,70 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
 
     private void setSunTicks(int ticks) {
         this.entityData.set(SUN_TICKS, ticks);
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return !this.hasCustomName();
+    }
+    //endregion
+
+    //region Spawning
+    public static boolean checkFireflySpawnRules(EntityType<? extends Firefly> type, ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
+        return Monster.isDarkEnoughToSpawn(level, pos, random) && level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.FIREFLIES_SPAWNABLE_ON);
+    }
+
+    @Override
+    public boolean isFood(@NotNull ItemStack stack) {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
+        return null;
+    }
+    //endregion
+
+    //region Behavior
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(1, new FireflyHideInGrassGoal(this, 1.2F, 10, 4));
+        this.goalSelector.addGoal(2, new FlyingWanderGoal(this));
+        this.goalSelector.addGoal(3, new FloatGoal(this));
+    }
+
+    @Override
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
+        FlyingPathNavigation navigation = new FlyingPathNavigation(this, level) {
+            public boolean isStableDestination(BlockPos pos) {
+                return !level().getBlockState(pos.below()).isAir();
+            }
+        };
+        navigation.setCanOpenDoors(false);
+        navigation.setCanFloat(false);
+        navigation.setCanPassDoors(true);
+        return navigation;
+    }
+
+    @Override
+    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+        return false;
+    }
+
+    @Override
+    protected void checkFallDamage(double y, boolean onGround, @NotNull BlockState state, @NotNull BlockPos pos) {
+    }
+
+    @Override
+    public boolean isFlapping() {
+        return this.isFlying() && this.tickCount % Mth.ceil(1.4959966F) == 0;
+    }
+
+    @Override
+    public boolean isFlying() {
+        return true;
     }
 
     @Override
@@ -201,21 +222,6 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
         return false;
     }
 
-    @Override
-    public boolean isFlapping() {
-        return this.isFlying() && this.tickCount % Mth.ceil(1.4959966F) == 0;
-    }
-
-    @Override
-    public boolean isFlying() {
-        return true;
-    }
-
-    @Override
-    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !this.hasCustomName();
-    }
-
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
@@ -232,25 +238,6 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
     @Override
     protected SoundEvent getDeathSound() {
         return NaturalistSoundEvents.FIREFLY_DEATH.get();
-    }
-
-    @Override
-    public double getBoneResetTime() {
-        return 2;
-    }
-
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Firefly> PlayState predicate(final AnimationState<E> event) {
-        event.getController().setAnimation(FLY);
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 2, this::predicate));
     }
 
     static class FireflyHideInGrassGoal extends MoveToBlockGoal {
@@ -289,4 +276,26 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
             return this.blockPos;
         }
     }
+    //endregion
+
+    //region Animation
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    @Override
+    public double getBoneResetTime() {
+        return 2;
+    }
+
+    private <E extends Firefly> PlayState predicate(final AnimationState<E> event) {
+        event.getController().setAnimation(FLY);
+        return PlayState.CONTINUE;
+    }
+
+    @Override
+    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 2, this::predicate));
+    }
+    //endregion
 }

@@ -1,17 +1,11 @@
 package com.crispytwig.naturalist.client.renderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.crispytwig.naturalist.client.model.DragonflyModel;
 import com.crispytwig.naturalist.server.entity.mob.Dragonfly;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
@@ -25,9 +19,5 @@ public class DragonflyRenderer extends GeoEntityRenderer<Dragonfly> {
     @Override
     public float getMotionAnimThreshold(Dragonfly animatable) {
         return 0.000001f;
-    }
-
-   public RenderType getRenderType(Dragonfly entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, @NotNull ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
     }
 }

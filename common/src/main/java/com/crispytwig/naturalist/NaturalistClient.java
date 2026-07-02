@@ -73,6 +73,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.ANGLERFISH.get(), AnglerfishRenderer::new);
         r.register(NaturalistEntityTypes.RAY.get(), RayRenderer::new);
         r.register(NaturalistEntityTypes.BLOBFISH.get(), BlobfishRenderer::new);
+        r.register(NaturalistEntityTypes.PIRANHA.get(), PiranhaRenderer::new);
     }
 
     @FunctionalInterface

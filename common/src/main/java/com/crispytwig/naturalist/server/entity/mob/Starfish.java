@@ -1,11 +1,10 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.base.VariantBucketable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -17,6 +16,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -29,7 +29,6 @@ import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +42,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Bucketable {
+public class Starfish extends WaterAnimal implements NaturalistGeoEntity, VariantBucketable {
     //region Data
     public static final int VARIANTS = 4;
     public static final String[] VARIANT_NAMES = {"orange", "purple", "blue", "red"};
@@ -70,16 +69,19 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Bucket
         builder.define(FROM_BUCKET, false);
     }
 
+    @Override
     public int getVariant() {
         return this.entityData.get(DATA_VARIANT);
     }
 
+    @Override
     public void setVariant(int variant) {
         this.entityData.set(DATA_VARIANT, variant);
     }
 
-    public String getVariantName() {
-        return VARIANT_NAMES[Math.floorMod(this.getVariant(), VARIANTS)];
+    @Override
+    public String[] getVariantNames() {
+        return VARIANT_NAMES;
     }
 
     @Override
@@ -117,23 +119,6 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Bucket
     }
 
     @Override
-    public void saveToBucketTag(@NotNull ItemStack stack) {
-        Bucketable.saveDefaultDataToBucketTag(this, stack);
-        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag -> tag.putInt("Variant", this.getVariant()));
-        CompoundTag custom = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        custom.putInt("Variant", this.getVariant());
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(custom));
-    }
-
-    @Override
-    public void loadFromBucketTag(@NotNull CompoundTag tag) {
-        Bucketable.loadDefaultDataFromBucketTag(this, tag);
-        if (tag.contains("Variant")) {
-            this.setVariant(tag.getInt("Variant"));
-        }
-    }
-
-    @Override
     public @NotNull ItemStack getBucketItemStack() {
         return new ItemStack(NaturalistRegistry.STARFISH_BUCKET.get());
     }
@@ -153,7 +138,7 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Bucket
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull net.minecraft.world.DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
         if (reason != MobSpawnType.BUCKET) {
             this.setVariant(this.random.nextInt(VARIANTS));
         }

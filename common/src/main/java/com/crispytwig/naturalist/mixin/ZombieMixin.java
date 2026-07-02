@@ -1,8 +1,8 @@
 package com.crispytwig.naturalist.mixin;
 
-import com.crispytwig.naturalist.server.entity.ai.goal.AttackAlligatorEggGoal;
-import com.crispytwig.naturalist.server.entity.ai.goal.AttackTortoiseEggGoal;
+import com.crispytwig.naturalist.server.entity.ai.goal.AttackEggGoal;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
+import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
@@ -22,7 +22,7 @@ public class ZombieMixin extends Monster {
     @Inject(at = @At("HEAD"), method = "registerGoals")
     @SuppressWarnings("unused")
     private void registerGoals(CallbackInfo info) {
-        this.goalSelector.addGoal(2, new AttackAlligatorEggGoal(NaturalistRegistry.ALLIGATOR_EGG.get(), this, 1.0D, 3));
-        this.goalSelector.addGoal(2, new AttackTortoiseEggGoal(NaturalistRegistry.TORTOISE_EGG.get(), this, 1.0D, 3));
+        this.goalSelector.addGoal(2, new AttackEggGoal(NaturalistRegistry.ALLIGATOR_EGG.get(), NaturalistSoundEvents.GATOR_EGG_BREAK.get(), this, 1.0D, 3));
+        this.goalSelector.addGoal(2, new AttackEggGoal(NaturalistRegistry.TORTOISE_EGG.get(), NaturalistSoundEvents.TORTOISE_EGG_BREAK.get(), this, 1.0D, 3));
     }
 }

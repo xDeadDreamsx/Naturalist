@@ -40,7 +40,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
@@ -59,14 +58,19 @@ import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
 public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal {
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private boolean followingOwner = true;
-    private int huntingCooldown;
-    private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> HAS_MANE = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
+    //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.LION_FOOD_ITEMS);
     private static final ResourceLocation BABY_SPEED_BOOST_ID = ResourceLocation.fromNamespaceAndPath("naturalist", "baby_speed_boost");
     private static final AttributeModifier BABY_SPEED_BOOST = new AttributeModifier(BABY_SPEED_BOOST_ID, 0.05D, AttributeModifier.Operation.ADD_VALUE);
+
+    private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> HAS_MANE = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
+
+    private boolean followingOwner = true;
+    private int huntingCooldown;
+    private boolean wasSitting;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.lion.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.lion.walk");
@@ -77,8 +81,6 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     protected static final RawAnimation SLEEP2 = RawAnimation.begin().thenLoop("animation.sf_nba.lion.sleep2");
     protected static final RawAnimation SIT = RawAnimation.begin().thenPlay("animation.sf_nba.lion.sit").thenLoop("animation.sf_nba.lion.sit_idle");
     protected static final RawAnimation UNSIT = RawAnimation.begin().thenPlay("animation.sf_nba.lion.unsit");
-
-    private boolean wasSitting;
 
     public Lion(@NotNull EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -92,6 +94,69 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
                 .add(Attributes.STEP_HEIGHT, 1.0D);
     }
 
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SLEEPING, false);
+        builder.define(HAS_MANE, false);
+    }
+
+    @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public int getHuntingCooldown() {
+        return this.huntingCooldown;
+    }
+
+    @Override
+    public void setHuntingCooldown(int ticks) {
+        this.huntingCooldown = ticks;
+    }
+
+    @Override
+    public void setSleeping(boolean sleeping) {
+        this.entityData.set(SLEEPING, sleeping);
+    }
+
+    @Override
+    public boolean isSleeping() {
+        return this.entityData.get(SLEEPING);
+    }
+
+    public void setHasMane(boolean hasMane) {
+        this.entityData.set(HAS_MANE, hasMane);
+    }
+
+    public boolean hasMane() {
+        return this.entityData.get(HAS_MANE);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putBoolean("Mane", this.hasMane());
+        FollowingPet.save(this, compound);
+        this.addHuntingCooldownSaveData(compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.setHasMane(compound.getBoolean("Mane"));
+        FollowingPet.load(this, compound);
+        this.readHuntingCooldownSaveData(compound);
+    }
+    //endregion
+
+    //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
         super.finalizeSpawn(level, difficulty, reason, spawnData);
@@ -109,12 +174,25 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         return spawnData;
     }
 
+    @Override
+    public boolean isFood(@NotNull ItemStack stack) {
+        return FOOD_ITEMS.test(stack);
+    }
+
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         return NaturalistEntityTypes.LION.get().create(serverLevel);
     }
 
+    @Override
+    protected void ageBoundaryReached() {
+        super.ageBoundaryReached();
+        this.setHasMane(this.getRandom().nextBoolean());
+    }
+    //endregion
+
+    //region Behavior
     @Override
     protected void registerGoals() {
         super.registerGoals();
@@ -140,18 +218,8 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     }
 
     @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
-    }
-
-    @Override
-    public boolean isFollowingOwner() {
-        return this.followingOwner;
-    }
-
-    @Override
-    public void setFollowingOwner(boolean following) {
-        this.followingOwner = following;
+    public boolean isSteppingCarefully() {
+        return this.isCrouching() || super.isSteppingCarefully();
     }
 
     @Override
@@ -161,6 +229,15 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
             return false;
         }
         return super.canAttack(target);
+    }
+
+    @Override
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
+        boolean result = super.killedEntity(level, killed);
+        if (result) {
+            this.startHuntingCooldown();
+        }
+        return result;
     }
 
     @Override
@@ -221,85 +298,12 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(SLEEPING, false);
-        builder.define(HAS_MANE, false);
-    }
-
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putBoolean("Mane", this.hasMane());
-        FollowingPet.save(this, compound);
-        this.addHuntingCooldownSaveData(compound);
-    }
-
-    @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.setHasMane(compound.getBoolean("Mane"));
-        FollowingPet.load(this, compound);
-        this.readHuntingCooldownSaveData(compound);
-    }
-
-    @Override
-    public int getHuntingCooldown() {
-        return this.huntingCooldown;
-    }
-
-    @Override
-    public void setHuntingCooldown(int ticks) {
-        this.huntingCooldown = ticks;
-    }
-
-    @Override
-    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
-        boolean result = super.killedEntity(level, killed);
-        if (result) {
-            this.startHuntingCooldown();
-        }
-        return result;
-    }
-
-    @Override
     public void aiStep() {
         super.aiStep();
         if (this.isSleeping() || this.isImmobile()) {
             this.jumping = false;
             this.xxa = 0.0F;
             this.zza = 0.0F;
-        }
-    }
-
-    @Override
-    protected void ageBoundaryReached() {
-        super.ageBoundaryReached();
-        this.setHasMane(this.getRandom().nextBoolean());
-    }
-
-    @Override
-    public boolean canSleep() {
-        long dayTime = this.level().getDayTime();
-        if (this.isTame() || this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
-            return false;
-        } else {
-            return dayTime > 6000 && dayTime < 13000;
-        }
-    }
-
-    private void updateBabySpeed() {
-        AttributeInstance speed = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speed == null) {
-            return;
-        }
-        boolean hasBoost = speed.hasModifier(BABY_SPEED_BOOST_ID);
-        if (this.isBaby()) {
-            if (!hasBoost) {
-                speed.addTransientModifier(BABY_SPEED_BOOST);
-            }
-        } else if (hasBoost) {
-            speed.removeModifier(BABY_SPEED_BOOST_ID);
         }
     }
 
@@ -324,27 +328,35 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         }
     }
 
-    @Override
-    public boolean isSteppingCarefully() {
-        return this.isCrouching() || super.isSteppingCarefully();
+    private void updateBabySpeed() {
+        AttributeInstance speed = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speed == null) {
+            return;
+        }
+        boolean hasBoost = speed.hasModifier(BABY_SPEED_BOOST_ID);
+        if (this.isBaby()) {
+            if (!hasBoost) {
+                speed.addTransientModifier(BABY_SPEED_BOOST);
+            }
+        } else if (hasBoost) {
+            speed.removeModifier(BABY_SPEED_BOOST_ID);
+        }
     }
 
     @Override
-    public void setSleeping(boolean sleeping) {
-        this.entityData.set(SLEEPING, sleeping);
+    public boolean canSleep() {
+        long dayTime = this.level().getDayTime();
+        if (this.isTame() || this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
+            return false;
+        } else {
+            return dayTime > 6000 && dayTime < 13000;
+        }
     }
 
+    @Nullable
     @Override
-    public boolean isSleeping() {
-        return this.entityData.get(SLEEPING);
-    }
-
-    public void setHasMane(boolean hasMane) {
-        this.entityData.set(HAS_MANE, hasMane);
-    }
-
-    public boolean hasMane() {
-        return this.entityData.get(HAS_MANE);
+    protected SoundEvent getAmbientSound() {
+        return this.isBaby() ? NaturalistSoundEvents.LION_AMBIENT_BABY.get() : NaturalistSoundEvents.LION_AMBIENT.get();
     }
 
     @Nullable
@@ -359,73 +371,9 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         return this.isBaby() ? NaturalistSoundEvents.LION_DEATH_BABY.get() : NaturalistSoundEvents.LION_DEATH.get();
     }
 
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return this.isBaby() ? NaturalistSoundEvents.LION_AMBIENT_BABY.get() : NaturalistSoundEvents.LION_AMBIENT.get();
-    }
-
     @Override
     public int getAmbientSoundInterval() {
         return 900;
-    }
-
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Lion> PlayState predicate(final AnimationState<E> event) {
-        if (this.isBaby() && (this.isInSittingPose() || this.wasSitting)) {
-            if (this.isInSittingPose()) {
-                event.getController().setAnimation(SIT);
-                this.wasSitting = true;
-            } else {
-                event.getController().setAnimation(UNSIT);
-                if (event.getController().hasAnimationFinished()) {
-                    this.wasSitting = false;
-                }
-            }
-            return PlayState.CONTINUE;
-        }
-        if (!this.isBaby() && this.isInSittingPose()) {
-            event.getController().setAnimation(this.hasMane() ? SLEEP2 : SLEEP);
-            return PlayState.CONTINUE;
-        }
-        if (this.isSleeping() && this.hasMane()) {
-            event.getController().setAnimation(SLEEP2);
-        } else if (this.isSleeping() && !this.hasMane()) {
-            event.getController().setAnimation(SLEEP);
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            if (this.isSprinting()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.5F);
-            } else if (this.isCrouching()) {
-                event.getController().setAnimation(PREY);
-                event.getController().setAnimationSpeed(0.8F);
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.0F);
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0F);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private <E extends Lion> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
     }
 
     static class LionFollowLeaderGoal extends Goal {
@@ -522,134 +470,6 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         }
     }
 
-    static class LionPreyGoal extends Goal {
-        protected final PathfinderMob mob;
-        private double speedModifier = 0.5D;
-        private Path path;
-        private double pathedTargetX;
-        private double pathedTargetY;
-        private double pathedTargetZ;
-        private int ticksUntilNextPathRecalculation;
-        private int ticksUntilNextAttack;
-        private long lastCanUseCheck;
-
-        public LionPreyGoal(PathfinderMob pathfinderMob) {
-            this.mob = pathfinderMob;
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-        }
-
-        @Override
-        public boolean canUse() {
-            if (this.mob.isBaby()) {
-                return false;
-            }
-            long gameTime = this.mob.level().getGameTime();
-            if (gameTime - this.lastCanUseCheck < 20L) {
-                return false;
-            }
-            this.lastCanUseCheck = gameTime;
-            LivingEntity livingEntity = this.mob.getTarget();
-            if (livingEntity == null) {
-                return false;
-            }
-            if (!livingEntity.isAlive()) {
-                return false;
-            }
-            this.path = this.mob.getNavigation().createPath(livingEntity, 0);
-            if (this.path != null) {
-                return true;
-            }
-            return this.getAttackReachSqr(livingEntity) >= this.mob.distanceToSqr(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            LivingEntity livingEntity = this.mob.getTarget();
-            if (livingEntity == null) {
-                return false;
-            }
-            if (!livingEntity.isAlive()) {
-                return false;
-            }
-            return !this.mob.getNavigation().isDone();
-        }
-
-        @Override
-        public void start() {
-            LivingEntity target = this.mob.getTarget();
-            if (target == null) {
-                return;
-            }
-            this.speedModifier = this.mob.distanceTo(target) > 12 ? 0.5D : 1.5D;
-            this.mob.getNavigation().moveTo(this.path, this.speedModifier);
-            this.mob.setAggressive(true);
-            this.mob.playSound(NaturalistSoundEvents.LION_ROAR.get());
-            this.ticksUntilNextPathRecalculation = 0;
-            this.ticksUntilNextAttack = 0;
-        }
-
-        @Override
-        public void stop() {
-            LivingEntity livingEntity = this.mob.getTarget();
-            if (!EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity)) {
-                this.mob.setTarget(null);
-            }
-            this.mob.setAggressive(false);
-            this.mob.getNavigation().stop();
-        }
-
-        @Override
-        public boolean requiresUpdateEveryTick() {
-            return true;
-        }
-
-        @Override
-        public void tick() {
-            LivingEntity target = this.mob.getTarget();
-            if (target == null) {
-                return;
-            }
-            this.speedModifier = this.mob.distanceTo(target) > 12 ? 0.5D : 1.5D;
-            this.mob.getLookControl().setLookAt(target, 30.0f, 30.0f);
-            double d = this.mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
-            this.ticksUntilNextPathRecalculation = Math.max(this.ticksUntilNextPathRecalculation - 1, 0);
-            if (this.mob.getSensing().hasLineOfSight(target) && this.ticksUntilNextPathRecalculation <= 0 && (this.pathedTargetX == 0.0 && this.pathedTargetY == 0.0 && this.pathedTargetZ == 0.0 || target.distanceToSqr(this.pathedTargetX, this.pathedTargetY, this.pathedTargetZ) >= 1.0 || this.mob.getRandom().nextFloat() < 0.05f)) {
-                this.pathedTargetX = target.getX();
-                this.pathedTargetY = target.getY();
-                this.pathedTargetZ = target.getZ();
-                this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
-                if (d > 1024.0) {
-                    this.ticksUntilNextPathRecalculation += 10;
-                } else if (d > 256.0) {
-                    this.ticksUntilNextPathRecalculation += 5;
-                }
-                if (!this.mob.getNavigation().moveTo(target, this.speedModifier)) {
-                    this.ticksUntilNextPathRecalculation += 15;
-                }
-                this.ticksUntilNextPathRecalculation = this.adjustedTickDelay(this.ticksUntilNextPathRecalculation);
-            }
-            this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            this.checkAndPerformAttack(target, d);
-        }
-
-        protected void checkAndPerformAttack(@NotNull LivingEntity enemy, double distToEnemySqr) {
-            double d = this.getAttackReachSqr(enemy);
-            if (distToEnemySqr <= d && this.ticksUntilNextAttack <= 0) {
-                this.resetAttackCooldown();
-                this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(enemy);
-            }
-        }
-
-        protected void resetAttackCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(20);
-        }
-
-        protected double getAttackReachSqr(@NotNull LivingEntity attackTarget) {
-            return this.mob.getBbWidth() * 1.3f * (this.mob.getBbWidth() * 1.3f) + attackTarget.getBbWidth();
-        }
-    }
-
     static class LionFollowParentGoal extends FollowParentGoal {
         private final Lion lion;
 
@@ -668,4 +488,65 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
             return !this.lion.isSleeping() && !this.lion.isTame() && super.canContinueToUse();
         }
     }
+    //endregion
+
+    //region Animation
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Lion> PlayState predicate(final AnimationState<E> event) {
+        if (this.isBaby() && (this.isInSittingPose() || this.wasSitting)) {
+            if (this.isInSittingPose()) {
+                event.getController().setAnimation(SIT);
+                this.wasSitting = true;
+            } else {
+                event.getController().setAnimation(UNSIT);
+                if (event.getController().hasAnimationFinished()) {
+                    this.wasSitting = false;
+                }
+            }
+            return PlayState.CONTINUE;
+        }
+        if (!this.isBaby() && this.isInSittingPose()) {
+            event.getController().setAnimation(this.hasMane() ? SLEEP2 : SLEEP);
+            return PlayState.CONTINUE;
+        }
+        if (this.isSleeping() && this.hasMane()) {
+            event.getController().setAnimation(SLEEP2);
+        } else if (this.isSleeping() && !this.hasMane()) {
+            event.getController().setAnimation(SLEEP);
+        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+            if (this.isSprinting()) {
+                event.getController().setAnimation(RUN);
+                event.getController().setAnimationSpeed(2.5F);
+            } else if (this.isCrouching()) {
+                event.getController().setAnimation(PREY);
+                event.getController().setAnimationSpeed(0.8F);
+            } else {
+                event.getController().setAnimation(WALK);
+                event.getController().setAnimationSpeed(1.0F);
+            }
+        } else {
+            event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0F);
+        }
+        return PlayState.CONTINUE;
+    }
+
+    private <E extends Lion> PlayState attackPredicate(final AnimationState<E> event) {
+        if (this.swinging) {
+            event.getController().forceAnimationReset();
+            event.getController().setAnimation(ATTACK);
+            this.swinging = false;
+        }
+        return PlayState.CONTINUE;
+    }
+
+    @Override
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+    }
+    //endregion
 }

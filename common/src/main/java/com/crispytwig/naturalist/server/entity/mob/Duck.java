@@ -58,9 +58,12 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
 public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet, Bucketable {
+    //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
+
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.BOOLEAN);
+
     private boolean followingOwner = true;
     public float flap;
     public float flapSpeed;
@@ -84,27 +87,8 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
         this.eggTime = this.random.nextInt(6000) + 6000;
     }
 
-    protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(1, new PanicGoal(this, 1.25));
-        this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.1, 16.0, 8.0, 5.0));
-        this.goalSelector.addGoal(4, new PetFollowOwnerGoal(this, 1.1, 10.0F, 2.0F));
-        this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0, 10));
-        this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-    }
-
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 4.0).add(Attributes.MOVEMENT_SPEED, 0.25);
-    }
-
-    @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
     }
 
     @Override
@@ -112,6 +96,51 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
         super.defineSynchedData(builder);
         builder.define(DATA_DYE, -1);
         builder.define(FROM_BUCKET, false);
+    }
+
+    @Nullable
+    @Override
+    public DyeColor getDyeColor() {
+        int id = this.entityData.get(DATA_DYE);
+        return id < 0 ? null : DyeColor.byId(id);
+    }
+
+    @Override
+    public void setDyeColor(@Nullable DyeColor color) {
+        this.entityData.set(DATA_DYE, color == null ? -1 : color.getId());
+    }
+
+    @Override
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Override
+    public boolean requiresCustomPersistence() {
+        return super.requiresCustomPersistence() || this.fromBucket();
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt("EggLayTime", this.eggTime);
+        DyeableAnimal.saveDye(this, compound);
+        FollowingPet.save(this, compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        if (compound.contains("EggLayTime")) {
+            this.eggTime = compound.getInt("EggLayTime");
+        }
+        DyeableAnimal.loadDye(this, compound);
+        FollowingPet.load(this, compound);
     }
 
     @Override
@@ -147,32 +176,55 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     public @NotNull SoundEvent getPickupSound() {
         return SoundEvents.BUCKET_FILL;
     }
+    //endregion
+
+    //region Spawning
+    public static boolean checkDuckSpawnRules(EntityType<? extends Duck> type, @NotNull ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
+        return (level.getBlockState(pos.below()).is(BlockTags.DIRT) || level.getBlockState(pos.below()).getFluidState().is(FluidTags.WATER)) && isBrightEnoughToSpawn(level, pos);
+    }
 
     @Override
-    public boolean requiresCustomPersistence() {
-        return super.requiresCustomPersistence() || this.fromBucket();
+    public boolean isFood(@NotNull ItemStack stack) {
+        return FOOD_ITEMS.test(stack);
     }
 
     @Nullable
     @Override
-    public DyeColor getDyeColor() {
-        int id = this.entityData.get(DATA_DYE);
-        return id < 0 ? null : DyeColor.byId(id);
+    public Duck getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
+        return NaturalistEntityTypes.DUCK.get().create(serverLevel);
+    }
+    //endregion
+
+    //region Behavior
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
+        this.goalSelector.addGoal(1, new PanicGoal(this, 1.25));
+        this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.1, 16.0, 8.0, 5.0));
+        this.goalSelector.addGoal(4, new PetFollowOwnerGoal(this, 1.1, 10.0F, 2.0F));
+        this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0, 10));
+        this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
     @Override
-    public void setDyeColor(@Nullable DyeColor color) {
-        this.entityData.set(DATA_DYE, color == null ? -1 : color.getId());
+    protected float getWaterSlowDown() {
+        return 0.9F;
     }
 
-    @Override
-    public boolean isFollowingOwner() {
-        return this.followingOwner;
+    protected boolean isFlapping() {
+        return this.flyDist > this.nextFlap;
     }
 
-    @Override
-    public void setFollowingOwner(boolean following) {
-        this.followingOwner = following;
+    protected void onFlap() {
+        this.nextFlap = this.flyDist + this.flapSpeed / 2.0F;
+    }
+
+    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+        return false;
     }
 
     @Override
@@ -237,53 +289,8 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     }
 
     @Override
-    protected float getWaterSlowDown() {
-        return 0.9F;
-    }
-
-    @Nullable
-    @Override
-    public Duck getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.DUCK.get().create(serverLevel);
-    }
-
-    public static boolean checkDuckSpawnRules(EntityType<? extends Duck> type, @NotNull ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
-        return (level.getBlockState(pos.below()).is(BlockTags.DIRT) || level.getBlockState(pos.below()).getFluidState().is(FluidTags.WATER)) && isBrightEnoughToSpawn(level, pos);
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return this.isBaby() ? NaturalistSoundEvents.DUCK_AMBIENT_BABY.get() : NaturalistSoundEvents.DUCK_AMBIENT.get();
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return this.isBaby() ? NaturalistSoundEvents.DUCK_HURT_BABY.get() : NaturalistSoundEvents.DUCK_HURT.get();
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getDeathSound() {
-        return this.isBaby() ? NaturalistSoundEvents.DUCK_DEATH_BABY.get() : NaturalistSoundEvents.DUCK_DEATH.get();
-    }
-
-    @Override
-    protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
-        this.playSound(NaturalistSoundEvents.DUCK_STEP.get(), 0.1f, 1.2f);
-    }
-
-    protected boolean isFlapping() {
-        return this.flyDist > this.nextFlap;
-    }
-
-    protected void onFlap() {
-        this.nextFlap = this.flyDist + this.flapSpeed / 2.0F;
-    }
-
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
-        return false;
+    public int getBaseExperienceReward() {
+        return 10;
     }
 
     @Override
@@ -324,29 +331,31 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
 
     }
 
+    @Nullable
     @Override
-    public int getBaseExperienceReward() {
-        return 10;
+    protected SoundEvent getAmbientSound() {
+        return this.isBaby() ? NaturalistSoundEvents.DUCK_AMBIENT_BABY.get() : NaturalistSoundEvents.DUCK_AMBIENT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return this.isBaby() ? NaturalistSoundEvents.DUCK_HURT_BABY.get() : NaturalistSoundEvents.DUCK_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() {
+        return this.isBaby() ? NaturalistSoundEvents.DUCK_DEATH_BABY.get() : NaturalistSoundEvents.DUCK_DEATH.get();
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        if (compound.contains("EggLayTime")) {
-            this.eggTime = compound.getInt("EggLayTime");
-        }
-        DyeableAnimal.loadDye(this, compound);
-        FollowingPet.load(this, compound);
+    protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
+        this.playSound(NaturalistSoundEvents.DUCK_STEP.get(), 0.1f, 1.2f);
     }
+    //endregion
 
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("EggLayTime", this.eggTime);
-        DyeableAnimal.saveDye(this, compound);
-        FollowingPet.save(this, compound);
-    }
-
+    //region Animation
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
@@ -394,4 +403,5 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
         controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "flapController", 2, this::flapPredicate));
     }
+    //endregion
 }

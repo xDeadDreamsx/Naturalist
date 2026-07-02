@@ -44,12 +44,15 @@ import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
 public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoEntity {
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
+
     private int remainingPersistentAngerTime;
     @Nullable
     private UUID persistentAngerTarget;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.boar.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.boar.walk");
@@ -64,12 +67,49 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 14.0).add(Attributes.MOVEMENT_SPEED, 0.2).add(Attributes.ATTACK_DAMAGE, 1.0D);
     }
 
+    @Override
+    public void setRemainingPersistentAngerTime(int remainingPersistentAngerTime) {
+        this.remainingPersistentAngerTime = remainingPersistentAngerTime;
+    }
+
+    @Override
+    public int getRemainingPersistentAngerTime() {
+        return this.remainingPersistentAngerTime;
+    }
+
+    @Override
+    public void setPersistentAngerTarget(@Nullable UUID persistentAngerTarget) {
+        this.persistentAngerTarget = persistentAngerTarget;
+    }
+
+    @Override
+    @Nullable
+    public UUID getPersistentAngerTarget() {
+        return this.persistentAngerTarget;
+    }
+    //endregion
+
+    //region Spawning
+    @Override
+    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        super.finalizeSpawn(level, difficulty, reason, spawnData);
+
+        return spawnData;
+    }
+
+    @Override
+    public boolean isFood(@NotNull ItemStack stack) {
+        return FOOD_ITEMS.test(stack);
+    }
+
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         return NaturalistEntityTypes.BOAR.get().create(serverLevel);
     }
+    //endregion
 
+    //region Behavior
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
@@ -92,8 +132,27 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     }
 
     @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+    public void startPersistentAngerTimer() {
+        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+    }
+
+    @Override
+    public void thunderHit(@NotNull ServerLevel level, @NotNull LightningBolt lightning) {
+        super.thunderHit(level, lightning);
+        if (level.getDifficulty() != Difficulty.PEACEFUL) {
+            Zoglin zoglin = EntityType.ZOGLIN.create(level);
+            assert zoglin != null;
+            zoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+            zoglin.setNoAi(this.isNoAi());
+            zoglin.setBaby(this.isBaby());
+            if (this.hasCustomName()) {
+                zoglin.setCustomName(this.getCustomName());
+                zoglin.setCustomNameVisible(this.isCustomNameVisible());
+            }
+            zoglin.setPersistenceRequired();
+            level.addFreshEntity(zoglin);
+            this.discard();
+        }
     }
 
     @Override
@@ -105,13 +164,6 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
             }
             this.updatePersistentAnger((ServerLevel)this.level(), true);
         }
-    }
-
-    @Override
-    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        super.finalizeSpawn(level, difficulty, reason, spawnData);
-
-        return spawnData;
     }
 
     @Override
@@ -150,85 +202,6 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     @Override
     public float getVoicePitch() {
         return (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.5F;
-    }
-
-    @Override
-    public void thunderHit(@NotNull ServerLevel level, @NotNull LightningBolt lightning) {
-        super.thunderHit(level, lightning);
-        if (level.getDifficulty() != Difficulty.PEACEFUL) {
-            Zoglin zoglin = EntityType.ZOGLIN.create(level);
-            assert zoglin != null;
-            zoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-            zoglin.setNoAi(this.isNoAi());
-            zoglin.setBaby(this.isBaby());
-            if (this.hasCustomName()) {
-                zoglin.setCustomName(this.getCustomName());
-                zoglin.setCustomNameVisible(this.isCustomNameVisible());
-            }
-            zoglin.setPersistenceRequired();
-            level.addFreshEntity(zoglin);
-            this.discard();
-        }
-    }
-
-    @Override
-    public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
-    }
-
-    @Override
-    public void setRemainingPersistentAngerTime(int remainingPersistentAngerTime) {
-        this.remainingPersistentAngerTime = remainingPersistentAngerTime;
-    }
-
-    @Override
-    public int getRemainingPersistentAngerTime() {
-        return this.remainingPersistentAngerTime;
-    }
-
-    @Override
-    public void setPersistentAngerTarget(@Nullable UUID persistentAngerTarget) {
-        this.persistentAngerTarget = persistentAngerTarget;
-    }
-
-    @Override
-    @Nullable
-    public UUID getPersistentAngerTarget() {
-        return this.persistentAngerTarget;
-    }
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-    protected <E extends Boar> PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            if (this.isSprinting()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.0D);
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.5D);
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private <E extends Boar> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 10, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
     }
 
     static class BoarMeleeAttackGoal extends MeleeAttackGoal {
@@ -274,4 +247,43 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
             super.start();
         }
     }
+    //endregion
+
+    //region Animation
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    protected <E extends Boar> PlayState predicate(final @NotNull AnimationState<E> event) {
+        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+            if (this.isSprinting()) {
+                event.getController().setAnimation(RUN);
+                event.getController().setAnimationSpeed(2.0D);
+            } else {
+                event.getController().setAnimation(WALK);
+                event.getController().setAnimationSpeed(1.5D);
+            }
+        } else {
+            event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
+        }
+        return PlayState.CONTINUE;
+    }
+
+    private <E extends Boar> PlayState attackPredicate(final AnimationState<E> event) {
+        if (this.swinging) {
+            event.getController().forceAnimationReset();
+            event.getController().setAnimation(ATTACK);
+            this.swinging = false;
+        }
+        return PlayState.CONTINUE;
+    }
+
+    @Override
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 10, this::predicate));
+        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+    }
+    //endregion
 }

@@ -1,18 +1,14 @@
 package com.crispytwig.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.crispytwig.naturalist.client.model.TortoiseModel;
 import com.crispytwig.naturalist.client.renderer.layers.TortoiseSkinLayer;
 import com.crispytwig.naturalist.server.entity.mob.Tortoise;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
@@ -33,9 +29,5 @@ public class TortoiseRenderer extends GeoEntityRenderer<Tortoise> {
     public void render(Tortoise entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
         this.shadowRadius = entity.isBaby() ? 0.4F : 0.8F;
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
-
-   public RenderType getRenderType(Tortoise entity, float partialTicks, PoseStack stack, @Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-        return RenderType.entityCutoutNoCull(textureLocation);
     }
 }

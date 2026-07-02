@@ -30,6 +30,7 @@ import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -77,7 +78,12 @@ public class NaturalistNeoForge {
 
     private void addPackFinders(AddPackFindersEvent event) {
         if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-            Path resourcePath = ModList.get().getModFileById(Naturalist.MOD_ID).getFile().findResource("resourcepacks/custom_spawn_eggs");
+            Path resourcePath = ModList.get().getModFiles().stream()
+                    .map(info -> info.getFile().findResource("resourcepacks/custom_spawn_eggs"))
+                    .filter(Files::exists)
+                    .findFirst()
+                    .orElse(null);
+            if (resourcePath == null) return;
             event.addRepositorySource(consumer -> {
                 PackLocationInfo info = new PackLocationInfo(
                         "naturalist:custom_spawn_eggs",

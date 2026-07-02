@@ -3,6 +3,10 @@ package com.crispytwig.naturalist.server.entity.mob;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
+import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
+import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -30,7 +34,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -42,25 +45,22 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
-import com.crispytwig.naturalist.server.entity.base.FollowingPet;
-import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
-
 @SuppressWarnings("unused")
 public class Lizard extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet {
-    private boolean followingOwner = true;
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    //region Data
+    private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS);
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_TAIL = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.INT);
-    private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS);
-    private LizardAvoidEntityGoal<Player> avoidPlayersGoal;
+
+    private boolean followingOwner = true;
     private int tailRegrowCooldown = 0;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.walk");
     protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.sit");
-    protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.sleep");
 
     public Lizard(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -71,19 +71,49 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     }
 
     @Override
-    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return null;
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(VARIANT_ID, 0);
+        builder.define(HAS_TAIL, true);
+        builder.define(DATA_DYE, -1);
+    }
+
+    public int getVariant() {
+        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 3);
+    }
+
+    public void setVariant(int variant) {
+        this.entityData.set(VARIANT_ID, variant);
+    }
+
+    public boolean hasTail() {
+        return this.entityData.get(HAS_TAIL);
+    }
+
+    public void setHasTail(boolean hasTail) {
+        this.entityData.set(HAS_TAIL, hasTail);
     }
 
     @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(3, new LizardTemptGoal(this, 0.6, TEMPT_INGREDIENT, true));
-        this.goalSelector.addGoal(6, new PetFollowOwnerGoal(this, 1.0, 10.0f, 2.0f));
-        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+    public boolean isFollowingOwner() {
+        return this.followingOwner;
+    }
+
+    @Override
+    public void setFollowingOwner(boolean following) {
+        this.followingOwner = following;
+    }
+
+    @Nullable
+    @Override
+    public DyeColor getDyeColor() {
+        int id = this.entityData.get(DATA_DYE);
+        return id < 0 ? null : DyeColor.byId(id);
+    }
+
+    @Override
+    public void setDyeColor(@Nullable DyeColor color) {
+        this.entityData.set(DATA_DYE, color == null ? -1 : color.getId());
     }
 
     @Override
@@ -96,6 +126,83 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
             Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(8.0);
         }
         Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(4.0);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt("Variant", this.getVariant());
+        compound.putBoolean("HasTail", this.hasTail());
+        DyeableAnimal.saveDye(this, compound);
+        FollowingPet.save(this, compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.setVariant(compound.getInt("Variant"));
+        this.setHasTail(compound.getBoolean("HasTail"));
+        DyeableAnimal.loadDye(this, compound);
+        FollowingPet.load(this, compound);
+    }
+    //endregion
+
+    //region Spawning
+    @Override
+    public @NotNull SpawnGroupData finalizeSpawn(ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        Holder<Biome> holder = level.getBiome(this.blockPosition());
+        if (holder.is(Biomes.SAVANNA)) {
+            this.setVariant(3);
+        } else if (holder.is(BiomeTags.IS_JUNGLE)) {
+            this.setVariant(0);
+        } else if (holder.is(Biomes.DESERT)) {
+            this.setVariant(2);
+        } else {
+            this.setVariant(1);
+        }
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
+    }
+
+    @Override
+    public boolean isFood(@NotNull ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
+        return null;
+    }
+    //endregion
+
+    //region Behavior
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
+        this.goalSelector.addGoal(3, new LizardTemptGoal(this, 0.6, TEMPT_INGREDIENT, true));
+        this.goalSelector.addGoal(6, new PetFollowOwnerGoal(this, 1.0, 10.0f, 2.0f));
+        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+    }
+
+    @Override
+    public boolean hurt(@NotNull DamageSource source, float amount) {
+        if (this.hasTail() && this.getHealth() <= this.getMaxHealth() / 2) {
+            this.setHasTail(false);
+            this.playSound(SoundEvents.SLIME_SQUISH, 1.0f, 1.0f);
+            LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level());
+            if (lizardTail != null) {
+                lizardTail.setVariant(this.getVariant());
+                lizardTail.setPos(this.getX(), this.getY(), this.getZ());
+                this.level().addFreshEntity(lizardTail);
+            }
+            for (Mob mob : this.level().getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(8.0), entity -> entity.getTarget() == this)) {
+                mob.setTarget(lizardTail);
+            }
+            this.tailRegrowCooldown = 12000;
+        }
+        return super.hurt(source, amount);
     }
 
     @Override
@@ -154,94 +261,6 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     }
 
     @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return false;
-    }
-
-    public int getVariant() {
-        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 3);
-    }
-
-    public void setVariant(int variant) {
-        this.entityData.set(VARIANT_ID, variant);
-    }
-
-    public boolean hasTail() {
-        return this.entityData.get(HAS_TAIL);
-    }
-
-    public void setHasTail(boolean hasTail) {
-        this.entityData.set(HAS_TAIL, hasTail);
-    }
-
-    @Override
-    public boolean isFollowingOwner() {
-        return this.followingOwner;
-    }
-
-    @Override
-    public void setFollowingOwner(boolean following) {
-        this.followingOwner = following;
-    }
-
-    @Nullable
-    @Override
-    public DyeColor getDyeColor() {
-        int id = this.entityData.get(DATA_DYE);
-        return id < 0 ? null : DyeColor.byId(id);
-    }
-
-    @Override
-    public void setDyeColor(@Nullable DyeColor color) {
-        this.entityData.set(DATA_DYE, color == null ? -1 : color.getId());
-    }
-
-    @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(VARIANT_ID, 0);
-        builder.define(HAS_TAIL, true);
-        builder.define(DATA_DYE, -1);
-    }
-
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
-        compound.putBoolean("HasTail", this.hasTail());
-        DyeableAnimal.saveDye(this, compound);
-        FollowingPet.save(this, compound);
-    }
-
-    @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
-        this.setHasTail(compound.getBoolean("HasTail"));
-        DyeableAnimal.loadDye(this, compound);
-        FollowingPet.load(this, compound);
-    }
-
-    @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        if (this.hasTail() && this.getHealth() <= this.getMaxHealth() / 2) {
-            this.setHasTail(false);
-            this.playSound(SoundEvents.SLIME_SQUISH, 1.0f, 1.0f);
-            LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level());
-            if (lizardTail != null) {
-                lizardTail.setVariant(this.getVariant());
-                lizardTail.setPos(this.getX(), this.getY(), this.getZ());
-                this.level().addFreshEntity(lizardTail);
-            }
-            for (Mob mob : this.level().getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(8.0), entity -> entity.getTarget() == this)) {
-                mob.setTarget(lizardTail);
-            }
-            this.tailRegrowCooldown = 12000;
-        }
-        return super.hurt(source, amount);
-    }
-
-    @Override
     public void aiStep() {
         super.aiStep();
         if (!this.hasTail() && !this.level().isClientSide()) {
@@ -252,21 +271,6 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
                 this.setHasTail(true);
             }
         }
-    }
-
-    @Override
-    public @NotNull SpawnGroupData finalizeSpawn(ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        Holder<Biome> holder = level.getBiome(this.blockPosition());
-        if (holder.is(Biomes.SAVANNA)) {
-            this.setVariant(3);
-        } else if (holder.is(BiomeTags.IS_JUNGLE)) {
-            this.setVariant(0);
-        } else if (holder.is(Biomes.DESERT)) {
-            this.setVariant(2);
-        } else {
-            this.setVariant(1);
-        }
-        return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
     @Nullable
@@ -285,29 +289,6 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     @Override
     protected SoundEvent getDeathSound() {
         return NaturalistSoundEvents.LIZARD_DEATH.get();
-    }
-
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Lizard> PlayState predicate(final AnimationState<E> event) {
-        if (this.isInSittingPose()) {
-            event.getController().setAnimation(SIT);
-            return PlayState.CONTINUE;
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimation(WALK);
-            event.getController().setAnimationSpeed(2.0D);
-            return PlayState.CONTINUE;
-        }
-        event.getController().forceAnimationReset();
-
-        return PlayState.STOP;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
 
     static class LizardTemptGoal extends TemptGoal {
@@ -343,23 +324,30 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
             return super.canUse() && !this.lizard.isTame();
         }
     }
+    //endregion
 
-    static class LizardAvoidEntityGoal<T extends LivingEntity> extends AvoidEntityGoal<T> {
-        private final @NotNull Lizard lizard;
-
-        public LizardAvoidEntityGoal(@NotNull Lizard lizard, Class<T> class_, float f, double d, double e) {
-            super(lizard, class_, f, d, e, EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
-            this.lizard = lizard;
-        }
-
-        @Override
-        public boolean canUse() {
-            return !this.lizard.isTame() && super.canUse();
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return !this.lizard.isTame() && super.canContinueToUse();
-        }
+    //region Animation
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
     }
+
+    private <E extends Lizard> PlayState predicate(final AnimationState<E> event) {
+        if (this.isInSittingPose()) {
+            event.getController().setAnimation(SIT);
+            return PlayState.CONTINUE;
+        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+            event.getController().setAnimation(WALK);
+            event.getController().setAnimationSpeed(2.0D);
+            return PlayState.CONTINUE;
+        }
+        event.getController().forceAnimationReset();
+
+        return PlayState.STOP;
+    }
+
+    @Override
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+    }
+    //endregion
 }

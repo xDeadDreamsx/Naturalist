@@ -54,11 +54,14 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    //region Data
     private static final EntityDataAccessor<Integer> CHARGE_COOLDOWN_TICKS = SynchedEntityData.defineId(Rhino.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_TARGET = SynchedEntityData.defineId(Rhino.class, EntityDataSerializers.BOOLEAN);
+
     private int stunnedTick;
     private boolean canBePushed = true;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.rhino.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.rhino.walk");
@@ -76,60 +79,10 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     @Override
-    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        if (spawnData == null) {
-            spawnData = new AgeableMobGroupData(1.0F);
-        }
-
-        return super.finalizeSpawn(level, difficulty, reason, spawnData);
-    }
-
-    @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    protected void registerGoals() {
-        super.registerGoals();
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new RhinoMeleeAttackGoal(this, 1.2D, false));
-        this.goalSelector.addGoal(2, new RhinoPrepareChargeGoal(this));
-        this.goalSelector.addGoal(3, new RhinoChargeGoal(this, 2.5F));
-
-        this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new RhinoNearestAttackablePlayerTargetGoal(this));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, false, false, (entity) -> entity.getItemBySlot(EquipmentSlot.HEAD).getItem() == Items.CARVED_PUMPKIN));
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.RHINO.get().create(serverLevel);
-    }
-
-    @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(CHARGE_COOLDOWN_TICKS, 0);
         builder.define(HAS_TARGET, false);
-    }
-
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("StunTick", this.stunnedTick);
-    }
-
-    @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.stunnedTick = compound.getInt("StunTick");
     }
 
     public void setChargeCooldownTicks(int ticks) {
@@ -154,6 +107,91 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
 
     public boolean hasTarget() {
         return this.entityData.get(HAS_TARGET);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt("StunTick", this.stunnedTick);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.stunnedTick = compound.getInt("StunTick");
+    }
+    //endregion
+
+    //region Spawning
+    @Override
+    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        if (spawnData == null) {
+            spawnData = new AgeableMobGroupData(1.0F);
+        }
+
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
+    }
+
+    @Override
+    public boolean isFood(@NotNull ItemStack stack) {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
+        return NaturalistEntityTypes.RHINO.get().create(serverLevel);
+    }
+    //endregion
+
+    //region Behavior
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new RhinoMeleeAttackGoal(this, 1.2D, false));
+        this.goalSelector.addGoal(2, new RhinoPrepareChargeGoal(this));
+        this.goalSelector.addGoal(3, new RhinoChargeGoal(this, 2.5F));
+
+        this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.25D));
+        this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new RhinoNearestAttackablePlayerTargetGoal(this));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 0, false, false, (entity) -> entity.getItemBySlot(EquipmentSlot.HEAD).getItem() == Items.CARVED_PUMPKIN));
+    }
+
+    @Override
+    public boolean isPushable() {
+        return this.canBePushed;
+    }
+
+    @Override
+    public void knockback(double strength, double x, double z) {
+        if (this.isBaby()) {
+            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
+        } else {
+            super.knockback(strength, x, z);
+        }
+    }
+
+    @Override
+    protected boolean isImmobile() {
+        return super.isImmobile() || this.stunnedTick > 0;
+    }
+
+    @Override
+    protected void blockedByShield(LivingEntity defender) {
+        this.stunnedTick = 60;
+        this.resetChargeCooldownTicks();
+        this.getNavigation().stop();
+        this.playSound(SoundEvents.RAVAGER_STUNNED, 1.0f, 1.0f);
+        this.level().broadcastEntityEvent(this, (byte)39);
+        defender.push(this);
+        defender.hurtMarked = true;
     }
 
     @Override
@@ -184,19 +222,13 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
     }
 
     @Override
-    protected boolean isImmobile() {
-        return super.isImmobile() || this.stunnedTick > 0;
-    }
-
-    @Override
-    protected void blockedByShield(LivingEntity defender) {
-        this.stunnedTick = 60;
-        this.resetChargeCooldownTicks();
-        this.getNavigation().stop();
-        this.playSound(SoundEvents.RAVAGER_STUNNED, 1.0f, 1.0f);
-        this.level().broadcastEntityEvent(this, (byte)39);
-        defender.push(this);
-        defender.hurtMarked = true;
+    public void customServerAiStep() {
+        super.customServerAiStep();
+        if (this.getMoveControl().hasWanted()) {
+            this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.5D);
+        } else {
+            this.setSprinting(false);
+        }
     }
 
     @Override
@@ -207,41 +239,11 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
         }
     }
 
-    @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
-        if (this.getMoveControl().hasWanted()) {
-            this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.5D);
-        } else {
-            this.setSprinting(false);
-        }
-    }
-
     private boolean isWithinYRange(LivingEntity target) {
         if (target == null) {
             return true;
         }
         return !(Math.abs(target.getY() - this.getY()) < 3);
-    }
-
-    @Override
-    public boolean isPushable() {
-        return this.canBePushed;
-    }
-
-    @Override
-    public void knockback(double strength, double x, double z) {
-        if (this.isBaby()) {
-            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
-            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
-        } else {
-            super.knockback(strength, x, z);
-        }
-    }
-
-    @Override
-    public float getVoicePitch() {
-        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.0f;
     }
 
     @Nullable
@@ -262,57 +264,9 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
         return NaturalistSoundEvents.RHINO_DEATH.get();
     }
 
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Rhino> PlayState predicate(final AnimationState<E> event) {
-        if (this.stunnedTick > 0) {
-            event.getController().setAnimation(STUNNED);
-            event.getController().setAnimationSpeed(1.0F);
-        } else if (event.isMoving()) {
-            if (this.isSprinting()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(3.0F);
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.0F);
-            }
-        } else if (this.hasChargeCooldown() && this.hasTarget()) {
-            event.getController().setAnimation(FOOT);
-            event.getController().setAnimationSpeed(1.0F);
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0F);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private void soundListener(SoundKeyframeEvent<Rhino> event) {
-        Rhino rhino = event.getAnimatable();
-        if (rhino.level().isClientSide) {
-            if (event.getKeyframeData().getSound().equals("scrape")) {
-                rhino.level().playLocalSound(rhino.getX(), rhino.getY(), rhino.getZ(), NaturalistSoundEvents.RHINO_SCRAPE.get(), rhino.getSoundSource(), 1.0F, rhino.getVoicePitch(), false);
-            }
-        }
-    }
-
-    private <E extends Rhino> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimationSpeed(1.3F);
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
     @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        AnimationController<Rhino> controller = new AnimationController<>(this, "controller", 5, this::predicate);
-        controller.setSoundKeyframeHandler(this::soundListener);
-        controllers.add(controller);
-        controllers.add(new AnimationController<>(this, "attackController", 5, this::attackPredicate));
+    public float getVoicePitch() {
+        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.0f;
     }
 
     static class RhinoPrepareChargeGoal extends Goal {
@@ -505,4 +459,60 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
             this.mob.swinging = false;
         }
     }
+    //endregion
+
+    //region Animation
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    private <E extends Rhino> PlayState predicate(final AnimationState<E> event) {
+        if (this.stunnedTick > 0) {
+            event.getController().setAnimation(STUNNED);
+            event.getController().setAnimationSpeed(1.0F);
+        } else if (event.isMoving()) {
+            if (this.isSprinting()) {
+                event.getController().setAnimation(RUN);
+                event.getController().setAnimationSpeed(3.0F);
+            } else {
+                event.getController().setAnimation(WALK);
+                event.getController().setAnimationSpeed(1.0F);
+            }
+        } else if (this.hasChargeCooldown() && this.hasTarget()) {
+            event.getController().setAnimation(FOOT);
+            event.getController().setAnimationSpeed(1.0F);
+        } else {
+            event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0F);
+        }
+        return PlayState.CONTINUE;
+    }
+
+    private <E extends Rhino> PlayState attackPredicate(final AnimationState<E> event) {
+        if (this.swinging) {
+            event.getController().forceAnimationReset();
+            event.getController().setAnimationSpeed(1.3F);
+            event.getController().setAnimation(ATTACK);
+            this.swinging = false;
+        }
+        return PlayState.CONTINUE;
+    }
+
+    private void soundListener(SoundKeyframeEvent<Rhino> event) {
+        Rhino rhino = event.getAnimatable();
+        if (rhino.level().isClientSide) {
+            if (event.getKeyframeData().getSound().equals("scrape")) {
+                rhino.level().playLocalSound(rhino.getX(), rhino.getY(), rhino.getZ(), NaturalistSoundEvents.RHINO_SCRAPE.get(), rhino.getSoundSource(), 1.0F, rhino.getVoicePitch(), false);
+            }
+        }
+    }
+
+    @Override
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        AnimationController<Rhino> controller = new AnimationController<>(this, "controller", 5, this::predicate);
+        controller.setSoundKeyframeHandler(this::soundListener);
+        controllers.add(controller);
+        controllers.add(new AnimationController<>(this, "attackController", 5, this::attackPredicate));
+    }
+    //endregion
 }

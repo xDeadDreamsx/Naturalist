@@ -35,8 +35,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
 public class Catfish extends AbstractFish implements NaturalistGeoEntity, HuntingAnimal {
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    //region Data
     private int huntingCooldown;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.catfish.swim");
     protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.catfish.flop");
@@ -50,17 +52,13 @@ public class Catfish extends AbstractFish implements NaturalistGeoEntity, Huntin
     }
 
     @Override
-    protected void registerGoals() {
-        super.registerGoals();
-        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.0D, 1.5D));
-        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Axolotl.class, 6.0F, 1.0D, 1.5D));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false)
-        {
-            public boolean canUse() {
-                return super.canUse() && !isBaby();
-            }
-        });
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> this.hasHuntingCooldown() && entity.getType().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
+    public int getHuntingCooldown() {
+        return this.huntingCooldown;
+    }
+
+    @Override
+    public void setHuntingCooldown(int ticks) {
+        this.huntingCooldown = ticks;
     }
 
     @Override
@@ -76,21 +74,24 @@ public class Catfish extends AbstractFish implements NaturalistGeoEntity, Huntin
     }
 
     @Override
-    public int getHuntingCooldown() {
-        return this.huntingCooldown;
+    public @NotNull ItemStack getBucketItemStack() {
+        return new ItemStack(NaturalistRegistry.CATFISH_BUCKET.get());
     }
+    //endregion
 
+    //region Behavior
     @Override
-    public void setHuntingCooldown(int ticks) {
-        this.huntingCooldown = ticks;
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
-        if (!this.level().isClientSide) {
-            this.tickHuntingCooldown();
-        }
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.0D, 1.5D));
+        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Axolotl.class, 6.0F, 1.0D, 1.5D));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false)
+        {
+            public boolean canUse() {
+                return super.canUse() && !isBaby();
+            }
+        });
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> this.hasHuntingCooldown() && entity.getType().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
     }
 
     @Override
@@ -103,9 +104,18 @@ public class Catfish extends AbstractFish implements NaturalistGeoEntity, Huntin
     }
 
     @Override
+    public void aiStep() {
+        super.aiStep();
+        if (!this.level().isClientSide) {
+            this.tickHuntingCooldown();
+        }
+    }
+
+    @Override
     protected @NotNull SoundEvent getFlopSound() {
         return NaturalistSoundEvents.CATFISH_FLOP.get();
     }
+
     @Override
     protected SoundEvent getAmbientSound() {
         return SoundEvents.SALMON_AMBIENT;
@@ -120,10 +130,12 @@ public class Catfish extends AbstractFish implements NaturalistGeoEntity, Huntin
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
         return SoundEvents.SALMON_HURT;
     }
+    //endregion
 
+    //region Animation
     @Override
-    public @NotNull ItemStack getBucketItemStack() {
-        return new ItemStack(NaturalistRegistry.CATFISH_BUCKET.get());
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
     }
 
     @Override
@@ -131,10 +143,6 @@ public class Catfish extends AbstractFish implements NaturalistGeoEntity, Huntin
         return 2;
     }
 
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
     protected <E extends Catfish> @NotNull PlayState predicate(final AnimationState<E> event) {
         if (!this.isInWater()) {
             event.getController().setAnimation(FLOP);
@@ -148,4 +156,5 @@ public class Catfish extends AbstractFish implements NaturalistGeoEntity, Huntin
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
     }
+    //endregion
 }

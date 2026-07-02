@@ -23,8 +23,10 @@ import software.bernie.geckolib.animation.AnimationState;
 
 @SuppressWarnings("unused")
 public class LizardTail extends Mob implements NaturalistGeoEntity {
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    //region Data
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(LizardTail.class, EntityDataSerializers.INT);
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.lizard_tail.flop");
 
@@ -34,6 +36,12 @@ public class LizardTail extends Mob implements NaturalistGeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(VARIANT_ID, 0);
     }
 
     public int getVariant() {
@@ -50,12 +58,6 @@ public class LizardTail extends Mob implements NaturalistGeoEntity {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(VARIANT_ID, 0);
-    }
-
-    @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("Variant", this.getVariant());
@@ -66,7 +68,9 @@ public class LizardTail extends Mob implements NaturalistGeoEntity {
         super.readAdditionalSaveData(compound);
         this.setVariant(compound.getInt("Variant"));
     }
+    //endregion
 
+    //region Behavior
     @Override
     public void knockback(double strength, double x, double z) {
         super.knockback(strength * 1.5D, x, z);
@@ -82,7 +86,9 @@ public class LizardTail extends Mob implements NaturalistGeoEntity {
             this.playSound(SoundEvents.SALMON_FLOP, this.getSoundVolume(), this.getVoicePitch());
         }
     }
+    //endregion
 
+    //region Animation
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
@@ -96,4 +102,5 @@ public class LizardTail extends Mob implements NaturalistGeoEntity {
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
+    //endregion
 }

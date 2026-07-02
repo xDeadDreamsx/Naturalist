@@ -6,9 +6,9 @@ import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.base.HidingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.base.VariantBucketable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -46,7 +46,6 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -64,7 +63,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAnimal, Bucketable {
+public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAnimal, VariantBucketable {
     //region Data
     public static final int VARIANTS = 2;
     public static final String[] VARIANT_NAMES = {"brown", "blue"};
@@ -103,16 +102,19 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
         builder.define(FROM_BUCKET, false);
     }
 
+    @Override
     public int getVariant() {
         return this.entityData.get(DATA_VARIANT);
     }
 
+    @Override
     public void setVariant(int variant) {
         this.entityData.set(DATA_VARIANT, variant);
     }
 
-    public String getVariantName() {
-        return VARIANT_NAMES[Math.floorMod(this.getVariant(), VARIANTS)];
+    @Override
+    public String[] getVariantNames() {
+        return VARIANT_NAMES;
     }
 
     @Override
@@ -147,23 +149,6 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
         super.readAdditionalSaveData(compound);
         this.setVariant(compound.getInt("Variant"));
         this.setFromBucket(compound.getBoolean("FromBucket"));
-    }
-
-    @Override
-    public void saveToBucketTag(@NotNull ItemStack stack) {
-        Bucketable.saveDefaultDataToBucketTag(this, stack);
-        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag -> tag.putInt("Variant", this.getVariant()));
-        CompoundTag custom = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        custom.putInt("Variant", this.getVariant());
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(custom));
-    }
-
-    @Override
-    public void loadFromBucketTag(@NotNull CompoundTag tag) {
-        Bucketable.loadDefaultDataFromBucketTag(this, tag);
-        if (tag.contains("Variant")) {
-            this.setVariant(tag.getInt("Variant"));
-        }
     }
 
     @Override

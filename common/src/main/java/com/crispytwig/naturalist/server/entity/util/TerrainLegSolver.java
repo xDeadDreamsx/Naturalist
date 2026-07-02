@@ -10,7 +10,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Optional;
 
-// https://github.com/AlexModGuy/AlexsCaves/blob/main/src/main/java/com/github/alexmodguy/alexscaves/server/entity/util/LuxtructosaurusLegSolver.java
+/**
+ * Adapted from <a href="https://github.com/AlexModGuy/AlexsCaves/blob/main/src/main/java/com/github/alexmodguy/alexscaves/server/entity/util/LuxtructosaurusLegSolver.java">Alex's Caves' LuxtructosaurusLegSolver by AlexModGuy</a>
+ */
 public class TerrainLegSolver {
     public final Leg backLeft;
     public final Leg backRight;

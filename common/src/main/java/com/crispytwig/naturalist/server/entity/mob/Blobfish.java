@@ -47,19 +47,22 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
 public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    //region Data
+    private static final int CONVERSION_DURATION = 100;
 
     private static final EntityDataAccessor<Boolean> DATA_GRAY = SynchedEntityData.defineId(Blobfish.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_CONVERTING = SynchedEntityData.defineId(Blobfish.class, EntityDataSerializers.BOOLEAN);
-    private static final int CONVERSION_DURATION = 100;
-    private int conversionTime;
 
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.blobfish_gray.swim");
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.blobfish_pink.idle");
+    private int conversionTime;
 
     public float xBodyRot;
     public float xBodyRotO;
     private Vec3 lastMoveDir = Vec3.ZERO;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+
+    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.blobfish_gray.swim");
+    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.blobfish_pink.idle");
 
     public Blobfish(EntityType<? extends AbstractFish> entityType, Level level) {
         super(entityType, level);
@@ -76,26 +79,6 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
         super.defineSynchedData(builder);
         builder.define(DATA_GRAY, true);
         builder.define(DATA_CONVERTING, false);
-    }
-
-    @Override
-    public @NotNull ItemStack getBucketItemStack() {
-        return new ItemStack(NaturalistRegistry.BLOBFISH_BUCKET.get());
-    }
-
-    @Override
-    protected @NotNull SoundEvent getFlopSound() {
-        return NaturalistSoundEvents.BLOBFISH_FLOP.get();
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return NaturalistSoundEvents.BLOBFISH_HURT.get();
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return NaturalistSoundEvents.BLOBFISH_DEATH.get();
     }
 
     public int getDeepY() {
@@ -118,13 +101,6 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
         return this.isInWaterOrBubble() && this.getY() <= this.getDeepY();
     }
 
-    @Nullable
-    @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.setGray(this.wantsGray());
-        return super.finalizeSpawn(level, difficulty, reason, spawnData);
-    }
-
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -139,6 +115,22 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
         this.conversionTime = compound.getInt("ConversionTime");
     }
 
+    @Override
+    public @NotNull ItemStack getBucketItemStack() {
+        return new ItemStack(NaturalistRegistry.BLOBFISH_BUCKET.get());
+    }
+    //endregion
+
+    //region Spawning
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        this.setGray(this.wantsGray());
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
+    }
+    //endregion
+
+    //region Behavior
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.5D, 2.0D));
@@ -167,10 +159,6 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
         this.xBodyRot += (target - this.xBodyRot) * 0.1F;
     }
 
-    public float getXBodyRot(float partialTick) {
-        return Mth.lerp(partialTick, this.xBodyRotO, this.xBodyRot);
-    }
-
     private void tickConversion() {
         boolean wantGray = this.wantsGray();
         if (wantGray == this.isGray()) {
@@ -193,6 +181,23 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
         this.playSound(NaturalistSoundEvents.BLOBFISH_HURT.get(), this.getSoundVolume(), this.getVoicePitch());
     }
 
+    @Override
+    protected @NotNull SoundEvent getFlopSound() {
+        return NaturalistSoundEvents.BLOBFISH_FLOP.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return NaturalistSoundEvents.BLOBFISH_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return NaturalistSoundEvents.BLOBFISH_DEATH.get();
+    }
+    //endregion
+
+    //region Animation
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
@@ -218,4 +223,9 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
     }
+
+    public float getXBodyRot(float partialTick) {
+        return Mth.lerp(partialTick, this.xBodyRotO, this.xBodyRot);
+    }
+    //endregion
 }

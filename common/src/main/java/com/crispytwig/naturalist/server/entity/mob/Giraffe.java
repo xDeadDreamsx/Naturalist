@@ -42,44 +42,45 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
 public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMount {
+    //region Data
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
+
+    public final TerrainLegSolver legSolver = new TerrainLegSolver(0.75F, 0.4F, 1.3F);
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.walk");
     protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.run");
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    public final TerrainLegSolver legSolver = new TerrainLegSolver(0.75F, 0.4F, 1.3F);
 
     public Giraffe(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
     }
 
-    @Override
-    public float getRenderPitch() {
-        return this.legSolver.renderPitch;
-    }
-
-    @Override
-    public float getRenderRoll() {
-        return this.legSolver.renderRoll;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        if (this.level().isClientSide) {
-            this.legSolver.update(this, this.getScale() * (this.isBaby() ? 0.5F : 1.0F));
-        }
-    }
-
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 35.0D).add(Attributes.MOVEMENT_SPEED, 0.25F).add(Attributes.STEP_HEIGHT, 1.0D);
     }
+    //endregion
 
+    //region Spawning
     @Override
-    public int getMaxHeadYRot() {
-        return 45;
+    public boolean isFood(@NotNull ItemStack stack) {
+        return FOOD_ITEMS.test(stack);
     }
 
+    @Override
+    public boolean canMate(@NotNull Animal otherAnimal) {
+        return !this.isVehicle() && !this.isPassenger() && !this.isBaby() && super.canMate(otherAnimal);
+    }
+
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
+        return NaturalistEntityTypes.GIRAFFE.get().create(serverLevel);
+    }
+    //endregion
+
+    //region Behavior
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
@@ -93,24 +94,31 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
     }
 
     @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
-    }
-
-    @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
-        if (this.getMoveControl().hasWanted()) {
-            this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.3D);
-        } else {
-            this.setSprinting(false);
+    public void travel(@NotNull Vec3 travelVector) {
+        if (!this.isAlive()) {
+            return;
         }
-    }
+        LivingEntity livingEntity = this.getControllingPassenger();
+        if (!this.isVehicle() || livingEntity == null) {
+            super.travel(travelVector);
+            return;
+        }
+        this.setYRot(livingEntity.getYRot());
+        this.yRotO = this.getYRot();
+        this.setXRot(livingEntity.getXRot() * 0.5f);
+        this.setRot(this.getYRot(), this.getXRot());
+        this.yHeadRot = this.yBodyRot = this.getYRot();
+        float f = livingEntity.xxa * 0.5f;
+        float g = livingEntity.zza;
 
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.GIRAFFE.get().create(serverLevel);
+        if (this.isControlledByLocalInstance()) {
+            this.setSpeed((float)this.getAttributeValue(Attributes.MOVEMENT_SPEED));
+            super.travel(new Vec3(f, travelVector.y, g));
+        } else if (livingEntity instanceof Player) {
+            this.setDeltaMovement(Vec3.ZERO);
+        }
+        this.calculateEntityAnimation(false);
+        this.tryCheckInsideBlocks();
     }
 
     @Override
@@ -118,12 +126,19 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
         return !this.isVehicle();
     }
 
-    protected void doPlayerRide(@NotNull Player player) {
-        if (!this.level().isClientSide) {
-            player.setYRot(this.getYRot());
-            player.setXRot(this.getXRot());
-            player.startRiding(this);
-        }
+    @Override
+    public boolean onClimbable() {
+        return false;
+    }
+
+    @Override
+    protected boolean isImmobile() {
+        return super.isImmobile() && this.isVehicle();
+    }
+
+    @Override
+    public int getMaxHeadYRot() {
+        return 45;
     }
 
     @Override
@@ -177,62 +192,11 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
         return super.mobInteract(player, hand);
     }
 
-    @Override
-    public void travel(@NotNull Vec3 travelVector) {
-        if (!this.isAlive()) {
-            return;
-        }
-        LivingEntity livingEntity = this.getControllingPassenger();
-        if (!this.isVehicle() || livingEntity == null) {
-            super.travel(travelVector);
-            return;
-        }
-        this.setYRot(livingEntity.getYRot());
-        this.yRotO = this.getYRot();
-        this.setXRot(livingEntity.getXRot() * 0.5f);
-        this.setRot(this.getYRot(), this.getXRot());
-        this.yHeadRot = this.yBodyRot = this.getYRot();
-        float f = livingEntity.xxa * 0.5f;
-        float g = livingEntity.zza;
-
-        if (this.isControlledByLocalInstance()) {
-            this.setSpeed((float)this.getAttributeValue(Attributes.MOVEMENT_SPEED));
-            super.travel(new Vec3(f, travelVector.y, g));
-        } else if (livingEntity instanceof Player) {
-            this.setDeltaMovement(Vec3.ZERO);
-        }
-        this.calculateEntityAnimation(false);
-        this.tryCheckInsideBlocks();
-    }
-
-    @Override
-    public boolean canMate(@NotNull Animal otherAnimal) {
-        return !this.isVehicle() && !this.isPassenger() && !this.isBaby() && super.canMate(otherAnimal);
-    }
-
-    @Override
-    protected boolean isImmobile() {
-        return super.isImmobile() && this.isVehicle();
-    }
-
-    protected void spawnTamingParticles(boolean tamed) {
-        SimpleParticleType particleOptions = tamed ? ParticleTypes.HEART : ParticleTypes.SMOKE;
-        for (int i = 0; i < 7; ++i) {
-            double d = this.random.nextGaussian() * 0.02;
-            double e = this.random.nextGaussian() * 0.02;
-            double f = this.random.nextGaussian() * 0.02;
-            this.level().addParticle(particleOptions, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d, e, f);
-        }
-    }
-
-    @Override
-    public void handleEntityEvent(byte id) {
-        if (id == 7) {
-            this.spawnTamingParticles(true);
-        } else if (id == 6) {
-            this.spawnTamingParticles(false);
-        } else {
-            super.handleEntityEvent(id);
+    protected void doPlayerRide(@NotNull Player player) {
+        if (!this.level().isClientSide) {
+            player.setYRot(this.getYRot());
+            player.setXRot(this.getXRot());
+            player.startRiding(this);
         }
     }
 
@@ -252,11 +216,6 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
     @Override
     protected @NotNull Vec3 getPassengerAttachmentPoint(@NotNull Entity entity, @NotNull EntityDimensions dimensions, float partialTick) {
         return new Vec3(0.0, this.getBbHeight() * 0.6, 0.0);
-    }
-
-    @Override
-    public boolean onClimbable() {
-        return false;
     }
 
     @Override
@@ -307,6 +266,45 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
         return this.position();
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.legSolver.update(this, this.getScale() * (this.isBaby() ? 0.5F : 1.0F));
+        }
+    }
+
+    @Override
+    public void customServerAiStep() {
+        super.customServerAiStep();
+        if (this.getMoveControl().hasWanted()) {
+            this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.3D);
+        } else {
+            this.setSprinting(false);
+        }
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 7) {
+            this.spawnTamingParticles(true);
+        } else if (id == 6) {
+            this.spawnTamingParticles(false);
+        } else {
+            super.handleEntityEvent(id);
+        }
+    }
+
+    protected void spawnTamingParticles(boolean tamed) {
+        SimpleParticleType particleOptions = tamed ? ParticleTypes.HEART : ParticleTypes.SMOKE;
+        for (int i = 0; i < 7; ++i) {
+            double d = this.random.nextGaussian() * 0.02;
+            double e = this.random.nextGaussian() * 0.02;
+            double f = this.random.nextGaussian() * 0.02;
+            this.level().addParticle(particleOptions, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d, e, f);
+        }
+    }
+
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
@@ -324,7 +322,9 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
     protected SoundEvent getDeathSound() {
         return this.isBaby() ? NaturalistSoundEvents.GIRAFFE_DEATH_BABY.get() : NaturalistSoundEvents.GIRAFFE_DEATH.get();
     }
+    //endregion
 
+    //region Animation
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
@@ -356,4 +356,15 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 4, this::predicate));
     }
+
+    @Override
+    public float getRenderPitch() {
+        return this.legSolver.renderPitch;
+    }
+
+    @Override
+    public float getRenderRoll() {
+        return this.legSolver.renderRoll;
+    }
+    //endregion
 }

@@ -36,8 +36,10 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.WHEAT, Items.SUGAR, Blocks.HAY_BLOCK.asItem(), Items.APPLE, Items.GOLDEN_CARROT, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.zebra.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.zebra.walk");
@@ -66,12 +68,9 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
     protected double generateRandomSpeed(@NotNull RandomSource randomSource) {
         return (0.5f + randomSource.nextDouble() * 0.3 + randomSource.nextDouble() * 0.3 + randomSource.nextDouble() * 0.3) * 0.25;
     }
+    //endregion
 
-    @Override
-    protected float getWaterSlowDown() {
-        return 0.96f;
-    }
-
+    //region Spawning
     @Override
     public boolean canMate(@NotNull Animal otherAnimal) {
         if (otherAnimal == this) {
@@ -91,7 +90,9 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
         this.setOffspringAttributes(ageableMob, zebra);
         return zebra;
     }
+    //endregion
 
+    //region Behavior
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
@@ -104,6 +105,37 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.7));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+    }
+
+    @Override
+    protected float getWaterSlowDown() {
+        return 0.96f;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return NaturalistSoundEvents.ZEBRA_AMBIENT.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return NaturalistSoundEvents.ZEBRA_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return NaturalistSoundEvents.ZEBRA_DEATH.get();
+    }
+
+    @Override
+    @Nullable
+    protected SoundEvent getEatingSound() {
+        return NaturalistSoundEvents.ZEBRA_EAT.get();
+    }
+
+    @Override
+    protected SoundEvent getAngrySound() {
+        return NaturalistSoundEvents.ZEBRA_ANGRY.get();
     }
 
     @Override
@@ -120,63 +152,8 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
     }
 
     @Override
-    protected SoundEvent getAmbientSound() {
-        super.getAmbientSound();
-        return NaturalistSoundEvents.ZEBRA_AMBIENT.get();
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return NaturalistSoundEvents.ZEBRA_DEATH.get();
-    }
-
-    @Override
-    @Nullable
-    protected SoundEvent getEatingSound() {
-        return NaturalistSoundEvents.ZEBRA_EAT.get();
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        super.getHurtSound(damageSource);
-        return NaturalistSoundEvents.ZEBRA_HURT.get();
-    }
-
-    @Override
-    protected SoundEvent getAngrySound() {
-        super.getAngrySound();
-        return NaturalistSoundEvents.ZEBRA_ANGRY.get();
-    }
-
-    @Override
     protected void playChestEquipsSound() {
         this.playSound(SoundEvents.MULE_CHEST, 1.0f, (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.0f);
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Zebra> PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            if (this.isSprinting() || this.getDeltaMovement().horizontalDistanceSqr() > 0.01) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.0D);
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.0D);
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
     }
 
     static class ZebraAvoidPlayersGoal extends AvoidEntityGoal<Player> {
@@ -211,4 +188,33 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
             return super.canScare() && !this.zebra.isTamed();
         }
     }
+    //endregion
+
+    //region Animation
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    protected <E extends Zebra> PlayState predicate(final @NotNull AnimationState<E> event) {
+        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+            if (this.isSprinting() || this.getDeltaMovement().horizontalDistanceSqr() > 0.01) {
+                event.getController().setAnimation(RUN);
+                event.getController().setAnimationSpeed(2.0D);
+            } else {
+                event.getController().setAnimation(WALK);
+                event.getController().setAnimationSpeed(1.0D);
+            }
+        } else {
+            event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
+        }
+        return PlayState.CONTINUE;
+    }
+
+    @Override
+    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+    }
+    //endregion
 }

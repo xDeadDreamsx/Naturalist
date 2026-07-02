@@ -5,6 +5,7 @@ import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.base.VariantAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -53,7 +54,7 @@ import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, HuntingAnimal {
+public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, HuntingAnimal, VariantAnimal {
     //region Data
     public static final int VARIANTS = 2;
     public static final String[] VARIANT_NAMES = {"red", "glow"};
@@ -94,16 +95,19 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, Hun
         return this.entityData.get(DATA_HAS_TARGET);
     }
 
+    @Override
     public int getVariant() {
         return this.entityData.get(DATA_VARIANT);
     }
 
+    @Override
     public void setVariant(int variant) {
         this.entityData.set(DATA_VARIANT, variant);
     }
 
-    public String getVariantName() {
-        return VARIANT_NAMES[Math.floorMod(this.getVariant(), VARIANTS)];
+    @Override
+    public String[] getVariantNames() {
+        return VARIANT_NAMES;
     }
 
     public boolean isGlowing() {

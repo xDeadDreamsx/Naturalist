@@ -24,6 +24,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
 public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
+    //region Data
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.bass.swim");
@@ -34,6 +35,13 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
     }
 
     @Override
+    public @NotNull ItemStack getBucketItemStack() {
+        return new ItemStack(NaturalistRegistry.BASS_BUCKET.get());
+    }
+    //endregion
+
+    //region Behavior
+    @Override
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.0D, 1.5D));
@@ -43,11 +51,6 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
     @Override
     public int getMaxSchoolSize() {
         return 5;
-    }
-
-    @Override
-    public @NotNull ItemStack getBucketItemStack() {
-        return new ItemStack(NaturalistRegistry.BASS_BUCKET.get());
     }
 
     @Override
@@ -69,15 +72,17 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
     protected @NotNull SoundEvent getFlopSound() {
         return NaturalistSoundEvents.BASS_FLOP.get();
     }
+    //endregion
+
+    //region Animation
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
 
     @Override
     public double getBoneResetTime() {
         return 2;
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
     }
 
     protected <E extends Bass> @NotNull PlayState predicate(final AnimationState<E> event) {
@@ -93,4 +98,5 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity {
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 2, this::predicate));
     }
+    //endregion
 }

@@ -3,6 +3,7 @@ package com.crispytwig.naturalist.server.entity.mob;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.base.VariantAnimal;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -41,7 +42,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Jellyfish extends AbstractFish implements NaturalistGeoEntity {
+public class Jellyfish extends AbstractFish implements NaturalistGeoEntity, VariantAnimal {
     //region Data
     public static final int VARIANTS = 5;
     public static final String[] VARIANT_NAMES = {"white", "orange", "pink", "blue", "green"};
@@ -77,16 +78,19 @@ public class Jellyfish extends AbstractFish implements NaturalistGeoEntity {
         builder.define(DATA_VARIANT, 0);
     }
 
+    @Override
     public int getVariant() {
         return this.entityData.get(DATA_VARIANT);
     }
 
+    @Override
     public void setVariant(int variant) {
         this.entityData.set(DATA_VARIANT, variant);
     }
 
-    public String getVariantName() {
-        return VARIANT_NAMES[Math.floorMod(this.getVariant(), VARIANTS)];
+    @Override
+    public String[] getVariantNames() {
+        return VARIANT_NAMES;
     }
 
     @Override

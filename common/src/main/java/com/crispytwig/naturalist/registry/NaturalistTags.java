@@ -71,6 +71,7 @@ public class NaturalistTags {
         public static final TagKey<EntityType<?>> VULTURE_HOSTILES = tag("vulture_hostiles");
         public static final TagKey<EntityType<?>> CATFISH_HOSTILES = tag("catfish_hostiles");
         public static final TagKey<EntityType<?>> ANGLERFISH_HOSTILES = tag("anglerfish_hostiles");
+        public static final TagKey<EntityType<?>> PIRANHA_HOSTILES = tag("piranha_hostiles");
         public static final TagKey<EntityType<?>> ALLIGATOR_HOSTILES = tag("alligator_hostiles");
         public static final TagKey<EntityType<?>> BOAR_HOSTILES = tag("boar_hostiles");
         public static final TagKey<EntityType<?>> ANIMAL_CRATE_BLACKLISTED = tag("animal_crate_blacklist");
@@ -87,6 +88,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_ANGLERFISH = tag("has_anglerfish");
         public static final TagKey<Biome> HAS_RAY = tag("has_ray");
         public static final TagKey<Biome> HAS_BLOBFISH = tag("has_blobfish");
+        public static final TagKey<Biome> HAS_PIRANHA = tag("has_piranha");
         public static final TagKey<Biome> HAS_BASS = tag("has_bass");
         public static final TagKey<Biome> HAS_BEAR = tag("has_bear");
         public static final TagKey<Biome> HAS_BLUEJAY = tag("has_bluejay");
@@ -125,6 +127,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_ANGLERFISH = tag("blacklist/blacklist_anglerfish");
         public static final TagKey<Biome> BLACKLIST_RAY = tag("blacklist/blacklist_ray");
         public static final TagKey<Biome> BLACKLIST_BLOBFISH = tag("blacklist/blacklist_blobfish");
+        public static final TagKey<Biome> BLACKLIST_PIRANHA = tag("blacklist/blacklist_piranha");
         public static final TagKey<Biome> BLACKLIST_BASS = tag("blacklist/blacklist_bass");
         public static final TagKey<Biome> BLACKLIST_BEAR = tag("blacklist/blacklist_bear");
         public static final TagKey<Biome> BLACKLIST_BLUEJAY = tag("blacklist/blacklist_bluejay");

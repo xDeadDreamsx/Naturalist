@@ -144,6 +144,41 @@
     ],
     "subtitle": "naturalist.subtitles.entity.blobfish.death"
   },
+  "entity.piranha.flop": {
+    "sounds": [
+      {
+        "name": "minecraft:entity/pufferfish/flop1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:entity/pufferfish/flop2",
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "naturalist.subtitles.entity.piranha.flop"
+  },
+  "entity.piranha.idle": {
+    "sounds": [
+      "naturalist:mob/piranha/idle1",
+      "naturalist:mob/piranha/idle2",
+      "naturalist:mob/piranha/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.piranha.idle"
+  },
+  "entity.piranha.hurt": {
+    "sounds": [
+      "naturalist:mob/piranha/hurt1",
+      "naturalist:mob/piranha/hurt2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.piranha.hurt"
+  },
+  "entity.piranha.death": {
+    "sounds": [
+      "naturalist:mob/piranha/death1",
+      "naturalist:mob/piranha/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.piranha.death"
+  },
   "entity.clam.ambient": {
     "sounds": [
       "naturalist:mob/clam/idle1",
