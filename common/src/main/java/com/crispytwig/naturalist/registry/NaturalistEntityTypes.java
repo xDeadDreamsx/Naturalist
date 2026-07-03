@@ -2,6 +2,7 @@ package com.crispytwig.naturalist.registry;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.mob.*;
+import com.crispytwig.naturalist.server.entity.misc.DirtTrail;
 import com.crispytwig.naturalist.server.entity.misc.ThrownDuckEgg;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +37,7 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Dragonfly>> DRAGONFLY = register("dragonfly", EntityType.Builder.of(Dragonfly::new, MobCategory.AMBIENT).sized(0.9F, 0.7F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Duck>> DUCK = register("duck", EntityType.Builder.of(Duck::new, MobCategory.CREATURE).sized(0.6F, 1.0F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<ThrownDuckEgg>> DUCK_EGG = register("duck_egg", EntityType.Builder.<ThrownDuckEgg>of(ThrownDuckEgg::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(16));
+    public static final DeferredHolder<EntityType<?>, EntityType<DirtTrail>> DIRT_TRAIL = register("dirt_trail", EntityType.Builder.of(DirtTrail::new, MobCategory.MISC).sized(0.7F, 0.3F).fireImmune().clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Elephant>> ELEPHANT = register("elephant", EntityType.Builder.of(Elephant::new, MobCategory.CREATURE).sized(2.5F, 3.5F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Firefly>> FIREFLY = register("firefly", EntityType.Builder.of(Firefly::new, MobCategory.AMBIENT).sized(0.7F, 0.6F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Bird>> FINCH = register("finch", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));
@@ -47,6 +49,7 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Lizard>> LIZARD = register("lizard", EntityType.Builder.of(Lizard::new, MobCategory.CREATURE).sized(0.8F, 0.5F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<LizardTail>> LIZARD_TAIL = register("lizard_tail", EntityType.Builder.of(LizardTail::new, MobCategory.CREATURE).sized(0.7F, 0.5F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Mammoth>> MAMMOTH = register("mammoth", EntityType.Builder.of(Mammoth::new, MobCategory.CREATURE).sized(2.5F, 3.5F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<Mole>> MOLE = register("mole", EntityType.Builder.of(Mole::new, MobCategory.CREATURE).sized(0.7F, 0.65F).clientTrackingRange(10));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Snake>> RATTLESNAKE = register("rattlesnake", EntityType.Builder.of(Snake::new, MobCategory.CREATURE).sized(0.6F, 0.7F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Rhino>> RHINO = register("rhino", EntityType.Builder.of(Rhino::new, MobCategory.CREATURE).sized(2.5F, 3.0F).clientTrackingRange(10));

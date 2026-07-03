@@ -119,6 +119,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.JELLYFISH.get(), Jellyfish.createAttributes());
         r.register(NaturalistEntityTypes.WHALE.get(), Whale.createAttributes());
         r.register(NaturalistEntityTypes.ANT.get(), Ant.createAttributes());
+        r.register(NaturalistEntityTypes.MOLE.get(), Mole.createAttributes());
     }
 
     public static void registerSpawnPlacements(SpawnPlacementRegistrar r) {
@@ -162,6 +163,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.GIANT_ISOPOD.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, GiantIsopod::checkGiantIsopodSpawnRules);
         r.register(NaturalistEntityTypes.JELLYFISH.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules);
         r.register(NaturalistEntityTypes.WHALE.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Whale::checkWhaleSpawnRules);
+        r.register(NaturalistEntityTypes.MOLE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
     }
 
     public static void registerPotionMixes(BrewingRegistrar r) {

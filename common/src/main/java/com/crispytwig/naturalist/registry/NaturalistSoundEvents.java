@@ -150,6 +150,13 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> ANT_HURT = register("entity.ant.hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANT_DEATH = register("entity.ant.death");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANT_STEP = register("entity.ant.step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOLE_AMBIENT = register("entity.mole.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOLE_HURT = register("entity.mole.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOLE_DEATH = register("entity.mole.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOLE_DIG_DOWN = register("entity.mole.dig_down");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOLE_DIG_UP = register("entity.mole.dig_up");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOLE_PEEK = register("entity.mole.peek");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOLE_STEP = register("entity.mole.step");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_IDLE = register("entity.ray.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_SWIM = register("entity.ray.swim");

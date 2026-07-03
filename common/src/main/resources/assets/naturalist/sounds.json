@@ -135,6 +135,65 @@
     ],
     "subtitle": "naturalist.subtitles.entity.ant.step"
   },
+  "entity.mole.ambient": {
+    "sounds": [
+      "naturalist:mob/mole/idle1",
+      "naturalist:mob/mole/idle2",
+      "naturalist:mob/mole/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mole.ambient"
+  },
+  "entity.mole.hurt": {
+    "sounds": [
+      "naturalist:mob/mole/hurt1",
+      "naturalist:mob/mole/hurt2",
+      "naturalist:mob/mole/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mole.hurt"
+  },
+  "entity.mole.death": {
+    "sounds": [
+      "naturalist:mob/mole/death1",
+      "naturalist:mob/mole/death2",
+      "naturalist:mob/mole/death3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mole.death"
+  },
+  "entity.mole.dig_down": {
+    "sounds": [
+      "naturalist:mob/mole/dig_down1",
+      "naturalist:mob/mole/dig_down2",
+      "naturalist:mob/mole/dig_down3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mole.dig_down"
+  },
+  "entity.mole.dig_up": {
+    "sounds": [
+      "naturalist:mob/mole/dig_up1",
+      "naturalist:mob/mole/dig_up2",
+      "naturalist:mob/mole/dig_up3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mole.dig_up"
+  },
+  "entity.mole.peek": {
+    "sounds": [
+      "naturalist:mob/mole/peek1",
+      "naturalist:mob/mole/peek2",
+      "naturalist:mob/mole/peek3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mole.peek"
+  },
+  "entity.mole.step": {
+    "sounds": [
+      "naturalist:mob/mole/step1",
+      "naturalist:mob/mole/step2",
+      "naturalist:mob/mole/step3",
+      "naturalist:mob/mole/step4",
+      "naturalist:mob/mole/step5",
+      "naturalist:mob/mole/step6"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mole.step"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",
