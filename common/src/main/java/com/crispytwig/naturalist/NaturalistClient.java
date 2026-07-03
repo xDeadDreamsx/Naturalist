@@ -52,6 +52,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.RHINO.get(), RhinoRenderer::new);
         r.register(NaturalistEntityTypes.LION.get(), LionRenderer::new);
         r.register(NaturalistEntityTypes.ELEPHANT.get(), ElephantRenderer::new);
+        r.register(NaturalistEntityTypes.MAMMOTH.get(), MammothRenderer::new);
         r.register(NaturalistEntityTypes.ZEBRA.get(), ZebraRenderer::new);
         r.register(NaturalistEntityTypes.GIRAFFE.get(), GiraffeRenderer::new);
         r.register(NaturalistEntityTypes.HIPPO.get(), HippoRenderer::new);

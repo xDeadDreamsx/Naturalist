@@ -78,6 +78,7 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.HIPPO.get())
                 .add(NaturalistEntityTypes.LION.get())
                 .add(NaturalistEntityTypes.LIZARD.get())
+                .add(NaturalistEntityTypes.MAMMOTH.get())
                 .add(NaturalistEntityTypes.RATTLESNAKE.get())
                 .add(NaturalistEntityTypes.RHINO.get())
                 .add(NaturalistEntityTypes.ROBIN.get())

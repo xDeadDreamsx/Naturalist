@@ -382,6 +382,14 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptional(terralith("tropical_jungle"))
                 .addOptional(terralith("warped_mesa"));
 
+        tag(NaturalistTags.Biomes.HAS_MAMMOTH)
+                .add(Biomes.SNOWY_PLAINS).add(Biomes.ICE_SPIKES)
+                .add(Biomes.SNOWY_SLOPES).add(Biomes.FROZEN_PEAKS)
+                .addOptional(bop("snowblossom_grove"))
+                .addOptional(bop("snowy_coniferous_forest"))
+                .addOptional(bop("snowy_fir_clearing"))
+                .addOptional(bop("snowy_maple_woods"));
+
         tag(NaturalistTags.Biomes.HAS_RATTLESNAKE)
                 .addTag(BiomeTags.IS_BADLANDS).addTag(BiomeTags.IS_SAVANNA)
                 .add(Biomes.DESERT)
@@ -576,6 +584,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_HIPPO);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_LION);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_LIZARD);
+        emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_MAMMOTH);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_RATTLESNAKE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_RHINO);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_ROBIN);

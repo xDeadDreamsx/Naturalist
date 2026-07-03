@@ -10,10 +10,16 @@
           "name": "minecraft:glowstone_dust",
           "weight": 1,
           "functions": [
-            { "function": "minecraft:set_count", "count": 1.0 }
+            {
+              "function": "minecraft:set_count",
+              "count": 1.0
+            }
           ]
         },
-        { "type": "minecraft:empty", "weight": 4 }
+        {
+          "type": "minecraft:empty",
+          "weight": 4
+        }
       ]
     },
     {
@@ -27,7 +33,15 @@
             {
               "function": "minecraft:furnace_smelt",
               "conditions": [
-                { "condition": "minecraft:entity_properties", "entity": "this", "predicate": { "flags": { "is_on_fire": true } } }
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
               ]
             }
           ]

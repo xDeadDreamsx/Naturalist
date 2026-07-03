@@ -93,6 +93,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.RHINO.get(), Rhino.createAttributes());
         r.register(NaturalistEntityTypes.LION.get(), Lion.createAttributes());
         r.register(NaturalistEntityTypes.ELEPHANT.get(), Elephant.createAttributes());
+        r.register(NaturalistEntityTypes.MAMMOTH.get(), Elephant.createAttributes());
         r.register(NaturalistEntityTypes.ZEBRA.get(), Zebra.createBaseHorseAttributes());
         r.register(NaturalistEntityTypes.GIRAFFE.get(), Giraffe.createAttributes());
         r.register(NaturalistEntityTypes.HIPPO.get(), Hippo.createAttributes());
@@ -136,6 +137,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.RHINO.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.LION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.ELEPHANT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
+        r.register(NaturalistEntityTypes.MAMMOTH.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mammoth::checkMammothSpawnRules);
         r.register(NaturalistEntityTypes.ZEBRA.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.GIRAFFE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.HIPPO.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Hippo::checkHippoSpawnRules);

@@ -3,14 +3,27 @@
   "criteria": {
     "has_anglerfish": {
       "trigger": "minecraft:inventory_changed",
-      "conditions": { "items": [ { "items": "naturalist:anglerfish" } ] }
+      "conditions": {
+        "items": [
+          {
+            "items": "naturalist:anglerfish"
+          }
+        ]
+      }
     },
     "has_the_recipe": {
-      "conditions": { "recipe": "naturalist:cooked_anglerfish" },
+      "conditions": {
+        "recipe": "naturalist:cooked_anglerfish"
+      },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
-  "requirements": [ [ "has_anglerfish", "has_the_recipe" ] ],
+  "requirements": [
+    [
+      "has_anglerfish",
+      "has_the_recipe"
+    ]
+  ],
   "rewards": {
     "recipes": [
       "naturalist:cooked_anglerfish",

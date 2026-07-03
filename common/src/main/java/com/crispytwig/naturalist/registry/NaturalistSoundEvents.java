@@ -87,6 +87,12 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> ELEPHANT_AMBIENT_BABY = register("entity.elephant.ambient_baby");
     public static final DeferredHolder<SoundEvent, SoundEvent> ELEPHANT_HURT_BABY = register("entity.elephant.hurt_baby");
     public static final DeferredHolder<SoundEvent, SoundEvent> ELEPHANT_DEATH_BABY = register("entity.elephant.death_baby");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MAMMOTH_HURT = register("entity.mammoth.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MAMMOTH_DEATH = register("entity.mammoth.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MAMMOTH_AMBIENT = register("entity.mammoth.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MAMMOTH_AMBIENT_BABY = register("entity.mammoth.ambient_baby");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MAMMOTH_HURT_BABY = register("entity.mammoth.hurt_baby");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MAMMOTH_DEATH_BABY = register("entity.mammoth.death_baby");
     public static final DeferredHolder<SoundEvent, SoundEvent> ZEBRA_AMBIENT = register("entity.zebra.ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> ZEBRA_HURT = register("entity.zebra.hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> ZEBRA_DEATH = register("entity.zebra.death");

@@ -9,17 +9,32 @@
           "type": "minecraft:item",
           "name": "naturalist:clam_meat",
           "functions": [
-            { "function": "minecraft:set_count", "count": 1.0 },
+            {
+              "function": "minecraft:set_count",
+              "count": 1.0
+            },
             {
               "function": "minecraft:furnace_smelt",
               "conditions": [
-                { "condition": "minecraft:entity_properties", "entity": "this", "predicate": { "flags": { "is_on_fire": true } } }
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {
+                    "flags": {
+                      "is_on_fire": true
+                    }
+                  }
+                }
               ]
             },
             {
               "function": "minecraft:enchanted_count_increase",
               "enchantment": "minecraft:looting",
-              "count": { "type": "minecraft:uniform", "min": 0.0, "max": 1.0 }
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 0.0,
+                "max": 1.0
+              }
             }
           ]
         }

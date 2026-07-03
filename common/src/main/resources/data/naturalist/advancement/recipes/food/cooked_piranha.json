@@ -3,14 +3,27 @@
   "criteria": {
     "has_piranha": {
       "trigger": "minecraft:inventory_changed",
-      "conditions": { "items": [ { "items": "naturalist:piranha" } ] }
+      "conditions": {
+        "items": [
+          {
+            "items": "naturalist:piranha"
+          }
+        ]
+      }
     },
     "has_the_recipe": {
-      "conditions": { "recipe": "naturalist:cooked_piranha" },
+      "conditions": {
+        "recipe": "naturalist:cooked_piranha"
+      },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
-  "requirements": [ [ "has_piranha", "has_the_recipe" ] ],
+  "requirements": [
+    [
+      "has_piranha",
+      "has_the_recipe"
+    ]
+  ],
   "rewards": {
     "recipes": [
       "naturalist:cooked_piranha",

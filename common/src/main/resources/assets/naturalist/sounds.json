@@ -372,7 +372,6 @@
     ],
     "subtitle": "naturalist.subtitles.entity.tortoise.death_baby"
   },
-
   "entity.alligator.egg_break": {
     "sounds": [
       "mob/turtle/egg/egg_break1",
@@ -398,7 +397,6 @@
     ],
     "subtitle": "naturalist.subtitles.entity.alligator.egg_hatch"
   },
-
   "entity.snake.hiss": {
     "sounds": [
       "naturalist:mob/snake/hiss"
@@ -834,6 +832,62 @@
     ],
     "subtitle": "naturalist.subtitles.entity.elephant.death"
   },
+  "entity.mammoth.ambient": {
+    "sounds": [
+      "naturalist:mob/elephant/idle1",
+      "naturalist:mob/elephant/idle2",
+      "naturalist:mob/elephant/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mammoth.ambient"
+  },
+  "entity.mammoth.ambient_baby": {
+    "sounds": [
+      {
+        "name": "naturalist:mob/elephant/baby_idle1",
+        "pitch": 0.75
+      },
+      {
+        "name": "naturalist:mob/elephant/baby_idle2",
+        "pitch": 0.75
+      }
+    ],
+    "subtitle": "naturalist.subtitles.entity.mammoth.ambient_baby"
+  },
+  "entity.mammoth.hurt_baby": {
+    "sounds": [
+      {
+        "name": "naturalist:mob/elephant/baby_hurt1",
+        "pitch": 0.75
+      },
+      {
+        "name": "naturalist:mob/elephant/baby_hurt2",
+        "pitch": 0.75
+      }
+    ],
+    "subtitle": "naturalist.subtitles.entity.mammoth.hurt_baby"
+  },
+  "entity.mammoth.death_baby": {
+    "sounds": [
+      {
+        "name": "naturalist:mob/elephant/baby_death1",
+        "pitch": 0.75
+      }
+    ],
+    "subtitle": "naturalist.subtitles.entity.mammoth.death_baby"
+  },
+  "entity.mammoth.hurt": {
+    "sounds": [
+      "naturalist:mob/elephant/hurt"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mammoth.hurt"
+  },
+  "entity.mammoth.death": {
+    "sounds": [
+      "naturalist:mob/elephant/death1",
+      "naturalist:mob/elephant/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.mammoth.death"
+  },
   "entity.deer.ambient": {
     "sounds": [
       "naturalist:mob/deer/idle1",
@@ -1180,18 +1234,18 @@
     "subtitle": "naturalist.subtitles.entity.duck.ambient"
   },
   "entity.duck.hurt": {
-      "sounds": [
+    "sounds": [
       "naturalist:mob/duck/hurt1",
       "naturalist:mob/duck/hurt2"
-      ],
-      "subtitle": "naturalist.subtitles.entity.duck.hurt"
+    ],
+    "subtitle": "naturalist.subtitles.entity.duck.hurt"
   },
   "entity.duck.death": {
-      "sounds": [
-        "naturalist:mob/duck/death1",
-        "naturalist:mob/duck/death2"
-      ],
-      "subtitle": "naturalist.subtitles.entity.duck.death"
+    "sounds": [
+      "naturalist:mob/duck/death1",
+      "naturalist:mob/duck/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.duck.death"
   },
   "entity.duck.ambient_baby": {
     "sounds": [
@@ -1215,36 +1269,36 @@
     "subtitle": "naturalist.subtitles.entity.duck.death_baby"
   },
   "entity.duck.step": {
-      "sounds": [
+    "sounds": [
       "naturalist:mob/duck/step1",
       "naturalist:mob/duck/step2",
       "naturalist:mob/duck/step3",
       "naturalist:mob/duck/step4",
       "naturalist:mob/duck/step5"
-      ],
-      "subtitle": "subtitles.block.generic.footsteps"
+    ],
+    "subtitle": "subtitles.block.generic.footsteps"
   },
-    "entity.rubber_ducky.ambient": {
-        "sounds": [
-        "naturalist:mob/duck/rubber_ducky/idle1",
-        "naturalist:mob/duck/rubber_ducky/idle2"
-        ],
-        "subtitle": "naturalist.subtitles.entity.duck.ambient"
-    },
-    "entity.rubber_ducky.hurt": {
-        "sounds": [
-        "naturalist:mob/duck/rubber_ducky/hurt1",
-        "naturalist:mob/duck/rubber_ducky/hurt2"
-        ],
-        "subtitle": "naturalist.subtitles.entity.duck.hurt"
-    },
-    "entity.rubber_ducky.death": {
-        "sounds": [
-        "naturalist:mob/duck/rubber_ducky/hurt1",
-        "naturalist:mob/duck/rubber_ducky/hurt2"
-        ],
-        "subtitle": "naturalist.subtitles.entity.duck.death"
-    },
+  "entity.rubber_ducky.ambient": {
+    "sounds": [
+      "naturalist:mob/duck/rubber_ducky/idle1",
+      "naturalist:mob/duck/rubber_ducky/idle2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.duck.ambient"
+  },
+  "entity.rubber_ducky.hurt": {
+    "sounds": [
+      "naturalist:mob/duck/rubber_ducky/hurt1",
+      "naturalist:mob/duck/rubber_ducky/hurt2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.duck.hurt"
+  },
+  "entity.rubber_ducky.death": {
+    "sounds": [
+      "naturalist:mob/duck/rubber_ducky/hurt1",
+      "naturalist:mob/duck/rubber_ducky/hurt2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.duck.death"
+  },
   "entity.lizard.ambient": {
     "sounds": [
       "naturalist:mob/lizard/idle1",

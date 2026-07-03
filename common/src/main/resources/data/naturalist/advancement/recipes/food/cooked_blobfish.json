@@ -3,14 +3,27 @@
   "criteria": {
     "has_blobfish": {
       "trigger": "minecraft:inventory_changed",
-      "conditions": { "items": [ { "items": "naturalist:blobfish" } ] }
+      "conditions": {
+        "items": [
+          {
+            "items": "naturalist:blobfish"
+          }
+        ]
+      }
     },
     "has_the_recipe": {
-      "conditions": { "recipe": "naturalist:cooked_blobfish" },
+      "conditions": {
+        "recipe": "naturalist:cooked_blobfish"
+      },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
-  "requirements": [ [ "has_blobfish", "has_the_recipe" ] ],
+  "requirements": [
+    [
+      "has_blobfish",
+      "has_the_recipe"
+    ]
+  ],
   "rewards": {
     "recipes": [
       "naturalist:cooked_blobfish",
