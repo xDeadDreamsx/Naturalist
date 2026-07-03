@@ -76,6 +76,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.BLOBFISH.get(), BlobfishRenderer::new);
         r.register(NaturalistEntityTypes.PIRANHA.get(), PiranhaRenderer::new);
         r.register(NaturalistEntityTypes.WHALE.get(), WhaleRenderer::new);
+        r.register(NaturalistEntityTypes.ANT.get(), AntRenderer::new);
     }
 
     @FunctionalInterface

@@ -3,6 +3,7 @@ package com.crispytwig.naturalist.server.entity.mob;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
+import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import net.minecraft.core.BlockPos;
@@ -201,6 +202,11 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
+    }
+
+    @Override
+    public boolean wantsToAttack(@NotNull LivingEntity target, @NotNull LivingEntity owner) {
+        return PetTargeting.wantsToAttack(target, owner);
     }
 
     @Override

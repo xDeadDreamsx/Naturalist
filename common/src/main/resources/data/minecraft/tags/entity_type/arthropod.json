@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "naturalist:ant",
     "naturalist:butterfly",
     "naturalist:caterpillar",
     "naturalist:crab",

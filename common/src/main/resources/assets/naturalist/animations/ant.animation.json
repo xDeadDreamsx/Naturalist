@@ -1,0 +1,66 @@
+{
+  "format_version": "1.10.0",
+  "animations": {
+    "animation.sf_nba.ant.walk": {
+      "loop": true,
+      "animation_length": 2,
+      "bones": {
+        "body": {
+          "rotation": [0, 0, "Math.sin(( q.anim_time - 0.0 ) * 720 ) * 4"]
+        },
+        "skull": {
+          "rotation": [0, 0, "Math.sin(( q.anim_time - 0.2 ) * 720 ) * 4"]
+        },
+        "antennae": {
+          "rotation": [
+            "12.5 + Math.cos(( q.anim_time - 0.1 ) * 720 ) * 4",
+            0,
+            0
+          ]
+        },
+        "left_middle": {
+          "rotation": [0, "Math.cos(( q.anim_time - 0.2 ) * 720 ) * 30", 0]
+        },
+        "left_front": {
+          "rotation": [0, "Math.cos(( q.anim_time - 0.0 ) * 720 ) * 30", 0]
+        },
+        "left_back": {
+          "rotation": [0, "Math.cos(( q.anim_time - 0.1 ) * 720 ) * 30", 0]
+        },
+        "right_middle": {
+          "rotation": [
+            0,
+            "( Math.cos(( q.anim_time - 0.2 ) * 720 ) * 30 )",
+            0
+          ]
+        },
+        "right_front": {
+          "rotation": [
+            0,
+            "( Math.cos(( q.anim_time - 0.0 ) * 720 ) * 30 )",
+            0
+          ]
+        },
+        "right_back": {
+          "rotation": [
+            0,
+            "( Math.cos(( q.anim_time - 0.1 ) * 720 ) * 30 )",
+            0
+          ]
+        }
+      }
+    },
+    "animation.sf_nba.ant.idle": {
+      "loop": true,
+      "bones": {
+        "antennae": {
+          "rotation": [
+            "12.5 + Math.cos(( q.anim_time - 0.1 ) * 90 ) * 4",
+            0,
+            0
+          ]
+        }
+      }
+    }
+  }
+}

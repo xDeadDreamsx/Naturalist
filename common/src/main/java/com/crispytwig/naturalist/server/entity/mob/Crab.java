@@ -7,6 +7,7 @@ import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.HidingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import net.minecraft.core.BlockPos;
@@ -334,6 +335,11 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
                 return super.canUse();
             }
         });
+    }
+
+    @Override
+    public boolean wantsToAttack(@NotNull LivingEntity target, @NotNull LivingEntity owner) {
+        return PetTargeting.wantsToAttack(target, owner);
     }
 
     @Override

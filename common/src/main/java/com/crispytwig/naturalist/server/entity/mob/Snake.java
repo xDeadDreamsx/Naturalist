@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
@@ -258,6 +259,11 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, livingEntity -> this.hasHuntingCooldown() && (livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny()))));
         this.targetSelector.addGoal(6, new ResetUniversalAngerTargetGoal<>(this, false));
+    }
+
+    @Override
+    public boolean wantsToAttack(@NotNull LivingEntity target, @NotNull LivingEntity owner) {
+        return PetTargeting.wantsToAttack(target, owner);
     }
 
     @Override

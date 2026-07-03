@@ -10,3 +10,4 @@ accessible	method	net/minecraft/world/level/block/StairBlock	<init>	(Lnet/minecr
 accessible	class	net/minecraft/world/inventory/MenuType$MenuSupplier
 accessible	method	net/minecraft/world/inventory/MenuType	<init>	(Lnet/minecraft/world/inventory/MenuType$MenuSupplier;Lnet/minecraft/world/flag/FeatureFlagSet;)V
 accessible	class	net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
+accessible	class	net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier

@@ -5,6 +5,7 @@ import com.crispytwig.naturalist.server.block.*;
 import com.crispytwig.naturalist.server.entity.mob.Butterfly;
 import com.crispytwig.naturalist.server.entity.mob.Crab;
 import com.crispytwig.naturalist.server.item.BugNetItem;
+import com.crispytwig.naturalist.server.item.QueenAntItem;
 import com.crispytwig.naturalist.server.item.DuckEggItem;
 import com.crispytwig.naturalist.server.item.KnapsackItem;
 import com.crispytwig.naturalist.server.item.WhistleItem;
@@ -91,6 +92,9 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, BlockItem> CHRYSALIS = ITEMS.register("chrysalis", () -> new BlockItem(CHRYSALIS_BLOCK.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobItem> CATERPILLAR = ITEMS.register("caterpillar", () -> new CaughtMobItem(NaturalistEntityTypes.CATERPILLAR, () -> Fluids.EMPTY, NaturalistSoundEvents.SNAIL_FORWARD, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobWithVariantsItem> BUTTERFLY = ITEMS.register("butterfly", () -> new CaughtMobWithVariantsItem(NaturalistEntityTypes.BUTTERFLY, () -> Fluids.EMPTY, NaturalistSoundEvents.BIRD_FLY, Butterfly.Variant.values().length, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, CaughtMobItem> ANT = ITEMS.register("ant", () -> new CaughtMobItem(NaturalistEntityTypes.ANT, () -> Fluids.EMPTY, NaturalistSoundEvents.ANT_AMBIENT, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, QueenAntItem> QUEEN_ANT = ITEMS.register("queen_ant", () -> new QueenAntItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Block, AntHillBlock> ANT_HILL = registerBlock("ant_hill", () -> new AntHillBlock(BlockBehaviour.Properties.of().strength(0.5F, 0.2F).sound(SoundType.ROOTED_DIRT).randomTicks()));
     public static final DeferredHolder<Item, Item> SNAIL_SHELL = ITEMS.register("snail_shell", () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, SnailBucketItem> SNAIL_BUCKET = ITEMS.register("snail_bucket", () -> new SnailBucketItem(NaturalistEntityTypes.SNAIL.get(), Fluids.EMPTY, NaturalistSoundEvents.BUCKET_EMPTY_SNAIL.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, NaturalistBucketItem> STARFISH_BUCKET = ITEMS.register("starfish_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.STARFISH.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1), false, "color.minecraft.", Starfish.VARIANT_NAMES));
@@ -169,6 +173,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, SpawnEggItem> VULTURE_SPAWN_EGG = ITEMS.register("vulture_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.VULTURE, 4010022, 15325376, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> ZEBRA_SPAWN_EGG = ITEMS.register("zebra_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.ZEBRA, 15263457, 1710104, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> WHALE_SPAWN_EGG = ITEMS.register("whale_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.WHALE, 3886172, 9413037, new Item.Properties()));
+    public static final DeferredHolder<Item, SpawnEggItem> ANT_SPAWN_EGG = ITEMS.register("ant_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.ANT, 5515292, 3085582, new Item.Properties()));
 
     public static void init() {
     }

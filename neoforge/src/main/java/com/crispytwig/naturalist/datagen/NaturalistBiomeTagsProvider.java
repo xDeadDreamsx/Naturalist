@@ -36,6 +36,9 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
 
     @Override
     protected void addTags(HolderLookup.@NonNull Provider provider) {
+        tag(NaturalistTags.Biomes.HAS_ANT_HILL)
+                .addTag(BiomeTags.IS_JUNGLE).addTag(BiomeTags.IS_SAVANNA);
+
         tag(NaturalistTags.Biomes.HAS_ALLIGATOR)
                 .add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP).add(Biomes.RIVER)
                 .addOptionalTag(Tags.Biomes.IS_SWAMP)

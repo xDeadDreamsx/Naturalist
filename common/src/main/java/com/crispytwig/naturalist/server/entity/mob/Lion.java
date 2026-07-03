@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
@@ -215,6 +216,11 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
                 entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby()
                         && !this.isSleeping() && !this.isBaby() && this.level().isNight() && this.hasHuntingCooldown()));
+    }
+
+    @Override
+    public boolean wantsToAttack(@NotNull LivingEntity target, @NotNull LivingEntity owner) {
+        return PetTargeting.wantsToAttack(target, owner);
     }
 
     @Override

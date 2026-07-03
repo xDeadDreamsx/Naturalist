@@ -6,6 +6,7 @@ import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SmoothFloatGoal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
+import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import net.minecraft.nbt.CompoundTag;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
@@ -170,6 +171,11 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
         this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity) -> !this.isBaby() && entity.isInWater() && !this.isOwnedBy(entity)));
+    }
+
+    @Override
+    public boolean wantsToAttack(@NotNull LivingEntity target, @NotNull LivingEntity owner) {
+        return PetTargeting.wantsToAttack(target, owner);
     }
 
     @Override

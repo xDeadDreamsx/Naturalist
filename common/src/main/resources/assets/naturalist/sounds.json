@@ -102,6 +102,39 @@
     ],
     "subtitle": "naturalist.subtitles.entity.whale.blowhole"
   },
+  "entity.ant.ambient": {
+    "sounds": [
+      "naturalist:mob/ant/idle1",
+      "naturalist:mob/ant/idle2",
+      "naturalist:mob/ant/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ant.ambient"
+  },
+  "entity.ant.hurt": {
+    "sounds": [
+      "naturalist:mob/ant/hurt1",
+      "naturalist:mob/ant/hurt2",
+      "naturalist:mob/ant/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ant.hurt"
+  },
+  "entity.ant.death": {
+    "sounds": [
+      "naturalist:mob/ant/death1",
+      "naturalist:mob/ant/death2",
+      "naturalist:mob/ant/death3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ant.death"
+  },
+  "entity.ant.step": {
+    "sounds": [
+      "naturalist:mob/ant/step1",
+      "naturalist:mob/ant/step2",
+      "naturalist:mob/ant/step3",
+      "naturalist:mob/ant/step4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ant.step"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",

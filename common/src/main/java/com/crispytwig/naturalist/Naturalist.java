@@ -47,7 +47,9 @@ public final class Naturalist {
     public static void bootstrap() {
         touch(NaturalistSoundEvents.SOUND_EVENTS);
         touch(NaturalistEntityTypes.ENTITY_TYPES);
+        touch(NaturalistFeatures.FEATURES);
         NaturalistRegistry.init();
+        touch(NaturalistBlockEntities.BLOCK_ENTITY_TYPES);
         touch(NaturalistMenus.MENUS);
         touch(NaturalistPotions.POTIONS);
         touch(NaturalistRecipes.RECIPE_TYPES);
@@ -116,6 +118,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.GIANT_ISOPOD.get(), GiantIsopod.createAttributes());
         r.register(NaturalistEntityTypes.JELLYFISH.get(), Jellyfish.createAttributes());
         r.register(NaturalistEntityTypes.WHALE.get(), Whale.createAttributes());
+        r.register(NaturalistEntityTypes.ANT.get(), Ant.createAttributes());
     }
 
     public static void registerSpawnPlacements(SpawnPlacementRegistrar r) {

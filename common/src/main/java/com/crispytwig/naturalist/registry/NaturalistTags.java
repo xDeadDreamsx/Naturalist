@@ -124,6 +124,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_VULTURE = tag("has_vulture");
         public static final TagKey<Biome> HAS_ZEBRA = tag("has_zebra");
         public static final TagKey<Biome> HAS_WHALE = tag("has_whale");
+        public static final TagKey<Biome> HAS_ANT_HILL = tag("has_ant_hill");
 
         public static final TagKey<Biome> BLACKLIST_ALLIGATOR = tag("blacklist/blacklist_alligator");
         public static final TagKey<Biome> BLACKLIST_ANGLERFISH = tag("blacklist/blacklist_anglerfish");
