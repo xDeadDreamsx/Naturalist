@@ -14,10 +14,12 @@
     "BottleItemMixin",
     "CreeperMixin",
     "CropBlockMixin",
+    "LevelMixin",
     "MapItemMixin",
     "MobMixin",
     "MonsterMixin",
     "ServerAdvancementManagerMixin",
+    "ServerLevelMixin",
     "ZombieMixin"
   ],
   "injectors": {

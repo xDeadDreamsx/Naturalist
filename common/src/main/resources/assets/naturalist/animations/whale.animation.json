@@ -1,0 +1,194 @@
+{
+  "format_version": "1.10.0",
+  "animations": {
+    "animation.sf_nba.whale.swim": {
+      "loop": true,
+      "animation_length": 2,
+      "bones": {
+        "leftFin": {
+          "rotation": [
+            22.5,
+            "Math.sin(( q.anim_time - 0.0 ) * 180 ) * -3",
+            "45 + Math.cos(( q.anim_time - 0.2 ) * 180 ) * 3"
+          ]
+        },
+        "tail": {
+          "rotation": ["Math.cos(( q.anim_time - 0.0 ) * 180 ) * 10", 0, 0]
+        },
+        "tail2": {
+          "rotation": ["Math.sin(( q.anim_time - 0.2 ) * 180 ) * 20", 0, 0],
+          "position": [
+            0,
+            "-1 + Math.cos(( q.anim_time - 0.8 ) * 180 ) * 1",
+            0
+          ]
+        },
+        "rightFin": {
+          "rotation": [
+            22.5,
+            "Math.sin(( q.anim_time - 0.0 ) * 180 ) * 3",
+            "-45 + Math.cos(( q.anim_time - 0.2 ) * 180 ) * -3"
+          ]
+        },
+        "body": {
+          "rotation": [0, 0, 0]
+        },
+        "root": {
+          "rotation": ["Math.sin(( q.anim_time - 0.2 ) * 180 ) * -2", 0, 0],
+          "position": [0, "Math.cos(( q.anim_time - 0.2 ) * 180 ) * -1", 0]
+        }
+      },
+      "sound_effects": {
+        "0.25": {
+          "effect": "swim"
+        }
+      }
+    },
+    "animation.sf_nba.whale.idle": {
+      "loop": true,
+      "animation_length": 4,
+      "bones": {
+        "leftFin": {
+          "rotation": [
+            22.5,
+            "Math.sin(( q.anim_time - 0.0 ) * 90 ) * -2",
+            "45 + Math.cos(( q.anim_time - 0.2 ) * 90 ) * 2"
+          ]
+        },
+        "tail": {
+          "rotation": ["Math.cos(( q.anim_time - 0.0 ) * 90 ) * 2", 0, 0]
+        },
+        "tail2": {
+          "rotation": ["Math.sin(( q.anim_time - 0.2 ) * 90 ) * 2", 0, 0],
+          "position": [
+            0,
+            "-0.25 + Math.cos(( q.anim_time - 0.9 ) * 90 ) * 0.25",
+            0
+          ]
+        },
+        "rightFin": {
+          "rotation": [
+            22.5,
+            "Math.sin(( q.anim_time - 0.0 ) * 90 ) * 2",
+            "-45 + Math.cos(( q.anim_time - 0.2 ) * 90 ) * -2"
+          ]
+        },
+        "body": {
+          "rotation": [0, 0, 0]
+        }
+      }
+    },
+    "animation.sf_nba.whale.flop": {
+      "loop": true,
+      "animation_length": 4,
+      "bones": {
+        "root": {
+          "position": [
+            0,
+            "Math.clamp( Math.sin(( q.anim_time - 0.4 ) * 360 ) * 8, 0, 16 )",
+            0
+          ]
+        },
+        "body": {
+          "rotation": ["Math.cos(( q.anim_time - 0.0 ) * 360 ) * 4", 0, 0]
+        },
+        "tail": {
+          "rotation": ["Math.cos(( q.anim_time - 0.0 ) * 360 ) * 10", 0, 0]
+        },
+        "tail2": {
+          "rotation": [
+            "Math.cos(( q.anim_time - 0.3 ) * 360 ) * 22.5",
+            0,
+            0
+          ]
+        },
+        "rightFin": {
+          "rotation": [
+            0,
+            0,
+            "-12.5 + Math.cos(( q.anim_time - 0.12 ) * 360 ) * 10"
+          ]
+        },
+        "leftFin": {
+          "rotation": [
+            0,
+            0,
+            "12.5 + Math.cos(( q.anim_time - 0.12 ) * 360 ) * -10"
+          ]
+        }
+      },
+      "sound_effects": {
+        "0.5": {
+          "effect": "flop"
+        },
+        "1.5": {
+          "effect": "flop"
+        },
+        "2.5": {
+          "effect": "flop"
+        },
+        "3.5": {
+          "effect": "flop"
+        }
+      }
+    },
+    "animation.sf_nba.whale.idle_event": {
+      "animation_length": 2,
+      "bones": {
+        "skullRot": {
+          "rotation": {
+            "0.0": {
+              "post": [0, 0, 0],
+              "lerp_mode": "catmullrom"
+            },
+            "1.0": {
+              "post": [-12.5, 0, 0],
+              "lerp_mode": "catmullrom"
+            },
+            "1.75": {
+              "post": [0, 0, 0],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        },
+        "bottomJaw": {
+          "rotation": {
+            "0.0": {
+              "post": [0, 0, 0],
+              "lerp_mode": "catmullrom"
+            },
+            "1.0": {
+              "post": [45, 0, 0],
+              "lerp_mode": "catmullrom"
+            },
+            "1.75": {
+              "post": [0, 0, 0],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        }
+      }
+    },
+    "animation.sf_nba.whale.particle": {
+      "sound_effects": {
+        "0.0": {
+          "effect": "blowhole"
+        }
+      },
+      "animation_length": 2,
+      "bones": {
+        "particle": {
+          "position": [0, -7, 0]
+        }
+      }
+    },
+    "animation.sf_nba.whale.baby_transform": {
+      "loop": true,
+      "bones": {
+        "skullRot": {
+          "scale": 1.2
+        }
+      }
+    }
+  }
+}

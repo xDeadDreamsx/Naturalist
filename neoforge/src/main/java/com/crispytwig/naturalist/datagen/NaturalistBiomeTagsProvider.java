@@ -325,6 +325,10 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addTag(BiomeTags.IS_OCEAN)
                 .addOptionalTag(Tags.Biomes.IS_OCEAN);
 
+        tag(NaturalistTags.Biomes.HAS_WHALE)
+                .addTag(BiomeTags.IS_OCEAN)
+                .addOptionalTag(Tags.Biomes.IS_OCEAN);
+
         tag(NaturalistTags.Biomes.HAS_PIRANHA)
                 .addTag(BiomeTags.IS_JUNGLE)
                 .add(Biomes.LUSH_CAVES)
@@ -582,6 +586,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_TORTOISE);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_VULTURE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_ZEBRA);
+        tag(NaturalistTags.Biomes.BLACKLIST_WHALE).add(Biomes.FROZEN_OCEAN, Biomes.DEEP_FROZEN_OCEAN);
     }
 
     private void coldBlacklist(TagKey<Biome> tag) {

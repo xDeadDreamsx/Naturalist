@@ -69,6 +69,39 @@
     ],
     "subtitle": "naturalist.subtitles.entity.anglerfish.death"
   },
+  "entity.whale.ambient": {
+    "sounds": [
+      "naturalist:mob/whale/idle2",
+      "naturalist:mob/whale/idle3",
+      "naturalist:mob/whale/idle6"
+    ],
+    "subtitle": "naturalist.subtitles.entity.whale.ambient"
+  },
+  "entity.whale.hurt": {
+    "sounds": [
+      "naturalist:mob/whale/hurt1",
+      "naturalist:mob/whale/hurt2",
+      "naturalist:mob/whale/hurt3",
+      "naturalist:mob/whale/hurt4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.whale.hurt"
+  },
+  "entity.whale.death": {
+    "sounds": [
+      "naturalist:mob/whale/death1",
+      "naturalist:mob/whale/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.whale.death"
+  },
+  "entity.whale.blowhole": {
+    "sounds": [
+      "naturalist:mob/whale/blowhole1",
+      "naturalist:mob/whale/blowhole2",
+      "naturalist:mob/whale/blowhole3",
+      "naturalist:mob/whale/blowhole4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.whale.blowhole"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",
