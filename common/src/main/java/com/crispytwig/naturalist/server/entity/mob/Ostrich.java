@@ -94,6 +94,8 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     private int layEggCounter;
     private float playerJumpPendingScale;
     private boolean isJumping;
+    private boolean hideCache;
+    private long hideCacheTick = -1L;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -280,6 +282,15 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
 
     @Override
     public boolean canHide() {
+        long t = this.level().getGameTime();
+        if (t != this.hideCacheTick) {
+            this.hideCacheTick = t;
+            this.hideCache = this.thinkCanHide();
+        }
+        return this.hideCache;
+    }
+
+    private boolean thinkCanHide() {
         if (this.isTame() || this.isBaby() || this.isAggressive() || this.isVehicle()) {
             return false;
         }
@@ -581,23 +592,18 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     protected <E extends Ostrich> @NotNull PlayState predicate(final AnimationState<E> event) {
         if (!this.onGround() && !this.isInWater() && !this.isBaby()) {
             event.getController().setAnimation(FLAP);
-            event.getController().setAnimationSpeed(1.0F);
         } else if (this.isInSittingPose()) {
             event.getController().setAnimation(this.isBaby() ? BABY_SIT : SIT);
-            event.getController().setAnimationSpeed(1.0F);
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting() || this.isVehicle()) {
                 event.getController().setAnimation(this.isBaby() ? BABY_RUN : RUN);
             } else {
                 event.getController().setAnimation(this.isBaby() ? BABY_WALK : WALK);
             }
-            event.getController().setAnimationSpeed(1.0F);
         } else if (this.canHide()) {
             event.getController().setAnimation(BURY);
-            event.getController().setAnimationSpeed(1.0F);
         } else {
             event.getController().setAnimation(this.isBaby() ? BABY_IDLE : IDLE);
-            event.getController().setAnimationSpeed(1.0F);
         }
         return PlayState.CONTINUE;
     }

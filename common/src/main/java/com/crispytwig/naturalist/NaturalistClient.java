@@ -84,6 +84,8 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.TIGER.get(), TigerRenderer::new);
         r.register(NaturalistEntityTypes.KOMODO_DRAGON.get(), KomodoDragonRenderer::new);
         r.register(NaturalistEntityTypes.OSTRICH.get(), OstrichRenderer::new);
+        r.register(NaturalistEntityTypes.DESERT_SCORPION.get(), DesertScorpionRenderer::new);
+        r.register(NaturalistEntityTypes.JUNGLE_SCORPION.get(), JungleScorpionRenderer::new);
     }
 
     @FunctionalInterface

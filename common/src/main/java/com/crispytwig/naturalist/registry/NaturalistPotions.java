@@ -19,4 +19,7 @@ public class NaturalistPotions {
 
     public static final DeferredHolder<Potion, Potion> STRONG_FOREST_DASHER = POTIONS.register("strong_forest_dasher",
             () -> new Potion("forest_dasher", new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 400, 2), new MobEffectInstance(MobEffects.WEAKNESS, 400, 1)));
+
+    public static final DeferredHolder<Potion, Potion> ANTIVENOM = POTIONS.register("antivenom",
+            () -> new Potion(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(NaturalistMobEffects.ANTIVENOM.get()), 1)));
 }

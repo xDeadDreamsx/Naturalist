@@ -38,6 +38,8 @@ public final class NaturalistSpawns {
         c.accept(NaturalistTags.Biomes.HAS_CORAL_SNAKE, NaturalistTags.Biomes.BLACKLIST_CORAL_SNAKE, MobCategory.CREATURE, NaturalistEntityTypes.CORAL_SNAKE.get(), 10, 1, 1);
         c.accept(NaturalistTags.Biomes.HAS_CRAB, NaturalistTags.Biomes.BLACKLIST_CRAB, MobCategory.CREATURE, NaturalistEntityTypes.CRAB.get(), 10, 1, 2);
         c.accept(NaturalistTags.Biomes.HAS_DEER, NaturalistTags.Biomes.BLACKLIST_DEER, MobCategory.CREATURE, NaturalistEntityTypes.DEER.get(), 10, 3, 5);
+        c.accept(NaturalistTags.Biomes.HAS_DESERT_SCORPION, NaturalistTags.Biomes.BLACKLIST_DESERT_SCORPION, MobCategory.CREATURE, NaturalistEntityTypes.DESERT_SCORPION.get(), 20, 1, 3);
+        c.accept(NaturalistTags.Biomes.HAS_JUNGLE_SCORPION, NaturalistTags.Biomes.BLACKLIST_JUNGLE_SCORPION, MobCategory.CREATURE, NaturalistEntityTypes.JUNGLE_SCORPION.get(), 30, 1, 3);
         c.accept(NaturalistTags.Biomes.HAS_DRAGONFLY, NaturalistTags.Biomes.BLACKLIST_DRAGONFLY, MobCategory.AMBIENT, NaturalistEntityTypes.DRAGONFLY.get(), 10, 2, 4);
         c.accept(NaturalistTags.Biomes.HAS_DUCK, NaturalistTags.Biomes.BLACKLIST_DUCK, MobCategory.CREATURE, NaturalistEntityTypes.DUCK.get(), 10, 3, 4);
         c.accept(NaturalistTags.Biomes.HAS_ELEPHANT, NaturalistTags.Biomes.BLACKLIST_ELEPHANT, MobCategory.CREATURE, NaturalistEntityTypes.ELEPHANT.get(), 5, 1, 3);

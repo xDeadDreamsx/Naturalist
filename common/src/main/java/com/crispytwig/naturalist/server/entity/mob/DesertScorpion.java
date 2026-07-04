@@ -1,0 +1,122 @@
+package com.crispytwig.naturalist.server.entity.mob;
+
+import com.crispytwig.naturalist.registry.NaturalistRegistry;
+import com.crispytwig.naturalist.server.entity.base.Catchable;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.RawAnimation;
+
+import java.util.Optional;
+
+public class DesertScorpion extends Scorpion implements Catchable {
+    //region Data
+    private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(DesertScorpion.class, EntityDataSerializers.BOOLEAN);
+
+    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.desert_scorpion.idle");
+    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.desert_scorpion.walk");
+    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.desert_scorpion.run");
+    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.desert_scorpion.attack");
+
+    public DesertScorpion(EntityType<? extends Animal> entityType, Level level) {
+        super(entityType, level, IDLE, WALK, RUN, ATTACK);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 5.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.27D)
+                .add(Attributes.ATTACK_DAMAGE, 3.0D);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(FROM_HAND, false);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putBoolean("FromHand", this.fromHand());
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.setFromHand(compound.getBoolean("FromHand"));
+    }
+
+    @Override
+    public boolean fromHand() {
+        return this.entityData.get(FROM_HAND);
+    }
+
+    @Override
+    public void setFromHand(boolean fromHand) {
+        this.entityData.set(FROM_HAND, fromHand);
+    }
+
+    @Override
+    public boolean requiresCustomPersistence() {
+        return super.requiresCustomPersistence() || this.fromHand();
+    }
+
+    @Override
+    public void saveToHandTag(@NotNull ItemStack stack) {
+        Catchable.saveDefaultDataToHandTag(this, stack);
+    }
+
+    @Override
+    public void loadFromHandTag(@NotNull CompoundTag tag) {
+        Catchable.loadDefaultDataFromHandTag(this, tag);
+    }
+
+    @Override
+    public ItemStack getCaughtItemStack() {
+        return new ItemStack(NaturalistRegistry.SCORPION.get());
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getPickupSound() {
+        return null;
+    }
+    //endregion
+
+    //region Behavior
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, true,
+                entity -> this.fromHand() && entity instanceof Enemy));
+    }
+
+    @Override
+    protected boolean canHuntPlayers() {
+        return !this.fromHand();
+    }
+
+    @Override
+    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
+        Optional<InteractionResult> caught = Catchable.catchAnimal(player, hand, this, true);
+        return caught.orElseGet(() -> super.mobInteract(player, hand));
+    }
+    //endregion
+}

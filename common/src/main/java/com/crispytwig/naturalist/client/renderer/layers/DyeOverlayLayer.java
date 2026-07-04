@@ -23,13 +23,17 @@ public class DyeOverlayLayer<T extends LivingEntity & GeoAnimatable & DyeableAni
         this.folder = folder;
     }
 
+    protected String textureName(T entity, DyeColor color) {
+        return color.getName();
+    }
+
     @Override
     public void render(PoseStack poseStack, T entity, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLightIn, int packedOverlay) {
         DyeColor color = entity.getDyeColor();
         if (color == null) {
             return;
         }
-        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/" + this.folder + "/dye/" + color.getName() + ".png");
+        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/" + this.folder + "/dye/" + this.textureName(entity, color) + ".png");
         RenderType renderLayer = RenderType.entityCutoutNoCull(texture);
         getRenderer().reRender(getDefaultBakedModel(entity), poseStack, bufferSource, entity, renderLayer, bufferSource.getBuffer(renderLayer), partialTick, packedLightIn, OverlayTexture.NO_OVERLAY, -1);
     }

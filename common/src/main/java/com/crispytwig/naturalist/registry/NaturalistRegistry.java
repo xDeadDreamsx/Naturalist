@@ -98,6 +98,8 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, CaughtMobWithVariantsItem> BUTTERFLY = ITEMS.register("butterfly", () -> new CaughtMobWithVariantsItem(NaturalistEntityTypes.BUTTERFLY, () -> Fluids.EMPTY, NaturalistSoundEvents.BIRD_FLY, "tooltip.naturalist.", Butterfly.VARIANT_NAMES, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobItem> ANT = ITEMS.register("ant", () -> new CaughtMobItem(NaturalistEntityTypes.ANT, () -> Fluids.EMPTY, NaturalistSoundEvents.ANT_AMBIENT, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobWithVariantsItem> RAT = ITEMS.register("rat", () -> new CaughtMobWithVariantsItem(NaturalistEntityTypes.RAT, () -> Fluids.EMPTY, NaturalistSoundEvents.RAT_AMBIENT, "tooltip.naturalist.rat_", Rat.VARIANT_NAMES, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, CaughtMobItem> SCORPION = ITEMS.register("scorpion", () -> new CaughtMobItem(NaturalistEntityTypes.DESERT_SCORPION, () -> Fluids.EMPTY, NaturalistSoundEvents.SCORPION_AMBIENT, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> SCORPION_POISON_GLAND = ITEMS.register("scorpion_poison_gland", () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, QueenAntItem> QUEEN_ANT = ITEMS.register("queen_ant", () -> new QueenAntItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Block, AntHillBlock> ANT_HILL = registerBlock("ant_hill", () -> new AntHillBlock(BlockBehaviour.Properties.of().strength(0.5F, 0.2F).sound(SoundType.ROOTED_DIRT).randomTicks()));
     public static final DeferredHolder<Item, Item> SNAIL_SHELL = ITEMS.register("snail_shell", () -> new Item(new Item.Properties()));
@@ -185,6 +187,8 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, SpawnEggItem> TIGER_SPAWN_EGG = ITEMS.register("tiger_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.TIGER, 14257212, 3158062, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> KOMODO_DRAGON_SPAWN_EGG = ITEMS.register("komodo_dragon_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.KOMODO_DRAGON, 5590330, 8746320, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> OSTRICH_SPAWN_EGG = ITEMS.register("ostrich_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.OSTRICH, 9521716, 14451302, new Item.Properties()));
+    public static final DeferredHolder<Item, SpawnEggItem> DESERT_SCORPION_SPAWN_EGG = ITEMS.register("desert_scorpion_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.DESERT_SCORPION, 13544037, 9856322, new Item.Properties()));
+    public static final DeferredHolder<Item, SpawnEggItem> JUNGLE_SCORPION_SPAWN_EGG = ITEMS.register("jungle_scorpion_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.JUNGLE_SCORPION, 2960943, 6926420, new Item.Properties()));
 
     public static void init() {
     }

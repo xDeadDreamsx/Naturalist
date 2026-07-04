@@ -480,6 +480,50 @@
     ],
     "subtitle": "naturalist.subtitles.entity.ostrich.egg_hatch"
   },
+  "entity.scorpion.ambient": {
+    "sounds": [
+      "naturalist:mob/scorpion/idle1",
+      "naturalist:mob/scorpion/idle2",
+      "naturalist:mob/scorpion/idle3",
+      "naturalist:mob/scorpion/idle4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.scorpion.ambient"
+  },
+  "entity.scorpion.hurt": {
+    "sounds": [
+      "naturalist:mob/scorpion/hurt1",
+      "naturalist:mob/scorpion/hurt2",
+      "naturalist:mob/scorpion/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.scorpion.hurt"
+  },
+  "entity.scorpion.death": {
+    "sounds": [
+      "naturalist:mob/scorpion/death1",
+      "naturalist:mob/scorpion/death2",
+      "naturalist:mob/scorpion/death3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.scorpion.death"
+  },
+  "entity.scorpion.attack": {
+    "sounds": [
+      "naturalist:mob/scorpion/attack1",
+      "naturalist:mob/scorpion/attack2",
+      "naturalist:mob/scorpion/attack3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.scorpion.attack"
+  },
+  "entity.scorpion.step": {
+    "sounds": [
+      "naturalist:mob/scorpion/step1",
+      "naturalist:mob/scorpion/step2",
+      "naturalist:mob/scorpion/step3",
+      "naturalist:mob/scorpion/step4",
+      "naturalist:mob/scorpion/step5",
+      "naturalist:mob/scorpion/step6"
+    ],
+    "subtitle": "subtitles.block.generic.footsteps"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",

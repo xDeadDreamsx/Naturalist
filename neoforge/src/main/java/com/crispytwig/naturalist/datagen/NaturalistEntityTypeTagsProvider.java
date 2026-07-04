@@ -76,6 +76,9 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.RATTLESNAKE.get())
                 .add(NaturalistEntityTypes.BOAR.get());
 
+        tag(NaturalistTags.EntityTypes.SCORPION_HOSTILES)
+                .add(NaturalistEntityTypes.LIZARD.get());
+
         tag(NaturalistTags.EntityTypes.NATURALIST_ENTITIES)
                 .add(NaturalistEntityTypes.ALLIGATOR.get())
                 .add(NaturalistEntityTypes.BASS.get())
@@ -89,6 +92,7 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.CATFISH.get())
                 .add(NaturalistEntityTypes.CORAL_SNAKE.get())
                 .add(NaturalistEntityTypes.DEER.get())
+                .add(NaturalistEntityTypes.DESERT_SCORPION.get())
                 .add(NaturalistEntityTypes.DRAGONFLY.get())
                 .add(NaturalistEntityTypes.DUCK.get())
                 .add(NaturalistEntityTypes.ELEPHANT.get())
@@ -96,6 +100,7 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.FINCH.get())
                 .add(NaturalistEntityTypes.GIRAFFE.get())
                 .add(NaturalistEntityTypes.HIPPO.get())
+                .add(NaturalistEntityTypes.JUNGLE_SCORPION.get())
                 .add(NaturalistEntityTypes.LION.get())
                 .add(NaturalistEntityTypes.LIZARD.get())
                 .add(NaturalistEntityTypes.MAMMOTH.get())

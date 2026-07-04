@@ -427,6 +427,15 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptional(bop("mediterranean_forest")).addOptional(bop("old_growth_woodland"))
                 .addOptional(bop("scrubland")).addOptional(bop("woodland"));
 
+        tag(NaturalistTags.Biomes.HAS_DESERT_SCORPION)
+                .add(Biomes.DESERT)
+                .addTag(BiomeTags.IS_BADLANDS)
+                .addOptional(bop("lush_desert"));
+
+        tag(NaturalistTags.Biomes.HAS_JUNGLE_SCORPION)
+                .addTag(BiomeTags.IS_JUNGLE)
+                .addOptional(bop("rainforest"));
+
         tag(NaturalistTags.Biomes.HAS_RAT)
                 .addTag(BiomeTags.IS_FOREST)
                 .add(Biomes.PLAINS).add(Biomes.SUNFLOWER_PLAINS)
@@ -614,6 +623,8 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_CORAL_SNAKE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_CRAB);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_DEER);
+        emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_DESERT_SCORPION);
+        emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_JUNGLE_SCORPION);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_DRAGONFLY);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_DUCK);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_ELEPHANT);

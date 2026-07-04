@@ -51,6 +51,7 @@ public final class Naturalist {
         NaturalistRegistry.init();
         touch(NaturalistBlockEntities.BLOCK_ENTITY_TYPES);
         touch(NaturalistMenus.MENUS);
+        touch(NaturalistMobEffects.MOB_EFFECTS);
         touch(NaturalistPotions.POTIONS);
         touch(NaturalistRecipes.RECIPE_TYPES);
         touch(NaturalistRecipes.RECIPE_SERIALIZERS);
@@ -125,6 +126,8 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.TIGER.get(), Tiger.createAttributes());
         r.register(NaturalistEntityTypes.KOMODO_DRAGON.get(), KomodoDragon.createAttributes());
         r.register(NaturalistEntityTypes.OSTRICH.get(), Ostrich.createAttributes());
+        r.register(NaturalistEntityTypes.DESERT_SCORPION.get(), DesertScorpion.createAttributes());
+        r.register(NaturalistEntityTypes.JUNGLE_SCORPION.get(), JungleScorpion.createAttributes());
     }
 
     public static void registerSpawnPlacements(SpawnPlacementRegistrar r) {
@@ -174,12 +177,15 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.TIGER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.KOMODO_DRAGON.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, KomodoDragon::checkKomodoDragonSpawnRules);
         r.register(NaturalistEntityTypes.OSTRICH.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
+        r.register(NaturalistEntityTypes.DESERT_SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Scorpion::checkScorpionSpawnRules);
+        r.register(NaturalistEntityTypes.JUNGLE_SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Scorpion::checkScorpionSpawnRules);
     }
 
     public static void registerPotionMixes(BrewingRegistrar r) {
         r.addMix(Potions.AWKWARD, NaturalistRegistry.ANTLER.get(), potion(NaturalistPotions.FOREST_DASHER));
         r.addMix(potion(NaturalistPotions.FOREST_DASHER), Items.REDSTONE, potion(NaturalistPotions.LONG_FOREST_DASHER));
         r.addMix(potion(NaturalistPotions.FOREST_DASHER), Items.GLOWSTONE_DUST, potion(NaturalistPotions.STRONG_FOREST_DASHER));
+        r.addMix(Potions.AWKWARD, NaturalistRegistry.SCORPION_POISON_GLAND.get(), potion(NaturalistPotions.ANTIVENOM));
     }
 
     private static Holder<Potion> potion(Supplier<Potion> potion) {

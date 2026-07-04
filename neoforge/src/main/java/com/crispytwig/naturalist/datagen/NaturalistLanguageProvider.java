@@ -75,6 +75,8 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("entity.naturalist.lizard", "Lizard");
         add("entity.naturalist.lizard_tail", "Lizard Tail");
         add("entity.naturalist.ostrich", "Ostrich");
+        add("entity.naturalist.desert_scorpion", "Desert Scorpion");
+        add("entity.naturalist.jungle_scorpion", "Jungle Scorpion");
         add("entity.naturalist.rattlesnake", "Rattlesnake");
         add("entity.naturalist.rhino", "Rhino");
         add("entity.naturalist.robin", "Robin");
@@ -146,6 +148,11 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("item.minecraft.potion.effect.forest_dasher", "Potion of the Forest Dasher");
         add("item.minecraft.splash_potion.effect.forest_dasher", "Splash Potion of the Forest Dasher");
         add("item.minecraft.lingering_potion.effect.forest_dasher", "Lingering Potion of the Forest Dasher");
+        add("effect.naturalist.antivenom", "Antivenom");
+        add("item.minecraft.tipped_arrow.effect.antivenom", "Arrow of Antivenom");
+        add("item.minecraft.potion.effect.antivenom", "Potion of Antivenom");
+        add("item.minecraft.splash_potion.effect.antivenom", "Splash Potion of Antivenom");
+        add("item.minecraft.lingering_potion.effect.antivenom", "Lingering Potion of Antivenom");
         add("item.minecraft.tipped_arrow.effect.glowing", "Arrow of Glowing");
         add("item.minecraft.potion.effect.glowing", "Potion of Glowing");
         add("item.minecraft.splash_potion.effect.glowing", "Splash Potion of Glowing");

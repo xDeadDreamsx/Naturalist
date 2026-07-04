@@ -193,6 +193,11 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_EGG_BREAK = register("entity.ostrich.egg_break");
     public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_EGG_CRACK = register("entity.ostrich.egg_crack");
     public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_EGG_HATCH = register("entity.ostrich.egg_hatch");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCORPION_AMBIENT = register("entity.scorpion.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCORPION_HURT = register("entity.scorpion.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCORPION_DEATH = register("entity.scorpion.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCORPION_ATTACK = register("entity.scorpion.attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCORPION_STEP = register("entity.scorpion.step");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_IDLE = register("entity.ray.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_SWIM = register("entity.ray.swim");
