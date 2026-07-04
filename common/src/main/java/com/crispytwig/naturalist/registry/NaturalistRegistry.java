@@ -190,6 +190,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, SpawnEggItem> DESERT_SCORPION_SPAWN_EGG = ITEMS.register("desert_scorpion_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.DESERT_SCORPION, 13544037, 9856322, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> JUNGLE_SCORPION_SPAWN_EGG = ITEMS.register("jungle_scorpion_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.JUNGLE_SCORPION, 2960943, 6926420, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> GREAT_WHITE_SHARK_SPAWN_EGG = ITEMS.register("great_white_shark_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.GREAT_WHITE_SHARK, 6060149, 15329245, new Item.Properties()));
+    public static final DeferredHolder<Item, SpawnEggItem> TURKEY_SPAWN_EGG = ITEMS.register("turkey_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.TURKEY, 4600099, 14122348, new Item.Properties()));
 
     public static void init() {
     }

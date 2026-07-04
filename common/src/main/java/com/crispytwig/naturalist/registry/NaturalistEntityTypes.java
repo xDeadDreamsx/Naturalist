@@ -67,6 +67,7 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Starfish>> STARFISH = register("starfish", EntityType.Builder.of(Starfish::new, MobCategory.WATER_AMBIENT).sized(0.6F, 0.3F).clientTrackingRange(4));
     public static final DeferredHolder<EntityType<?>, EntityType<Tiger>> TIGER = register("tiger", EntityType.Builder.of(Tiger::new, MobCategory.CREATURE).sized(1.5F, 1.8F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Tortoise>> TORTOISE = register("tortoise", EntityType.Builder.of(Tortoise::new, MobCategory.CREATURE).sized(1.2F, 0.875F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<Turkey>> TURKEY = register("turkey", EntityType.Builder.of(Turkey::new, MobCategory.CREATURE).sized(0.6F, 0.8F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Vulture>> VULTURE = register("vulture", EntityType.Builder.of(Vulture::new, MobCategory.CREATURE).sized(0.9F, 0.5F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Zebra>> ZEBRA = register("zebra", EntityType.Builder.of(Zebra::new, MobCategory.CREATURE).sized(1.3964844F, 1.5F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Whale>> WHALE = register("whale", EntityType.Builder.of(Whale::new, MobCategory.WATER_CREATURE).sized(3.0F, 2.5F).clientTrackingRange(10));

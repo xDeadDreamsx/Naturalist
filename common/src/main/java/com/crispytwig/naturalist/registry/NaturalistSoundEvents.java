@@ -205,6 +205,11 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_FLOP = register("entity.great_white_shark.flop");
     public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_SWIM = register("entity.great_white_shark.swim");
     public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_SWIM_FAST = register("entity.great_white_shark.swim_fast");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TURKEY_AMBIENT = register("entity.turkey.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TURKEY_HURT = register("entity.turkey.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TURKEY_DEATH = register("entity.turkey.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TURKEY_STEP = register("entity.turkey.step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TURKEY_PECK = register("entity.turkey.peck");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_IDLE = register("entity.ray.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_SWIM = register("entity.ray.swim");

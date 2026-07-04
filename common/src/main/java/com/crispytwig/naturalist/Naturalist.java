@@ -129,6 +129,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.DESERT_SCORPION.get(), DesertScorpion.createAttributes());
         r.register(NaturalistEntityTypes.JUNGLE_SCORPION.get(), JungleScorpion.createAttributes());
         r.register(NaturalistEntityTypes.GREAT_WHITE_SHARK.get(), GreatWhiteShark.createAttributes());
+        r.register(NaturalistEntityTypes.TURKEY.get(), Turkey.createAttributes());
     }
 
     public static void registerSpawnPlacements(SpawnPlacementRegistrar r) {
@@ -181,6 +182,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.DESERT_SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Scorpion::checkScorpionSpawnRules);
         r.register(NaturalistEntityTypes.JUNGLE_SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Scorpion::checkScorpionSpawnRules);
         r.register(NaturalistEntityTypes.GREAT_WHITE_SHARK.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, GreatWhiteShark::checkGreatWhiteSharkSpawnRules);
+        r.register(NaturalistEntityTypes.TURKEY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
     }
 
     public static void registerPotionMixes(BrewingRegistrar r) {

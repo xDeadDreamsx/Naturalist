@@ -437,6 +437,14 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .add(Biomes.LUKEWARM_OCEAN)
                 .add(Biomes.DEEP_LUKEWARM_OCEAN);
 
+        tag(NaturalistTags.Biomes.HAS_TURKEY)
+                .add(Biomes.FOREST).add(Biomes.FLOWER_FOREST)
+                .add(Biomes.TAIGA).add(Biomes.OLD_GROWTH_PINE_TAIGA).add(Biomes.OLD_GROWTH_SPRUCE_TAIGA)
+                .add(Biomes.GROVE)
+                .addOptional(bop("fir_clearing")).addOptional(bop("lavender_field"))
+                .addOptional(bop("mystic_grove")).addOptional(bop("pasture"))
+                .addOptional(bop("snowy_fir_clearing"));
+
         tag(NaturalistTags.Biomes.HAS_JUNGLE_SCORPION)
                 .addTag(BiomeTags.IS_JUNGLE)
                 .addOptional(bop("rainforest"));
@@ -654,6 +662,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_TIGER);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_KOMODO_DRAGON);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_OSTRICH);
+        emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_TURKEY);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_RATTLESNAKE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_RHINO);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_ROBIN);

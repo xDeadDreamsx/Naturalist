@@ -67,6 +67,7 @@ public final class NaturalistSpawns {
         c.accept(NaturalistTags.Biomes.HAS_STARFISH, NaturalistTags.Biomes.BLACKLIST_STARFISH, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.STARFISH.get(), 8, 1, 2);
         c.accept(NaturalistTags.Biomes.HAS_TIGER, NaturalistTags.Biomes.BLACKLIST_TIGER, MobCategory.CREATURE, NaturalistEntityTypes.TIGER.get(), 10, 1, 2);
         c.accept(NaturalistTags.Biomes.HAS_TORTOISE, NaturalistTags.Biomes.BLACKLIST_TORTOISE, MobCategory.CREATURE, NaturalistEntityTypes.TORTOISE.get(), 10, 1, 1);
+        c.accept(NaturalistTags.Biomes.HAS_TURKEY, NaturalistTags.Biomes.BLACKLIST_TURKEY, MobCategory.CREATURE, NaturalistEntityTypes.TURKEY.get(), 17, 1, 2);
         c.accept(NaturalistTags.Biomes.HAS_VULTURE, NaturalistTags.Biomes.BLACKLIST_VULTURE, MobCategory.CREATURE, NaturalistEntityTypes.VULTURE.get(), 3, 3, 5);
         c.accept(NaturalistTags.Biomes.HAS_ZEBRA, NaturalistTags.Biomes.BLACKLIST_ZEBRA, MobCategory.CREATURE, NaturalistEntityTypes.ZEBRA.get(), 1, 2, 6);
     }

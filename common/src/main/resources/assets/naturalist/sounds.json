@@ -583,6 +583,48 @@
     ],
     "subtitle": "naturalist.subtitles.entity.great_white_shark.swim"
   },
+  "entity.turkey.ambient": {
+    "sounds": [
+      "naturalist:mob/turkey/idle1",
+      "naturalist:mob/turkey/idle2",
+      "naturalist:mob/turkey/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.turkey.ambient"
+  },
+  "entity.turkey.hurt": {
+    "sounds": [
+      "naturalist:mob/turkey/hurt1",
+      "naturalist:mob/turkey/hurt2",
+      "naturalist:mob/turkey/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.turkey.hurt"
+  },
+  "entity.turkey.death": {
+    "sounds": [
+      "naturalist:mob/turkey/death1",
+      "naturalist:mob/turkey/death2",
+      "naturalist:mob/turkey/death3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.turkey.death"
+  },
+  "entity.turkey.step": {
+    "sounds": [
+      "naturalist:mob/turkey/step1",
+      "naturalist:mob/turkey/step2",
+      "naturalist:mob/turkey/step3",
+      "naturalist:mob/turkey/step4",
+      "naturalist:mob/turkey/step5",
+      "naturalist:mob/turkey/step6"
+    ]
+  },
+  "entity.turkey.peck": {
+    "sounds": [
+      "naturalist:mob/turkey/peck1",
+      "naturalist:mob/turkey/peck2",
+      "naturalist:mob/turkey/peck3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.turkey.peck"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",

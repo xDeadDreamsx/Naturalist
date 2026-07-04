@@ -89,6 +89,9 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.BLOBFISH.get())
                 .add(NaturalistEntityTypes.ANGLERFISH.get());
 
+        tag(NaturalistTags.EntityTypes.TURKEY_HOSTILES)
+                .add(NaturalistEntityTypes.ANT.get());
+
         tag(NaturalistTags.EntityTypes.NATURALIST_ENTITIES)
                 .add(NaturalistEntityTypes.ALLIGATOR.get())
                 .add(NaturalistEntityTypes.BASS.get())
@@ -122,6 +125,7 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.SNAKE.get())
                 .add(NaturalistEntityTypes.SPARROW.get())
                 .add(NaturalistEntityTypes.TORTOISE.get())
+                .add(NaturalistEntityTypes.TURKEY.get())
                 .add(NaturalistEntityTypes.VULTURE.get())
                 .add(NaturalistEntityTypes.ZEBRA.get());
 

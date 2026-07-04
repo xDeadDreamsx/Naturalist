@@ -85,6 +85,7 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("entity.naturalist.snake", "Snake");
         add("entity.naturalist.sparrow", "Sparrow");
         add("entity.naturalist.tortoise", "Tortoise");
+        add("entity.naturalist.turkey", "Turkey");
         add("entity.naturalist.vulture", "Vulture");
         add("entity.naturalist.zebra", "Zebra");
 
