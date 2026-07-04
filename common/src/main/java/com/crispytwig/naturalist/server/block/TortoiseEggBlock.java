@@ -21,7 +21,6 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TurtleEggBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -98,7 +97,8 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     }
 
     private boolean shouldUpdateHatchLevel(@NotNull Level level) {
-        return level.random.nextInt(500) == 0;
+        float timeOfDay = level.getTimeOfDay(1.0F);
+        return timeOfDay < 0.69F && timeOfDay > 0.65F || level.random.nextInt(500) == 0;
     }
 
     @Override
@@ -121,7 +121,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
         if (!this.canDestroyEgg(level, entity)) {
             return;
         }
-        if (!level.isClientSide && level.random.nextInt(chance) == 0 && state.is(Blocks.TURTLE_EGG)) {
+        if (!level.isClientSide && level.random.nextInt(chance) == 0 && state.is(this)) {
             this.decreaseEggs(level, pos, state);
         }
     }

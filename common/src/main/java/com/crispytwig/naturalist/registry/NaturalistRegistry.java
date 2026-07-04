@@ -53,6 +53,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Block, AlligatorEggBlock> ALLIGATOR_EGG = registerBlock("alligator_egg", () -> new AlligatorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
     public static final DeferredHolder<Item, DuckEggItem> DUCK_EGG = ITEMS.register("duck_egg", () -> new DuckEggItem(new Item.Properties()));
     public static final DeferredHolder<Block, TortoiseEggBlock> TORTOISE_EGG = registerBlock("tortoise_egg", () -> new TortoiseEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+    public static final DeferredHolder<Block, OstrichEggBlock> OSTRICH_EGG = registerBlock("ostrich_egg", () -> new OstrichEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
     public static final DeferredHolder<Item, Item> COOKED_EGG = ITEMS.register("cooked_egg", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.6F).build())));
     public static final DeferredHolder<Block, SnailEggBlock> SNAIL_EGGS = registerBlock("snail_eggs", () -> new SnailEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FROGSPAWN)));
 
@@ -64,6 +65,8 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, Item> COOKED_DUCK = ITEMS.register("cooked_duck", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.6F).build())));
     public static final DeferredHolder<Item, Item> VENISON = ITEMS.register("venison", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.3F).build())));
     public static final DeferredHolder<Item, Item> COOKED_VENISON = ITEMS.register("cooked_venison", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.8F).build())));
+    public static final DeferredHolder<Item, Item> DRUMSTICK = ITEMS.register("drumstick", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build())));
+    public static final DeferredHolder<Item, Item> COOKED_DRUMSTICK = ITEMS.register("cooked_drumstick", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.6F).build())));
     public static final DeferredHolder<Item, Item> MAMMOTH_MEAT = ITEMS.register("mammoth_meat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build())));
     public static final DeferredHolder<Item, Item> COOKED_MAMMOTH_MEAT = ITEMS.register("cooked_mammoth_meat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.8F).build())));
     public static final DeferredHolder<Item, Item> LIZARD_TAIL = ITEMS.register("lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.8F).effect(new MobEffectInstance(MobEffects.POISON, 100, 0), 1.0F).build())));
@@ -181,6 +184,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, SpawnEggItem> BLACK_BEAR_SPAWN_EGG = ITEMS.register("black_bear_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.BLACK_BEAR, 2500134, 12550772, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> TIGER_SPAWN_EGG = ITEMS.register("tiger_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.TIGER, 14257212, 3158062, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> KOMODO_DRAGON_SPAWN_EGG = ITEMS.register("komodo_dragon_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.KOMODO_DRAGON, 5590330, 8746320, new Item.Properties()));
+    public static final DeferredHolder<Item, SpawnEggItem> OSTRICH_SPAWN_EGG = ITEMS.register("ostrich_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.OSTRICH, 9521716, 14451302, new Item.Properties()));
 
     public static void init() {
     }

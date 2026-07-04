@@ -422,6 +422,11 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptional(bop("old_growth_woodland")).addOptional(bop("scrubland"))
                 .addOptional(bop("woodland"));
 
+        tag(NaturalistTags.Biomes.HAS_OSTRICH)
+                .addTag(BiomeTags.IS_SAVANNA)
+                .addOptional(bop("mediterranean_forest")).addOptional(bop("old_growth_woodland"))
+                .addOptional(bop("scrubland")).addOptional(bop("woodland"));
+
         tag(NaturalistTags.Biomes.HAS_RAT)
                 .addTag(BiomeTags.IS_FOREST)
                 .add(Biomes.PLAINS).add(Biomes.SUNFLOWER_PLAINS)
@@ -631,6 +636,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_RAT);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_TIGER);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_KOMODO_DRAGON);
+        emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_OSTRICH);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_RATTLESNAKE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_RHINO);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_ROBIN);

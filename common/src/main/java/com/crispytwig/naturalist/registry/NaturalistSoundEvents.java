@@ -181,6 +181,18 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> KOMODO_DRAGON_DEATH = register("entity.komodo_dragon.death");
     public static final DeferredHolder<SoundEvent, SoundEvent> KOMODO_DRAGON_ATTACK = register("entity.komodo_dragon.attack");
     public static final DeferredHolder<SoundEvent, SoundEvent> KOMODO_DRAGON_STEP = register("entity.komodo_dragon.step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_AMBIENT = register("entity.ostrich.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_HURT = register("entity.ostrich.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_DEATH = register("entity.ostrich.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_ATTACK = register("entity.ostrich.attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_BURY = register("entity.ostrich.bury");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_AMBIENT_BABY = register("entity.ostrich.ambient_baby");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_HURT_BABY = register("entity.ostrich.hurt_baby");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_DEATH_BABY = register("entity.ostrich.death_baby");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_STEP = register("entity.ostrich.step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_EGG_BREAK = register("entity.ostrich.egg_break");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_EGG_CRACK = register("entity.ostrich.egg_crack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> OSTRICH_EGG_HATCH = register("entity.ostrich.egg_hatch");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_IDLE = register("entity.ray.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_SWIM = register("entity.ray.swim");

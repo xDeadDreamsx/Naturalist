@@ -26,6 +26,7 @@ public class NaturalistTags {
         public static final TagKey<Block> SHELLSTONE = tag("shellstone");
         public static final TagKey<Block> MOTHS_ATTRACTED_TO = tag("moths_attracted_to");
         public static final TagKey<Block> KOMODO_DRAGONS_SPAWNABLE_ON = tag("komodo_dragons_spawnable_on");
+        public static final TagKey<Block> OSTRICH_EGG_LAYABLE_ON = tag("ostrich_egg_layable_on");
 
         private static TagKey<Block> tag(@NotNull String name) {
             return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
@@ -122,6 +123,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_LIZARD = tag("has_lizard");
         public static final TagKey<Biome> HAS_MAMMOTH = tag("has_mammoth");
         public static final TagKey<Biome> HAS_MOLE = tag("has_mole");
+        public static final TagKey<Biome> HAS_OSTRICH = tag("has_ostrich");
         public static final TagKey<Biome> HAS_RAT = tag("has_rat");
         public static final TagKey<Biome> HAS_RATTLESNAKE = tag("has_rattlesnake");
         public static final TagKey<Biome> HAS_RHINO = tag("has_rhino");
@@ -169,6 +171,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_LIZARD = tag("blacklist/blacklist_lizard");
         public static final TagKey<Biome> BLACKLIST_MAMMOTH = tag("blacklist/blacklist_mammoth");
         public static final TagKey<Biome> BLACKLIST_MOLE = tag("blacklist/blacklist_mole");
+        public static final TagKey<Biome> BLACKLIST_OSTRICH = tag("blacklist/blacklist_ostrich");
         public static final TagKey<Biome> BLACKLIST_RAT = tag("blacklist/blacklist_rat");
         public static final TagKey<Biome> BLACKLIST_RATTLESNAKE = tag("blacklist/blacklist_rattlesnake");
         public static final TagKey<Biome> BLACKLIST_RHINO = tag("blacklist/blacklist_rhino");

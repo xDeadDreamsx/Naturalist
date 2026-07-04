@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": {
+    "item": "naturalist:drumstick"
+  },
+  "result": {
+    "id": "naturalist:cooked_drumstick"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

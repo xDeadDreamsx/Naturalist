@@ -385,6 +385,101 @@
     ],
     "subtitle": "subtitles.block.generic.footsteps"
   },
+  "entity.ostrich.ambient": {
+    "sounds": [
+      "naturalist:mob/ostrich/idle1",
+      "naturalist:mob/ostrich/idle2",
+      "naturalist:mob/ostrich/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.ambient"
+  },
+  "entity.ostrich.hurt": {
+    "sounds": [
+      "naturalist:mob/ostrich/hurt1",
+      "naturalist:mob/ostrich/hurt2",
+      "naturalist:mob/ostrich/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.hurt"
+  },
+  "entity.ostrich.death": {
+    "sounds": [
+      "naturalist:mob/ostrich/death1",
+      "naturalist:mob/ostrich/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.death"
+  },
+  "entity.ostrich.attack": {
+    "sounds": [
+      "naturalist:mob/ostrich/attack1",
+      "naturalist:mob/ostrich/attack2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.attack"
+  },
+  "entity.ostrich.bury": {
+    "sounds": [
+      "naturalist:mob/ostrich/bury1",
+      "naturalist:mob/ostrich/bury2",
+      "naturalist:mob/ostrich/bury3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.bury"
+  },
+  "entity.ostrich.ambient_baby": {
+    "sounds": [
+      "naturalist:mob/ostrich/baby_idle1",
+      "naturalist:mob/ostrich/baby_idle2",
+      "naturalist:mob/ostrich/baby_idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.ambient"
+  },
+  "entity.ostrich.hurt_baby": {
+    "sounds": [
+      "naturalist:mob/ostrich/baby_hurt1",
+      "naturalist:mob/ostrich/baby_hurt2",
+      "naturalist:mob/ostrich/baby_hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.hurt"
+  },
+  "entity.ostrich.death_baby": {
+    "sounds": [
+      "naturalist:mob/ostrich/baby_death1",
+      "naturalist:mob/ostrich/baby_death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.death"
+  },
+  "entity.ostrich.step": {
+    "sounds": [
+      "naturalist:mob/ostrich/step1",
+      "naturalist:mob/ostrich/step2",
+      "naturalist:mob/ostrich/step3",
+      "naturalist:mob/ostrich/step4",
+      "naturalist:mob/ostrich/step5",
+      "naturalist:mob/ostrich/step6"
+    ],
+    "subtitle": "subtitles.block.generic.footsteps"
+  },
+  "entity.ostrich.egg_break": {
+    "sounds": [
+      "mob/turtle/egg/egg_break1",
+      "mob/turtle/egg/egg_break2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.egg_break"
+  },
+  "entity.ostrich.egg_crack": {
+    "sounds": [
+      "naturalist:mob/ostrich/egg_crack1",
+      "naturalist:mob/ostrich/egg_crack2",
+      "naturalist:mob/ostrich/egg_crack3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.egg_crack"
+  },
+  "entity.ostrich.egg_hatch": {
+    "sounds": [
+      "mob/turtle/baby/egg_hatched1",
+      "mob/turtle/baby/egg_hatched2",
+      "mob/turtle/baby/egg_hatched3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.ostrich.egg_hatch"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",
@@ -637,7 +732,7 @@
       "naturalist:mob/tortoise/baby_idle2",
       "naturalist:mob/tortoise/baby_idle3"
     ],
-    "subtitle": "naturalist.subtitles.entity.tortoise.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.tortoise.ambient"
   },
   "entity.tortoise.hurt_baby": {
     "sounds": [
@@ -645,7 +740,7 @@
       "naturalist:mob/tortoise/baby_hurt2",
       "naturalist:mob/tortoise/baby_hurt3"
     ],
-    "subtitle": "naturalist.subtitles.entity.tortoise.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.tortoise.hurt"
   },
   "entity.tortoise.death_baby": {
     "sounds": [
@@ -653,7 +748,7 @@
       "naturalist:mob/tortoise/baby_death2",
       "naturalist:mob/tortoise/baby_death3"
     ],
-    "subtitle": "naturalist.subtitles.entity.tortoise.death_baby"
+    "subtitle": "naturalist.subtitles.entity.tortoise.death"
   },
   "entity.alligator.egg_break": {
     "sounds": [
@@ -797,7 +892,7 @@
       "naturalist:mob/bear/baby_idle3",
       "naturalist:mob/bear/baby_idle4"
     ],
-    "subtitle": "naturalist.subtitles.entity.bear.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.bear.ambient"
   },
   "entity.bear.hurt_baby": {
     "sounds": [
@@ -805,14 +900,14 @@
       "naturalist:mob/bear/baby_hurt2",
       "naturalist:mob/bear/baby_hurt3"
     ],
-    "subtitle": "naturalist.subtitles.entity.bear.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.bear.hurt"
   },
   "entity.bear.death_baby": {
     "sounds": [
       "naturalist:mob/bear/baby_death1",
       "naturalist:mob/bear/baby_death2"
     ],
-    "subtitle": "naturalist.subtitles.entity.bear.death_baby"
+    "subtitle": "naturalist.subtitles.entity.bear.death"
   },
   "entity.bear.sleep": {
     "sounds": [
@@ -1004,7 +1099,7 @@
     "sounds": [
       "naturalist:mob/rhino/idle_baby"
     ],
-    "subtitle": "naturalist.subtitles.entity.rhino.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.rhino.ambient"
   },
   "entity.rhino.hurt": {
     "sounds": [
@@ -1049,7 +1144,7 @@
       "naturalist:mob/lion/baby_idle2",
       "naturalist:mob/lion/baby_idle3"
     ],
-    "subtitle": "naturalist.subtitles.entity.lion.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.lion.ambient"
   },
   "entity.lion.hurt_baby": {
     "sounds": [
@@ -1057,14 +1152,14 @@
       "naturalist:mob/lion/baby_hurt2",
       "naturalist:mob/lion/baby_hurt3"
     ],
-    "subtitle": "naturalist.subtitles.entity.lion.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.lion.hurt"
   },
   "entity.lion.death_baby": {
     "sounds": [
       "naturalist:mob/lion/baby_death1",
       "naturalist:mob/lion/baby_death2"
     ],
-    "subtitle": "naturalist.subtitles.entity.lion.death_baby"
+    "subtitle": "naturalist.subtitles.entity.lion.death"
   },
   "entity.lion.death": {
     "sounds": [
@@ -1087,20 +1182,20 @@
       "naturalist:mob/elephant/baby_idle1",
       "naturalist:mob/elephant/baby_idle2"
     ],
-    "subtitle": "naturalist.subtitles.entity.elephant.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.elephant.ambient"
   },
   "entity.elephant.hurt_baby": {
     "sounds": [
       "naturalist:mob/elephant/baby_hurt1",
       "naturalist:mob/elephant/baby_hurt2"
     ],
-    "subtitle": "naturalist.subtitles.entity.elephant.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.elephant.hurt"
   },
   "entity.elephant.death_baby": {
     "sounds": [
       "naturalist:mob/elephant/baby_death1"
     ],
-    "subtitle": "naturalist.subtitles.entity.elephant.death_baby"
+    "subtitle": "naturalist.subtitles.entity.elephant.death"
   },
   "entity.elephant.hurt": {
     "sounds": [
@@ -1134,7 +1229,7 @@
         "pitch": 0.75
       }
     ],
-    "subtitle": "naturalist.subtitles.entity.mammoth.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.mammoth.ambient"
   },
   "entity.mammoth.hurt_baby": {
     "sounds": [
@@ -1147,7 +1242,7 @@
         "pitch": 0.75
       }
     ],
-    "subtitle": "naturalist.subtitles.entity.mammoth.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.mammoth.hurt"
   },
   "entity.mammoth.death_baby": {
     "sounds": [
@@ -1156,7 +1251,7 @@
         "pitch": 0.75
       }
     ],
-    "subtitle": "naturalist.subtitles.entity.mammoth.death_baby"
+    "subtitle": "naturalist.subtitles.entity.mammoth.death"
   },
   "entity.mammoth.hurt": {
     "sounds": [
@@ -1191,21 +1286,21 @@
       "naturalist:mob/deer/fawn_idle1",
       "naturalist:mob/deer/fawn_idle2"
     ],
-    "subtitle": "naturalist.subtitles.entity.deer.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.deer.ambient"
   },
   "entity.deer.hurt_baby": {
     "sounds": [
       "naturalist:mob/deer/fawn_hurt1",
       "naturalist:mob/deer/fawn_hurt2"
     ],
-    "subtitle": "naturalist.subtitles.entity.deer.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.deer.hurt"
   },
   "entity.deer.death_baby": {
     "sounds": [
       "naturalist:mob/deer/fawn_death1",
       "naturalist:mob/deer/fawn_death2"
     ],
-    "subtitle": "naturalist.subtitles.entity.deer.death_baby"
+    "subtitle": "naturalist.subtitles.entity.deer.death"
   },
   "entity.deer.death": {
     "sounds": [
@@ -1300,21 +1395,21 @@
       "naturalist:mob/giraffe/baby_idle2",
       "naturalist:mob/giraffe/baby_idle3"
     ],
-    "subtitle": "naturalist.subtitles.entity.giraffe.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.giraffe.ambient"
   },
   "entity.giraffe.hurt_baby": {
     "sounds": [
       "naturalist:mob/giraffe/baby_hurt1",
       "naturalist:mob/giraffe/baby_hurt2"
     ],
-    "subtitle": "naturalist.subtitles.entity.giraffe.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.giraffe.hurt"
   },
   "entity.giraffe.death_baby": {
     "sounds": [
       "naturalist:mob/giraffe/baby_death1",
       "naturalist:mob/giraffe/baby_death2"
     ],
-    "subtitle": "naturalist.subtitles.entity.giraffe.death_baby"
+    "subtitle": "naturalist.subtitles.entity.giraffe.death"
   },
   "entity.giraffe.hurt": {
     "sounds": [
@@ -1381,7 +1476,7 @@
       "naturalist:mob/alligator/baby_idle3",
       "naturalist:mob/alligator/baby_idle4"
     ],
-    "subtitle": "naturalist.subtitles.entity.alligator.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.alligator.ambient"
   },
   "entity.alligator.hurt_baby": {
     "sounds": [
@@ -1389,7 +1484,7 @@
       "naturalist:mob/alligator/baby_hurt2",
       "naturalist:mob/alligator/baby_hurt3"
     ],
-    "subtitle": "naturalist.subtitles.entity.alligator.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.alligator.hurt"
   },
   "entity.alligator.death_baby": {
     "sounds": [
@@ -1397,7 +1492,7 @@
       "naturalist:mob/alligator/baby_death2",
       "naturalist:mob/alligator/baby_death3"
     ],
-    "subtitle": "naturalist.subtitles.entity.alligator.death_baby"
+    "subtitle": "naturalist.subtitles.entity.alligator.death"
   },
   "entity.boar.ambient": {
     "sounds": [
@@ -1421,21 +1516,21 @@
       "naturalist:mob/boar/piglet_idle2",
       "naturalist:mob/boar/piglet_idle3"
     ],
-    "subtitle": "naturalist.subtitles.entity.boar.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.boar.ambient"
   },
   "entity.boar.hurt_baby": {
     "sounds": [
       "naturalist:mob/boar/piglet_hurt1",
       "naturalist:mob/boar/piglet_hurt2"
     ],
-    "subtitle": "naturalist.subtitles.entity.boar.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.boar.hurt"
   },
   "entity.boar.death_baby": {
     "sounds": [
       "naturalist:mob/boar/piglet_death1",
       "naturalist:mob/boar/piglet_death2"
     ],
-    "subtitle": "naturalist.subtitles.entity.boar.death_baby"
+    "subtitle": "naturalist.subtitles.entity.boar.death"
   },
   "entity.boar.death": {
     "sounds": [
@@ -1535,21 +1630,21 @@
       "naturalist:mob/duck/duckling_idle1",
       "naturalist:mob/duck/duckling_idle2"
     ],
-    "subtitle": "naturalist.subtitles.entity.duck.ambient_baby"
+    "subtitle": "naturalist.subtitles.entity.duck.ambient"
   },
   "entity.duck.hurt_baby": {
     "sounds": [
       "naturalist:mob/duck/duckling_hurt1",
       "naturalist:mob/duck/duckling_hurt2"
     ],
-    "subtitle": "naturalist.subtitles.entity.duck.hurt_baby"
+    "subtitle": "naturalist.subtitles.entity.duck.hurt"
   },
   "entity.duck.death_baby": {
     "sounds": [
       "naturalist:mob/duck/duckling_death1",
       "naturalist:mob/duck/duckling_death2"
     ],
-    "subtitle": "naturalist.subtitles.entity.duck.death_baby"
+    "subtitle": "naturalist.subtitles.entity.duck.death"
   },
   "entity.duck.step": {
     "sounds": [

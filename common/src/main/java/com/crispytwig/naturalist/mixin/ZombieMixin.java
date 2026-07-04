@@ -24,5 +24,6 @@ public class ZombieMixin extends Monster {
     private void registerGoals(CallbackInfo info) {
         this.goalSelector.addGoal(2, new AttackEggGoal(NaturalistRegistry.ALLIGATOR_EGG.get(), NaturalistSoundEvents.GATOR_EGG_BREAK.get(), this, 1.0D, 3));
         this.goalSelector.addGoal(2, new AttackEggGoal(NaturalistRegistry.TORTOISE_EGG.get(), NaturalistSoundEvents.TORTOISE_EGG_BREAK.get(), this, 1.0D, 3));
+        this.goalSelector.addGoal(2, new AttackEggGoal(NaturalistRegistry.OSTRICH_EGG.get(), NaturalistSoundEvents.OSTRICH_EGG_BREAK.get(), this, 1.0D, 3));
     }
 }
