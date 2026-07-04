@@ -39,6 +39,7 @@ public class NaturalistTags {
         public static final TagKey<Item> RAT_FOOD = tag("rat_food");
         public static final TagKey<Item> TIGER_FOOD_ITEMS = tag("tiger_food_items");
         public static final TagKey<Item> KOMODO_DRAGON_FOOD_ITEMS = tag("komodo_dragon_food_items");
+        public static final TagKey<Item> GREAT_WHITE_SHARK_FOOD_ITEMS = tag("great_white_shark_food_items");
         public static final TagKey<Item> GIANT_ISOPOD_FOOD = tag("giant_isopod_food");
         public static final TagKey<Item> MOOSE_FOOD = tag("moose_food");
         public static final TagKey<Item> CAPYBARA_FOOD = tag("capybara_food");
@@ -77,6 +78,7 @@ public class NaturalistTags {
         public static final TagKey<EntityType<?>> TIGER_HOSTILES = tag("tiger_hostiles");
         public static final TagKey<EntityType<?>> KOMODO_DRAGON_HOSTILES = tag("komodo_dragon_hostiles");
         public static final TagKey<EntityType<?>> SCORPION_HOSTILES = tag("scorpion_hostiles");
+        public static final TagKey<EntityType<?>> GREAT_WHITE_SHARK_HOSTILES = tag("great_white_shark_hostiles");
         public static final TagKey<EntityType<?>> VULTURE_HOSTILES = tag("vulture_hostiles");
         public static final TagKey<EntityType<?>> CATFISH_HOSTILES = tag("catfish_hostiles");
         public static final TagKey<EntityType<?>> ANGLERFISH_HOSTILES = tag("anglerfish_hostiles");
@@ -119,6 +121,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_FIREFLY = tag("has_firefly");
         public static final TagKey<Biome> HAS_GIANT_ISOPOD = tag("has_giant_isopod");
         public static final TagKey<Biome> HAS_GIRAFFE = tag("has_giraffe");
+        public static final TagKey<Biome> HAS_GREAT_WHITE_SHARK = tag("has_great_white_shark");
         public static final TagKey<Biome> HAS_HIPPO = tag("has_hippo");
         public static final TagKey<Biome> HAS_JELLYFISH = tag("has_jellyfish");
         public static final TagKey<Biome> HAS_JUNGLE_SCORPION = tag("has_jungle_scorpion");
@@ -169,6 +172,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_FIREFLY = tag("blacklist/blacklist_firefly");
         public static final TagKey<Biome> BLACKLIST_GIANT_ISOPOD = tag("blacklist/blacklist_giant_isopod");
         public static final TagKey<Biome> BLACKLIST_GIRAFFE = tag("blacklist/blacklist_giraffe");
+        public static final TagKey<Biome> BLACKLIST_GREAT_WHITE_SHARK = tag("blacklist/blacklist_great_white_shark");
         public static final TagKey<Biome> BLACKLIST_HIPPO = tag("blacklist/blacklist_hippo");
         public static final TagKey<Biome> BLACKLIST_JELLYFISH = tag("blacklist/blacklist_jellyfish");
         public static final TagKey<Biome> BLACKLIST_JUNGLE_SCORPION = tag("blacklist/blacklist_jungle_scorpion");

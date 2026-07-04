@@ -198,6 +198,13 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> SCORPION_DEATH = register("entity.scorpion.death");
     public static final DeferredHolder<SoundEvent, SoundEvent> SCORPION_ATTACK = register("entity.scorpion.attack");
     public static final DeferredHolder<SoundEvent, SoundEvent> SCORPION_STEP = register("entity.scorpion.step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_AMBIENT = register("entity.great_white_shark.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_HURT = register("entity.great_white_shark.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_DEATH = register("entity.great_white_shark.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_ATTACK = register("entity.great_white_shark.attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_FLOP = register("entity.great_white_shark.flop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_SWIM = register("entity.great_white_shark.swim");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GREAT_WHITE_SHARK_SWIM_FAST = register("entity.great_white_shark.swim_fast");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_IDLE = register("entity.ray.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_SWIM = register("entity.ray.swim");

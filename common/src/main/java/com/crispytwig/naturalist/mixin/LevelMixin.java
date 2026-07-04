@@ -1,6 +1,6 @@
 package com.crispytwig.naturalist.mixin;
 
-import com.crispytwig.naturalist.server.entity.mob.WhalePart;
+import com.crispytwig.naturalist.server.entity.util.MobPart;
 import com.crispytwig.naturalist.server.entity.util.MultipartLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -19,21 +19,21 @@ import java.util.function.Predicate;
 @Mixin(Level.class)
 public abstract class LevelMixin implements MultipartLevel {
     @Unique
-    private final Set<WhalePart> naturalist$whaleParts = new HashSet<>();
+    private final Set<MobPart> naturalist$mobParts = new HashSet<>();
 
     @Override
-    public void naturalist$addWhalePart(WhalePart part) {
-        this.naturalist$whaleParts.add(part);
+    public void naturalist$addMobPart(MobPart part) {
+        this.naturalist$mobParts.add(part);
     }
 
     @Override
-    public void naturalist$removeWhalePart(WhalePart part) {
-        this.naturalist$whaleParts.remove(part);
+    public void naturalist$removeMobPart(MobPart part) {
+        this.naturalist$mobParts.remove(part);
     }
 
     @Override
-    public WhalePart naturalist$getWhalePart(int id) {
-        for (WhalePart part : this.naturalist$whaleParts) {
+    public MobPart naturalist$getMobPart(int id) {
+        for (MobPart part : this.naturalist$mobParts) {
             if (part.getId() == id) {
                 return part;
             }
@@ -43,12 +43,12 @@ public abstract class LevelMixin implements MultipartLevel {
 
     @Inject(method = "getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;",
             at = @At("RETURN"))
-    private void naturalist$includeWhaleParts(Entity except, AABB box, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir) {
-        if (this.naturalist$whaleParts.isEmpty()) {
+    private void naturalist$includeMobParts(Entity except, AABB box, Predicate<? super Entity> predicate, CallbackInfoReturnable<List<Entity>> cir) {
+        if (this.naturalist$mobParts.isEmpty()) {
             return;
         }
         List<Entity> list = cir.getReturnValue();
-        for (WhalePart part : this.naturalist$whaleParts) {
+        for (MobPart part : this.naturalist$mobParts) {
             if (part != except && part.getParent() != except && part.getBoundingBox().intersects(box) && predicate.test(part)) {
                 list.add(part);
             }

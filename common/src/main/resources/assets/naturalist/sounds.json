@@ -524,6 +524,65 @@
     ],
     "subtitle": "subtitles.block.generic.footsteps"
   },
+  "entity.great_white_shark.ambient": {
+    "sounds": [
+      "naturalist:mob/great_white_shark/idle1",
+      "naturalist:mob/great_white_shark/idle3",
+      "naturalist:mob/great_white_shark/idle4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.great_white_shark.ambient"
+  },
+  "entity.great_white_shark.hurt": {
+    "sounds": [
+      "naturalist:mob/great_white_shark/hurt1",
+      "naturalist:mob/great_white_shark/hurt2",
+      "naturalist:mob/great_white_shark/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.great_white_shark.hurt"
+  },
+  "entity.great_white_shark.death": {
+    "sounds": [
+      "naturalist:mob/great_white_shark/death1",
+      "naturalist:mob/great_white_shark/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.great_white_shark.death"
+  },
+  "entity.great_white_shark.attack": {
+    "sounds": [
+      "naturalist:mob/great_white_shark/attack1",
+      "naturalist:mob/great_white_shark/attack2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.great_white_shark.attack"
+  },
+  "entity.great_white_shark.flop": {
+    "sounds": [
+      "naturalist:mob/great_white_shark/flop1",
+      "naturalist:mob/great_white_shark/flop3",
+      "naturalist:mob/great_white_shark/flop4",
+      "naturalist:mob/great_white_shark/flop5"
+    ],
+    "subtitle": "naturalist.subtitles.entity.great_white_shark.flop"
+  },
+  "entity.great_white_shark.swim": {
+    "sounds": [
+      "naturalist:mob/great_white_shark/swim1",
+      "naturalist:mob/great_white_shark/swim2",
+      "naturalist:mob/great_white_shark/swim3",
+      "naturalist:mob/great_white_shark/swim4",
+      "naturalist:mob/great_white_shark/swim5"
+    ],
+    "subtitle": "naturalist.subtitles.entity.great_white_shark.swim"
+  },
+  "entity.great_white_shark.swim_fast": {
+    "sounds": [
+      "naturalist:mob/great_white_shark/swim_fast1",
+      "naturalist:mob/great_white_shark/swim_fast2",
+      "naturalist:mob/great_white_shark/swim_fast3",
+      "naturalist:mob/great_white_shark/swim_fast4",
+      "naturalist:mob/great_white_shark/swim_fast5"
+    ],
+    "subtitle": "naturalist.subtitles.entity.great_white_shark.swim"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",

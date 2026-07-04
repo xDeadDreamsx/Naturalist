@@ -1,4 +1,4 @@
-package com.crispytwig.naturalist.server.entity.mob;
+package com.crispytwig.naturalist.server.entity.util;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -10,29 +10,31 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 @SuppressWarnings("unused")
-public class WhalePart extends Entity {
-    public static final double[] PART_Z = {4.0D, 1.5D, -1.0D, -3.5D, -5.3D};
-    public static final float[][] SIZES = {{2.2F, 2.2F}, {3.0F, 2.5F}, {3.0F, 2.5F}, {2.2F, 2.0F}, {1.4F, 1.2F}};
-    public static final int PART_COUNT = PART_Z.length;
-
-    private final Whale parent;
+public class MobPart extends Entity {
+    private final Mob parent;
     private final EntityDimensions baseSize;
     private float scale = 1.0F;
 
-    public WhalePart(Whale parent, int index) {
+    public MobPart(Mob parent, float width, float height) {
         super(parent.getType(), parent.level());
         this.parent = parent;
-        this.baseSize = EntityDimensions.scalable(SIZES[index][0], SIZES[index][1]);
+        this.baseSize = EntityDimensions.scalable(width, height);
         this.refreshDimensions();
     }
 
-    public Whale getParent() {
+    public Mob getParent() {
         return this.parent;
     }
 
@@ -41,6 +43,58 @@ public class WhalePart extends Entity {
             this.scale = newScale;
             this.refreshDimensions();
         }
+    }
+
+    public static void assignIds(MobPart[] parts, int parentId) {
+        for (int i = 0; i < parts.length; i++) {
+            parts[i].setId(parentId + 1 + i);
+        }
+    }
+
+    public static void registerAll(MultipartLevel level, MobPart[] parts) {
+        for (MobPart part : parts) {
+            level.naturalist$addMobPart(part);
+        }
+    }
+
+    public static void unregisterAll(MultipartLevel level, MobPart[] parts) {
+        for (MobPart part : parts) {
+            level.naturalist$removeMobPart(part);
+        }
+    }
+
+    public static void pushEntities(Mob parent, MobPart[] parts) {
+        for (MobPart part : parts) {
+            List<Entity> list = parent.level().getEntities(part, part.getBoundingBox(),
+                    e -> !e.is(parent) && !(e instanceof MobPart) && e.isPushable());
+            for (Entity entity : list) {
+                part.push(entity);
+            }
+        }
+    }
+
+    public static boolean resolveBodyCollisions(Mob parent, MobPart[] parts) {
+        Vec3 push = Vec3.ZERO;
+        Vec3 center = parent.position().add(0.0D, parent.getBbHeight() * 0.5D, 0.0D);
+        for (MobPart part : parts) {
+            if (!parent.level().getBlockCollisions(part, part.getBoundingBox()).iterator().hasNext()) {
+                continue;
+            }
+            Vec3 away = center.subtract(part.position().add(0.0D, part.getBbHeight() * 0.5D, 0.0D));
+            if (away.lengthSqr() < 1.0E-4D) {
+                continue;
+            }
+            push = push.add(away.normalize().scale(0.04D));
+        }
+        if (push.lengthSqr() == 0.0D) {
+            return false;
+        }
+        if (push.length() > 0.12D) {
+            push = push.normalize().scale(0.12D);
+        }
+        parent.move(MoverType.SELF, push);
+        parent.setDeltaMovement(parent.getDeltaMovement().add(push.scale(0.2D)));
+        return true;
     }
 
     @Override
@@ -71,16 +125,6 @@ public class WhalePart extends Entity {
     }
 
     @Override
-    public boolean isPushable() {
-        return false;
-    }
-
-    @Override
-    public boolean canBeCollidedWith() {
-        return false;
-    }
-
-    @Override
     public boolean is(@NotNull Entity entity) {
         return this == entity || this.parent == entity;
     }
@@ -96,7 +140,7 @@ public class WhalePart extends Entity {
     }
 
     @Override
-    public @NotNull ItemStack getPickResult() {
+    public @Nullable ItemStack getPickResult() {
         return this.parent.getPickResult();
     }
 

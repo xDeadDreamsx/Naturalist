@@ -432,6 +432,11 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addTag(BiomeTags.IS_BADLANDS)
                 .addOptional(bop("lush_desert"));
 
+        tag(NaturalistTags.Biomes.HAS_GREAT_WHITE_SHARK)
+                .add(Biomes.WARM_OCEAN)
+                .add(Biomes.LUKEWARM_OCEAN)
+                .add(Biomes.DEEP_LUKEWARM_OCEAN);
+
         tag(NaturalistTags.Biomes.HAS_JUNGLE_SCORPION)
                 .addTag(BiomeTags.IS_JUNGLE)
                 .addOptional(bop("rainforest"));
@@ -633,6 +638,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_FOREST_FOXES);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_FOREST_RABBITS);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_GIANT_ISOPOD);
+        emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_GREAT_WHITE_SHARK);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_JELLYFISH);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_ANGLERFISH);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_RAY);

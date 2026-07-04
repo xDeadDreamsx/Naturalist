@@ -1,8 +1,8 @@
 package com.crispytwig.naturalist.mixin;
 
 import com.crispytwig.naturalist.server.entity.base.IKMount;
-import com.crispytwig.naturalist.server.entity.mob.Whale;
-import com.crispytwig.naturalist.server.entity.mob.WhalePart;
+import com.crispytwig.naturalist.server.entity.base.MultipartMob;
+import com.crispytwig.naturalist.server.entity.util.MobPart;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -26,12 +26,12 @@ public class EntityRenderDispatcherMixin {
     }
 
     @Inject(method = "renderHitbox", at = @At("TAIL"))
-    private static void naturalist$renderWhalePartHitboxes(PoseStack poseStack, VertexConsumer buffer, Entity entity, float partialTicks, float red, float green, float blue, CallbackInfo ci) {
-        if (entity instanceof Whale whale) {
-            double x = -Mth.lerp(partialTicks, whale.xOld, whale.getX());
-            double y = -Mth.lerp(partialTicks, whale.yOld, whale.getY());
-            double z = -Mth.lerp(partialTicks, whale.zOld, whale.getZ());
-            for (WhalePart part : whale.getParts()) {
+    private static void naturalist$renderMobPartHitboxes(PoseStack poseStack, VertexConsumer buffer, Entity entity, float partialTicks, float red, float green, float blue, CallbackInfo ci) {
+        if (entity instanceof MultipartMob multipart) {
+            double x = -Mth.lerp(partialTicks, entity.xOld, entity.getX());
+            double y = -Mth.lerp(partialTicks, entity.yOld, entity.getY());
+            double z = -Mth.lerp(partialTicks, entity.zOld, entity.getZ());
+            for (MobPart part : multipart.getParts()) {
                 poseStack.pushPose();
                 double px = x + Mth.lerp(partialTicks, part.xOld, part.getX());
                 double py = y + Mth.lerp(partialTicks, part.yOld, part.getY());

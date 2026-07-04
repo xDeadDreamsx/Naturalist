@@ -7,7 +7,11 @@ import com.crispytwig.naturalist.server.entity.ai.goal.WhaleDiveGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.WhaleSeekDeeperWaterGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.WhaleSurfaceGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.WhaleSwimGoal;
+import com.crispytwig.naturalist.server.entity.base.MultipartMob;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.BeachedMob;
+import com.crispytwig.naturalist.server.entity.util.BodyChain;
+import com.crispytwig.naturalist.server.entity.util.MobPart;
 import com.crispytwig.naturalist.server.entity.util.MultipartLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -56,17 +60,14 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.List;
-
 @SuppressWarnings("unused")
-public class Whale extends Animal implements NaturalistGeoEntity {
+public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob {
     //region Data
+    private static final double[] PART_Z = {4.0D, 1.5D, -1.0D, -3.5D, -5.3D};
+    private static final float[][] PART_SIZES = {{2.2F, 2.2F}, {3.0F, 2.5F}, {3.0F, 2.5F}, {2.2F, 2.0F}, {1.4F, 1.2F}};
+
     private static final float MAX_TILT = 40.0F;
     private static final float BREACH_TILT = 60.0F;
-    private static final float MAX_ROLL = 30.0F;
-    private static final float ROLL_PER_YAW = 5.0F;
-    private static final float ROLL_EASE = 0.06F;
-    private static final int SEGMENTS = 4;
     private static final int BODY_PUSH_BAIL = 20;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -75,26 +76,21 @@ public class Whale extends Animal implements NaturalistGeoEntity {
     private int bodyPushTicks;
     private int flopCooldown;
 
-    private final WhalePart[] parts;
+    private final MobPart[] parts;
     private boolean partsRegistered;
 
     public float xBodyRot;
     public float xBodyRotO;
-    private float renderYaw;
-    private float renderYawO;
-    private float zBodyRot;
-    private float zBodyRotO;
     private float finLag;
     private float finLagO;
     private float frontDroop;
     private float frontDroopO;
     private float backDroop;
     private float backDroopO;
-    private final float[] segYaw = new float[SEGMENTS];
-    private final float[] segYawO = new float[SEGMENTS];
-    private final float[] segPitch = new float[SEGMENTS];
-    private final float[] segPitchO = new float[SEGMENTS];
-    private boolean chainsInitialized;
+    private final BodyChain chain = new BodyChain(0.15F,
+            new float[]{0.35F, 0.14F, 0.11F, 0.09F},
+            new float[]{0.24F, 0.12F, 0.1F, 0.08F},
+            5.0F, 30.0F, 0.06F);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.whale.idle");
     protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.whale.swim");
@@ -109,13 +105,14 @@ public class Whale extends Animal implements NaturalistGeoEntity {
         this.lookControl = new SmoothSwimmingLookControl(this, 6);
         this.setPathfindingMalus(PathType.WATER, 0.0F);
         this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
-        this.parts = new WhalePart[WhalePart.PART_COUNT];
+        this.parts = new MobPart[PART_Z.length];
         for (int i = 0; i < this.parts.length; i++) {
-            this.parts[i] = new WhalePart(this, i);
+            this.parts[i] = new MobPart(this, PART_SIZES[i][0], PART_SIZES[i][1]);
         }
     }
 
-    public WhalePart[] getParts() {
+    @Override
+    public MobPart[] getParts() {
         return this.parts;
     }
 
@@ -265,9 +262,7 @@ public class Whale extends Animal implements NaturalistGeoEntity {
     public void setId(int id) {
         super.setId(id);
         if (this.parts != null) {
-            for (int i = 0; i < this.parts.length; i++) {
-                this.parts[i].setId(id + 1 + i);
-            }
+            MobPart.assignIds(this.parts, id);
         }
     }
 
@@ -275,41 +270,27 @@ public class Whale extends Animal implements NaturalistGeoEntity {
     public void tick() {
         super.tick();
         if (!this.partsRegistered && this.level() instanceof MultipartLevel multipart) {
-            for (WhalePart part : this.parts) {
-                multipart.naturalist$addWhalePart(part);
-            }
+            MobPart.registerAll(multipart, this.parts);
             this.partsRegistered = true;
         }
         this.positionParts();
-        this.pushEntitiesFromParts();
+        MobPart.pushEntities(this, this.parts);
         if (!this.level().isClientSide) {
             this.resolveBodyCollisions();
-        }
-    }
-
-    private void pushEntitiesFromParts() {
-        for (WhalePart part : this.parts) {
-            List<Entity> list = this.level().getEntities(part, part.getBoundingBox(),
-                    e -> !e.is(this) && !(e instanceof WhalePart) && e.isPushable());
-            for (Entity entity : list) {
-                part.push(entity);
-            }
         }
     }
 
     @Override
     public void remove(Entity.@NotNull RemovalReason reason) {
         if (this.partsRegistered && this.level() instanceof MultipartLevel multipart) {
-            for (WhalePart part : this.parts) {
-                multipart.naturalist$removeWhalePart(part);
-            }
+            MobPart.unregisterAll(multipart, this.parts);
             this.partsRegistered = false;
         }
         super.remove(reason);
     }
 
     private void positionParts() {
-        float yaw = this.renderYaw * Mth.DEG_TO_RAD;
+        float yaw = this.chain.getRenderYaw() * Mth.DEG_TO_RAD;
         float pitch = this.xBodyRot * Mth.DEG_TO_RAD;
         float sin = Mth.sin(yaw);
         float cos = Mth.cos(yaw);
@@ -317,14 +298,14 @@ public class Whale extends Animal implements NaturalistGeoEntity {
         float sinPitch = -Mth.sin(pitch);
         float scale = this.isBaby() ? 0.5F : 1.0F;
         for (int i = 0; i < this.parts.length; i++) {
-            WhalePart part = this.parts[i];
+            MobPart part = this.parts[i];
             part.updateScale(scale);
-            double z = WhalePart.PART_Z[i] * scale;
+            double z = PART_Z[i] * scale;
             double px = this.getX() - sin * z * cosPitch;
             double pz = this.getZ() + cos * z * cosPitch;
             double py = this.getY() + (this.getBbHeight() - part.getBbHeight()) * 0.5D + sinPitch * z;
-            double zRaw = WhalePart.PART_Z[i];
-            double droopRatio = zRaw / (zRaw > 0.0D ? WhalePart.PART_Z[0] : WhalePart.PART_Z[WhalePart.PART_COUNT - 1]);
+            double zRaw = PART_Z[i];
+            double droopRatio = zRaw / (zRaw > 0.0D ? PART_Z[0] : PART_Z[PART_Z.length - 1]);
             py -= (zRaw > 0.0D ? this.frontDroop : this.backDroop) * droopRatio * droopRatio * 0.9D * scale;
             part.setOldPosAndRot();
             part.setPos(px, py, pz);
@@ -332,25 +313,8 @@ public class Whale extends Animal implements NaturalistGeoEntity {
     }
 
     private void resolveBodyCollisions() {
-        Vec3 push = Vec3.ZERO;
-        Vec3 center = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
-        for (WhalePart part : this.parts) {
-            if (!this.level().getBlockCollisions(part, part.getBoundingBox()).iterator().hasNext()) {
-                continue;
-            }
-            Vec3 away = center.subtract(part.position().add(0.0D, part.getBbHeight() * 0.5D, 0.0D));
-            if (away.lengthSqr() < 1.0E-4D) {
-                continue;
-            }
-            push = push.add(away.normalize().scale(0.04D));
-        }
-        if (push.lengthSqr() > 0.0D) {
+        if (MobPart.resolveBodyCollisions(this, this.parts)) {
             this.bodyPushTicks = Math.min(this.bodyPushTicks + 2, 2 * BODY_PUSH_BAIL);
-            if (push.length() > 0.12D) {
-                push = push.normalize().scale(0.12D);
-            }
-            this.move(MoverType.SELF, push);
-            this.setDeltaMovement(this.getDeltaMovement().add(push.scale(0.2D)));
             this.positionParts();
         } else if (this.bodyPushTicks > 0) {
             this.bodyPushTicks--;
@@ -360,21 +324,10 @@ public class Whale extends Animal implements NaturalistGeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.chainsInitialized) {
-            this.chainsInitialized = true;
-            this.renderYaw = this.renderYawO = this.yBodyRot;
-            for (int i = 0; i < SEGMENTS; i++) {
-                this.segYaw[i] = this.segYawO[i] = this.yBodyRot;
-            }
-        }
         this.xBodyRotO = this.xBodyRot;
-        this.renderYawO = this.renderYaw;
-        this.zBodyRotO = this.zBodyRot;
         this.finLagO = this.finLag;
         this.frontDroopO = this.frontDroop;
         this.backDroopO = this.backDroop;
-        System.arraycopy(this.segYaw, 0, this.segYawO, 0, SEGMENTS);
-        System.arraycopy(this.segPitch, 0, this.segPitchO, 0, SEGMENTS);
 
         float targetPitch = 0.0F;
         Vec3 movement = this.getDeltaMovement();
@@ -387,24 +340,12 @@ public class Whale extends Animal implements NaturalistGeoEntity {
         }
         this.xBodyRot += (targetPitch - this.xBodyRot) * (grounded ? 0.25F : 0.07F);
 
-        this.renderYaw += Mth.wrapDegrees(this.yBodyRot - this.renderYaw) * 0.15F;
-        this.segYaw[0] += Mth.wrapDegrees(this.yBodyRot - this.segYaw[0]) * 0.35F;
-        this.segYaw[1] += Mth.wrapDegrees(this.renderYaw - this.segYaw[1]) * 0.14F;
-        this.segYaw[2] += Mth.wrapDegrees(this.segYaw[1] - this.segYaw[2]) * 0.11F;
-        this.segYaw[3] += Mth.wrapDegrees(this.segYaw[2] - this.segYaw[3]) * 0.09F;
-
-        this.segPitch[0] += (targetPitch - this.segPitch[0]) * 0.24F;
-        this.segPitch[1] += (this.xBodyRot - this.segPitch[1]) * 0.12F;
-        this.segPitch[2] += (this.segPitch[1] - this.segPitch[2]) * 0.1F;
-        this.segPitch[3] += (this.segPitch[2] - this.segPitch[3]) * 0.08F;
+        this.chain.tick(this.yBodyRot, this.xBodyRot, targetPitch);
 
         this.finLag += (this.xBodyRot - this.finLag) * 0.1F;
 
         this.frontDroop += ((this.isInWater() && this.isPartInWater(this.parts[0]) ? 1.0F : 0.0F) - this.frontDroop) * 0.08F;
         this.backDroop += ((this.isInWater() && this.isPartInWater(this.parts[3]) ? 1.0F : 0.0F) - this.backDroop) * 0.08F;
-
-        float rollTarget = Mth.clamp(-Mth.wrapDegrees(this.renderYaw - this.renderYawO) * ROLL_PER_YAW, -MAX_ROLL, MAX_ROLL);
-        this.zBodyRot += (rollTarget - this.zBodyRot) * ROLL_EASE;
 
         if (!this.level().isClientSide) {
             if (this.blowholeCooldown > 0) {
@@ -413,58 +354,8 @@ public class Whale extends Animal implements NaturalistGeoEntity {
                 this.spray();
                 this.blowholeCooldown = 160 + this.random.nextInt(160);
             }
-            if (!this.isInWater() && this.onGround() && this.verticalCollisionBelow) {
-                if (this.flopCooldown > 0) {
-                    this.flopCooldown--;
-                } else {
-                    this.flopTowardWater();
-                    this.flopCooldown = 15 + this.random.nextInt(25);
-                }
-            }
+            this.flopCooldown = BeachedMob.tickFlopping(this, this.flopCooldown, SoundEvents.GUARDIAN_FLOP);
         }
-    }
-
-    private void flopTowardWater() {
-        Vec3 dir = this.findNearestWaterDirection();
-        double dx;
-        double dz;
-        if (dir != null) {
-            Vec3 jittered = dir.yRot((this.random.nextFloat() - 0.5F) * 0.35F);
-            dx = jittered.x * 0.45D;
-            dz = jittered.z * 0.45D;
-            float yaw = (float) (Mth.atan2(jittered.z, jittered.x) * Mth.RAD_TO_DEG) - 90.0F;
-            this.setYRot(yaw);
-            this.yBodyRot = yaw;
-            this.yHeadRot = yaw;
-        } else {
-            dx = (this.random.nextFloat() * 2.0F - 1.0F) * 0.3D;
-            dz = (this.random.nextFloat() * 2.0F - 1.0F) * 0.3D;
-        }
-        this.setDeltaMovement(this.getDeltaMovement().add(dx, 0.5D, dz));
-        this.setOnGround(false);
-        this.hasImpulse = true;
-        this.playSound(SoundEvents.GUARDIAN_FLOP, 2.0F, 0.6F);
-    }
-
-    @Nullable
-    private Vec3 findNearestWaterDirection() {
-        BlockPos origin = this.blockPosition();
-        BlockPos best = null;
-        double bestDist = Double.MAX_VALUE;
-        for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-16, -8, -16), origin.offset(16, 1, 16))) {
-            if (this.isWaterAt(pos)) {
-                double dist = pos.distSqr(origin);
-                if (dist < bestDist) {
-                    bestDist = dist;
-                    best = pos.immutable();
-                }
-            }
-        }
-        if (best == null) {
-            return null;
-        }
-        Vec3 dir = new Vec3(best.getX() + 0.5D - this.getX(), 0.0D, best.getZ() + 0.5D - this.getZ());
-        return dir.lengthSqr() < 1.0E-4D ? null : dir.normalize();
     }
 
     public boolean canSpray() {
@@ -488,11 +379,11 @@ public class Whale extends Animal implements NaturalistGeoEntity {
     }
 
     public float getRenderYaw(float partialTick) {
-        return Mth.rotLerp(partialTick, this.renderYawO, this.renderYaw);
+        return this.chain.getRenderYaw(partialTick);
     }
 
     public float getZBodyRot(float partialTick) {
-        return Mth.lerp(partialTick, this.zBodyRotO, this.zBodyRot);
+        return this.chain.getRoll(partialTick);
     }
 
     public float getFinLag(float partialTick) {
@@ -523,24 +414,16 @@ public class Whale extends Animal implements NaturalistGeoEntity {
         return this.bodyPushTicks >= BODY_PUSH_BAIL;
     }
 
-    private boolean isPartInWater(WhalePart part) {
+    private boolean isPartInWater(MobPart part) {
         return !this.isWaterAt(BlockPos.containing(part.getX(), part.getY() + part.getBbHeight() * 0.5D, part.getZ()));
     }
 
     public float getSegYawOffset(int index, float partialTick) {
-        float current = Mth.rotLerp(partialTick, this.segYawO[index], this.segYaw[index]);
-        float reference = index <= 1
-                ? this.getRenderYaw(partialTick)
-                : Mth.rotLerp(partialTick, this.segYawO[index - 1], this.segYaw[index - 1]);
-        return Mth.wrapDegrees(current - reference);
+        return this.chain.getSegYawOffset(index, partialTick);
     }
 
     public float getSegPitchOffset(int index, float partialTick) {
-        float current = Mth.lerp(partialTick, this.segPitchO[index], this.segPitch[index]);
-        float reference = index <= 1
-                ? this.getXBodyRot(partialTick)
-                : Mth.lerp(partialTick, this.segPitchO[index - 1], this.segPitch[index - 1]);
-        return current - reference;
+        return this.chain.getSegPitchOffset(index, partialTick, this.getXBodyRot(partialTick));
     }
 
     static class WhaleMoveControl extends MoveControl {

@@ -1,13 +1,12 @@
 package com.crispytwig.naturalist.server.entity.util;
 
-import com.crispytwig.naturalist.server.entity.mob.WhalePart;
 import org.jetbrains.annotations.Nullable;
 
 public interface MultipartLevel {
-    void naturalist$addWhalePart(WhalePart part);
+    void naturalist$addMobPart(MobPart part);
 
-    void naturalist$removeWhalePart(WhalePart part);
+    void naturalist$removeMobPart(MobPart part);
 
     @Nullable
-    WhalePart naturalist$getWhalePart(int id);
+    MobPart naturalist$getMobPart(int id);
 }
