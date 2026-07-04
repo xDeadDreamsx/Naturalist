@@ -81,6 +81,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.DIRT_TRAIL.get(), DirtTrailRenderer::new);
         r.register(NaturalistEntityTypes.RAT.get(), RatRenderer::new);
         r.register(NaturalistEntityTypes.BLACK_BEAR.get(), BlackBearRenderer::new);
+        r.register(NaturalistEntityTypes.TIGER.get(), TigerRenderer::new);
     }
 
     @FunctionalInterface

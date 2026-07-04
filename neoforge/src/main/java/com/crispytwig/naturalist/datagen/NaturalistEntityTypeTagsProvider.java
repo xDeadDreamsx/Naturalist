@@ -48,6 +48,7 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
         tag(NaturalistTags.EntityTypes.DEER_PREDATORS)
                 .add(NaturalistEntityTypes.BEAR.get())
                 .add(NaturalistEntityTypes.BLACK_BEAR.get())
+                .add(NaturalistEntityTypes.TIGER.get())
                 .addOptional(ResourceLocation.fromNamespaceAndPath("alexsmobs", "grizzly_bear"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("alexsmobs", "crocodile"));
 
@@ -56,6 +57,15 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.ZEBRA.get())
                 .add(NaturalistEntityTypes.BOAR.get())
                 .add(EntityType.HORSE);
+
+        tag(NaturalistTags.EntityTypes.TIGER_HOSTILES)
+                .add(NaturalistEntityTypes.BOAR.get())
+                .add(EntityType.PIG)
+                .add(NaturalistEntityTypes.DEER.get())
+                .add(NaturalistEntityTypes.ZEBRA.get())
+                .add(NaturalistEntityTypes.SNAKE.get())
+                .add(NaturalistEntityTypes.CORAL_SNAKE.get())
+                .add(NaturalistEntityTypes.RATTLESNAKE.get());
 
         tag(NaturalistTags.EntityTypes.NATURALIST_ENTITIES)
                 .add(NaturalistEntityTypes.ALLIGATOR.get())

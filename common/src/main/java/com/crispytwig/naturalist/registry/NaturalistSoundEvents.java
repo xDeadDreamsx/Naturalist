@@ -169,6 +169,13 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_EAT = register("entity.black_bear.eat");
     public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_SNIFF = register("entity.black_bear.sniff");
     public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_ATTACK = register("entity.black_bear.attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_AMBIENT = register("entity.tiger.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_HURT = register("entity.tiger.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_DEATH = register("entity.tiger.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_ATTACK = register("entity.tiger.attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_SLEEP = register("entity.tiger.sleep");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_PREY = register("entity.tiger.prey");
+    public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_STEP = register("entity.tiger.step");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_IDLE = register("entity.ray.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_SWIM = register("entity.ray.swim");

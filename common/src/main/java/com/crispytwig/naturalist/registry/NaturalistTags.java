@@ -34,6 +34,7 @@ public class NaturalistTags {
     public static class ItemTags {
         public static final TagKey<Item> CRAB_FOOD = tag("crab_food");
         public static final TagKey<Item> RAT_FOOD = tag("rat_food");
+        public static final TagKey<Item> TIGER_FOOD_ITEMS = tag("tiger_food_items");
         public static final TagKey<Item> GIANT_ISOPOD_FOOD = tag("giant_isopod_food");
         public static final TagKey<Item> MOOSE_FOOD = tag("moose_food");
         public static final TagKey<Item> CAPYBARA_FOOD = tag("capybara_food");
@@ -69,6 +70,7 @@ public class NaturalistTags {
         public static final TagKey<EntityType<?>> SNAKE_HOSTILES = tag("snake_hostiles");
         public static final TagKey<EntityType<?>> DEER_PREDATORS = tag("deer_predators");
         public static final TagKey<EntityType<?>> LION_HOSTILES = tag("lion_hostiles");
+        public static final TagKey<EntityType<?>> TIGER_HOSTILES = tag("tiger_hostiles");
         public static final TagKey<EntityType<?>> VULTURE_HOSTILES = tag("vulture_hostiles");
         public static final TagKey<EntityType<?>> CATFISH_HOSTILES = tag("catfish_hostiles");
         public static final TagKey<EntityType<?>> ANGLERFISH_HOSTILES = tag("anglerfish_hostiles");
@@ -124,6 +126,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_SNAKE = tag("has_snake");
         public static final TagKey<Biome> HAS_SPARROW = tag("has_sparrow");
         public static final TagKey<Biome> HAS_STARFISH = tag("has_starfish");
+        public static final TagKey<Biome> HAS_TIGER = tag("has_tiger");
         public static final TagKey<Biome> HAS_TORTOISE = tag("has_tortoise");
         public static final TagKey<Biome> HAS_VULTURE = tag("has_vulture");
         public static final TagKey<Biome> HAS_ZEBRA = tag("has_zebra");
@@ -169,6 +172,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_SNAKE = tag("blacklist/blacklist_snake");
         public static final TagKey<Biome> BLACKLIST_SPARROW = tag("blacklist/blacklist_sparrow");
         public static final TagKey<Biome> BLACKLIST_STARFISH = tag("blacklist/blacklist_starfish");
+        public static final TagKey<Biome> BLACKLIST_TIGER = tag("blacklist/blacklist_tiger");
         public static final TagKey<Biome> BLACKLIST_TORTOISE = tag("blacklist/blacklist_tortoise");
         public static final TagKey<Biome> BLACKLIST_VULTURE = tag("blacklist/blacklist_vulture");
         public static final TagKey<Biome> BLACKLIST_ZEBRA = tag("blacklist/blacklist_zebra");

@@ -122,6 +122,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.MOLE.get(), Mole.createAttributes());
         r.register(NaturalistEntityTypes.RAT.get(), Rat.createAttributes());
         r.register(NaturalistEntityTypes.BLACK_BEAR.get(), Bear.createAttributes());
+        r.register(NaturalistEntityTypes.TIGER.get(), Tiger.createAttributes());
     }
 
     public static void registerSpawnPlacements(SpawnPlacementRegistrar r) {
@@ -168,6 +169,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.MOLE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.RAT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.BLACK_BEAR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
+        r.register(NaturalistEntityTypes.TIGER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
     }
 
     public static void registerPotionMixes(BrewingRegistrar r) {

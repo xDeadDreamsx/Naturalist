@@ -2,6 +2,7 @@
   "values": [
     "naturalist:bear",
     "naturalist:black_bear",
+    "naturalist:tiger",
     {
       "id": "alexsmobs:grizzly_bear",
       "required": false

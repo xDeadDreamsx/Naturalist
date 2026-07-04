@@ -204,11 +204,7 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
 
     @Override
     public boolean canAttack(@NotNull LivingEntity target) {
-        if (this.isTame() && this.getOwnerUUID() != null && target instanceof OwnableEntity ownable
-                && this.getOwnerUUID().equals(ownable.getOwnerUUID())) {
-            return false;
-        }
-        return super.canAttack(target);
+        return !PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
     }
 
     @Override

@@ -291,6 +291,59 @@
     ],
     "subtitle": "naturalist.subtitles.entity.black_bear.attack"
   },
+  "entity.tiger.ambient": {
+    "sounds": [
+      "naturalist:mob/tiger/idle1",
+      "naturalist:mob/tiger/idle2",
+      "naturalist:mob/tiger/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.tiger.ambient"
+  },
+  "entity.tiger.hurt": {
+    "sounds": [
+      "naturalist:mob/tiger/hurt1",
+      "naturalist:mob/tiger/hurt2",
+      "naturalist:mob/tiger/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.tiger.hurt"
+  },
+  "entity.tiger.death": {
+    "sounds": [
+      "naturalist:mob/tiger/death1",
+      "naturalist:mob/tiger/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.tiger.death"
+  },
+  "entity.tiger.attack": {
+    "sounds": [
+      "naturalist:mob/tiger/attack1",
+      "naturalist:mob/tiger/attack2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.tiger.attack"
+  },
+  "entity.tiger.sleep": {
+    "sounds": [
+      "naturalist:mob/tiger/sleep1",
+      "naturalist:mob/tiger/sleep2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.tiger.sleep"
+  },
+  "entity.tiger.prey": {
+    "sounds": [
+      "naturalist:mob/tiger/prey1",
+      "naturalist:mob/tiger/prey2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.tiger.prey"
+  },
+  "entity.tiger.step": {
+    "sounds": [
+      "naturalist:mob/tiger/step1",
+      "naturalist:mob/tiger/step2",
+      "naturalist:mob/tiger/step3",
+      "naturalist:mob/tiger/step4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.tiger.step"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",

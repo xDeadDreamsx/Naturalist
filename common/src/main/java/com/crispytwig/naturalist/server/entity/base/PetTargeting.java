@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.base;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -10,6 +11,11 @@ import net.minecraft.world.entity.player.Player;
 
 public final class PetTargeting {
     private PetTargeting() {
+    }
+
+    public static boolean protectsOwnedPet(TamableAnimal self, LivingEntity target) {
+        return self.isTame() && self.getOwnerUUID() != null && target instanceof OwnableEntity ownable
+                && self.getOwnerUUID().equals(ownable.getOwnerUUID());
     }
 
     public static boolean wantsToAttack(LivingEntity target, LivingEntity owner) {
