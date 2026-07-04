@@ -194,6 +194,50 @@
     ],
     "subtitle": "naturalist.subtitles.entity.mole.step"
   },
+  "entity.rat.ambient": {
+    "sounds": [
+      "naturalist:mob/rat/idle1",
+      "naturalist:mob/rat/idle2",
+      "naturalist:mob/rat/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.rat.ambient"
+  },
+  "entity.rat.hurt": {
+    "sounds": [
+      "naturalist:mob/rat/hurt1",
+      "naturalist:mob/rat/hurt2",
+      "naturalist:mob/rat/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.rat.hurt"
+  },
+  "entity.rat.death": {
+    "sounds": [
+      "naturalist:mob/rat/death1",
+      "naturalist:mob/rat/death2",
+      "naturalist:mob/rat/death3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.rat.death"
+  },
+  "entity.rat.swim": {
+    "sounds": [
+      "naturalist:mob/duck/swim1",
+      "naturalist:mob/duck/swim2",
+      "naturalist:mob/duck/swim3",
+      "naturalist:mob/duck/swim4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.rat.swim"
+  },
+  "entity.rat.step": {
+    "sounds": [
+      "naturalist:mob/rat/step1",
+      "naturalist:mob/rat/step2",
+      "naturalist:mob/rat/step3",
+      "naturalist:mob/rat/step4",
+      "naturalist:mob/rat/step5",
+      "naturalist:mob/rat/step6"
+    ],
+    "subtitle": "naturalist.subtitles.entity.rat.step"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",

@@ -87,7 +87,7 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
 
     //region Data
     public static final int VARIANTS = 5;
-    private static final String[] VARIANT_NAMES = {"blue", "brown", "orange", "red", "yellow"};
+    public static final String[] VARIANT_NAMES = {"blue", "brown", "orange", "red", "yellow"};
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.CRAB_FOOD);
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
@@ -128,10 +128,6 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
         builder.define(DATA_VARIANT, 0);
         builder.define(DATA_DANCING, false);
         builder.define(FROM_HAND, false);
-    }
-
-    public static String getVariantName(int id) {
-        return VARIANT_NAMES[Math.floorMod(id, VARIANT_NAMES.length)];
     }
 
     public int getVariant() {
@@ -196,12 +192,7 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
         if (!held.isEmpty()) {
             tag.put("HeldItem", held.save(this.level().registryAccess()));
         }
-        if (this.isTame() && this.getOwnerUUID() != null) {
-            tag.putBoolean("Tame", true);
-            tag.putUUID("Owner", this.getOwnerUUID());
-            tag.putBoolean("FollowingOwner", this.isFollowingOwner());
-            tag.putBoolean("Sitting", this.isOrderedToSit());
-        }
+        Catchable.saveTamableDataToHandTag(this, tag);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
 
@@ -217,12 +208,7 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
             this.setItemSlot(EquipmentSlot.MAINHAND, held);
             this.setDropChance(EquipmentSlot.MAINHAND, 2.0F);
         }
-        if (tag.getBoolean("Tame") && tag.hasUUID("Owner")) {
-            this.setOwnerUUID(tag.getUUID("Owner"));
-            this.setTame(true, true);
-            this.setFollowingOwner(tag.getBoolean("FollowingOwner"));
-            this.setOrderedToSit(tag.getBoolean("Sitting"));
-        }
+        Catchable.loadTamableDataFromHandTag(this, tag);
     }
 
     @Override

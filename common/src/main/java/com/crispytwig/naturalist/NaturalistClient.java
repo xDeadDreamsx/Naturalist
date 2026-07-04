@@ -79,6 +79,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.ANT.get(), AntRenderer::new);
         r.register(NaturalistEntityTypes.MOLE.get(), MoleRenderer::new);
         r.register(NaturalistEntityTypes.DIRT_TRAIL.get(), DirtTrailRenderer::new);
+        r.register(NaturalistEntityTypes.RAT.get(), RatRenderer::new);
     }
 
     @FunctionalInterface
@@ -107,6 +108,16 @@ public final class NaturalistClient {
                     CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
                     if (customData != null) {
                         return customData.copyTag().getInt("Variant") / 5.0f;
+                    }
+                    return 0.0f;
+                });
+
+        ItemProperties.register(NaturalistRegistry.RAT.get(),
+                ResourceLocation.withDefaultNamespace("variant"),
+                (stack, level, entity, seed) -> {
+                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+                    if (customData != null) {
+                        return customData.copyTag().getInt("Variant") / 3.0f;
                     }
                     return 0.0f;
                 });

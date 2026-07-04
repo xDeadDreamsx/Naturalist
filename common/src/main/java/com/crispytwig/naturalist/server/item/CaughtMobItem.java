@@ -1,15 +1,10 @@
 package com.crispytwig.naturalist.server.item;
 
-import com.crispytwig.naturalist.server.entity.mob.Butterfly;
-import com.crispytwig.naturalist.server.entity.mob.Crab;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
-import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
@@ -19,10 +14,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -33,7 +26,6 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public class CaughtMobItem extends NaturalistBucketItem {
@@ -44,26 +36,12 @@ public class CaughtMobItem extends NaturalistBucketItem {
     }
 
     public CaughtMobItem(Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, Properties properties) {
-        super(entitySupplier.get(), fluidSupplier.get(), soundSupplier.get(), properties);
-        this.typeSup = entitySupplier;
+        this(entitySupplier, fluidSupplier, soundSupplier, null, null, properties);
     }
 
-    @SuppressWarnings("unused")
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
-        if (this.type() == NaturalistEntityTypes.BUTTERFLY.get()) {
-            CompoundTag compoundnbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-            if (compoundnbt.contains("Variant", 3)) {
-                Butterfly.Variant variant = Butterfly.Variant.getTypeById(compoundnbt.getInt("Variant"));
-                tooltip.add((Component.translatable(String.format("tooltip.naturalist.%s", variant.toString().toLowerCase())).withStyle(ChatFormatting.GRAY)));
-            }
-        } else if (this.type() == NaturalistEntityTypes.CRAB.get()) {
-            CompoundTag compoundnbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-            if (compoundnbt.contains("Variant", 3)) {
-                String variant = Crab.getVariantName(compoundnbt.getInt("Variant"));
-                tooltip.add(Component.translatable(String.format("tooltip.naturalist.crab_%s", variant)).withStyle(ChatFormatting.GRAY));
-            }
-        }
+    public CaughtMobItem(Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, @Nullable String tooltipPrefix, @Nullable String[] variantNames, Properties properties) {
+        super(entitySupplier.get(), fluidSupplier.get(), soundSupplier.get(), properties, true, tooltipPrefix, variantNames);
+        this.typeSup = entitySupplier;
     }
 
     private void spawn(ServerLevel serverLevel, ItemStack itemStack, BlockPos pos) {

@@ -15,6 +15,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -90,6 +91,24 @@ public interface Catchable {
             mob.setHealth(tag.getFloat("Health"));
         }
 
+    }
+
+    static <T extends TamableAnimal & FollowingPet> void saveTamableDataToHandTag(@NotNull T entity, @NotNull CompoundTag tag) {
+        if (entity.isTame() && entity.getOwnerUUID() != null) {
+            tag.putBoolean("Tame", true);
+            tag.putUUID("Owner", entity.getOwnerUUID());
+            tag.putBoolean("FollowingOwner", entity.isFollowingOwner());
+            tag.putBoolean("Sitting", entity.isOrderedToSit());
+        }
+    }
+
+    static <T extends TamableAnimal & FollowingPet> void loadTamableDataFromHandTag(@NotNull T entity, @NotNull CompoundTag tag) {
+        if (tag.getBoolean("Tame") && tag.hasUUID("Owner")) {
+            entity.setOwnerUUID(tag.getUUID("Owner"));
+            entity.setTame(true, true);
+            entity.setFollowingOwner(tag.getBoolean("FollowingOwner"));
+            entity.setOrderedToSit(tag.getBoolean("Sitting"));
+        }
     }
 
     static <T extends LivingEntity & Catchable> @NotNull Optional<InteractionResult> catchAnimal(Player player, @NotNull InteractionHand hand, T entity, boolean needsNet) {

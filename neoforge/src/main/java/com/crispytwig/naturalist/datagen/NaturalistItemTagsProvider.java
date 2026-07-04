@@ -45,6 +45,9 @@ public class NaturalistItemTagsProvider extends ItemTagsProvider {
         tag(NaturalistTags.ItemTags.CRAB_FOOD)
                 .add(Items.TROPICAL_FISH);
 
+        tag(NaturalistTags.ItemTags.RAT_FOOD)
+                .add(Items.BREAD);
+
         tag(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS)
                 .addTag(Tags.Items.FOODS_RAW_FISH);
 

@@ -189,6 +189,8 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
         return null;
     }
 
+    public static final String[] VARIANT_NAMES = Arrays.stream(Variant.BY_ID).map(Variant::getName).toArray(String[]::new);
+
     public enum Variant {
         MONARCH(0, "monarch"),
         CLOUDED_YELLOW(1, "clouded_yellow"),

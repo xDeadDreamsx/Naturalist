@@ -1,0 +1,26 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "naturalist:item/rat_black",
+      "predicate": {
+        "minecraft:variant": 0.0
+      }
+    },
+    {
+      "model": "naturalist:item/rat_brown",
+      "predicate": {
+        "minecraft:variant": 0.33
+      }
+    },
+    {
+      "model": "naturalist:item/rat_white",
+      "predicate": {
+        "minecraft:variant": 0.66
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "naturalist:item/rat_black"
+  }
+}

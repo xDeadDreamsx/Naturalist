@@ -401,6 +401,14 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptional(bop("mystic_grove")).addOptional(bop("orchard"))
                 .addOptional(bop("rocky_shrubland")).addOptional(bop("shrubland"));
 
+        tag(NaturalistTags.Biomes.HAS_RAT)
+                .addTag(BiomeTags.IS_FOREST)
+                .add(Biomes.PLAINS).add(Biomes.SUNFLOWER_PLAINS)
+                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_PLAINS)
+                .addOptional(bop("grassland")).addOptional(bop("lavender_field"))
+                .addOptional(bop("orchard")).addOptional(bop("overgrown_greens"))
+                .addOptional(bop("rocky_shrubland")).addOptional(bop("shrubland"));
+
         tag(NaturalistTags.Biomes.HAS_RATTLESNAKE)
                 .addTag(BiomeTags.IS_BADLANDS).addTag(BiomeTags.IS_SAVANNA)
                 .add(Biomes.DESERT)
@@ -597,6 +605,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_LIZARD);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_MAMMOTH);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_MOLE);
+        emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_RAT);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_RATTLESNAKE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_RHINO);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_ROBIN);

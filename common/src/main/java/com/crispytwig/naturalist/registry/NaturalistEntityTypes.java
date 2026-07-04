@@ -51,6 +51,7 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Mammoth>> MAMMOTH = register("mammoth", EntityType.Builder.of(Mammoth::new, MobCategory.CREATURE).sized(2.5F, 3.5F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Mole>> MOLE = register("mole", EntityType.Builder.of(Mole::new, MobCategory.CREATURE).sized(0.7F, 0.65F).clientTrackingRange(10));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<Rat>> RAT = register("rat", EntityType.Builder.of(Rat::new, MobCategory.CREATURE).sized(0.9F, 0.6F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Snake>> RATTLESNAKE = register("rattlesnake", EntityType.Builder.of(Snake::new, MobCategory.CREATURE).sized(0.6F, 0.7F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Rhino>> RHINO = register("rhino", EntityType.Builder.of(Rhino::new, MobCategory.CREATURE).sized(2.5F, 3.0F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Bird>> ROBIN = register("robin", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));

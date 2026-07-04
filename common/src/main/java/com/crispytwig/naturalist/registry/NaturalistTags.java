@@ -33,6 +33,7 @@ public class NaturalistTags {
 
     public static class ItemTags {
         public static final TagKey<Item> CRAB_FOOD = tag("crab_food");
+        public static final TagKey<Item> RAT_FOOD = tag("rat_food");
         public static final TagKey<Item> GIANT_ISOPOD_FOOD = tag("giant_isopod_food");
         public static final TagKey<Item> MOOSE_FOOD = tag("moose_food");
         public static final TagKey<Item> CAPYBARA_FOOD = tag("capybara_food");
@@ -114,6 +115,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_LIZARD = tag("has_lizard");
         public static final TagKey<Biome> HAS_MAMMOTH = tag("has_mammoth");
         public static final TagKey<Biome> HAS_MOLE = tag("has_mole");
+        public static final TagKey<Biome> HAS_RAT = tag("has_rat");
         public static final TagKey<Biome> HAS_RATTLESNAKE = tag("has_rattlesnake");
         public static final TagKey<Biome> HAS_RHINO = tag("has_rhino");
         public static final TagKey<Biome> HAS_ROBIN = tag("has_robin");
@@ -157,6 +159,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_LIZARD = tag("blacklist/blacklist_lizard");
         public static final TagKey<Biome> BLACKLIST_MAMMOTH = tag("blacklist/blacklist_mammoth");
         public static final TagKey<Biome> BLACKLIST_MOLE = tag("blacklist/blacklist_mole");
+        public static final TagKey<Biome> BLACKLIST_RAT = tag("blacklist/blacklist_rat");
         public static final TagKey<Biome> BLACKLIST_RATTLESNAKE = tag("blacklist/blacklist_rattlesnake");
         public static final TagKey<Biome> BLACKLIST_RHINO = tag("blacklist/blacklist_rhino");
         public static final TagKey<Biome> BLACKLIST_ROBIN = tag("blacklist/blacklist_robin");
