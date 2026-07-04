@@ -133,7 +133,7 @@
       "naturalist:mob/ant/step3",
       "naturalist:mob/ant/step4"
     ],
-    "subtitle": "naturalist.subtitles.entity.ant.step"
+    "subtitle": "subtitles.block.generic.footsteps"
   },
   "entity.mole.ambient": {
     "sounds": [
@@ -192,7 +192,7 @@
       "naturalist:mob/mole/step5",
       "naturalist:mob/mole/step6"
     ],
-    "subtitle": "naturalist.subtitles.entity.mole.step"
+    "subtitle": "subtitles.block.generic.footsteps"
   },
   "entity.rat.ambient": {
     "sounds": [
@@ -236,7 +236,7 @@
       "naturalist:mob/rat/step5",
       "naturalist:mob/rat/step6"
     ],
-    "subtitle": "naturalist.subtitles.entity.rat.step"
+    "subtitle": "subtitles.block.generic.footsteps"
   },
   "entity.black_bear.ambient": {
     "sounds": [
@@ -342,7 +342,48 @@
       "naturalist:mob/tiger/step3",
       "naturalist:mob/tiger/step4"
     ],
-    "subtitle": "naturalist.subtitles.entity.tiger.step"
+    "subtitle": "subtitles.block.generic.footsteps"
+  },
+  "entity.komodo_dragon.ambient": {
+    "sounds": [
+      "naturalist:mob/komodo_dragon/idle1",
+      "naturalist:mob/komodo_dragon/idle2",
+      "naturalist:mob/komodo_dragon/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.komodo_dragon.ambient"
+  },
+  "entity.komodo_dragon.hurt": {
+    "sounds": [
+      "naturalist:mob/komodo_dragon/hurt1",
+      "naturalist:mob/komodo_dragon/hurt2",
+      "naturalist:mob/komodo_dragon/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.komodo_dragon.hurt"
+  },
+  "entity.komodo_dragon.death": {
+    "sounds": [
+      "naturalist:mob/komodo_dragon/death1",
+      "naturalist:mob/komodo_dragon/death2",
+      "naturalist:mob/komodo_dragon/death3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.komodo_dragon.death"
+  },
+  "entity.komodo_dragon.attack": {
+    "sounds": [
+      "naturalist:mob/komodo_dragon/attack1",
+      "naturalist:mob/komodo_dragon/attack2",
+      "naturalist:mob/komodo_dragon/attack3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.komodo_dragon.attack"
+  },
+  "entity.komodo_dragon.step": {
+    "sounds": [
+      "naturalist:mob/komodo_dragon/step1",
+      "naturalist:mob/komodo_dragon/step2",
+      "naturalist:mob/komodo_dragon/step3",
+      "naturalist:mob/komodo_dragon/step4"
+    ],
+    "subtitle": "subtitles.block.generic.footsteps"
   },
   "entity.ray.idle": {
     "sounds": [
@@ -510,7 +551,7 @@
       "naturalist:mob/crab/run2",
       "naturalist:mob/crab/run3"
     ],
-    "subtitle": "naturalist.subtitles.entity.crab.step"
+    "subtitle": "subtitles.block.generic.footsteps"
   },
   "entity.crab.pincer": {
     "sounds": [
@@ -1410,7 +1451,7 @@
       "minecraft:mob/pig/step3",
       "minecraft:mob/pig/step4"
     ],
-    "subtitle": "naturalist.subtitles.entity.boar.step"
+    "subtitle": "subtitles.block.generic.footsteps"
   },
   "entity.catfish.flop": {
     "sounds": [

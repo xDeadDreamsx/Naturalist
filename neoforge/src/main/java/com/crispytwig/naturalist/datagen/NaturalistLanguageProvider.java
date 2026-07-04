@@ -282,7 +282,6 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("naturalist.subtitles.entity.duck.ambient", "Duck quacks");
         add("naturalist.subtitles.entity.duck.hurt", "Duck hurts");
         add("naturalist.subtitles.entity.duck.death", "Duck dies");
-        add("naturalist.subtitles.entity.duck.step", "Duck steps");
         add("naturalist.subtitles.entity.duck.ambient_baby", "Duckling quacks");
         add("naturalist.subtitles.entity.duck.hurt_baby", "Duckling hurts");
         add("naturalist.subtitles.entity.duck.death_baby", "Duckling dies");

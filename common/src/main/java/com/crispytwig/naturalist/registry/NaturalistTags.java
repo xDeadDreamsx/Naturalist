@@ -25,6 +25,7 @@ public class NaturalistTags {
         public static final TagKey<Block> TORTOISE_EGG_LAYABLE_ON = tag("tortoise_egg_layable_on");
         public static final TagKey<Block> SHELLSTONE = tag("shellstone");
         public static final TagKey<Block> MOTHS_ATTRACTED_TO = tag("moths_attracted_to");
+        public static final TagKey<Block> KOMODO_DRAGONS_SPAWNABLE_ON = tag("komodo_dragons_spawnable_on");
 
         private static TagKey<Block> tag(@NotNull String name) {
             return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
@@ -35,6 +36,7 @@ public class NaturalistTags {
         public static final TagKey<Item> CRAB_FOOD = tag("crab_food");
         public static final TagKey<Item> RAT_FOOD = tag("rat_food");
         public static final TagKey<Item> TIGER_FOOD_ITEMS = tag("tiger_food_items");
+        public static final TagKey<Item> KOMODO_DRAGON_FOOD_ITEMS = tag("komodo_dragon_food_items");
         public static final TagKey<Item> GIANT_ISOPOD_FOOD = tag("giant_isopod_food");
         public static final TagKey<Item> MOOSE_FOOD = tag("moose_food");
         public static final TagKey<Item> CAPYBARA_FOOD = tag("capybara_food");
@@ -71,6 +73,7 @@ public class NaturalistTags {
         public static final TagKey<EntityType<?>> DEER_PREDATORS = tag("deer_predators");
         public static final TagKey<EntityType<?>> LION_HOSTILES = tag("lion_hostiles");
         public static final TagKey<EntityType<?>> TIGER_HOSTILES = tag("tiger_hostiles");
+        public static final TagKey<EntityType<?>> KOMODO_DRAGON_HOSTILES = tag("komodo_dragon_hostiles");
         public static final TagKey<EntityType<?>> VULTURE_HOSTILES = tag("vulture_hostiles");
         public static final TagKey<EntityType<?>> CATFISH_HOSTILES = tag("catfish_hostiles");
         public static final TagKey<EntityType<?>> ANGLERFISH_HOSTILES = tag("anglerfish_hostiles");
@@ -114,6 +117,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> HAS_GIRAFFE = tag("has_giraffe");
         public static final TagKey<Biome> HAS_HIPPO = tag("has_hippo");
         public static final TagKey<Biome> HAS_JELLYFISH = tag("has_jellyfish");
+        public static final TagKey<Biome> HAS_KOMODO_DRAGON = tag("has_komodo_dragon");
         public static final TagKey<Biome> HAS_LION = tag("has_lion");
         public static final TagKey<Biome> HAS_LIZARD = tag("has_lizard");
         public static final TagKey<Biome> HAS_MAMMOTH = tag("has_mammoth");
@@ -160,6 +164,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_GIRAFFE = tag("blacklist/blacklist_giraffe");
         public static final TagKey<Biome> BLACKLIST_HIPPO = tag("blacklist/blacklist_hippo");
         public static final TagKey<Biome> BLACKLIST_JELLYFISH = tag("blacklist/blacklist_jellyfish");
+        public static final TagKey<Biome> BLACKLIST_KOMODO_DRAGON = tag("blacklist/blacklist_komodo_dragon");
         public static final TagKey<Biome> BLACKLIST_LION = tag("blacklist/blacklist_lion");
         public static final TagKey<Biome> BLACKLIST_LIZARD = tag("blacklist/blacklist_lizard");
         public static final TagKey<Biome> BLACKLIST_MAMMOTH = tag("blacklist/blacklist_mammoth");

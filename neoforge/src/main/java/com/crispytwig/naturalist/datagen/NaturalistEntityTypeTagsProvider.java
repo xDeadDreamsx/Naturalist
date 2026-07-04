@@ -67,6 +67,15 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.CORAL_SNAKE.get())
                 .add(NaturalistEntityTypes.RATTLESNAKE.get());
 
+        tag(NaturalistTags.EntityTypes.KOMODO_DRAGON_HOSTILES)
+                .add(EntityType.CHICKEN)
+                .add(EntityType.RABBIT)
+                .add(NaturalistEntityTypes.LIZARD.get())
+                .add(NaturalistEntityTypes.SNAKE.get())
+                .add(NaturalistEntityTypes.CORAL_SNAKE.get())
+                .add(NaturalistEntityTypes.RATTLESNAKE.get())
+                .add(NaturalistEntityTypes.BOAR.get());
+
         tag(NaturalistTags.EntityTypes.NATURALIST_ENTITIES)
                 .add(NaturalistEntityTypes.ALLIGATOR.get())
                 .add(NaturalistEntityTypes.BASS.get())

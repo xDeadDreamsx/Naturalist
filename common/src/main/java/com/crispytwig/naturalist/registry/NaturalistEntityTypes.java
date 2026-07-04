@@ -46,6 +46,7 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Giraffe>> GIRAFFE = register("giraffe", EntityType.Builder.of(Giraffe::new, MobCategory.CREATURE).sized(1.9F, 5.4F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Hippo>> HIPPO = register("hippo", EntityType.Builder.of(Hippo::new, MobCategory.CREATURE).sized(1.8F, 1.8F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Jellyfish>> JELLYFISH = register("jellyfish", EntityType.Builder.of(Jellyfish::new, MobCategory.WATER_AMBIENT).sized(1.0F, 1.0F).clientTrackingRange(8));
+    public static final DeferredHolder<EntityType<?>, EntityType<KomodoDragon>> KOMODO_DRAGON = register("komodo_dragon", EntityType.Builder.of(KomodoDragon::new, MobCategory.CREATURE).sized(1.3F, 0.7F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Lion>> LION = register("lion", EntityType.Builder.of(Lion::new, MobCategory.CREATURE).sized(1.5F, 1.8F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Lizard>> LIZARD = register("lizard", EntityType.Builder.of(Lizard::new, MobCategory.CREATURE).sized(0.8F, 0.5F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<LizardTail>> LIZARD_TAIL = register("lizard_tail", EntityType.Builder.of(LizardTail::new, MobCategory.CREATURE).sized(0.7F, 0.5F).clientTrackingRange(10));

@@ -176,6 +176,11 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_SLEEP = register("entity.tiger.sleep");
     public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_PREY = register("entity.tiger.prey");
     public static final DeferredHolder<SoundEvent, SoundEvent> TIGER_STEP = register("entity.tiger.step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KOMODO_DRAGON_AMBIENT = register("entity.komodo_dragon.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KOMODO_DRAGON_HURT = register("entity.komodo_dragon.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KOMODO_DRAGON_DEATH = register("entity.komodo_dragon.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KOMODO_DRAGON_ATTACK = register("entity.komodo_dragon.attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KOMODO_DRAGON_STEP = register("entity.komodo_dragon.step");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_IDLE = register("entity.ray.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_SWIM = register("entity.ray.swim");
