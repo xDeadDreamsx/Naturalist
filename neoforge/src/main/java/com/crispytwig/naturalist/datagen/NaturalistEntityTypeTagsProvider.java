@@ -47,6 +47,7 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
         tag(NaturalistTags.EntityTypes.DEER_PREDATORS)
                 .add(NaturalistEntityTypes.BEAR.get())
+                .add(NaturalistEntityTypes.BLACK_BEAR.get())
                 .addOptional(ResourceLocation.fromNamespaceAndPath("alexsmobs", "grizzly_bear"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("alexsmobs", "crocodile"));
 

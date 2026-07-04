@@ -162,6 +162,13 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> RAT_DEATH = register("entity.rat.death");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAT_SWIM = register("entity.rat.swim");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAT_STEP = register("entity.rat.step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_AMBIENT = register("entity.black_bear.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_HURT = register("entity.black_bear.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_DEATH = register("entity.black_bear.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_SLEEP = register("entity.black_bear.sleep");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_EAT = register("entity.black_bear.eat");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_SNIFF = register("entity.black_bear.sniff");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLACK_BEAR_ATTACK = register("entity.black_bear.attack");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_IDLE = register("entity.ray.idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> RAY_SWIM = register("entity.ray.swim");

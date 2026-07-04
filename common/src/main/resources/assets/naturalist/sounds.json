@@ -238,6 +238,59 @@
     ],
     "subtitle": "naturalist.subtitles.entity.rat.step"
   },
+  "entity.black_bear.ambient": {
+    "sounds": [
+      "naturalist:mob/black_bear/idle1",
+      "naturalist:mob/black_bear/idle2",
+      "naturalist:mob/black_bear/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.black_bear.ambient"
+  },
+  "entity.black_bear.hurt": {
+    "sounds": [
+      "naturalist:mob/black_bear/hurt1",
+      "naturalist:mob/black_bear/hurt2",
+      "naturalist:mob/black_bear/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.black_bear.hurt"
+  },
+  "entity.black_bear.death": {
+    "sounds": [
+      "naturalist:mob/black_bear/death1",
+      "naturalist:mob/black_bear/death2",
+      "naturalist:mob/black_bear/death3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.black_bear.death"
+  },
+  "entity.black_bear.sleep": {
+    "sounds": [
+      "naturalist:mob/black_bear/sleep1",
+      "naturalist:mob/black_bear/sleep2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.black_bear.sleep"
+  },
+  "entity.black_bear.eat": {
+    "sounds": [
+      "naturalist:mob/black_bear/eat1",
+      "naturalist:mob/black_bear/eat2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.black_bear.eat"
+  },
+  "entity.black_bear.sniff": {
+    "sounds": [
+      "naturalist:mob/black_bear/sniff1",
+      "naturalist:mob/black_bear/sniff2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.black_bear.sniff"
+  },
+  "entity.black_bear.attack": {
+    "sounds": [
+      "naturalist:mob/black_bear/attack1",
+      "naturalist:mob/black_bear/attack2",
+      "naturalist:mob/black_bear/attack3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.black_bear.attack"
+  },
   "entity.ray.idle": {
     "sounds": [
       "naturalist:mob/ray/idle1",

@@ -27,6 +27,7 @@ public final class NaturalistSpawns {
         c.accept(NaturalistTags.Biomes.HAS_PIRANHA, NaturalistTags.Biomes.BLACKLIST_PIRANHA, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.PIRANHA.get(), 8, 2, 4);
         c.accept(NaturalistTags.Biomes.HAS_BASS, NaturalistTags.Biomes.BLACKLIST_BASS, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.BASS.get(), 10, 3, 6);
         c.accept(NaturalistTags.Biomes.HAS_BEAR, NaturalistTags.Biomes.BLACKLIST_BEAR, MobCategory.CREATURE, NaturalistEntityTypes.BEAR.get(), 10, 1, 2);
+        c.accept(NaturalistTags.Biomes.HAS_BLACK_BEAR, NaturalistTags.Biomes.BLACKLIST_BLACK_BEAR, MobCategory.CREATURE, NaturalistEntityTypes.BLACK_BEAR.get(), 10, 1, 2);
         c.accept(NaturalistTags.Biomes.HAS_BLUEJAY, NaturalistTags.Biomes.BLACKLIST_BLUEJAY, MobCategory.CREATURE, NaturalistEntityTypes.BLUEJAY.get(), 10, 3, 4);
         c.accept(NaturalistTags.Biomes.HAS_BOAR, NaturalistTags.Biomes.BLACKLIST_BOAR, MobCategory.CREATURE, NaturalistEntityTypes.BOAR.get(), 10, 3, 4);
         c.accept(NaturalistTags.Biomes.HAS_BUTTERFLY, NaturalistTags.Biomes.BLACKLIST_BUTTERFLY, MobCategory.AMBIENT, NaturalistEntityTypes.BUTTERFLY.get(), 10, 3, 6);

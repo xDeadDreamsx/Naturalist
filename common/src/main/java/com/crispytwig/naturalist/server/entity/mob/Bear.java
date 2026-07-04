@@ -64,6 +64,7 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import org.jetbrains.annotations.Nullable;
@@ -284,8 +285,9 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.BEAR.get().create(serverLevel);
+        return (AgeableMob) this.getType().create(serverLevel);
     }
+
     //endregion
 
     //region Behavior
@@ -554,7 +556,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
                 }
                 this.setEatCounter(this.getEatCounter() + 1);
                 if (this.getEatCounter() % 5 == 0 || this.getEatCounter() == 1) {
-                    this.playSound(NaturalistSoundEvents.BEAR_EAT.get(), 0.5F + 0.5F * (float)this.random.nextInt(2), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                    this.playEatSound();
                 }
             }
         } else if (this.isEating()) {
@@ -605,6 +607,23 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
     @Override
     protected SoundEvent getDeathSound() {
         return this.isBaby() ? NaturalistSoundEvents.BEAR_DEATH_BABY.get() : NaturalistSoundEvents.BEAR_DEATH.get();
+    }
+
+    protected SoundEvent getEatSound() {
+        return NaturalistSoundEvents.BEAR_EAT.get();
+    }
+
+    protected SoundEvent getSniffSound() {
+        return NaturalistSoundEvents.BEAR_SNIFF.get();
+    }
+
+    @Nullable
+    protected SoundEvent getAttackSound() {
+        return null;
+    }
+
+    protected void playEatSound() {
+        this.playSound(this.getEatSound(), 0.5F + 0.5F * (float)this.random.nextInt(2), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
     }
 
     @Override
@@ -698,7 +717,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
                     ++this.ticksWaited;
                 }
             } else if (!this.isReachedTarget() && bear.getRandom().nextFloat() < 0.05F) {
-                bear.playSound(NaturalistSoundEvents.BEAR_SNIFF.get(), 1.0F, 1.0F);
+                bear.playSound(bear.getSniffSound(), 1.0F, 1.0F);
                 bear.setSniffing(true);
             }
             bear.getLookControl().setLookAt(blockPos.getX() + 0.5D, blockPos.getY(), blockPos.getZ() + 0.5D, 10.0F, bear.getMaxHeadXRot());
@@ -788,7 +807,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
         private final Bear bear;
 
         public BabyBearSniffFlowersGoal(@NotNull Bear bear, double speedModifier, int searchRange, int verticalSearchRange) {
-            super(bear, speedModifier, searchRange, verticalSearchRange, NaturalistSoundEvents.BEAR_SNIFF.get());
+            super(bear, speedModifier, searchRange, verticalSearchRange, bear.getSniffSound());
             this.bear = bear;
         }
 
@@ -851,7 +870,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
         public void tick() {
             super.tick();
             if (bear.getRandom().nextFloat() < 0.05F) {
-                bear.playSound(NaturalistSoundEvents.BEAR_SNIFF.get(), 1.0F, 1.0F);
+                bear.playSound(bear.getSniffSound(), 1.0F, 1.0F);
             }
         }
 
@@ -1004,12 +1023,29 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
         return PlayState.STOP;
     }
 
+    private void soundListener(@NotNull SoundKeyframeEvent<Bear> event) {
+        Bear bear = event.getAnimatable();
+        if (!bear.level().isClientSide) {
+            return;
+        }
+        switch (event.getKeyframeData().getSound()) {
+            case "eat" -> bear.level().playLocalSound(bear.getX(), bear.getY(), bear.getZ(), bear.getEatSound(), bear.getSoundSource(), 1.0F, 1.0F, false);
+            case "vanilla.eat" -> bear.level().playLocalSound(bear.getX(), bear.getY(), bear.getZ(), SoundEvents.GENERIC_EAT, bear.getSoundSource(), 0.7F, (bear.getRandom().nextFloat() - bear.getRandom().nextFloat()) * 0.2F + 1.0F, false);
+            case "attack" -> {
+                SoundEvent attackSound = bear.getAttackSound();
+                if (attackSound != null) {
+                    bear.level().playLocalSound(bear.getX(), bear.getY(), bear.getZ(), attackSound, bear.getSoundSource(), 1.0F, 1.0F, false);
+                }
+            }
+        }
+    }
+
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "sniffController", 2, this::sniffPredicate));
-        controllers.add(new AnimationController<>(this, "swingController", 2, this::attackPredicate));
-        controllers.add(new AnimationController<>(this, "eatController", 5, this::eatPredicate));
+        controllers.add(new AnimationController<>(this, "swingController", 2, this::attackPredicate).setSoundKeyframeHandler(this::soundListener));
+        controllers.add(new AnimationController<>(this, "eatController", 5, this::eatPredicate).setSoundKeyframeHandler(this::soundListener));
     }
     //endregion
 }

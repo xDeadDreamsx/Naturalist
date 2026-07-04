@@ -401,6 +401,13 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptional(bop("mystic_grove")).addOptional(bop("orchard"))
                 .addOptional(bop("rocky_shrubland")).addOptional(bop("shrubland"));
 
+        tag(NaturalistTags.Biomes.HAS_BLACK_BEAR)
+                .addTag(BiomeTags.IS_FOREST).addTag(BiomeTags.IS_TAIGA).add(Biomes.GROVE)
+                .addOptionalTag(Tags.Biomes.IS_FOREST).addOptionalTag(Tags.Biomes.IS_TAIGA)
+                .addOptional(bop("coniferous_forest")).addOptional(bop("forested_field"))
+                .addOptional(bop("orchard")).addOptional(bop("pumpkin_patch"))
+                .addOptional(bop("seasonal_forest")).addOptional(bop("woodland"));
+
         tag(NaturalistTags.Biomes.HAS_RAT)
                 .addTag(BiomeTags.IS_FOREST)
                 .add(Biomes.PLAINS).add(Biomes.SUNFLOWER_PLAINS)
@@ -575,6 +582,8 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_ALLIGATOR);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_BASS);
         tag(NaturalistTags.Biomes.BLACKLIST_BEAR)
+                .addOptionalTag(Tags.Biomes.IS_HOT).addOptionalTag(ATMOSPHERIC_IS_RAINFOREST);
+        tag(NaturalistTags.Biomes.BLACKLIST_BLACK_BEAR)
                 .addOptionalTag(Tags.Biomes.IS_HOT).addOptionalTag(ATMOSPHERIC_IS_RAINFOREST);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_BLUEJAY);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_BOAR);
