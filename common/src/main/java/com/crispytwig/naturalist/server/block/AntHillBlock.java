@@ -11,7 +11,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -105,13 +108,38 @@ public class AntHillBlock extends Block implements EntityBlock {
         return super.playerWillDestroy(level, pos, state, player);
     }
 
+    @Override
+    protected void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof AntHillBlockEntity hill) {
+            Containers.dropContents(level, pos, hill.getStorage());
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
     public static boolean canAntEnter(LevelReader level, BlockPos pos, @Nullable UUID antOwner) {
+        return canAntStore(level, pos, antOwner) && level.getBlockState(pos).getValue(WORKERS) < MAX_WORKERS;
+    }
+
+    public static boolean canAntStore(LevelReader level, BlockPos pos, @Nullable UUID antOwner) {
         BlockState state = level.getBlockState(pos);
         return state.getBlock() instanceof AntHillBlock
                 && state.getValue(OPEN)
-                && state.getValue(WORKERS) < MAX_WORKERS
                 && level.getBlockEntity(pos) instanceof AntHillBlockEntity hill
                 && Objects.equals(hill.getOwner(), antOwner);
+    }
+
+    public static boolean storeFood(ServerLevel level, BlockPos pos, Ant ant) {
+        ItemEntity carried = ant.getCarriedFood();
+        if (carried == null || !canAntStore(level, pos, ant.getOwnerUUID()) || !(level.getBlockEntity(pos) instanceof AntHillBlockEntity hill)) {
+            return false;
+        }
+        ItemStack leftover = hill.storeFood(carried.getItem().copy());
+        ant.consumeCarriedFood();
+        if (!leftover.isEmpty()) {
+            popResource(level, pos, leftover);
+        }
+        playEnterLeaveEffects(level, pos, ant.getRandom());
+        return true;
     }
 
     public static boolean tryEnter(ServerLevel level, BlockPos pos, Ant ant) {

@@ -6,6 +6,8 @@ import com.crispytwig.naturalist.server.block.AntHillBlock;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
+import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
+import com.crispytwig.naturalist.server.entity.misc.CarriedFoodEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +21,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -27,11 +30,13 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
@@ -54,10 +59,13 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Ant extends TamableAnimal implements NaturalistGeoEntity, NeutralMob, Catchable {
+public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, NeutralMob, Catchable {
     //region Data
     private static final int PERSISTENT_ANGER_TIME = 500;
     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Ant.class, EntityDataSerializers.INT);
@@ -66,6 +74,11 @@ public class Ant extends TamableAnimal implements NaturalistGeoEntity, NeutralMo
     private int hillCooldown;
     @Nullable
     private UUID persistentAngerTarget;
+
+    @Nullable
+    private UUID carriedFoodId;
+    @Nullable
+    private CarriedFoodEntity carriedFood;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -126,6 +139,9 @@ public class Ant extends TamableAnimal implements NaturalistGeoEntity, NeutralMo
         super.addAdditionalSaveData(compound);
         compound.putInt("HillCooldown", this.hillCooldown);
         compound.putBoolean("FromHand", this.fromHand());
+        if (this.carriedFoodId != null) {
+            compound.putUUID("CarriedFood", this.carriedFoodId);
+        }
         this.addPersistentAngerSaveData(compound);
     }
 
@@ -134,6 +150,7 @@ public class Ant extends TamableAnimal implements NaturalistGeoEntity, NeutralMo
         super.readAdditionalSaveData(compound);
         this.hillCooldown = compound.getInt("HillCooldown");
         this.setFromHand(compound.getBoolean("FromHand"));
+        this.carriedFoodId = compound.hasUUID("CarriedFood") ? compound.getUUID("CarriedFood") : null;
         this.readPersistentAngerSaveData(this.level(), compound);
     }
 
@@ -202,10 +219,12 @@ public class Ant extends TamableAnimal implements NaturalistGeoEntity, NeutralMo
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.15D, true));
-        this.goalSelector.addGoal(2, new AntEnterHillGoal(this, 1.0D, 16, 5));
-        this.goalSelector.addGoal(3, new RandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F, 0.02F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(2, new AntStoreFoodGoal(this, 1.0D, 16, 5));
+        this.goalSelector.addGoal(3, new AntGatherFoodGoal(this));
+        this.goalSelector.addGoal(4, new AntEnterHillGoal(this, 1.0D, 16, 5));
+        this.goalSelector.addGoal(5, new RandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F, 0.02F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this).setAlertOthers());
@@ -250,6 +269,95 @@ public class Ant extends TamableAnimal implements NaturalistGeoEntity, NeutralMo
         }
     }
 
+    public static boolean isFoodItem(@NotNull ItemStack stack) {
+        return stack.has(DataComponents.FOOD);
+    }
+
+    public boolean isCarryingFood() {
+        return this.getCarriedFood() != null;
+    }
+
+    @Nullable
+    public CarriedFoodEntity getCarriedFood() {
+        if (this.carriedFood != null && (this.carriedFood.isRemoved() || this.carriedFood.getItem().isEmpty())) {
+            this.carriedFood = null;
+        }
+        if (this.carriedFood == null && this.carriedFoodId != null && this.level() instanceof ServerLevel server) {
+            if (server.getEntity(this.carriedFoodId) instanceof CarriedFoodEntity item && item.isAlive() && !item.getItem().isEmpty()) {
+                this.carriedFood = item;
+            } else {
+                this.carriedFoodId = null;
+            }
+        }
+        return this.carriedFood;
+    }
+
+    public boolean isCarriedFood(@NotNull ItemEntity item) {
+        return this.carriedFoodId != null && this.carriedFoodId.equals(item.getUUID());
+    }
+
+    public void onCarriedFoodTaken(@NotNull Player player) {
+        this.detachCarriedFood();
+        if (player.isAlive() && !this.isOwnedBy(player) && this.getTarget() == null) {
+            this.setPersistentAngerTarget(player.getUUID());
+            this.startPersistentAngerTimer();
+            this.setTarget(player);
+        }
+    }
+
+    @Nullable
+    private CarriedFoodEntity detachCarriedFood() {
+        CarriedFoodEntity carried = this.getCarriedFood();
+        this.carriedFood = null;
+        this.carriedFoodId = null;
+        return carried;
+    }
+
+    @Nullable
+    private ItemEntity findNearbyFood() {
+        List<ItemEntity> items = this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(8.0D, 4.0D, 8.0D),
+                e -> e.isAlive() && !e.hasPickUpDelay() && !(e instanceof CarriedFoodEntity) && isFoodItem(e.getItem()));
+        return items.stream().min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
+    }
+
+    private void pickUpOneFood(@NotNull ItemEntity source) {
+        ItemStack stack = source.getItem();
+        ItemStack one = stack.copyWithCount(1);
+        if (stack.getCount() <= 1) {
+            source.discard();
+        } else {
+            source.setItem(stack.copyWithCount(stack.getCount() - 1));
+        }
+
+        CarriedFoodEntity carried = new CarriedFoodEntity(this.level(), this, one);
+        this.level().addFreshEntity(carried);
+        this.carriedFood = carried;
+        this.carriedFoodId = carried.getUUID();
+        this.playSound(SoundEvents.ITEM_PICKUP, 0.2F, ((this.random.nextFloat() - this.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+    }
+
+    public void consumeCarriedFood() {
+        CarriedFoodEntity carried = this.detachCarriedFood();
+        if (carried != null) {
+            carried.discard();
+        }
+    }
+
+    private void releaseCarriedFood() {
+        CarriedFoodEntity carried = this.detachCarriedFood();
+        if (carried != null) {
+            carried.releaseToWorld();
+        }
+    }
+
+    @Override
+    public void remove(Entity.@NotNull RemovalReason reason) {
+        if (!this.level().isClientSide && reason.shouldDestroy()) {
+            this.releaseCarriedFood();
+        }
+        super.remove(reason);
+    }
+
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
@@ -287,12 +395,12 @@ public class Ant extends TamableAnimal implements NaturalistGeoEntity, NeutralMo
 
         @Override
         public boolean canUse() {
-            return this.ant.hillCooldown <= 0 && this.ant.getTarget() == null && super.canUse();
+            return this.ant.hillCooldown <= 0 && this.ant.getTarget() == null && !this.ant.isCarryingFood() && super.canUse();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.ant.getTarget() == null && super.canContinueToUse();
+            return this.ant.getTarget() == null && !this.ant.isCarryingFood() && super.canContinueToUse();
         }
 
         @Override
@@ -306,6 +414,91 @@ public class Ant extends TamableAnimal implements NaturalistGeoEntity, NeutralMo
         @Override
         protected boolean isValidTarget(@NotNull LevelReader level, @NotNull BlockPos pos) {
             return AntHillBlock.canAntEnter(level, pos, this.ant.getOwnerUUID());
+        }
+    }
+
+    private static class AntGatherFoodGoal extends Goal {
+        private final Ant ant;
+        @Nullable
+        private ItemEntity target;
+
+        AntGatherFoodGoal(Ant ant) {
+            this.ant = ant;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (this.ant.tickCount % 10 != 0 || this.ant.isCarryingFood() || this.ant.getTarget() != null) {
+                return false;
+            }
+            this.target = this.ant.findNearbyFood();
+            return this.target != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.target != null && this.target.isAlive() && !this.target.hasPickUpDelay()
+                    && !this.ant.isCarryingFood() && this.ant.getTarget() == null;
+        }
+
+        @Override
+        public void start() {
+            if (this.target != null) {
+                this.ant.getNavigation().moveTo(this.target, 1.15D);
+            }
+        }
+
+        @Override
+        public void stop() {
+            this.target = null;
+            this.ant.getNavigation().stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.target == null) {
+                return;
+            }
+            this.ant.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
+            if (this.ant.getNavigation().isDone()) {
+                this.ant.getNavigation().moveTo(this.target, 1.15D);
+            }
+            if (this.ant.distanceToSqr(this.target) < 1.0D) {
+                this.ant.pickUpOneFood(this.target);
+            }
+        }
+    }
+
+    private static class AntStoreFoodGoal extends MoveToBlockGoal {
+        private final Ant ant;
+
+        AntStoreFoodGoal(Ant mob, double speedModifier, int searchRange, int verticalSearchRange) {
+            super(mob, speedModifier, searchRange, verticalSearchRange);
+            this.ant = mob;
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.ant.isCarryingFood() && this.ant.getTarget() == null && super.canUse();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.ant.isCarryingFood() && this.ant.getTarget() == null && super.canContinueToUse();
+        }
+
+        @Override
+        public void tick() {
+            super.tick();
+            if (this.isReachedTarget() && this.ant.level() instanceof ServerLevel level) {
+                AntHillBlock.storeFood(level, this.blockPos, this.ant);
+            }
+        }
+
+        @Override
+        protected boolean isValidTarget(@NotNull LevelReader level, @NotNull BlockPos pos) {
+            return AntHillBlock.canAntStore(level, pos, this.ant.getOwnerUUID());
         }
     }
     //endregion

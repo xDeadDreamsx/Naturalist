@@ -7,9 +7,12 @@ import com.crispytwig.naturalist.server.entity.mob.Ant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,9 +24,11 @@ import java.util.UUID;
 public class AntHillBlockEntity extends BlockEntity {
     private static final int POLL_INTERVAL = 10;
     private static final double DEFEND_RANGE_SQR = 24.0D * 24.0D;
+    private static final int STORAGE_SIZE = 9;
 
     @Nullable
     private UUID owner;
+    private final SimpleContainer storage = new SimpleContainer(STORAGE_SIZE);
 
     public AntHillBlockEntity(BlockPos pos, BlockState state) {
         super(NaturalistBlockEntities.ANT_HILL.get(), pos, state);
@@ -39,18 +44,30 @@ public class AntHillBlockEntity extends BlockEntity {
         this.setChanged();
     }
 
+    public SimpleContainer getStorage() {
+        return this.storage;
+    }
+
+    public ItemStack storeFood(ItemStack stack) {
+        ItemStack leftover = this.storage.addItem(stack);
+        this.setChanged();
+        return leftover;
+    }
+
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
         if (this.owner != null) {
             tag.putUUID("Owner", this.owner);
         }
+        tag.put("Storage", this.storage.createTag(registries));
     }
 
     @Override
     protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
         this.owner = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
+        this.storage.fromTag(tag.getList("Storage", Tag.TAG_COMPOUND), registries);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, AntHillBlockEntity hill) {
