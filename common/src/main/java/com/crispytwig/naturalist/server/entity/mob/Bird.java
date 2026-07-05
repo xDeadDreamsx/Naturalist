@@ -10,12 +10,14 @@ import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -61,6 +63,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     //region Data
     private static final Ingredient TAME_FOOD = Ingredient.of(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.INT);
+    private static final Vec3 HEAD_ATTACHMENT = new Vec3(0.0D, 0.1D, 0.0D);
 
     private boolean followingOwner = true;
     public float flap;
@@ -162,6 +165,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BirdTemptGoal(this, 1.0D, TAME_FOOD, true));
+        this.goalSelector.addGoal(2, new MountOnOwnersHeadGoal(this));
         this.goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new PetFollowOwnerGoal(this, 1.5D, 5.0F, 1.0F));
         this.goalSelector.addGoal(4, new BirdWanderGoal(this, 1.0D));
@@ -281,6 +285,44 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
 
         }
         return super.mobInteract(player, hand);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.getVehicle() instanceof Player player) {
+            this.rideOnHead(player);
+        }
+    }
+
+    private void rideOnHead(@NotNull Player player) {
+        this.setYRot(player.getYRot());
+        this.yRotO = this.getYRot();
+        this.setYBodyRot(player.yBodyRot);
+        this.yBodyRotO = this.yBodyRot;
+        this.setYHeadRot(player.getYHeadRot());
+        this.yHeadRotO = this.yHeadRot;
+
+        if (this.level().isClientSide) {
+            Vec3 movement = player.getDeltaMovement();
+            if (movement.y < 0.0D && !player.onGround() && !player.getAbilities().flying && !player.isFallFlying()) {
+                player.setDeltaMovement(movement.multiply(1.0D, 0.6D, 1.0D));
+            }
+        } else if (player.isCrouching() || !player.isAlive() || player.isSpectator()) {
+            this.stopRiding();
+            notifyCarrier(player);
+        }
+    }
+
+    private static void notifyCarrier(@NotNull Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.connection.send(new ClientboundSetPassengersPacket(player));
+        }
+    }
+
+    @Override
+    public @NotNull Vec3 getVehicleAttachmentPoint(@NotNull Entity vehicle) {
+        return HEAD_ATTACHMENT;
     }
 
     @Override
@@ -452,6 +494,45 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
             return super.canUse() && !this.bird.isTame();
         }
     }
+
+    static class MountOnOwnersHeadGoal extends Goal {
+        private final @NotNull Bird bird;
+
+        public MountOnOwnersHeadGoal(@NotNull Bird bird) {
+            this.bird = bird;
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!this.bird.isTame() || this.bird.isOrderedToSit() || this.bird.isPassenger() || this.bird.isLeashed()) {
+                return false;
+            }
+            if (!(this.bird.getOwner() instanceof Player player)) {
+                return false;
+            }
+            return !player.isSpectator()
+                    && !player.getAbilities().flying
+                    && !player.isInWater()
+                    && !player.isCrouching()
+                    && player.getPassengers().isEmpty()
+                    && this.bird.getBoundingBox().intersects(player.getBoundingBox());
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return false;
+        }
+
+        @Override
+        public void start() {
+            if (this.bird.getOwner() instanceof Player player) {
+                this.bird.getNavigation().stop();
+                if (this.bird.startRiding(player)) {
+                    notifyCarrier(player);
+                }
+            }
+        }
+    }
     //endregion
 
     //region Animation
@@ -466,7 +547,10 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     }
 
     protected <E extends Bird> @NotNull PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.isInSittingPose()) {
+        if (this.isPassenger()) {
+            event.getController().setAnimation(this.getVehicle().onGround() ? IDLE : FLY);
+            return PlayState.CONTINUE;
+        } else if (this.isInSittingPose()) {
             event.getController().setAnimation(SIT);
             return PlayState.CONTINUE;
         } else if (this.isFlying()) {
