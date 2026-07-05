@@ -82,6 +82,9 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     private static final int UNROLL_TIME = 25;
     private static final int CALM_TIME = 60;
     private static final int ATTACKER_MEMORY_TIME = 1200;
+    private static final int DIG_LOCKOUT_TIME = 60;
+    private static final int DIG_HOLD_TIME = 3;
+    private static final int UNDERGROUND_GRACE = 60;
 
     private static final EntityDataAccessor<Integer> DATA_STATE = SynchedEntityData.defineId(Mole.class, EntityDataSerializers.INT);
 
@@ -93,6 +96,9 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     @Nullable
     private UUID rememberedAttacker;
     private int attackerMemoryTicks;
+    private int digLockoutTicks;
+    private int dugOutHoldTicks;
+    private int undergroundGraceTicks;
     @Nullable
     private BlockPos lastMoundPos;
 
@@ -149,6 +155,7 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
                 this.calmTicks = 0;
                 this.peekTicks = 100 + this.random.nextInt(300);
                 this.lastMoundPos = null;
+                this.undergroundGraceTicks = UNDERGROUND_GRACE;
             }
             case STATE_PEEKING -> {
                 this.stateTicks = MOUND_SPAWN_TIME + PEEK_TIME;
@@ -264,6 +271,17 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
         if (this.attackerMemoryTicks > 0) {
             this.attackerMemoryTicks--;
         }
+        if (this.digLockoutTicks > 0) {
+            this.digLockoutTicks--;
+        }
+        if (this.undergroundGraceTicks > 0) {
+            this.undergroundGraceTicks--;
+        }
+        if (this.dugOutHoldTicks > 0) {
+            this.dugOutHoldTicks--;
+            freezeInPlace(this);
+            return;
+        }
         if (this.tickCount % 4 == 0) {
             this.threatDetected = this.scanForThreats();
         }
@@ -308,7 +326,7 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
                 }
             }
             case STATE_UNROLLING -> {
-                if (!forcedOut && this.threatDetected) {
+                if (!forcedOut && this.threatDetected && this.digLockoutTicks <= 0) {
                     this.setState(STATE_UNDERGROUND);
                 } else if (--this.stateTicks <= 0) {
                     this.setState(STATE_UNROLLED);
@@ -335,11 +353,34 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     }
 
     private void tryRollUp() {
-        if (this.getState() != STATE_UNROLLED || !this.onGround() || this.isOnFire() || this.isFreezing()
+        if (this.digLockoutTicks > 0 || this.getState() != STATE_UNROLLED || !this.onGround() || this.isOnFire() || this.isFreezing()
                 || this.isInWater() || this.isLeashed() || this.isPassenger()) {
             return;
         }
         this.setState(STATE_DIGGING);
+    }
+
+    public void holdForDigging() {
+        this.dugOutHoldTicks = DIG_HOLD_TIME;
+    }
+
+    public boolean isBeingDugOut() {
+        return this.dugOutHoldTicks > 0;
+    }
+
+    public boolean canBeDugOut() {
+        return this.getState() == STATE_UNDERGROUND && this.undergroundGraceTicks <= 0;
+    }
+
+    public void popOut(LivingEntity digger) {
+        this.rememberedAttacker = digger.getUUID();
+        this.attackerMemoryTicks = ATTACKER_MEMORY_TIME;
+        this.digLockoutTicks = DIG_LOCKOUT_TIME;
+        this.dugOutHoldTicks = 0;
+        int state = this.getState();
+        if (state != STATE_UNROLLING && state != STATE_UNROLLED) {
+            this.setState(STATE_UNROLLING);
+        }
     }
 
     private void leaveDirtTrail() {
@@ -377,14 +418,19 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
 
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
-        if (this.isRolledUp() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+        boolean peeking = this.getState() == STATE_PEEKING;
+        if (this.isRolledUp() && !peeking && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return false;
         }
         boolean hurt = super.hurt(source, amount);
         if (hurt && !this.level().isClientSide && source.getEntity() instanceof LivingEntity attacker) {
-            this.rememberedAttacker = attacker.getUUID();
-            this.attackerMemoryTicks = ATTACKER_MEMORY_TIME;
-            this.tryRollUp();
+            if (peeking) {
+                this.popOut(attacker);
+            } else {
+                this.rememberedAttacker = attacker.getUUID();
+                this.attackerMemoryTicks = ATTACKER_MEMORY_TIME;
+                this.tryRollUp();
+            }
         }
         return hurt;
     }
@@ -459,12 +505,12 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
 
         @Override
         public boolean canUse() {
-            return this.mole.getState() == STATE_UNDERGROUND && super.canUse();
+            return !this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canUse();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.mole.getState() == STATE_UNDERGROUND && super.canContinueToUse();
+            return !this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canContinueToUse();
         }
 
         @Nullable
@@ -484,12 +530,12 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
 
         @Override
         public boolean canUse() {
-            return this.mole.getState() == STATE_UNDERGROUND && super.canUse();
+            return !this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canUse();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.mole.getState() == STATE_UNDERGROUND && super.canContinueToUse();
+            return !this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canContinueToUse();
         }
     }
     //endregion

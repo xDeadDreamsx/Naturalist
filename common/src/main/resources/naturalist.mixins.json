@@ -7,7 +7,8 @@
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
     "EntityRenderDispatcherMixin",
-    "HumanoidModelMixin"
+    "HumanoidModelMixin",
+    "WolfModelMixin"
   ],
   "mixins": [
     "AbstractFishMixin",
@@ -20,6 +21,7 @@
     "MonsterMixin",
     "ServerAdvancementManagerMixin",
     "ServerLevelMixin",
+    "WolfMixin",
     "ZombieMixin"
   ],
   "injectors": {
