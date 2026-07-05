@@ -8,6 +8,9 @@
     "ClientPacketListenerMixin",
     "EntityRenderDispatcherMixin",
     "HumanoidModelMixin",
+    "LocalPlayerMixin",
+    "ParrotModelMixin",
+    "ParrotOnShoulderLayerMixin",
     "WolfModelMixin"
   ],
   "mixins": [
@@ -19,7 +22,9 @@
     "MapItemMixin",
     "MobMixin",
     "MonsterMixin",
+    "PlayerMixin",
     "ServerAdvancementManagerMixin",
+    "ServerGamePacketListenerMixin",
     "ServerLevelMixin",
     "WolfMixin",
     "ZombieMixin"
