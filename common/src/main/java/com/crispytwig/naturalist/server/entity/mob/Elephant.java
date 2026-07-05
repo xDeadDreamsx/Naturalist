@@ -72,6 +72,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.MELON_SLICE);
     private static final int INVENTORY_SIZE = 27;
+    private static final int CAKES_TO_TAME = 5;
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
@@ -79,6 +80,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
 
     private final SimpleContainer inventory = new SimpleContainer(INVENTORY_SIZE);
+    private int tamingFood;
     @Nullable
     private UUID persistentAngerTarget;
     public final TerrainLegSolver legSolver = new TerrainLegSolver(1.0F, 0.5F, 0.9F);
@@ -135,6 +137,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
         this.addPersistentAngerSaveData(compound);
         compound.putBoolean("Saddled", this.isSaddled());
         compound.putBoolean("Chested", this.isChested());
+        compound.putInt("TamingFood", this.tamingFood);
         NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
         for (int i = 0; i < items.size(); i++) {
             items.set(i, this.inventory.getItem(i));
@@ -148,6 +151,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
         this.readPersistentAngerSaveData(this.level(), compound);
         this.setSaddled(compound.getBoolean("Saddled"));
         this.setChested(compound.getBoolean("Chested"));
+        this.tamingFood = compound.getInt("TamingFood");
         NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(compound, items, this.registryAccess());
         for (int i = 0; i < items.size(); i++) {
@@ -313,12 +317,12 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
             return super.mobInteract(player, hand);
         }
         if (!this.isTame()) {
-            if (this.isBaby() && this.isFood(stack)) {
+            if (this.isBaby() && stack.is(Items.CAKE)) {
                 if (!this.level().isClientSide) {
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
-                    if (this.random.nextInt(3) == 0) {
+                    if (++this.tamingFood >= CAKES_TO_TAME) {
                         this.tame(player);
                         this.level().broadcastEntityEvent(this, (byte) 7);
                     } else {
