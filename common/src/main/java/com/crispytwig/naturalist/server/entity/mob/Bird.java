@@ -15,6 +15,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,20 +33,27 @@ import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.ai.util.AirAndWaterRandomPos;
+import net.minecraft.world.entity.ai.util.HoverRandomPos;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -164,13 +172,14 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new BirdTemptGoal(this, 1.0D, TAME_FOOD, true));
+        this.goalSelector.addGoal(1, new BirdEatSeedsGoal(this));
         this.goalSelector.addGoal(2, new MountOnOwnersHeadGoal(this));
         this.goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(3, new PetFollowOwnerGoal(this, 1.5D, 5.0F, 1.0F));
-        this.goalSelector.addGoal(4, new BirdWanderGoal(this, 1.0D));
-        this.goalSelector.addGoal(5, new BirdFlockGoal(this, 1.0D, 6.0F, 12.0F));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(4, new BirdAvoidPlayerGoal(this));
+        this.goalSelector.addGoal(5, new BirdWanderGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new BirdFlockGoal(this, 1.0D, 6.0F, 12.0F));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
 
     }
 
@@ -247,26 +256,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
         if (dyeResult.isPresent()) {
             return dyeResult.get();
         }
-        if (!this.isTame() && TAME_FOOD.test(stack)) {
-            if (!player.getAbilities().instabuild) {
-                stack.shrink(1);
-            }
-
-            if (!this.isSilent()) {
-                this.level().playSound(null, this.getX(), this.getY(), this.getZ(), NaturalistSoundEvents.BIRD_EAT.get(), this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
-            }
-
-            if (!this.level().isClientSide) {
-                if (this.random.nextInt(10) == 0) {
-                    this.tame(player);
-                    this.level().broadcastEntityEvent(this, (byte)7);
-                } else {
-                    this.level().broadcastEntityEvent(this, (byte)6);
-                }
-            }
-
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-        } else if (this.isTame() && this.isOwnedBy(player)) {
+        if (this.isTame() && this.isOwnedBy(player)) {
             if (TAME_FOOD.test(stack) && this.getHealth() < this.getMaxHealth()) {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
@@ -464,34 +454,148 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
         }
     }
 
-    static class BirdTemptGoal extends TemptGoal {
-        @Nullable
-        private Player selectedPlayer;
+    static class BirdAvoidPlayerGoal extends Goal {
+        private static final float MAX_DIST = 8.0F;
         private final @NotNull Bird bird;
+        private final TargetingConditions avoidTargeting;
+        @Nullable
+        private Player toAvoid;
+        @Nullable
+        private Path fleePath;
 
-        public BirdTemptGoal(@NotNull Bird bird, double speedModifier, @NotNull Ingredient temptItems, boolean canScare) {
-            super(bird, speedModifier, temptItems, canScare);
+        public BirdAvoidPlayerGoal(@NotNull Bird bird) {
             this.bird = bird;
-        }
-
-        @Override
-        public void tick() {
-            super.tick();
-            if (this.selectedPlayer == null && this.mob.getRandom().nextInt(this.adjustedTickDelay(600)) == 0) {
-                this.selectedPlayer = this.player;
-            } else if (this.mob.getRandom().nextInt(this.adjustedTickDelay(500)) == 0) {
-                this.selectedPlayer = null;
-            }
-        }
-
-        @Override
-        protected boolean canScare() {
-            return (this.selectedPlayer == null || !this.selectedPlayer.equals(this.player)) && super.canScare();
+            this.avoidTargeting = TargetingConditions.forCombat().range(MAX_DIST)
+                    .selector(entity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && !entity.isDiscrete());
+            this.setFlags(EnumSet.of(Flag.MOVE));
         }
 
         @Override
         public boolean canUse() {
-            return super.canUse() && !this.bird.isTame();
+            if (this.bird.isTame()) {
+                return false;
+            }
+            this.toAvoid = this.bird.level().getNearestPlayer(this.avoidTargeting, this.bird);
+            if (this.toAvoid == null) {
+                return false;
+            }
+            Vec3 flee = this.getFleePosition();
+            if (flee == null) {
+                return false;
+            }
+            this.fleePath = this.bird.getNavigation().createPath(flee.x, flee.y, flee.z, 0);
+            return this.fleePath != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return !this.bird.isTame() && !this.bird.getNavigation().isDone();
+        }
+
+        @Override
+        public void start() {
+            this.bird.getNavigation().moveTo(this.fleePath, 1.4D);
+        }
+
+        @Override
+        public void stop() {
+            this.toAvoid = null;
+        }
+
+        @Override
+        public void tick() {
+            if (this.toAvoid != null) {
+                this.bird.getNavigation().setSpeedModifier(this.bird.distanceToSqr(this.toAvoid) < 49.0D ? 1.8D : 1.4D);
+            }
+        }
+
+        @Nullable
+        private Vec3 getFleePosition() {
+            Vec3 away = this.bird.position().subtract(this.toAvoid.position());
+            Vec3 pos = HoverRandomPos.getPos(this.bird, 16, 7, away.x, away.z, (float) (Math.PI / 2), 3, 1);
+            return pos != null ? pos : AirAndWaterRandomPos.getPos(this.bird, 16, 4, -2, away.x, away.z, (float) (Math.PI / 2));
+        }
+    }
+
+    static class BirdEatSeedsGoal extends Goal {
+        private final @NotNull Bird bird;
+        @Nullable
+        private ItemEntity targetSeeds;
+        private int eatCooldown;
+
+        public BirdEatSeedsGoal(@NotNull Bird bird) {
+            this.bird = bird;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (this.bird.isTame()) {
+                return false;
+            }
+            this.targetSeeds = this.findSeeds();
+            return this.targetSeeds != null;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return !this.bird.isTame() && this.targetSeeds != null && this.targetSeeds.isAlive()
+                    && TAME_FOOD.test(this.targetSeeds.getItem());
+        }
+
+        @Override
+        public void stop() {
+            this.targetSeeds = null;
+            this.bird.getNavigation().stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.targetSeeds == null) {
+                return;
+            }
+            this.bird.getLookControl().setLookAt(this.targetSeeds, 30.0F, 30.0F);
+            this.bird.getNavigation().moveTo(this.targetSeeds, 1.0D);
+            if (this.eatCooldown > 0) {
+                this.eatCooldown--;
+            } else if (this.bird.distanceToSqr(this.targetSeeds) < 1.5D) {
+                this.eatSeed();
+            }
+        }
+
+        private void eatSeed() {
+            this.eatCooldown = 20;
+            Level level = this.bird.level();
+            ItemStack stack = this.targetSeeds.getItem();
+            if (!this.bird.isSilent()) {
+                level.playSound(null, this.bird.getX(), this.bird.getY(), this.bird.getZ(),
+                        NaturalistSoundEvents.BIRD_EAT.get(), this.bird.getSoundSource(),
+                        1.0F, 1.0F + (this.bird.random.nextFloat() - this.bird.random.nextFloat()) * 0.2F);
+            }
+            if (level instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack.copy()),
+                        this.targetSeeds.getX(), this.targetSeeds.getY() + 0.15D, this.targetSeeds.getZ(),
+                        8, 0.15D, 0.1D, 0.15D, 0.02D);
+            }
+            Entity thrower = this.targetSeeds.getOwner();
+            stack.shrink(1);
+            if (stack.isEmpty()) {
+                this.targetSeeds.discard();
+            }
+            if (thrower instanceof Player player && this.bird.random.nextInt(10) == 0) {
+                this.bird.tame(player);
+                level.broadcastEntityEvent(this.bird, (byte) 7);
+            } else {
+                level.broadcastEntityEvent(this.bird, (byte) 6);
+            }
+        }
+
+        @Nullable
+        private ItemEntity findSeeds() {
+            List<ItemEntity> list = this.bird.level().getEntitiesOfClass(ItemEntity.class,
+                    this.bird.getBoundingBox().inflate(8.0D, 4.0D, 8.0D),
+                    item -> item.isAlive() && TAME_FOOD.test(item.getItem()));
+            return list.isEmpty() ? null : list.get(0);
         }
     }
 
