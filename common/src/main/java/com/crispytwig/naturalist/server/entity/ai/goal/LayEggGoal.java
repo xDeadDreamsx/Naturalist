@@ -73,7 +73,9 @@ public class LayEggGoal<T extends Animal & EggLayingAnimal> extends MoveToBlockG
                     eggState = this.animal.getEggBlock().defaultBlockState();
                 }
 
-                level.setBlock(this.blockPos.above(), eggState, 3);
+                BlockPos eggPos = this.blockPos.above();
+                level.setBlock(eggPos, eggState, 3);
+                this.animal.onEggLaid(eggPos);
                 this.animal.setHasEgg(false);
                 this.animal.setLayingEgg(false);
                 this.animal.setInLoveTime(600);

@@ -28,6 +28,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.TimeUtil;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionHand;
@@ -41,6 +43,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.PlayerRideableJumping;
 import net.minecraft.world.entity.Saddleable;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -78,12 +81,19 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount {
+public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS);
+
+    private static final double EGG_DEFEND_RADIUS = 10.0D;
+    private static final int MAX_TRACKED_EGGS = 16;
+    private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(Ostrich.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Ostrich.class, EntityDataSerializers.BOOLEAN);
@@ -96,6 +106,11 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     private boolean isJumping;
     private boolean hideCache;
     private long hideCacheTick = -1L;
+
+    private final Set<BlockPos> ownedEggs = new LinkedHashSet<>();
+    private int remainingPersistentAngerTime;
+    @Nullable
+    private UUID persistentAngerTarget;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -205,10 +220,87 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     }
 
     @Override
+    public void setRemainingPersistentAngerTime(int time) {
+        this.remainingPersistentAngerTime = time;
+    }
+
+    @Override
+    public int getRemainingPersistentAngerTime() {
+        return this.remainingPersistentAngerTime;
+    }
+
+    @Override
+    public void setPersistentAngerTarget(@Nullable UUID target) {
+        this.persistentAngerTarget = target;
+    }
+
+    @Nullable
+    @Override
+    public UUID getPersistentAngerTarget() {
+        return this.persistentAngerTarget;
+    }
+
+    @Override
+    public void startPersistentAngerTimer() {
+        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+    }
+
+    @Override
+    public void onEggLaid(@NotNull BlockPos pos) {
+        if (this.isTame()) {
+            return;
+        }
+        if (this.ownedEggs.size() >= MAX_TRACKED_EGGS) {
+            this.ownedEggs.remove(this.ownedEggs.iterator().next());
+        }
+        this.ownedEggs.add(pos.immutable());
+    }
+
+    private boolean isEggAt(@NotNull BlockPos pos) {
+        return this.level().isLoaded(pos)
+                && this.level().getBlockState(pos).is(NaturalistRegistry.OSTRICH_EGG.get());
+    }
+
+    private boolean isNearOwnedEgg(@NotNull LivingEntity entity) {
+        double radiusSqr = EGG_DEFEND_RADIUS * EGG_DEFEND_RADIUS;
+        for (BlockPos pos : this.ownedEggs) {
+            if (entity.distanceToSqr(Vec3.atCenterOf(pos)) <= radiusSqr && this.isEggAt(pos)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void pruneOwnedEggs() {
+        this.ownedEggs.removeIf(pos -> this.level().isLoaded(pos) && !this.isEggAt(pos));
+    }
+
+    public void onOwnedEggDestroyed(@NotNull BlockPos pos, @NotNull Player culprit) {
+        this.ownedEggs.remove(pos);
+        if (this.isTame() || this.isBaby() || !this.canAttack(culprit)) {
+            return;
+        }
+        this.setPersistentAngerTarget(culprit.getUUID());
+        this.startPersistentAngerTimer();
+        this.setTarget(culprit);
+    }
+
+    public boolean owns(@NotNull BlockPos pos) {
+        return this.ownedEggs.contains(pos);
+    }
+
+    @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Saddled", this.isSaddled());
         compound.putBoolean("HasEgg", this.hasEgg());
+        long[] eggs = new long[this.ownedEggs.size()];
+        int i = 0;
+        for (BlockPos pos : this.ownedEggs) {
+            eggs[i++] = pos.asLong();
+        }
+        compound.putLongArray("OwnedEggs", eggs);
+        this.addPersistentAngerSaveData(compound);
         DyeableAnimal.saveDye(this, compound);
         FollowingPet.save(this, compound);
     }
@@ -218,6 +310,11 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
         super.readAdditionalSaveData(compound);
         this.setSaddled(compound.getBoolean("Saddled"));
         this.setHasEgg(compound.getBoolean("HasEgg"));
+        this.ownedEggs.clear();
+        for (long packed : compound.getLongArray("OwnedEggs")) {
+            this.ownedEggs.add(BlockPos.of(packed));
+        }
+        this.readPersistentAngerSaveData(this.level(), compound);
         DyeableAnimal.loadDye(this, compound);
         FollowingPet.load(this, compound);
     }
@@ -267,7 +364,8 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new OstrichHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OstrichDefendEggGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
+        this.targetSelector.addGoal(3, new OstrichDefendEggGoal(this));
     }
 
     @Override
@@ -518,6 +616,25 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
                 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
             this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
         }
+        if (!this.level().isClientSide) {
+            this.updateEggAnger();
+            if (this.tickCount % 60 == 0 && !this.ownedEggs.isEmpty()) {
+                this.pruneOwnedEggs();
+            }
+        }
+    }
+
+    private void updateEggAnger() {
+        if (this.remainingPersistentAngerTime <= 0) {
+            return;
+        }
+        LivingEntity target = this.getTarget();
+        boolean engaged = target != null && target.isAlive()
+                && target.getUUID().equals(this.persistentAngerTarget)
+                && this.closerThan(target, this.getAttributeValue(Attributes.FOLLOW_RANGE));
+        if (!engaged && --this.remainingPersistentAngerTime <= 0) {
+            this.stopBeingAngry();
+        }
     }
 
     @Override
@@ -567,18 +684,14 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
 
         public OstrichDefendEggGoal(Ostrich ostrich) {
             super(ostrich, Player.class, 10, true, false,
-                    entity -> !ostrich.isBaby() && !ostrich.isTame());
+                    entity -> !ostrich.isBaby() && !ostrich.isTame() && ostrich.isNearOwnedEgg(entity));
             this.ostrich = ostrich;
         }
 
         @Override
-        public boolean canUse() {
-            return super.canUse() && this.isEggNearby();
-        }
-
-        private boolean isEggNearby() {
-            return BlockPos.findClosestMatch(this.ostrich.blockPosition(), 8, 4,
-                    pos -> this.ostrich.level().getBlockState(pos).is(NaturalistRegistry.OSTRICH_EGG.get())).isPresent();
+        public boolean canContinueToUse() {
+            LivingEntity target = this.ostrich.getTarget();
+            return super.canContinueToUse() && target != null && this.ostrich.isNearOwnedEgg(target);
         }
     }
     //endregion

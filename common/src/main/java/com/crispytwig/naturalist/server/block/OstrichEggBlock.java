@@ -103,11 +103,9 @@ public class OstrichEggBlock extends TurtleEggBlock {
     }
 
     private void angerNearbyOstriches(@NotNull Level level, BlockPos pos, Player player) {
-        for (Ostrich ostrich : level.getEntitiesOfClass(Ostrich.class, new AABB(pos).inflate(10.0, 4.0, 10.0),
-                entity -> !entity.isBaby() && !entity.isTame() && entity.getTarget() == null)) {
-            if (ostrich.canAttack(player)) {
-                ostrich.setTarget(player);
-            }
+        for (Ostrich ostrich : level.getEntitiesOfClass(Ostrich.class, new AABB(pos).inflate(16.0, 8.0, 16.0),
+                entity -> !entity.isBaby() && !entity.isTame() && entity.owns(pos))) {
+            ostrich.onOwnedEggDestroyed(pos, player);
         }
     }
 
