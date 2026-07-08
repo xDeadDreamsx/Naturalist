@@ -4,6 +4,7 @@ import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.base.NocturnalHostile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -43,7 +44,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public abstract class Scorpion extends Animal implements NaturalistGeoEntity {
+public abstract class Scorpion extends Animal implements NaturalistGeoEntity, NocturnalHostile {
     //region Data
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -90,7 +91,7 @@ public abstract class Scorpion extends Animal implements NaturalistGeoEntity {
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
                 entity -> entity.getType().is(NaturalistTags.EntityTypes.SCORPION_HOSTILES)));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true,
-                player -> this.canHuntPlayers() && this.getLightLevelDependentMagicValue() < 0.5F));
+                player -> this.canHuntPlayers() && this.isInDarkness()));
     }
 
     protected boolean canHuntPlayers() {

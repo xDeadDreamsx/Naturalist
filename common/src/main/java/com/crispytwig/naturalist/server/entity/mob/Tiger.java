@@ -10,6 +10,7 @@ import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.base.NocturnalHostile;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.base.VariantAnimal;
@@ -72,7 +73,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
-public class Tiger extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal, VariantAnimal {
+public class Tiger extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal, VariantAnimal, NocturnalHostile {
     //region Data
     public static final String[] VARIANT_NAMES = {"black_panther", "leopard", "tiger", "white_tiger"};
 
@@ -257,7 +258,7 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
         this.targetSelector.addGoal(4, new HurtByTargetGoal(this).setAlertOthers(Tiger.class));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
                 entity -> entity.getType().is(NaturalistTags.EntityTypes.TIGER_HOSTILES) && !entity.isBaby()
-                        && !this.isSleeping() && !this.isBaby() && !this.isStalking() && this.level().isNight() && this.hasHuntingCooldown()));
+                        && !this.isSleeping() && !this.isBaby() && !this.isStalking() && this.isNightTime() && this.hasHuntingCooldown()));
     }
 
     @Override

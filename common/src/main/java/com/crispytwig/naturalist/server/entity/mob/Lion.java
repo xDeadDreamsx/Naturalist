@@ -3,6 +3,7 @@ package com.crispytwig.naturalist.server.entity.mob;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
+import com.crispytwig.naturalist.server.entity.base.NocturnalHostile;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
@@ -58,7 +59,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal {
+public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal, NocturnalHostile {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.LION_FOOD_ITEMS);
     private static final ResourceLocation BABY_SPEED_BOOST_ID = ResourceLocation.fromNamespaceAndPath("naturalist", "baby_speed_boost");
@@ -215,7 +216,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         this.targetSelector.addGoal(3, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
                 entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby()
-                        && !this.isSleeping() && !this.isBaby() && this.level().isNight() && this.hasHuntingCooldown()));
+                        && !this.isSleeping() && !this.isBaby() && this.isNightTime() && this.hasHuntingCooldown()));
     }
 
     @Override

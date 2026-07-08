@@ -5,6 +5,7 @@ import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.base.NocturnalHostile;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.*;
@@ -35,6 +36,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
@@ -76,7 +78,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal {
+public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
@@ -313,8 +315,10 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(2, new BearAttackPlayerNearBabiesGoal(this, Player.class, 20, false, true, null));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 20, true, false, this::isHostileWhenDark));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby() && this.hasHuntingCooldown()));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
     }
@@ -322,6 +326,11 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
     @Override
     public boolean wantsToAttack(@NotNull LivingEntity target, @NotNull LivingEntity owner) {
         return PetTargeting.wantsToAttack(target, owner);
+    }
+
+    private boolean isHostileWhenDark(LivingEntity target) {
+        return !this.isTame() && !this.isBaby() && !this.isSleeping()
+                && this.isDarkOrNight() && NocturnalHostile.isAttackablePlayer(target);
     }
 
     @Override
@@ -354,7 +363,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
 
     @Override
     public boolean canAttack(@NotNull LivingEntity target) {
-        return !PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
+        return !this.isOwnedBy(target) && !PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
     }
 
     @Override
