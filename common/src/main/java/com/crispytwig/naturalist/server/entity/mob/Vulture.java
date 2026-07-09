@@ -1,9 +1,13 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistTags.BlockTags;
 import com.crispytwig.naturalist.registry.NaturalistTags.EntityTypes;
 import com.crispytwig.naturalist.server.entity.ai.goal.FlyingWanderGoal;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -14,6 +18,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -42,6 +47,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
@@ -64,10 +70,11 @@ import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-public class Vulture extends PathfinderMob implements NaturalistGeoEntity, FlyingAnimal {
+public class Vulture extends PathfinderMob implements NaturalistGeoEntity, FlyingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.ROTTEN_FLESH);
     private static final int PERCH_COOLDOWN_AFTER_HURT = 200;
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Vulture.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> PERCHED = SynchedEntityData.defineId(Vulture.class, EntityDataSerializers.BOOLEAN);
 
     private int ticksSinceEaten;
@@ -100,7 +107,35 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(PERCHED, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/vulture.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
     }
 
     @Nullable
@@ -133,6 +168,12 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     @Override
     public boolean isBaby() {
         return false;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
 

@@ -10,8 +10,12 @@ import com.crispytwig.naturalist.server.entity.util.BeachedMob;
 import com.crispytwig.naturalist.server.entity.util.BodyChain;
 import com.crispytwig.naturalist.server.entity.util.MobPart;
 import com.crispytwig.naturalist.server.entity.util.MultipartLevel;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -20,6 +24,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -29,6 +34,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -48,6 +54,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -64,14 +71,16 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 
-public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, MultipartMob, HuntingAnimal {
+public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, MultipartMob, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(GreatWhiteShark.class, EntityDataSerializers.STRING);
+
     private static final double[] PART_Z = {2.0D, -1.5D, -2.9D};
     private static final float[][] PART_SIZES = {{1.2F, 1.2F}, {1.0F, 1.0F}, {0.8F, 1.2F}};
 
     private static final float MAX_TILT = 40.0F;
     private static final float ATTACK_CONE_COS = Mth.cos(60.0F * Mth.DEG_TO_RAD);
-    private static final ResourceLocation AGGRO_SPEED_BOOST_ID = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "shark_aggro_speed_boost");
+    private static final ResourceLocation AGGRO_SPEED_BOOST_ID = Naturalist.location("shark_aggro_speed_boost");
     private static final AttributeModifier AGGRO_SPEED_BOOST = new AttributeModifier(AGGRO_SPEED_BOOST_ID, 0.4D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GREAT_WHITE_SHARK_FOOD_ITEMS);
@@ -121,6 +130,27 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
     }
 
     @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/great_white_shark.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
+    }
+
+    @Override
     public void baseTick() {
         int air = this.getAirSupply();
         super.baseTick();
@@ -153,12 +183,14 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         this.addHuntingCooldownSaveData(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.readHuntingCooldownSaveData(compound);
     }
 
@@ -188,6 +220,12 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         return null;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
 

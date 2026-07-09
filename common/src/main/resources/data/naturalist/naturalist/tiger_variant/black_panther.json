@@ -1,0 +1,9 @@
+{
+  "texture": "naturalist:entity/tiger/black_panther",
+  "baby_texture": "naturalist:entity/tiger/black_panther_baby",
+  "biomes": [
+    "minecraft:mangrove_swamp",
+    "minecraft:swamp",
+    "minecraft:dark_forest"
+  ]
+}

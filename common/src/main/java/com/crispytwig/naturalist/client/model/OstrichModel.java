@@ -17,25 +17,24 @@ public class OstrichModel extends GeoModel<Ostrich> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Ostrich ostrich) {
-        String name = ostrich.isBaby() ? "ostrich_baby" : "ostrich";
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/ostrich/" + name + ".png");
+        return ostrich.isBaby() ? ostrich.getVariantBabyTexture() : ostrich.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Ostrich ostrich) {
         if (ostrich.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/ostrich_baby.geo.json");
+            return ostrich.getVariantBabyModel(Naturalist.location("geo/entity/ostrich_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/ostrich.geo.json");
+        return ostrich.getVariantModel(Naturalist.location("geo/entity/ostrich.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Ostrich ostrich) {
         if (ostrich.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/ostrich_baby.animation.json");
+            return ostrich.getVariantBabyAnimation(Naturalist.location("animations/ostrich_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/ostrich.animation.json");
+        return ostrich.getVariantAnimation(Naturalist.location("animations/ostrich.animation.json"));
     }
 
     @Override

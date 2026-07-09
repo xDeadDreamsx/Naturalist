@@ -16,18 +16,18 @@ public class MoleModel extends GeoModel<Mole> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Mole mole) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/mole.png");
+        return mole.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Mole mole) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/mole.geo.json");
+        return mole.getVariantModel(Naturalist.location("geo/entity/mole.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Mole mole) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/mole.animation.json");
+        return mole.getVariantAnimation(Naturalist.location("animations/mole.animation.json"));
     }
 
     @Override

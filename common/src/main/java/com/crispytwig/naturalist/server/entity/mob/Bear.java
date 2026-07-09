@@ -1,6 +1,8 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
@@ -21,6 +23,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -78,11 +81,12 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile {
+public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SNIFFING = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SITTING = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.BOOLEAN);
@@ -126,6 +130,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(SLEEPING, false);
         builder.define(SNIFFING, false);
         builder.define(SITTING, false);
@@ -133,6 +138,21 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
         builder.define(EAT_COUNTER, 0);
         builder.define(REMAINING_ANGER_TIME, 0);
         builder.define(DATA_DYE, -1);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/bear/bear.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Nullable
@@ -247,6 +267,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         this.addPersistentAngerSaveData(compound);
         compound.putBoolean("Sheared", this.isSheared());
         DyeableAnimal.saveDye(this, compound);
@@ -257,6 +278,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
         if (compound.contains("Sheared")) {
             this.setSheared(compound.getBoolean("Sheared"));
@@ -270,6 +292,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        this.pickVariantForSpawn(level);
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(1.0F);
         }
@@ -287,7 +310,11 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return (AgeableMob) this.getType().create(serverLevel);
+        AgeableMob baby = (AgeableMob) this.getType().create(serverLevel);
+        if (baby instanceof Bear bearBaby) {
+            bearBaby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
     }
 
     //endregion

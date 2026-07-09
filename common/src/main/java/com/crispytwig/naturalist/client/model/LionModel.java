@@ -20,27 +20,24 @@ public class LionModel extends GeoModel<Lion> {
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getModelResource(Lion entity) {
         if (entity.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/lion_baby.geo.json");
+            return entity.getVariantBabyModel(Naturalist.location("geo/entity/lion_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/lion.geo.json");
+        return entity.getVariantModel(Naturalist.location("geo/entity/lion.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Lion entity) {
-        if (entity.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion_baby.png");
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lion/lion.png");
+        return entity.isBaby() ? entity.getVariantBabyTexture() : entity.getVariantTexture();
     }
 
     @SuppressWarnings("unused")
     @Override
     public ResourceLocation getAnimationResource(Lion entity) {
         if (entity.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/lion_baby.animation.json");
+            return entity.getVariantBabyAnimation(Naturalist.location("animations/lion_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/lion.animation.json");
+        return entity.getVariantAnimation(Naturalist.location("animations/lion.animation.json"));
     }
 
     @Override

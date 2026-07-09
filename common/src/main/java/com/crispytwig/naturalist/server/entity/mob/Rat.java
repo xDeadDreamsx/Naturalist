@@ -1,6 +1,8 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
@@ -11,13 +13,16 @@ import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
-import com.crispytwig.naturalist.server.entity.base.VariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
@@ -64,13 +69,13 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, Catchable, VariantAnimal {
+public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"black", "brown", "white"};
 
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.RAT_FOOD);
 
-    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Rat.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Rat.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Rat.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> INTERESTED = SynchedEntityData.defineId(Rat.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Rat.class, EntityDataSerializers.BOOLEAN);
@@ -100,25 +105,35 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, 0);
+        builder.define(DATA_VARIANT, NaturalistMobVariants.RAT_BLACK.location().toString());
         builder.define(SLEEPING, false);
         builder.define(INTERESTED, false);
         builder.define(FROM_HAND, false);
     }
 
     @Override
-    public int getVariant() {
+    public ResourceKey<MobVariant> defaultVariant() {
+        return NaturalistMobVariants.RAT_BLACK;
+    }
+
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/rat/black.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariant(int variant) {
-        this.entityData.set(DATA_VARIANT, variant);
-    }
-
-    @Override
-    public String[] getVariantNames() {
-        return VARIANT_NAMES;
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
@@ -167,7 +182,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt(VARIANT_TAG, this.getVariant());
+        this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
         FollowingPet.save(this, compound);
     }
@@ -175,7 +190,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt(VARIANT_TAG));
+        this.loadVariant(compound);
         this.setFromHand(compound.getBoolean("FromHand"));
         FollowingPet.load(this, compound);
     }
@@ -184,7 +199,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     public void saveToHandTag(@NotNull ItemStack stack) {
         Catchable.saveDefaultDataToHandTag(this, stack);
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        tag.putInt(VARIANT_TAG, this.getVariant());
+        this.saveVariant(tag);
         tag.putInt("Age", this.getAge());
         Catchable.saveTamableDataToHandTag(this, tag);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -193,7 +208,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     @Override
     public void loadFromHandTag(@NotNull CompoundTag tag) {
         Catchable.loadDefaultDataFromHandTag(this, tag);
-        this.setVariant(tag.getInt(VARIANT_TAG));
+        this.loadVariant(tag);
         this.setAge(tag.getInt("Age"));
         Catchable.loadTamableDataFromHandTag(this, tag);
     }
@@ -221,8 +236,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         Rat baby = NaturalistEntityTypes.RAT.get().create(level);
         if (baby != null) {
-            int variant = this.random.nextBoolean() || !(mob instanceof Rat other) ? this.getVariant() : other.getVariant();
-            baby.setVariant(variant);
+            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
             if (this.isTame()) {
                 baby.setOwnerUUID(this.getOwnerUUID());
                 baby.setTame(true, true);
@@ -234,7 +248,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnType != MobSpawnType.BUCKET) {
-            this.setVariant(this.random.nextInt(this.getVariantCount()));
+            this.pickVariantForSpawn(level);
         }
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);

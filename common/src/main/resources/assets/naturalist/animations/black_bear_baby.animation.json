@@ -1453,51 +1453,51 @@
         },
         "leftArm": {
           "rotation": [
-            "-( v.freq = 2; v.mag = 15; v.balloon = 1; v.offset = 2; v.time_offset = -0.4; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset );",
+            "v.freq = 2; v.mag = 15; v.balloon = 1; v.offset = 2; v.time_offset = -0.4; -( Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset )",
             0,
             0
           ],
           "position": [
             -0.1,
-            "( v.freq = 2; v.mag = 1.2; v.balloon = 1.3; v.offset = 1.3; v.time_offset = 0.52; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );",
-            "( v.freq = 2; v.mag = 0.6; v.balloon = 1; v.offset = 0.4; v.time_offset = 0.6; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );"
+            "v.freq = 2; v.mag = 1.2; v.balloon = 1.3; v.offset = 1.3; v.time_offset = 0.52; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
+            "v.freq = 2; v.mag = 0.6; v.balloon = 1; v.offset = 0.4; v.time_offset = 0.6; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
           ]
         },
         "rightArm": {
           "rotation": [
-            "-( v.freq = 2; v.mag = 15; v.balloon = 1; v.offset = 2; v.time_offset = -0.45; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset );",
+            "v.freq = 2; v.mag = 15; v.balloon = 1; v.offset = 2; v.time_offset = -0.45; -( Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset )",
             0,
             0
           ],
           "position": [
             0.1,
-            "( v.freq = 2; v.mag = 1.2; v.balloon = 1.3; v.offset = 1.3; v.time_offset = 0.42; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset );",
-            "( v.freq = 2; v.mag = 0.6; v.balloon = 1; v.offset = 0.5; v.time_offset = 0.5; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );"
+            "v.freq = 2; v.mag = 1.2; v.balloon = 1.3; v.offset = 1.3; v.time_offset = 0.42; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset",
+            "v.freq = 2; v.mag = 0.6; v.balloon = 1; v.offset = 0.5; v.time_offset = 0.5; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
           ]
         },
         "rightLeg": {
           "rotation": [
-            "10 - ( v.freq = 2; v.mag = -35; v.balloon = 2; v.offset = 3; v.time_offset = 1; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset );",
+            "v.freq = 2; v.mag = -35; v.balloon = 2; v.offset = 3; v.time_offset = 1; 10 -( Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset )",
             0,
             0
           ],
           "position": [
             0,
-            "( v.freq = 2; v.mag = 0.7; v.balloon = 1; v.offset = 0.8; v.time_offset = 0.9; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );",
-            "( v.freq = 2; v.mag = 0.8; v.balloon = 1; v.offset = -1; v.time_offset = 0.4; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );"
+            "v.freq = 2; v.mag = 0.7; v.balloon = 1; v.offset = 0.8; v.time_offset = 0.9; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
+            "v.freq = 2; v.mag = 0.8; v.balloon = 1; v.offset = -1; v.time_offset = 0.4; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
           ],
           "scale": [1, "1 + Math.sin(( q.anim_time - 0.0 ) * 540 ) * 0.07", 1]
         },
         "leftLeg": {
           "rotation": [
-            "10 - ( v.freq = 2; v.mag = -35; v.balloon = 2; v.offset = 3; v.time_offset = 0.85; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset );",
+            "v.freq = 2; v.mag = -35; v.balloon = 2; v.offset = 3; v.time_offset = 0.85; 10 -( Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset )",
             0,
             0
           ],
           "position": [
             0,
-            "( v.freq = 2; v.mag = 0.7; v.balloon = 1; v.offset = 0.8; v.time_offset = 0.75; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset );",
-            "( v.freq = 2; v.mag = 0.8; v.balloon = 1; v.offset = -1; v.time_offset = 0.25; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );"
+            "v.freq = 2; v.mag = 0.7; v.balloon = 1; v.offset = 0.8; v.time_offset = 0.75; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset",
+            "v.freq = 2; v.mag = 0.8; v.balloon = 1; v.offset = -1; v.time_offset = 0.25; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
           ],
           "scale": [
             1,
@@ -1538,13 +1538,13 @@
         },
         "body": {
           "rotation": [
-            "( v.freq = 4; v.mag = 1.2; v.balloon = 2; v.offset = 1.4; v.time_offset = 0.1; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset; );",
+            "v.freq = 4; v.mag = 1.2; v.balloon = 2; v.offset = 1.4; v.time_offset = 0.1; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset;",
             0,
             "Math.cos(( q.anim_time - 0.0 ) * 360 ) * 1"
           ],
           "position": [
             "-Math.cos(( q.anim_time - 0.0 ) * 360 ) * -0.2",
-            "( v.freq = 4; v.mag = 0.3; v.balloon = 2; v.offset = -0.3; v.time_offset = -0.45; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );",
+            "v.freq = 4; v.mag = 0.3; v.balloon = 2; v.offset = -0.3; v.time_offset = -0.45; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
             0
           ]
         },
@@ -1564,32 +1564,32 @@
           "rotation": ["-Math.cos(( q.anim_time + 0.1 ) * 360 ) * -15", 0, 0],
           "position": [
             0,
-            "( v.freq = 2; v.mag = -0.7; v.balloon = 3; v.offset = 1; v.time_offset = -0.45; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );",
-            "( v.freq = 2; v.mag = 1; v.balloon = 1; v.offset = 0.5; v.time_offset = 0.1; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );"
+            "v.freq = 2; v.mag = -0.7; v.balloon = 3; v.offset = 1; v.time_offset = -0.45; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
+            "v.freq = 2; v.mag = 1; v.balloon = 1; v.offset = 0.5; v.time_offset = 0.1; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
           ]
         },
         "rightArm": {
           "rotation": ["-Math.cos(( q.anim_time + 0.1 ) * 360 ) * 15", 0, 0],
           "position": [
             0,
-            "( v.freq = 2; v.mag = 0.7; v.balloon = 3; v.offset = 1; v.time_offset = -0.45; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );",
-            "( v.freq = 2; v.mag = -1; v.balloon = 1; v.offset = 0.5; v.time_offset = 0.1; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );"
+            "v.freq = 2; v.mag = 0.7; v.balloon = 3; v.offset = 1; v.time_offset = -0.45; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
+            "v.freq = 2; v.mag = -1; v.balloon = 1; v.offset = 0.5; v.time_offset = 0.1; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
           ]
         },
         "rightLeg": {
           "rotation": ["-Math.cos(( q.anim_time + 0.15 ) * 360 ) * -15", 0, 0],
           "position": [
             0,
-            "( v.freq = 2; v.mag = 0.8; v.balloon = 2; v.offset = 0.9; v.time_offset = -0.7; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );",
-            "( v.freq = 2; v.mag = 0.3; v.balloon = 1; v.offset = -0.5; v.time_offset = 0.5; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );"
+            "v.freq = 2; v.mag = 0.8; v.balloon = 2; v.offset = 0.9; v.time_offset = -0.7; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
+            "v.freq = 2; v.mag = 0.3; v.balloon = 1; v.offset = -0.5; v.time_offset = 0.5; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
           ]
         },
         "leftLeg": {
           "rotation": ["-Math.cos(( q.anim_time + 0.15 ) * 360 ) * 15", 0, 0],
           "position": [
             0,
-            "( v.freq = 2; v.mag = -0.8; v.balloon = 2; v.offset = 0.9; v.time_offset = -0.7; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );",
-            "( v.freq = 2; v.mag = -0.3; v.balloon = 1; v.offset = -0.5; v.time_offset = 0.5; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );"
+            "v.freq = 2; v.mag = -0.8; v.balloon = 2; v.offset = 0.9; v.time_offset = -0.7; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
+            "v.freq = 2; v.mag = -0.3; v.balloon = 1; v.offset = -0.5; v.time_offset = 0.5; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
           ]
         },
         "tail": {
@@ -1626,20 +1626,20 @@
       "bones": {
         "skull": {
           "rotation": [
-            "-( v.freq = 6; v.mag = 7; v.balloon = 1; v.offset = 1.4; v.time_offset = 0.0; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset; );",
+            "v.freq = 6; v.mag = 7; v.balloon = 1; v.offset = 1.4; v.time_offset = 0.0; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset;",
             0,
             0
           ]
         },
         "nose": {
           "rotation": [
-            "-( v.freq = 6; v.mag = 5.5; v.balloon = 1; v.offset = 1.4; v.time_offset = 0.1; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset; );",
+            "v.freq = 6; v.mag = 5.5; v.balloon = 1; v.offset = 1.4; v.time_offset = 0.1; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset;",
             0,
             0
           ],
           "scale": [
-            "( v.freq = 6; v.mag = 0.3; v.balloon = 3; v.offset = 1.0; v.time_offset = -0.2; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );",
-            "( v.freq = 6; v.mag = 0.3; v.balloon = 0.5; v.offset = 1.0; v.time_offset = 0; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset; );",
+            "v.freq = 6; v.mag = 0.3; v.balloon = 3; v.offset = 1.0; v.time_offset = -0.2; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
+            "v.freq = 6; v.mag = 0.3; v.balloon = 0.5; v.offset = 1.0; v.time_offset = 0; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
             1
           ]
         }

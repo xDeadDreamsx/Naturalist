@@ -19,26 +19,23 @@ public class AlligatorModel extends GeoModel<Alligator> {
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Alligator alligator) {
         if (alligator.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/alligator_baby.geo.json");
+            return alligator.getVariantBabyModel(Naturalist.location("geo/entity/alligator_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/alligator.geo.json");
+        return alligator.getVariantModel(Naturalist.location("geo/entity/alligator.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Alligator alligator) {
-        if (alligator.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/alligator/alligator_baby.png");
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/alligator/alligator.png");
+        return alligator.isBaby() ? alligator.getVariantBabyTexture() : alligator.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Alligator alligator) {
         if (alligator.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/alligator_baby.animation.json");
+            return alligator.getVariantBabyAnimation(Naturalist.location("animations/alligator_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/alligator.animation.json");
+        return alligator.getVariantAnimation(Naturalist.location("animations/alligator.animation.json"));
     }
 
     @Override

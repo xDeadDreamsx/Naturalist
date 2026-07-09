@@ -1,0 +1,9 @@
+{
+  "texture": "naturalist:entity/tiger/white_tiger",
+  "baby_texture": "naturalist:entity/tiger/white_tiger_baby",
+  "biomes": [
+    "minecraft:bamboo_jungle",
+    "minecraft:cherry_grove"
+  ],
+  "priority": 1
+}

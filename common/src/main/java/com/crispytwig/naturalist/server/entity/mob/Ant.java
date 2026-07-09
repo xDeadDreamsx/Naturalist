@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.block.AntHillBlock;
@@ -8,15 +9,18 @@ import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
 import com.crispytwig.naturalist.server.entity.misc.CarriedFoodEntity;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,7 +29,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -48,6 +54,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,9 +72,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, NeutralMob, Catchable {
+public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, NeutralMob, Catchable, DataDrivenVariantAnimal {
     //region Data
     private static final int PERSISTENT_ANGER_TIME = 500;
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Ant.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Ant.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Ant.class, EntityDataSerializers.BOOLEAN);
 
@@ -100,8 +108,24 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(DATA_REMAINING_ANGER_TIME, 0);
         builder.define(FROM_HAND, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/ant.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     public void startHillCooldown() {
@@ -137,6 +161,7 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putInt("HillCooldown", this.hillCooldown);
         compound.putBoolean("FromHand", this.fromHand());
         if (this.carriedFoodId != null) {
@@ -148,6 +173,7 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.hillCooldown = compound.getInt("HillCooldown");
         this.setFromHand(compound.getBoolean("FromHand"));
         this.carriedFoodId = compound.hasUUID("CarriedFood") ? compound.getUUID("CarriedFood") : null;
@@ -172,17 +198,19 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     @Override
     public void saveToHandTag(@NotNull ItemStack stack) {
         Catchable.saveDefaultDataToHandTag(this, stack);
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        this.saveVariant(tag);
         if (this.isTame() && this.getOwnerUUID() != null) {
-            CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
             tag.putBoolean("Tame", true);
             tag.putUUID("Owner", this.getOwnerUUID());
-            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         }
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
 
     @Override
     public void loadFromHandTag(@NotNull CompoundTag tag) {
         Catchable.loadDefaultDataFromHandTag(this, tag);
+        this.loadVariant(tag);
         if (tag.getBoolean("Tame") && tag.hasUUID("Owner")) {
             this.setOwnerUUID(tag.getUUID("Owner"));
             this.setTame(true, true);
@@ -211,6 +239,12 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         return null;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
 

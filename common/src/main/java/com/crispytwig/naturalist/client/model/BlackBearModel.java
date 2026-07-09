@@ -19,26 +19,23 @@ public class BlackBearModel extends GeoModel<BlackBear> {
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getModelResource(BlackBear bear) {
         if (bear.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/black_bear_baby.geo.json");
+            return bear.getVariantBabyModel(Naturalist.location("geo/entity/black_bear_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/black_bear.geo.json");
+        return bear.getVariantModel(Naturalist.location("geo/entity/black_bear.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(@NotNull BlackBear bear) {
-        if (bear.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/black_bear/black_bear_baby.png");
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/black_bear/black_bear.png");
+        return bear.isBaby() ? bear.getVariantBabyTexture() : bear.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(BlackBear bear) {
         if (bear.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/black_bear_baby.animation.json");
+            return bear.getVariantBabyAnimation(Naturalist.location("animations/black_bear_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/black_bear.animation.json");
+        return bear.getVariantAnimation(Naturalist.location("animations/black_bear.animation.json"));
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
@@ -15,6 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -23,6 +26,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -57,10 +61,11 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet, Bucketable {
+public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet, Bucketable, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.BOOLEAN);
 
@@ -94,8 +99,24 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(DATA_DYE, -1);
         builder.define(FROM_BUCKET, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/duck/duck.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Nullable
@@ -128,6 +149,7 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putInt("EggLayTime", this.eggTime);
         DyeableAnimal.saveDye(this, compound);
         FollowingPet.save(this, compound);
@@ -136,6 +158,7 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         if (compound.contains("EggLayTime")) {
             this.eggTime = compound.getInt("EggLayTime");
         }
@@ -156,12 +179,19 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     @Override
     public void saveToBucketTag(@NotNull ItemStack stack) {
         Bucketable.saveDefaultDataToBucketTag(this, stack);
-        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag -> tag.putInt("Age", this.getAge()));
+        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag -> {
+            this.saveVariant(tag);
+            tag.putInt("Age", this.getAge());
+        });
+        CompoundTag custom = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        this.saveVariant(custom);
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(custom));
     }
 
     @Override
     public void loadFromBucketTag(@NotNull CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
+        this.loadVariant(tag);
         if (tag.contains("Age")) {
             this.setAge(tag.getInt("Age"));
         }
@@ -191,7 +221,19 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     @Nullable
     @Override
     public Duck getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.DUCK.get().create(serverLevel);
+        Duck baby = NaturalistEntityTypes.DUCK.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        if (spawnType != MobSpawnType.BUCKET) {
+            this.pickVariantForSpawn(level);
+        }
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
 

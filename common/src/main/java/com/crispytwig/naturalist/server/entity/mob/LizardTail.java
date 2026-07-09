@@ -1,17 +1,22 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
+import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -22,9 +27,13 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.animation.AnimationState;
 
 @SuppressWarnings("unused")
-public class LizardTail extends Mob implements NaturalistGeoEntity {
+public class LizardTail extends Mob implements NaturalistGeoEntity, DataDrivenVariantAnimal {
     //region Data
-    private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(LizardTail.class, EntityDataSerializers.INT);
+    public static final String[] VARIANT_NAMES = {"green", "brown", "beardie", "leopard_gecko"};
+
+    private static final String DEFAULT_VARIANT_ID = "naturalist:green";
+
+    private static final EntityDataAccessor<String> VARIANT_ID = SynchedEntityData.defineId(LizardTail.class, EntityDataSerializers.STRING);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -41,15 +50,32 @@ public class LizardTail extends Mob implements NaturalistGeoEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(VARIANT_ID, 0);
+        builder.define(VARIANT_ID, DEFAULT_VARIANT_ID);
     }
 
-    public int getVariant() {
-        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 3);
+    @Override
+    public ResourceKey<MobVariant> defaultVariant() {
+        return NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("lizard_tail"), "green");
     }
 
-    public void setVariant(int variant) {
-        this.entityData.set(VARIANT_ID, variant);
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/lizard/green_tail.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(VARIANT_ID);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(VARIANT_ID, id);
     }
 
     @Override
@@ -60,13 +86,13 @@ public class LizardTail extends Mob implements NaturalistGeoEntity {
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
+        this.saveVariant(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
+        this.loadVariant(compound);
     }
     //endregion
 

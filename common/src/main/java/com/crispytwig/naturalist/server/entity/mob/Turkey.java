@@ -1,9 +1,16 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
@@ -46,9 +53,11 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class Turkey extends Animal implements NaturalistGeoEntity {
+public class Turkey extends Animal implements NaturalistGeoEntity, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TURKEY_FOOD_ITEMS);
+
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Turkey.class, EntityDataSerializers.STRING);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -67,6 +76,39 @@ public class Turkey extends Animal implements NaturalistGeoEntity {
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 5.0D);
     }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/turkey.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
+    }
     //endregion
 
     //region Spawning
@@ -78,11 +120,16 @@ public class Turkey extends Animal implements NaturalistGeoEntity {
     @Nullable
     @Override
     public Turkey getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        return NaturalistEntityTypes.TURKEY.get().create(level);
+        Turkey baby = NaturalistEntityTypes.TURKEY.get().create(level);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+        }
+        return baby;
     }
 
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }

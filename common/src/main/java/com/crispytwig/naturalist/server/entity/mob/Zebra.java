@@ -1,16 +1,26 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
@@ -20,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import org.jetbrains.annotations.NotNull;
@@ -35,9 +46,11 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
+public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.WHEAT, Items.SUGAR, Blocks.HAY_BLOCK.asItem(), Items.APPLE, Items.GOLDEN_CARROT, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
+
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Zebra.class, EntityDataSerializers.STRING);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -48,6 +61,39 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
 
     public Zebra(@NotNull EntityType<? extends AbstractChestedHorse> entityType, @NotNull Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/zebra.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
     }
 
     @Override
@@ -87,8 +133,17 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity {
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         AbstractHorse zebra = NaturalistEntityTypes.ZEBRA.get().create(serverLevel);
         assert zebra != null;
+        if (zebra instanceof Zebra baby) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
         this.setOffspringAttributes(ageableMob, zebra);
         return zebra;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
 

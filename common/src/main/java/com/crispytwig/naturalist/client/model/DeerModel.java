@@ -18,27 +18,23 @@ public class DeerModel extends GeoModel<Deer> {
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Deer deer) {
         if (deer.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/deer_baby.geo.json");
+            return deer.getVariantBabyModel(Naturalist.location("geo/entity/deer_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/deer.geo.json");
+        return deer.getVariantModel(Naturalist.location("geo/entity/deer.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Deer deer) {
-        if (deer.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/deer/deer_baby.png");
-        }
-
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/deer/deer.png");
+        return deer.isBaby() ? deer.getVariantBabyTexture() : deer.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Deer deer) {
         if (deer.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/deer_baby.animation.json");
+            return deer.getVariantBabyAnimation(Naturalist.location("animations/deer_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/deer.animation.json");
+        return deer.getVariantAnimation(Naturalist.location("animations/deer.animation.json"));
     }
 
     @Override

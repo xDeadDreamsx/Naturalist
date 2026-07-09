@@ -13,21 +13,17 @@ public class ButterflyModel extends GeoModel<Butterfly> {
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getModelResource(Butterfly butterfly) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/butterfly.geo.json");
+        return butterfly.getVariantModel(Naturalist.location("geo/entity/butterfly.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getTextureResource(Butterfly butterfly) {
-        String name = butterfly.getVariant().getName();
-        if (name.equals("swallowtail")) {
-            name = "green_swallowtail";
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/butterfly/" + name + ".png");
+        return butterfly.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Butterfly butterfly) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/butterfly.animation.json");
+        return butterfly.getVariantAnimation(Naturalist.location("animations/butterfly.animation.json"));
     }
 }

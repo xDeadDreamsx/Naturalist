@@ -2,7 +2,6 @@ package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.mob.Bird;
-import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -18,52 +17,24 @@ public class BirdModel extends GeoModel<Bird> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Bird bird) {
-        if (bird.isBaby()) {
-            if (bird.getType().equals(NaturalistEntityTypes.BLUEJAY.get())) {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_blue_jay.png");
-            } else if (bird.getType().equals(NaturalistEntityTypes.CANARY.get())) {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_canary.png");
-            } else if (bird.getType().equals(NaturalistEntityTypes.CARDINAL.get())) {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_cardinal.png");
-            } else if (bird.getType().equals(NaturalistEntityTypes.FINCH.get())) {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_finch.png");
-            } else if (bird.getType().equals(NaturalistEntityTypes.SPARROW.get())) {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_sparrow.png");
-            } else {
-                return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bird_baby_robin.png");
-            }
-        }
-
-        if (bird.getType().equals(NaturalistEntityTypes.BLUEJAY.get())) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/bluejay.png");
-        } else if (bird.getType().equals(NaturalistEntityTypes.CANARY.get())) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/canary.png");
-        } else if (bird.getType().equals(NaturalistEntityTypes.CARDINAL.get())) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/cardinal.png");
-        } else if (bird.getType().equals(NaturalistEntityTypes.FINCH.get())) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/finch.png");
-        } else if (bird.getType().equals(NaturalistEntityTypes.SPARROW.get())) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/sparrow.png");
-        } else {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bird/robin.png");
-        }
+        return bird.isBaby() ? bird.getVariantBabyTexture() : bird.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Bird bird) {
         if (bird.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/bird_baby.geo.json");
+            return bird.getVariantBabyModel(Naturalist.location("geo/entity/bird_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/bird.geo.json");
+        return bird.getVariantModel(Naturalist.location("geo/entity/bird.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Bird bird) {
         if (bird.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/bird_baby.animation.json");
+            return bird.getVariantBabyAnimation(Naturalist.location("animations/bird_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/bird.animation.json");
+        return bird.getVariantAnimation(Naturalist.location("animations/bird.animation.json"));
     }
 
     @Override

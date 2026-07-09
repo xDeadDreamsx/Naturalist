@@ -1,11 +1,13 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -13,6 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -53,8 +56,9 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
+public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, DataDrivenVariantAnimal {
     //region Data
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Rhino.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> CHARGE_COOLDOWN_TICKS = SynchedEntityData.defineId(Rhino.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> HAS_TARGET = SynchedEntityData.defineId(Rhino.class, EntityDataSerializers.BOOLEAN);
 
@@ -81,8 +85,24 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(CHARGE_COOLDOWN_TICKS, 0);
         builder.define(HAS_TARGET, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/rhino.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     public void setChargeCooldownTicks(int ticks) {
@@ -112,12 +132,14 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putInt("StunTick", this.stunnedTick);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.stunnedTick = compound.getInt("StunTick");
     }
     //endregion
@@ -125,6 +147,7 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        this.pickVariantForSpawn(level);
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(1.0F);
         }
@@ -140,7 +163,11 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.RHINO.get().create(serverLevel);
+        Rhino baby = NaturalistEntityTypes.RHINO.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
     }
     //endregion
 

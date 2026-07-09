@@ -9,26 +9,26 @@ import software.bernie.geckolib.model.GeoModel;
 
 @Environment(EnvType.CLIENT)
 public class CrabModel extends GeoModel<Crab> {
-    private static final String[] TEXTURES = {"blue_crab", "brown_crab", "orange_crab", "red_crab", "yellow_crab"};
-
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Crab crab) {
-        int variant = Math.floorMod(crab.getVariant(), TEXTURES.length);
-        String name = TEXTURES[variant] + (crab.isBaby() ? "_baby" : "");
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/crab/" + name + ".png");
+        return crab.isBaby() ? crab.getVariantBabyTexture() : crab.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Crab crab) {
-        String geo = crab.isBaby() ? "crab_baby" : "crab";
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/" + geo + ".geo.json");
+        if (crab.isBaby()) {
+            return crab.getVariantBabyModel(Naturalist.location("geo/entity/crab_baby.geo.json"));
+        }
+        return crab.getVariantModel(Naturalist.location("geo/entity/crab.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Crab crab) {
-        String anim = crab.isBaby() ? "crab_baby" : "crab";
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/" + anim + ".animation.json");
+        if (crab.isBaby()) {
+            return crab.getVariantBabyAnimation(Naturalist.location("animations/crab_baby.animation.json"));
+        }
+        return crab.getVariantAnimation(Naturalist.location("animations/crab.animation.json"));
     }
 }

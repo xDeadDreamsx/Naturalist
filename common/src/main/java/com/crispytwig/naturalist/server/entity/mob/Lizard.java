@@ -1,22 +1,25 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
-import net.minecraft.core.Holder;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BiomeTags;
-import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -30,8 +33,6 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -46,10 +47,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class Lizard extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet {
+public class Lizard extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
     //region Data
+    public static final String[] VARIANT_NAMES = {"green", "brown", "beardie", "leopard_gecko"};
+
+    private static final String DEFAULT_VARIANT_ID = "naturalist:green";
+
     private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS);
-    private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> VARIANT_ID = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> HAS_TAIL = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.INT);
 
@@ -73,17 +78,34 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(VARIANT_ID, 0);
+        builder.define(VARIANT_ID, DEFAULT_VARIANT_ID);
         builder.define(HAS_TAIL, true);
         builder.define(DATA_DYE, -1);
     }
 
-    public int getVariant() {
-        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 3);
+    @Override
+    public ResourceKey<MobVariant> defaultVariant() {
+        return NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("lizard"), "green");
     }
 
-    public void setVariant(int variant) {
-        this.entityData.set(VARIANT_ID, variant);
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/lizard/green.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(VARIANT_ID);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(VARIANT_ID, id);
     }
 
     public boolean hasTail() {
@@ -131,7 +153,7 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
+        this.saveVariant(compound);
         compound.putBoolean("HasTail", this.hasTail());
         DyeableAnimal.saveDye(this, compound);
         FollowingPet.save(this, compound);
@@ -140,7 +162,7 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
+        this.loadVariant(compound);
         this.setHasTail(compound.getBoolean("HasTail"));
         DyeableAnimal.loadDye(this, compound);
         FollowingPet.load(this, compound);
@@ -150,16 +172,7 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        Holder<Biome> holder = level.getBiome(this.blockPosition());
-        if (holder.is(Biomes.SAVANNA)) {
-            this.setVariant(3);
-        } else if (holder.is(BiomeTags.IS_JUNGLE)) {
-            this.setVariant(0);
-        } else if (holder.is(Biomes.DESERT)) {
-            this.setVariant(2);
-        } else {
-            this.setVariant(1);
-        }
+        this.pickVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
@@ -193,7 +206,7 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
             this.playSound(SoundEvents.SLIME_SQUISH, 1.0f, 1.0f);
             LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level());
             if (lizardTail != null) {
-                lizardTail.setVariant(this.getVariant());
+                lizardTail.setVariantRawId(this.getVariantRawId());
                 lizardTail.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(lizardTail);
             }

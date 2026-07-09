@@ -1,6 +1,8 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
@@ -13,16 +15,17 @@ import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.NocturnalHostile;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
-import com.crispytwig.naturalist.server.entity.base.VariantAnimal;
-import net.minecraft.core.Holder;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -56,8 +59,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -73,13 +74,13 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
-public class Tiger extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal, VariantAnimal, NocturnalHostile {
+public class Tiger extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal, NocturnalHostile {
     //region Data
     public static final String[] VARIANT_NAMES = {"black_panther", "leopard", "tiger", "white_tiger"};
 
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TIGER_FOOD_ITEMS);
 
-    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Tiger.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Tiger.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Tiger.class, EntityDataSerializers.BOOLEAN);
 
     private boolean followingOwner = true;
@@ -112,23 +113,33 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, 0);
+        builder.define(DATA_VARIANT, NaturalistMobVariants.TIGER_BLACK_PANTHER.location().toString());
         builder.define(SLEEPING, false);
     }
 
     @Override
-    public int getVariant() {
+    public ResourceKey<MobVariant> defaultVariant() {
+        return NaturalistMobVariants.TIGER_BLACK_PANTHER;
+    }
+
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/tiger/tiger.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariant(int variant) {
-        this.entityData.set(DATA_VARIANT, variant);
-    }
-
-    @Override
-    public String[] getVariantNames() {
-        return VARIANT_NAMES;
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
@@ -185,7 +196,7 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt(VARIANT_TAG, this.getVariant());
+        this.saveVariant(compound);
         FollowingPet.save(this, compound);
         this.addHuntingCooldownSaveData(compound);
     }
@@ -193,7 +204,7 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt(VARIANT_TAG));
+        this.loadVariant(compound);
         FollowingPet.load(this, compound);
         this.readHuntingCooldownSaveData(compound);
     }
@@ -210,8 +221,7 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         Tiger baby = NaturalistEntityTypes.TIGER.get().create(level);
         if (baby != null) {
-            int variant = this.random.nextBoolean() || !(mob instanceof Tiger other) ? this.getVariant() : other.getVariant();
-            baby.setVariant(variant);
+            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
         }
         return baby;
     }
@@ -221,16 +231,7 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }
-        Holder<Biome> biome = level.getBiome(this.blockPosition());
-        if (biome.is(Biomes.BAMBOO_JUNGLE) || biome.is(Biomes.CHERRY_GROVE)) {
-            this.setVariant(3);
-        } else if (biome.is(Biomes.MANGROVE_SWAMP) || biome.is(Biomes.SWAMP) || biome.is(Biomes.DARK_FOREST)) {
-            this.setVariant(0);
-        } else if (biome.is(BiomeTags.IS_MOUNTAIN) || biome.is(BiomeTags.IS_BADLANDS) || biome.is(Biomes.DESERT)) {
-            this.setVariant(1);
-        } else {
-            this.setVariant(2);
-        }
+        this.pickVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion

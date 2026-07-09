@@ -1,11 +1,13 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -68,13 +70,14 @@ import java.util.Objects;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, IKMount {
+public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeoEntity, IKMount, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.MELON_SLICE);
     private static final int INVENTORY_SIZE = 27;
     private static final int CAKES_TO_TAME = 5;
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> CHESTED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
@@ -110,9 +113,25 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
 
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(REMAINING_ANGER_TIME, 0);
         builder.define(SADDLED, false);
         builder.define(CHESTED, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/elephant/elephant.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     public boolean isSaddled() {
@@ -134,6 +153,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         this.addPersistentAngerSaveData(compound);
         compound.putBoolean("Saddled", this.isSaddled());
         compound.putBoolean("Chested", this.isChested());
@@ -148,6 +168,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
         this.setSaddled(compound.getBoolean("Saddled"));
         this.setChested(compound.getBoolean("Chested"));
@@ -163,6 +184,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        this.pickVariantForSpawn(level);
         AgeableMobGroupData ageableMobGroupData;
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(true);
@@ -184,7 +206,11 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.ELEPHANT.get().create(serverLevel);
+        Elephant baby = NaturalistEntityTypes.ELEPHANT.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
     }
     //endregion
 

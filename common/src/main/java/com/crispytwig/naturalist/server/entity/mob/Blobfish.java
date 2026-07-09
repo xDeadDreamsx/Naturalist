@@ -1,15 +1,18 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.entity.ai.goal.BlobfishStayDeepGoal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
@@ -46,10 +49,11 @@ import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
+public class Blobfish extends AbstractFish implements NaturalistGeoEntity, DataDrivenVariantAnimal {
     //region Data
     private static final int CONVERSION_DURATION = 100;
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Blobfish.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> DATA_GRAY = SynchedEntityData.defineId(Blobfish.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_CONVERTING = SynchedEntityData.defineId(Blobfish.class, EntityDataSerializers.BOOLEAN);
 
@@ -77,8 +81,24 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(DATA_GRAY, true);
         builder.define(DATA_CONVERTING, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/blobfish/pink.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     public int getDeepY() {
@@ -104,6 +124,7 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putBoolean("Gray", this.isGray());
         compound.putInt("ConversionTime", this.conversionTime);
     }
@@ -111,6 +132,7 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.setGray(compound.getBoolean("Gray"));
         this.conversionTime = compound.getInt("ConversionTime");
     }
@@ -125,6 +147,9 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity {
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        if (reason != MobSpawnType.BUCKET) {
+            this.pickVariantForSpawn(level);
+        }
         this.setGray(this.wantsGray());
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }

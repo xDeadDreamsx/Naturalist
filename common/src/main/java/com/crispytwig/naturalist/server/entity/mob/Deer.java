@@ -1,18 +1,28 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.ai.goal.BigPanicGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -23,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -36,8 +47,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
+public class Deer extends NaturalistAnimal implements NaturalistGeoEntity, DataDrivenVariantAnimal {
     //region Data
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Deer.class, EntityDataSerializers.STRING);
+
     private int panicTicks = 0;
     private int eatAnimationTick;
 
@@ -60,6 +73,39 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
     public boolean isEating() {
         return this.eatAnimationTick > 0;
     }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/deer/deer.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
+    }
     //endregion
 
     //region Spawning
@@ -71,7 +117,17 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.DEER.get().create(serverLevel);
+        Deer baby = NaturalistEntityTypes.DEER.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
 

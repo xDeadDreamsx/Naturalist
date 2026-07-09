@@ -19,26 +19,23 @@ public class GiraffeModel extends IKGeoModel<Giraffe> {
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Giraffe giraffe) {
         if (giraffe.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/giraffe_baby.geo.json");
+            return giraffe.getVariantBabyModel(Naturalist.location("geo/entity/giraffe_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/giraffe.geo.json");
+        return giraffe.getVariantModel(Naturalist.location("geo/entity/giraffe.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getTextureResource(Giraffe giraffe) {
-        if (giraffe.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/giraffe/giraffe_baby.png");
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/giraffe/giraffe.png");
+        return giraffe.isBaby() ? giraffe.getVariantBabyTexture() : giraffe.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Giraffe giraffe) {
         if (giraffe.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/giraffe_baby.animation.json");
+            return giraffe.getVariantBabyAnimation(Naturalist.location("animations/giraffe_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/giraffe.animation.json");
+        return giraffe.getVariantAnimation(Naturalist.location("animations/giraffe.animation.json"));
     }
 
     @Override

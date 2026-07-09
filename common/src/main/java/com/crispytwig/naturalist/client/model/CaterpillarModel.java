@@ -13,18 +13,18 @@ public class CaterpillarModel extends GeoModel<Caterpillar> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Caterpillar object) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/caterpillar.geo.json");
+        return object.getVariantModel(Naturalist.location("geo/entity/caterpillar.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Caterpillar object) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/caterpillar.png");
+        return object.getVariantTexture();
     }
 
     @SuppressWarnings("unused")
     @Override
     public @NotNull ResourceLocation getAnimationResource(Caterpillar animatable) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/caterpillar.animation.json");
+        return animatable.getVariantAnimation(Naturalist.location("animations/caterpillar.animation.json"));
     }
 }

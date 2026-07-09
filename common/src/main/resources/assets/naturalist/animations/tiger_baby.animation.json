@@ -1082,7 +1082,7 @@
         },
         "leftArm": {
           "rotation": [
-            "-( v.freq = 2; v.mag = 25; v.balloon = 1; v.offset = 0; v.time_offset = -0.4; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset );",
+            "v.freq = 2; v.mag = 25; v.balloon = 1; v.offset = 0; v.time_offset = -0.4; -( Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset )",
             0,
             0
           ],
@@ -1094,7 +1094,7 @@
         },
         "rightArm": {
           "rotation": [
-            "-( v.freq = 2; v.mag = 20; v.balloon = 1; v.offset = 0; v.time_offset = -0.5; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset );",
+            "v.freq = 2; v.mag = 20; v.balloon = 1; v.offset = 0; v.time_offset = -0.5; -( Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset )",
             0,
             0
           ],
@@ -1106,7 +1106,7 @@
         },
         "rightLeg": {
           "rotation": [
-            "10 - ( v.freq = 2; v.mag = -35; v.balloon = 2; v.offset = 10; v.time_offset = 1; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset );",
+            "v.freq = 2; v.mag = -35; v.balloon = 2; v.offset = 10; v.time_offset = 1; 10 -( Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset )",
             0,
             0
           ],
@@ -1119,7 +1119,7 @@
         },
         "leftLeg": {
           "rotation": [
-            "10 - ( v.freq = 2; v.mag = -35; v.balloon = 2; v.offset = 10; v.time_offset = 0.85; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset );",
+            "v.freq = 2; v.mag = -35; v.balloon = 2; v.offset = 10; v.time_offset = 0.85; 10 -( Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 270 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset )",
             0,
             0
           ],

@@ -1,19 +1,5 @@
 {
   "parent": "minecraft:item/generated",
-  "overrides": [
-    {
-      "model": "naturalist:item/giant_isopod_bucket/brown",
-      "predicate": {
-        "variant": 0.0
-      }
-    },
-    {
-      "model": "naturalist:item/giant_isopod_bucket/blue",
-      "predicate": {
-        "variant": 1.0
-      }
-    }
-  ],
   "textures": {
     "layer0": "naturalist:item/bucket_brown_giant_isopod"
   }

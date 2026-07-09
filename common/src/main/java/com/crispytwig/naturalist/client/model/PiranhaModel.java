@@ -14,17 +14,17 @@ import software.bernie.geckolib.model.GeoModel;
 public class PiranhaModel extends GeoModel<Piranha> {
     @Override
     public ResourceLocation getTextureResource(Piranha piranha) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/piranha.png");
+        return piranha.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getModelResource(Piranha piranha) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/piranha.geo.json");
+        return piranha.getVariantModel(Naturalist.location("geo/entity/piranha.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Piranha piranha) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/piranha.animation.json");
+        return piranha.getVariantAnimation(Naturalist.location("animations/piranha.animation.json"));
     }
 
     @Override

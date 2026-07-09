@@ -1,14 +1,19 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.VariantBucketable;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -44,10 +49,11 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 @SuppressWarnings("unused")
 public class Starfish extends WaterAnimal implements NaturalistGeoEntity, VariantBucketable {
     //region Data
-    public static final int VARIANTS = 4;
     public static final String[] VARIANT_NAMES = {"orange", "purple", "blue", "red"};
 
-    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Starfish.class, EntityDataSerializers.INT);
+    private static final ResourceKey<MobVariant> DEFAULT_VARIANT = NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("starfish"), "orange");
+
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Starfish.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Starfish.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -65,23 +71,33 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Varian
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, 0);
+        builder.define(DATA_VARIANT, DEFAULT_VARIANT.location().toString());
         builder.define(FROM_BUCKET, false);
     }
 
     @Override
-    public int getVariant() {
+    public ResourceKey<MobVariant> defaultVariant() {
+        return DEFAULT_VARIANT;
+    }
+
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/starfish/orange.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariant(int variant) {
-        this.entityData.set(DATA_VARIANT, variant);
-    }
-
-    @Override
-    public String[] getVariantNames() {
-        return VARIANT_NAMES;
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
@@ -107,14 +123,14 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Varian
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
+        this.saveVariant(compound);
         compound.putBoolean("FromBucket", this.fromBucket());
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
+        this.loadVariant(compound);
         this.setFromBucket(compound.getBoolean("FromBucket"));
     }
 
@@ -140,7 +156,7 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Varian
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
         if (reason != MobSpawnType.BUCKET) {
-            this.setVariant(this.random.nextInt(VARIANTS));
+            this.pickVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
@@ -158,7 +174,7 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Varian
     }
 
     private ItemLike getPlaceableBlock() {
-        return switch (Math.floorMod(this.getVariant(), VARIANTS)) {
+        return switch (this.getLegacyVariantIndex()) {
             case 1 -> NaturalistRegistry.PURPLE_STARFISH.get();
             case 2 -> NaturalistRegistry.BLUE_STARFISH.get();
             case 3 -> NaturalistRegistry.RED_STARFISH.get();

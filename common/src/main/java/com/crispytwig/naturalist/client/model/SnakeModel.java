@@ -18,24 +18,18 @@ public class SnakeModel extends GeoModel<Snake> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Snake snake) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/snake.geo.json");
+        return snake.getVariantModel(Naturalist.location("geo/entity/snake.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(@NotNull Snake snake) {
-        if (snake.getType().equals(NaturalistEntityTypes.CORAL_SNAKE.get())) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snake/coral_snake.png");
-        } else if (snake.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get())) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snake/rattle_snake.png");
-        } else {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snake/green_snake.png");
-        }
+        return snake.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Snake snake) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/snake.animation.json");
+        return snake.getVariantAnimation(Naturalist.location("animations/snake.animation.json"));
     }
 
     @Override

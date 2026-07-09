@@ -1,17 +1,21 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
@@ -59,11 +63,12 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 
-public class KomodoDragon extends Animal implements NaturalistGeoEntity, SleepingAnimal {
+public class KomodoDragon extends Animal implements NaturalistGeoEntity, SleepingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.KOMODO_DRAGON_FOOD_ITEMS);
     private static final int PLAYER_TARGETING_TIME = 400;
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(KomodoDragon.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> BASKING = SynchedEntityData.defineId(KomodoDragon.class, EntityDataSerializers.BOOLEAN);
 
     private int playerNearbyTicks;
@@ -92,7 +97,35 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(BASKING, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/komodo_dragon.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
     }
 
     @Override
@@ -117,6 +150,7 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
 
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }
@@ -131,7 +165,11 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        return NaturalistEntityTypes.KOMODO_DRAGON.get().create(level);
+        KomodoDragon baby = NaturalistEntityTypes.KOMODO_DRAGON.get().create(level);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+        }
+        return baby;
     }
     //endregion
 

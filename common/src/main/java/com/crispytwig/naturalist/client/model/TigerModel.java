@@ -16,25 +16,24 @@ public class TigerModel extends GeoModel<Tiger> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Tiger tiger) {
-        String name = tiger.getVariantName() + (tiger.isBaby() ? "_baby" : "");
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tiger/" + name + ".png");
+        return tiger.isBaby() ? tiger.getVariantBabyTexture() : tiger.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Tiger tiger) {
         if (tiger.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/tiger_baby.geo.json");
+            return tiger.getVariantBabyModel(Naturalist.location("geo/entity/tiger_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/tiger.geo.json");
+        return tiger.getVariantModel(Naturalist.location("geo/entity/tiger.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Tiger tiger) {
         if (tiger.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/tiger_baby.animation.json");
+            return tiger.getVariantBabyAnimation(Naturalist.location("animations/tiger_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/tiger.animation.json");
+        return tiger.getVariantAnimation(Naturalist.location("animations/tiger.animation.json"));
     }
 
     @Override

@@ -19,26 +19,23 @@ public class ZebraModel extends GeoModel<Zebra> {
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getModelResource(Zebra zebra) {
         if (zebra.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/zebra_baby.geo.json");
+            return zebra.getVariantBabyModel(Naturalist.location("geo/entity/zebra_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/zebra.geo.json");
+        return zebra.getVariantModel(Naturalist.location("geo/entity/zebra.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Zebra zebra) {
-        if (zebra.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/zebra_baby.png");
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/zebra.png");
+        return zebra.isBaby() ? zebra.getVariantBabyTexture() : zebra.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Zebra zebra) {
         if (zebra.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/zebra_baby.animation.json");
+            return zebra.getVariantBabyAnimation(Naturalist.location("animations/zebra_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/zebra.animation.json");
+        return zebra.getVariantAnimation(Naturalist.location("animations/zebra.animation.json"));
     }
 
     @Override

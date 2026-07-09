@@ -13,17 +13,17 @@ public class CatfishModel extends GeoModel<Catfish> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Catfish catfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/catfish.geo.json");
+        return catfish.getVariantModel(Naturalist.location("geo/entity/catfish.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getTextureResource(Catfish catfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/catfish.png");
+        return catfish.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Catfish catfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/catfish.animation.json");
+        return catfish.getVariantAnimation(Naturalist.location("animations/catfish.animation.json"));
     }
 }

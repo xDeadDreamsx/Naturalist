@@ -16,18 +16,18 @@ public class KomodoDragonModel extends GeoModel<KomodoDragon> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(KomodoDragon komodoDragon) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/komodo_dragon.png");
+        return komodoDragon.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(KomodoDragon komodoDragon) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/komodo_dragon.geo.json");
+        return komodoDragon.getVariantModel(Naturalist.location("geo/entity/komodo_dragon.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(KomodoDragon komodoDragon) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/komodo_dragon.animation.json");
+        return komodoDragon.getVariantAnimation(Naturalist.location("animations/komodo_dragon.animation.json"));
     }
 
     @Override

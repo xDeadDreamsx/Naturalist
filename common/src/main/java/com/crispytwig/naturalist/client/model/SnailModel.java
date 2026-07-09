@@ -19,22 +19,25 @@ public class SnailModel extends GeoModel<Snail> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Snail snail) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/snail.geo.json");
+        return snail.getVariantModel(Naturalist.location("geo/entity/snail.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getTextureResource(@NotNull Snail snail) {
+        if (snail.hasNonDefaultVariant()) {
+            return snail.getVariantTexture();
+        }
         if (snail.getSnailColor() != null) {
             int color = snail.getSnailColor().getId();
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snail/" + DyeColor.byId(color).getName() + ".png");
+            return Naturalist.location("textures/entity/snail/" + DyeColor.byId(color).getName() + ".png");
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/snail/snail.png");
+        return Naturalist.location("textures/entity/snail/snail.png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Snail snail) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/snail.animation.json");
+        return snail.getVariantAnimation(Naturalist.location("animations/snail.animation.json"));
     }
 
     @Override

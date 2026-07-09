@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
@@ -13,8 +14,14 @@ import com.crispytwig.naturalist.server.entity.util.BeachedMob;
 import com.crispytwig.naturalist.server.entity.util.BodyChain;
 import com.crispytwig.naturalist.server.entity.util.MobPart;
 import com.crispytwig.naturalist.server.entity.util.MultipartLevel;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -61,8 +68,10 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob {
+public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, DataDrivenVariantAnimal {
     //region Data
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Whale.class, EntityDataSerializers.STRING);
+
     private static final double[] PART_Z = {4.0D, 1.5D, -1.0D, -3.5D, -5.3D};
     private static final float[][] PART_SIZES = {{2.2F, 2.2F}, {3.0F, 2.5F}, {3.0F, 2.5F}, {2.2F, 2.0F}, {1.4F, 1.2F}};
 
@@ -122,6 +131,39 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob {
                 .add(Attributes.MOVEMENT_SPEED, 0.6D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/whale/whale.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
     }
 
     @Override
@@ -185,6 +227,7 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob {
 
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        this.pickVariantForSpawn(level);
         AgeableMobGroupData groupData;
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(false);
@@ -211,7 +254,11 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.WHALE.get().create(serverLevel);
+        Whale baby = NaturalistEntityTypes.WHALE.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
     }
     //endregion
 

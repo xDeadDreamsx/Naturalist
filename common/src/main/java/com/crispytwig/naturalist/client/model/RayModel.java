@@ -15,18 +15,18 @@ public class RayModel extends GeoModel<Ray> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Ray ray) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/ray/" + ray.getVariantName() + ".png");
+        return ray.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Ray ray) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/ray.geo.json");
+        return ray.getVariantModel(Naturalist.location("geo/entity/ray.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Ray ray) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/ray.animation.json");
+        return ray.getVariantAnimation(Naturalist.location("animations/ray.animation.json"));
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.NaturalistConfig;
 import com.crispytwig.naturalist.server.entity.base.*;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.EggLayingBreedGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.LayEggGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
@@ -16,10 +18,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -39,6 +43,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -55,10 +60,11 @@ import software.bernie.geckolib.animation.AnimationState;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucketable, HidingAnimal, EggLayingAnimal {
+public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucketable, HidingAnimal, EggLayingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BEETROOT);
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_COLOR = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
@@ -84,10 +90,26 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(FROM_BUCKET, false);
         builder.define(DATA_COLOR, Color.BROWN.getId());
         builder.define(HAS_EGG, false);
         builder.define(LAYING_EGG, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/snail/brown.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
@@ -164,6 +186,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putBoolean("FromBucket", this.fromBucket());
         compound.putByte("Color", (byte)this.getSnailColor().getId());
         compound.putBoolean("HasEgg", this.hasEgg());
@@ -172,6 +195,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.setFromBucket(compound.getBoolean("FromBucket"));
         this.setSnailColor(Color.BY_ID[compound.getInt("Color")]);
         this.setHasEgg(compound.getBoolean("HasEgg"));
@@ -180,7 +204,9 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     @Override
     public void saveToBucketTag(@NotNull ItemStack stack) {
         Bucketable.saveDefaultDataToBucketTag(this, stack);
+        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, this::saveVariant);
         CompoundTag compoundTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        this.saveVariant(compoundTag);
         compoundTag.putInt("Color", this.getSnailColor().getId());
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compoundTag));
     }
@@ -188,6 +214,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     @Override
     public void loadFromBucketTag(@NotNull CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
+        this.loadVariant(tag);
         if (tag.contains("Color", 3)) {
             int i = tag.getInt("Color");
             if (i >= 0 && i < Snail.Color.BY_ID.length) {
@@ -266,7 +293,19 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.SNAIL.get().create(serverLevel);
+        Snail baby = NaturalistEntityTypes.SNAIL.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        if (spawnType != MobSpawnType.BUCKET) {
+            this.pickVariantForSpawn(level);
+        }
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
 

@@ -1,11 +1,15 @@
 package com.crispytwig.naturalist.server.item;
 
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
+import com.crispytwig.naturalist.server.entity.variant.MobVariantUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
@@ -30,9 +34,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class NaturalistBucketItem extends MobBucketItem {
+    private final EntityType<?> variantEntityType;
     private final boolean noFluid;
     private final boolean allowMidWater;
     private final @Nullable String tooltipPrefix;
@@ -44,10 +50,19 @@ public class NaturalistBucketItem extends MobBucketItem {
 
     public NaturalistBucketItem(EntityType<?> entityType, Fluid content, SoundEvent emptySound, Properties properties, boolean allowMidWater, @Nullable String tooltipPrefix, @Nullable String[] variantNames) {
         super(entityType, content, emptySound, properties);
+        this.variantEntityType = entityType;
         this.noFluid = content == Fluids.EMPTY;
         this.allowMidWater = allowMidWater;
         this.tooltipPrefix = tooltipPrefix;
         this.variantNames = variantNames;
+    }
+
+    public EntityType<?> getVariantEntityType() {
+        return this.variantEntityType;
+    }
+
+    public @Nullable String[] getLegacyVariantNames() {
+        return this.variantNames;
     }
 
     @Override
@@ -102,13 +117,23 @@ public class NaturalistBucketItem extends MobBucketItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        if (this.variantNames == null || this.tooltipPrefix == null) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
+        ResourceLocation id = MobVariantUtil.readVariantId(tag, this.variantNames).orElse(null);
+        if (id == null) {
             return;
         }
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (tag.contains("Variant")) {
-            int variant = Math.floorMod(tag.getInt("Variant"), this.variantNames.length);
-            tooltip.add(Component.translatable(this.tooltipPrefix + this.variantNames[variant]).withStyle(ChatFormatting.GRAY));
+        HolderLookup.Provider registries = context.registries();
+        if (registries != null) {
+            Optional<Component> custom = NaturalistMobVariants.findRegistry(this.variantEntityType)
+                    .flatMap(registry -> MobVariantUtil.byId(registries, registry, id))
+                    .flatMap(holder -> holder.value().tooltip());
+            if (custom.isPresent()) {
+                tooltip.add(custom.get().copy().withStyle(ChatFormatting.GRAY));
+                return;
+            }
+        }
+        if (this.tooltipPrefix != null) {
+            tooltip.add(Component.translatable(this.tooltipPrefix + id.getPath()).withStyle(ChatFormatting.GRAY));
         }
     }
 }

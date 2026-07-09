@@ -7,21 +7,24 @@ import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.EggLayingBreedGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.HideGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.LayEggGoal;
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -37,8 +40,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,11 +57,13 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, HidingAnimal, EggLayingAnimal, FollowingPet {
+public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, HidingAnimal, EggLayingAnimal, FollowingPet, DataDrivenVariantAnimal {
     //region Data
+    public static final String[] VARIANT_NAMES = {"brown", "green", "black"};
+
     private static final Ingredient TEMPT_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS);
 
-    private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> VARIANT_ID = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
 
@@ -87,17 +90,34 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(VARIANT_ID, 0);
+        builder.define(VARIANT_ID, NaturalistMobVariants.TORTOISE_BROWN.location().toString());
         builder.define(HAS_EGG, false);
         builder.define(LAYING_EGG, false);
     }
 
-    public int getVariant() {
-        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 2);
+    @Override
+    public ResourceKey<MobVariant> defaultVariant() {
+        return NaturalistMobVariants.TORTOISE_BROWN;
     }
 
-    public void setVariant(int variant) {
-        this.entityData.set(VARIANT_ID, variant);
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/tortoise/brown.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(VARIANT_ID);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(VARIANT_ID, id);
     }
 
     @Override
@@ -153,7 +173,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
+        this.saveVariant(compound);
         compound.putBoolean("HasEgg", this.hasEgg());
         FollowingPet.save(this, compound);
     }
@@ -161,7 +181,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
+        this.loadVariant(compound);
         this.setHasEgg(compound.getBoolean("HasEgg"));
         FollowingPet.load(this, compound);
     }
@@ -170,14 +190,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        Holder<Biome> holder = level.getBiome(this.blockPosition());
-        if (holder.is(Biomes.SWAMP) || holder.is(Biomes.MANGROVE_SWAMP)) {
-            this.setVariant(1);
-        } else if (holder.is(BiomeTags.IS_JUNGLE) || holder.is(Biomes.DARK_FOREST)) {
-            this.setVariant(2);
-        } else {
-            this.setVariant(0);
-        }
+        this.pickVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
@@ -208,11 +221,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
         Tortoise tortoise = NaturalistEntityTypes.TORTOISE.get().create(serverLevel);
         if (ageableMob instanceof Tortoise tortoiseParent) {
             assert tortoise != null;
-            if (this.getVariant() == tortoiseParent.getVariant()) {
-                tortoise.setVariant(this.getVariant());
-            } else {
-                tortoise.setVariant(this.random.nextBoolean() ? tortoiseParent.getVariant() : this.getVariant());
-            }
+            tortoise.setVariantRawId(this.inheritVariantFrom(tortoiseParent, this.random));
             tortoise.setOwnerUUID(this.random.nextBoolean() ? tortoiseParent.getOwnerUUID() : this.getOwnerUUID());
         }
         return tortoise;

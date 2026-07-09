@@ -16,18 +16,18 @@ public class TurkeyModel extends GeoModel<Turkey> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Turkey turkey) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/turkey.png");
+        return turkey.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Turkey turkey) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/turkey.geo.json");
+        return turkey.getVariantModel(Naturalist.location("geo/entity/turkey.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Turkey turkey) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/turkey.animation.json");
+        return turkey.getVariantAnimation(Naturalist.location("animations/turkey.animation.json"));
     }
 
     @Override

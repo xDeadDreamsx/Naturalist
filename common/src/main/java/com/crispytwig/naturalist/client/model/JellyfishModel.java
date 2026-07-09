@@ -15,18 +15,18 @@ public class JellyfishModel extends GeoModel<Jellyfish> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Jellyfish jellyfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/jellyfish/" + jellyfish.getVariantName() + ".png");
+        return jellyfish.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Jellyfish jellyfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/jellyfish.geo.json");
+        return jellyfish.getVariantModel(Naturalist.location("geo/entity/jellyfish.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Jellyfish jellyfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/jellyfish.animation.json");
+        return jellyfish.getVariantAnimation(Naturalist.location("animations/jellyfish.animation.json"));
     }
 
     @Override

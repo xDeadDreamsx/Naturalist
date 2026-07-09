@@ -17,17 +17,17 @@ public class GreatWhiteSharkModel extends GeoModel<GreatWhiteShark> {
 
     @Override
     public ResourceLocation getModelResource(GreatWhiteShark shark) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/great_white_shark.geo.json");
+        return shark.getVariantModel(Naturalist.location("geo/entity/great_white_shark.geo.json"));
     }
 
     @Override
     public ResourceLocation getTextureResource(GreatWhiteShark shark) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/great_white_shark.png");
+        return shark.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(GreatWhiteShark shark) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/great_white_shark.animation.json");
+        return shark.getVariantAnimation(Naturalist.location("animations/great_white_shark.animation.json"));
     }
 
     @Override

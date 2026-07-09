@@ -12,17 +12,17 @@ public class ClamModel extends GeoModel<Clam> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Clam clam) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/clam/" + clam.getVariantName() + "_clam.png");
+        return clam.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Clam clam) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/clam.geo.json");
+        return clam.getVariantModel(Naturalist.location("geo/entity/clam.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Clam clam) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/clam.animation.json");
+        return clam.getVariantAnimation(Naturalist.location("animations/clam.animation.json"));
     }
 }

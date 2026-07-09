@@ -1,14 +1,19 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.ai.goal.FollowAdultGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -67,9 +72,10 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Bird extends ShoulderRidingEntity implements FlyingAnimal, NaturalistGeoEntity, DyeableAnimal, FollowingPet {
+public class Bird extends ShoulderRidingEntity implements FlyingAnimal, NaturalistGeoEntity, DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient TAME_FOOD = Ingredient.of(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS);
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.INT);
     private static final Vec3 HEAD_ATTACHMENT = new Vec3(0.0D, 0.1D, 0.0D);
 
@@ -102,7 +108,35 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(DATA_DYE, -1);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        if (this.getType().equals(NaturalistEntityTypes.BLUEJAY.get())) {
+            return Naturalist.location("textures/entity/bird/bluejay.png");
+        } else if (this.getType().equals(NaturalistEntityTypes.CANARY.get())) {
+            return Naturalist.location("textures/entity/bird/canary.png");
+        } else if (this.getType().equals(NaturalistEntityTypes.CARDINAL.get())) {
+            return Naturalist.location("textures/entity/bird/cardinal.png");
+        } else if (this.getType().equals(NaturalistEntityTypes.FINCH.get())) {
+            return Naturalist.location("textures/entity/bird/finch.png");
+        } else if (this.getType().equals(NaturalistEntityTypes.SPARROW.get())) {
+            return Naturalist.location("textures/entity/bird/sparrow.png");
+        } else {
+            return Naturalist.location("textures/entity/bird/robin.png");
+        }
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
@@ -130,6 +164,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         DyeableAnimal.saveDye(this, compound);
         FollowingPet.save(this, compound);
     }
@@ -137,6 +172,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         DyeableAnimal.loadDye(this, compound);
         FollowingPet.load(this, compound);
     }
@@ -145,6 +181,12 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     //region Spawning
     public static boolean checkBirdSpawnRules(EntityType<Bird> entityType, @NotNull LevelAccessor state, MobSpawnType type, @NotNull BlockPos pos, RandomSource random) {
         return state.getBlockState(pos.below()).is(BlockTags.PARROTS_SPAWNABLE_ON) && isBrightEnoughToSpawn(state, pos);
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 
     @Override

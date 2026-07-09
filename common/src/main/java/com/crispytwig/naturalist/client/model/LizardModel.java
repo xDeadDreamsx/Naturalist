@@ -14,28 +14,21 @@ import software.bernie.geckolib.model.data.EntityModelData;
 
 @Environment(EnvType.CLIENT)
 public class LizardModel extends GeoModel<Lizard> {
-    public static final ResourceLocation[] TEXTURE_LOCATIONS = new ResourceLocation[]{
-            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lizard/green.png"),
-            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lizard/brown.png"),
-            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lizard/beardie.png"),
-            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/lizard/leopard_gecko.png")
-    };
-
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Lizard lizard) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/lizard.geo.json");
+        return lizard.getVariantModel(Naturalist.location("geo/entity/lizard.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(@NotNull Lizard lizard) {
-        return TEXTURE_LOCATIONS[Math.min(lizard.getVariant(), TEXTURE_LOCATIONS.length - 1)];
+        return lizard.getVariantTexture();
     }
 
     @Override
     public @NotNull ResourceLocation getAnimationResource(Lizard lizard) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/lizard.animation.json");
+        return lizard.getVariantAnimation(Naturalist.location("animations/lizard.animation.json"));
     }
 
     @Override

@@ -22,17 +22,23 @@ public class WhaleModel extends GeoModel<Whale> {
 
     @Override
     public ResourceLocation getTextureResource(Whale whale) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/whale/" + (whale.isBaby() ? "whale_baby" : "whale") + ".png");
+        return whale.isBaby() ? whale.getVariantBabyTexture() : whale.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getModelResource(Whale whale) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/" + (whale.isBaby() ? "whale_baby" : "whale") + ".geo.json");
+        if (whale.isBaby()) {
+            return whale.getVariantBabyModel(Naturalist.location("geo/entity/whale_baby.geo.json"));
+        }
+        return whale.getVariantModel(Naturalist.location("geo/entity/whale.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Whale whale) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/" + (whale.isBaby() ? "whale_baby" : "whale") + ".animation.json");
+        if (whale.isBaby()) {
+            return whale.getVariantBabyAnimation(Naturalist.location("animations/whale_baby.animation.json"));
+        }
+        return whale.getVariantAnimation(Naturalist.location("animations/whale.animation.json"));
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
@@ -16,6 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -66,12 +69,13 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity, FollowingPet, HuntingAnimal {
+public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
     private static final Ingredient TAME_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Snake.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Snake.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Snake.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> EAT_COUNTER = SynchedEntityData.defineId(Snake.class, EntityDataSerializers.INT);
@@ -102,9 +106,31 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(SLEEPING, false);
         builder.define(EAT_COUNTER, 0);
         builder.define(REMAINING_ANGER_TIME, 0);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        if (this.getType().equals(NaturalistEntityTypes.CORAL_SNAKE.get())) {
+            return Naturalist.location("textures/entity/snake/coral_snake.png");
+        } else if (this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get())) {
+            return Naturalist.location("textures/entity/snake/rattle_snake.png");
+        } else {
+            return Naturalist.location("textures/entity/snake/green_snake.png");
+        }
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
@@ -177,6 +203,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         this.addPersistentAngerSaveData(compound);
         FollowingPet.save(this, compound);
         this.addHuntingCooldownSaveData(compound);
@@ -185,6 +212,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
         FollowingPet.load(this, compound);
         this.readHuntingCooldownSaveData(compound);
@@ -198,6 +226,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        this.pickVariantForSpawn(level);
         this.populateDefaultEquipmentSlots(random, difficulty);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }

@@ -20,26 +20,23 @@ public class HippoModel extends GeoModel<Hippo> {
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Hippo hippo) {
         if (hippo.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/hippo_baby.geo.json");
+            return hippo.getVariantBabyModel(Naturalist.location("geo/entity/hippo_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/hippo.geo.json");
+        return hippo.getVariantModel(Naturalist.location("geo/entity/hippo.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getTextureResource(Hippo hippo) {
-        if (hippo.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/hippo/hippo_baby.png");
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/hippo/hippo.png");
+        return hippo.isBaby() ? hippo.getVariantBabyTexture() : hippo.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Hippo hippo) {
         if (hippo.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/hippo_baby.animation.json");
+            return hippo.getVariantBabyAnimation(Naturalist.location("animations/hippo_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/hippo.animation.json");
+        return hippo.getVariantAnimation(Naturalist.location("animations/hippo.animation.json"));
     }
 
     @Override

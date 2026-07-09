@@ -15,20 +15,26 @@ public class BlobfishModel extends GeoModel<Blobfish> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Blobfish blobfish) {
+        if (blobfish.hasNonDefaultVariant()) {
+            return blobfish.getVariantTexture();
+        }
         String form = blobfish.isGray() ? "gray" : "pink";
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/blobfish/" + form + ".png");
+        return Naturalist.location("textures/entity/blobfish/" + form + ".png");
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Blobfish blobfish) {
+        if (blobfish.hasNonDefaultVariant()) {
+            return blobfish.getVariantModel(Naturalist.location("geo/entity/blobfish_pink.geo.json"));
+        }
         String form = blobfish.isGray() ? "gray" : "pink";
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/blobfish_" + form + ".geo.json");
+        return Naturalist.location("geo/entity/blobfish_" + form + ".geo.json");
     }
 
     @Override
     public ResourceLocation getAnimationResource(Blobfish blobfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/blobfish.animation.json");
+        return blobfish.getVariantAnimation(Naturalist.location("animations/blobfish.animation.json"));
     }
 
     @Override

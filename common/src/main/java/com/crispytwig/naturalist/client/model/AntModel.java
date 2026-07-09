@@ -12,17 +12,17 @@ public class AntModel extends GeoModel<Ant> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Ant ant) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/ant.png");
+        return ant.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Ant ant) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/ant.geo.json");
+        return ant.getVariantModel(Naturalist.location("geo/entity/ant.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Ant ant) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/ant.animation.json");
+        return ant.getVariantAnimation(Naturalist.location("animations/ant.animation.json"));
     }
 }

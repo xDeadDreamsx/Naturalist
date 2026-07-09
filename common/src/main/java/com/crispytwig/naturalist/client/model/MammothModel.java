@@ -12,17 +12,14 @@ public class MammothModel extends ElephantModel {
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Elephant elephant) {
         if (elephant.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/mammoth_baby.geo.json");
+            return elephant.getVariantBabyModel(Naturalist.location("geo/entity/mammoth_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/mammoth.geo.json");
+        return elephant.getVariantModel(Naturalist.location("geo/entity/mammoth.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Elephant elephant) {
-        if (elephant.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/mammoth/mammoth_baby.png");
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/mammoth/mammoth.png");
+        return elephant.isBaby() ? elephant.getVariantBabyTexture() : elephant.getVariantTexture();
     }
 }

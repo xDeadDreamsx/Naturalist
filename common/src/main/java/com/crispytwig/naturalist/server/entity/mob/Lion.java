@@ -1,7 +1,9 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NocturnalHostile;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
@@ -59,12 +61,13 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal, NocturnalHostile {
+public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.LION_FOOD_ITEMS);
     private static final ResourceLocation BABY_SPEED_BOOST_ID = ResourceLocation.fromNamespaceAndPath("naturalist", "baby_speed_boost");
     private static final AttributeModifier BABY_SPEED_BOOST = new AttributeModifier(BABY_SPEED_BOOST_ID, 0.05D, AttributeModifier.Operation.ADD_VALUE);
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_MANE = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.BOOLEAN);
 
@@ -99,8 +102,24 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(SLEEPING, false);
         builder.define(HAS_MANE, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/lion/lion.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
@@ -144,6 +163,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putBoolean("Mane", this.hasMane());
         FollowingPet.save(this, compound);
         this.addHuntingCooldownSaveData(compound);
@@ -152,6 +172,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.setHasMane(compound.getBoolean("Mane"));
         FollowingPet.load(this, compound);
         this.readHuntingCooldownSaveData(compound);
@@ -161,6 +182,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        this.pickVariantForSpawn(level);
         super.finalizeSpawn(level, difficulty, reason, spawnData);
         AgeableMobGroupData ageableMobGroupData;
         if (spawnData == null) {
@@ -184,7 +206,11 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.LION.get().create(serverLevel);
+        Lion baby = NaturalistEntityTypes.LION.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
     }
 
     @Override

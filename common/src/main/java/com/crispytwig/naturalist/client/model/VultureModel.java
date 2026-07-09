@@ -17,26 +17,23 @@ public class VultureModel extends GeoModel<Vulture> {
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Vulture vulture) {
         if (vulture.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/vulture_baby.geo.json");
+            return vulture.getVariantBabyModel(Naturalist.location("geo/entity/vulture_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/vulture.geo.json");
+        return vulture.getVariantModel(Naturalist.location("geo/entity/vulture.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Vulture vulture) {
-        if (vulture.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/vulture/vulture_baby.png");
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/vulture.png");
+        return vulture.isBaby() ? vulture.getVariantBabyTexture() : vulture.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Vulture vulture) {
         if (vulture.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/vulture_baby.animation.json");
+            return vulture.getVariantBabyAnimation(Naturalist.location("animations/vulture_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/vulture.animation.json");
+        return vulture.getVariantAnimation(Naturalist.location("animations/vulture.animation.json"));
     }
 
     @Override

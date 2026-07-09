@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.entity.ai.goal.HideGoal;
@@ -7,6 +8,7 @@ import com.crispytwig.naturalist.server.entity.base.HidingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.misc.DirtTrail;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -15,6 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
@@ -68,7 +71,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.UUID;
 
-public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, HidingAnimal {
+public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, HidingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final int STATE_UNROLLED = 0;
     private static final int STATE_DIGGING = 1;
@@ -86,6 +89,7 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     private static final int DIG_HOLD_TIME = 3;
     private static final int UNDERGROUND_GRACE = 60;
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Mole.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_STATE = SynchedEntityData.defineId(Mole.class, EntityDataSerializers.INT);
 
     private int stateTicks;
@@ -125,7 +129,23 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(DATA_STATE, STATE_UNROLLED);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/mole.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     private int getState() {
@@ -186,12 +206,14 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putInt("MoleState", this.getState());
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         int state = compound.getInt("MoleState");
         this.entityData.set(DATA_STATE, state);
         this.applyStateEffects(state);
@@ -207,11 +229,16 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        return NaturalistEntityTypes.MOLE.get().create(level);
+        Mole baby = NaturalistEntityTypes.MOLE.get().create(level);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+        }
+        return baby;
     }
 
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }

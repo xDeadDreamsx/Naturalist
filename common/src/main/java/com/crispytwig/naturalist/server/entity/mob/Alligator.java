@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.EggLayingAnimal;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
@@ -8,8 +9,12 @@ import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -45,10 +50,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
-public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, EggLayingAnimal, HuntingAnimal {
+public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, EggLayingAnimal, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.ALLIGATOR_FOOD_ITEMS);
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.BOOLEAN);
 
@@ -79,8 +85,24 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(HAS_EGG, false);
         builder.define(LAYING_EGG, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/alligator/alligator.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
@@ -141,6 +163,7 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putBoolean("HasEgg", this.hasEgg());
         this.addHuntingCooldownSaveData(compound);
     }
@@ -148,6 +171,7 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.setHasEgg(compound.getBoolean("HasEgg"));
         this.readHuntingCooldownSaveData(compound);
     }
@@ -171,7 +195,17 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.ALLIGATOR.get().create(serverLevel);
+        Alligator baby = NaturalistEntityTypes.ALLIGATOR.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
 

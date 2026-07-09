@@ -101,36 +101,6 @@ public final class NaturalistClient {
     }
 
     public static void registerItemProperties() {
-        ItemProperties.register(NaturalistRegistry.BUTTERFLY.get(),
-                ResourceLocation.withDefaultNamespace("variant"),
-                (stack, level, entity, seed) -> {
-                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                    if (customData != null) {
-                        return customData.copyTag().getInt("Variant") / 7.0f;
-                    }
-                    return 0.0f;
-                });
-
-        ItemProperties.register(NaturalistRegistry.CRAB.get(),
-                ResourceLocation.withDefaultNamespace("variant"),
-                (stack, level, entity, seed) -> {
-                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                    if (customData != null) {
-                        return customData.copyTag().getInt("Variant") / 5.0f;
-                    }
-                    return 0.0f;
-                });
-
-        ItemProperties.register(NaturalistRegistry.RAT.get(),
-                ResourceLocation.withDefaultNamespace("variant"),
-                (stack, level, entity, seed) -> {
-                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                    if (customData != null) {
-                        return customData.copyTag().getInt("Variant") / 3.0f;
-                    }
-                    return 0.0f;
-                });
-
         ItemProperties.register(NaturalistRegistry.SNAIL_BUCKET.get(),
                 ResourceLocation.withDefaultNamespace("color"),
                 (stack, level, entity, seed) -> {
@@ -141,58 +111,8 @@ public final class NaturalistClient {
                     return 0.0f;
                 });
 
-        ItemProperties.register(NaturalistRegistry.STARFISH_BUCKET.get(),
-                ResourceLocation.withDefaultNamespace("variant"),
-                (stack, level, entity, seed) -> {
-                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                    if (customData != null) {
-                        return customData.copyTag().getInt("Variant") / 3.0f;
-                    }
-                    return 0.0f;
-                });
-
-        ItemProperties.register(NaturalistRegistry.GIANT_ISOPOD_BUCKET.get(),
-                ResourceLocation.withDefaultNamespace("variant"),
-                (stack, level, entity, seed) -> {
-                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                    if (customData != null) {
-                        return customData.copyTag().getInt("Variant");
-                    }
-                    return 0.0f;
-                });
-
-        ItemProperties.register(NaturalistRegistry.JELLYFISH_BUCKET.get(),
-                ResourceLocation.withDefaultNamespace("variant"),
-                (stack, level, entity, seed) -> {
-                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                    if (customData != null) {
-                        return customData.copyTag().getInt("Variant") / 4.0f;
-                    }
-                    return 0.0f;
-                });
-
-        ItemProperties.register(NaturalistRegistry.ANGLERFISH_BUCKET.get(),
-                ResourceLocation.withDefaultNamespace("variant"),
-                (stack, level, entity, seed) -> {
-                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                    if (customData != null) {
-                        return customData.copyTag().getInt("Variant");
-                    }
-                    return 0.0f;
-                });
-
-        ItemProperties.register(NaturalistRegistry.RAY_BUCKET.get(),
-                ResourceLocation.withDefaultNamespace("variant"),
-                (stack, level, entity, seed) -> {
-                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                    if (customData != null) {
-                        return customData.copyTag().getInt("Variant");
-                    }
-                    return 0.0f;
-                });
-
         ItemProperties.register(NaturalistRegistry.KNAPSACK.get(),
-                ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "filled"),
+                Naturalist.location("filled"),
                 (stack, level, entity, seed) -> KnapsackItem.isFilled(stack) ? 1.0f : 0.0f);
     }
 }

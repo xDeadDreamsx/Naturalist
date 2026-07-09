@@ -12,17 +12,17 @@ public class BassModel extends GeoModel<Bass> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Bass bass) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/bass.geo.json");
+        return bass.getVariantModel(Naturalist.location("geo/entity/bass.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Bass bass) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/bass.png");
+        return bass.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Bass bass) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/bass.animation.json");
+        return bass.getVariantAnimation(Naturalist.location("animations/bass.animation.json"));
     }
 }

@@ -19,26 +19,23 @@ public class ElephantModel extends IKGeoModel<Elephant> {
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Elephant elephant) {
         if (elephant.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/elephant_baby.geo.json");
+            return elephant.getVariantBabyModel(Naturalist.location("geo/entity/elephant_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/elephant.geo.json");
+        return elephant.getVariantModel(Naturalist.location("geo/entity/elephant.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Elephant elephant) {
-        if (elephant.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/elephant/elephant_baby.png");
-        }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/elephant/elephant.png");
+        return elephant.isBaby() ? elephant.getVariantBabyTexture() : elephant.getVariantTexture();
     }
 
     @Override
     public @NotNull ResourceLocation getAnimationResource(Elephant elephant) {
         if (elephant.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/elephant_baby.animation.json");
+            return elephant.getVariantBabyAnimation(Naturalist.location("animations/elephant_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/elephant.animation.json");
+        return elephant.getVariantAnimation(Naturalist.location("animations/elephant.animation.json"));
     }
 
     @Override

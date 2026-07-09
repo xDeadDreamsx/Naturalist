@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 public final class DeferredRegister<T> {
     private final RegistrationProvider<T> provider;
     private final List<DeferredHolder<T, ? extends T>> entries = new ArrayList<>();
+    private final List<String> names = new ArrayList<>();
 
     private DeferredRegister(ResourceKey<? extends Registry<T>> registryKey, String modId) {
         this.provider = RegistrationProvider.get(registryKey, modId);
@@ -28,10 +29,15 @@ public final class DeferredRegister<T> {
     public <I extends T> DeferredHolder<T, I> register(String name, Supplier<I> supplier) {
         DeferredHolder<T, I> holder = provider.register(name, supplier);
         entries.add(holder);
+        names.add(name);
         return holder;
     }
 
     public Collection<DeferredHolder<T, ? extends T>> getEntries() {
         return Collections.unmodifiableList(entries);
+    }
+
+    public Collection<String> getRegisteredNames() {
+        return Collections.unmodifiableList(names);
     }
 }

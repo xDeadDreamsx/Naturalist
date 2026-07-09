@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
@@ -10,7 +11,13 @@ import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import net.minecraft.nbt.CompoundTag;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -40,6 +47,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.Path;
@@ -58,9 +66,11 @@ import java.util.EnumSet;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Hippo extends TamableAnimal implements NaturalistGeoEntity, FollowingPet {
+public class Hippo extends TamableAnimal implements NaturalistGeoEntity, FollowingPet, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Blocks.MELON.asItem());
+
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Hippo.class, EntityDataSerializers.STRING);
 
     private boolean followingOwner = true;
     private int eatingTicks;
@@ -92,6 +102,27 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     }
 
     @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/hippo/hippo.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
+    }
+
+    @Override
     public boolean isFollowingOwner() {
         return this.followingOwner;
     }
@@ -104,12 +135,14 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         FollowingPet.save(this, compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         FollowingPet.load(this, compound);
     }
     //endregion
@@ -148,7 +181,17 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.HIPPO.get().create(serverLevel);
+        Hippo baby = NaturalistEntityTypes.HIPPO.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
 

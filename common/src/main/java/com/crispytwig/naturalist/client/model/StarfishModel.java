@@ -12,17 +12,17 @@ public class StarfishModel extends GeoModel<Starfish> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Starfish starfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/starfish/" + starfish.getVariantName() + ".png");
+        return starfish.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Starfish starfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/starfish.geo.json");
+        return starfish.getVariantModel(Naturalist.location("geo/entity/starfish.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Starfish starfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/starfish.animation.json");
+        return starfish.getVariantAnimation(Naturalist.location("animations/starfish.animation.json"));
     }
 }

@@ -15,18 +15,18 @@ public class AnglerfishModel extends GeoModel<Anglerfish> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Anglerfish anglerfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/anglerfish/" + anglerfish.getVariantName() + ".png");
+        return anglerfish.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Anglerfish anglerfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/anglerfish.geo.json");
+        return anglerfish.getVariantModel(Naturalist.location("geo/entity/anglerfish.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Anglerfish anglerfish) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/anglerfish.animation.json");
+        return anglerfish.getVariantAnimation(Naturalist.location("animations/anglerfish.animation.json"));
     }
 
     @Override

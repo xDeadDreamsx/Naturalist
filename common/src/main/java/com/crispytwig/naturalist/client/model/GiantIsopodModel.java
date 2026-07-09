@@ -12,17 +12,17 @@ public class GiantIsopodModel extends GeoModel<GiantIsopod> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(GiantIsopod isopod) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/giant_isopod/" + isopod.getVariantName() + ".png");
+        return isopod.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(GiantIsopod isopod) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/giant_isopod.geo.json");
+        return isopod.getVariantModel(Naturalist.location("geo/entity/giant_isopod.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(GiantIsopod isopod) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/giant_isopod.animation.json");
+        return isopod.getVariantAnimation(Naturalist.location("animations/giant_isopod.animation.json"));
     }
 }

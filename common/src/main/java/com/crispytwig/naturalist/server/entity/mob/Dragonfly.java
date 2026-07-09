@@ -1,6 +1,10 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -10,6 +14,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -45,9 +51,13 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
-public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
+public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity, DataDrivenVariantAnimal {
     //region Data
-    private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Dragonfly.class, EntityDataSerializers.INT);
+    public static final String[] VARIANT_NAMES = {"blue", "green", "red"};
+
+    private static final String DEFAULT_VARIANT_ID = "naturalist:blue";
+
+    private static final EntityDataAccessor<String> VARIANT_ID = SynchedEntityData.defineId(Dragonfly.class, EntityDataSerializers.STRING);
 
     @Nullable
     private BlockPos targetPosition;
@@ -70,15 +80,32 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(VARIANT_ID, 0);
+        builder.define(VARIANT_ID, DEFAULT_VARIANT_ID);
     }
 
-    public int getVariant() {
-        return Mth.clamp(this.entityData.get(VARIANT_ID), 0, 2);
+    @Override
+    public ResourceKey<MobVariant> defaultVariant() {
+        return NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("dragonfly"), "blue");
     }
 
-    public void setVariant(int variant) {
-        this.entityData.set(VARIANT_ID, variant);
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/dragonfly/blue_dragonfly.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(VARIANT_ID);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(VARIANT_ID, id);
     }
 
     public int getHoverTicks() {
@@ -92,13 +119,13 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
+        this.saveVariant(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
+        this.loadVariant(compound);
     }
     //endregion
 
@@ -107,14 +134,10 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity {
         return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.DRAGONFLIES_SPAWNABLE_ON) && level.getRawBrightness(pos, 0) > 8;
     }
 
-    public void initVariantOnSpawn(ServerLevelAccessor level) {
-        this.setVariant(level.getRandom().nextInt(3));
-    }
-
     @Override
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.initVariantOnSpawn(level);
+        this.pickVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
     //endregion

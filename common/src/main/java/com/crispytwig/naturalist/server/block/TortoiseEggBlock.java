@@ -77,7 +77,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
 
                 Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level);
                 if (baby != null) {
-                    baby.setVariant(variant);
+                    baby.setVariantByLegacyIndex(variant);
                     baby.setAge(-24000);
                     double x = pos.getX() + 0.3 + i * 0.2;
                     double y = pos.getY();
@@ -143,7 +143,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
             for (int i = 0; i < eggCount; i++) {
                 Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level);
                 if (baby != null) {
-                    baby.setVariant(variant);
+                    baby.setVariantByLegacyIndex(variant);
                     baby.setAge(-24000);
                     double dx = pos.getX() + 0.3 + i * 0.2;
                     double dy = pos.getY();

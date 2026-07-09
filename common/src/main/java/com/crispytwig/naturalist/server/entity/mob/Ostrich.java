@@ -1,9 +1,11 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.EggLayingBreedGoal;
@@ -22,6 +24,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -87,7 +90,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob {
+public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS);
 
@@ -95,6 +98,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     private static final int MAX_TRACKED_EGGS = 16;
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Ostrich.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(Ostrich.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Ostrich.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Ostrich.class, EntityDataSerializers.BOOLEAN);
@@ -142,10 +146,26 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(SADDLED, false);
         builder.define(HAS_EGG, false);
         builder.define(LAYING_EGG, false);
         builder.define(DATA_DYE, -1);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/ostrich/ostrich.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
@@ -292,6 +312,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putBoolean("Saddled", this.isSaddled());
         compound.putBoolean("HasEgg", this.hasEgg());
         long[] eggs = new long[this.ownedEggs.size()];
@@ -308,6 +329,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.setSaddled(compound.getBoolean("Saddled"));
         this.setHasEgg(compound.getBoolean("HasEgg"));
         this.ownedEggs.clear();
@@ -329,7 +351,11 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        return NaturalistEntityTypes.OSTRICH.get().create(level);
+        Ostrich baby = NaturalistEntityTypes.OSTRICH.get().create(level);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+        }
+        return baby;
     }
 
     @Override
@@ -339,6 +365,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
 
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.pickVariantForSpawn(level);
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }

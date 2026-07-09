@@ -63,7 +63,7 @@ public class LayEggGoal<T extends Animal & EggLayingAnimal> extends MoveToBlockG
                 if (this.animal instanceof Tortoise tortoise) {
                     eggState = this.animal.getEggBlock().defaultBlockState()
                             .setValue(TurtleEggBlock.EGGS, eggCount)
-                            .setValue(TortoiseEggBlock.VARIANT, tortoise.getVariant());
+                            .setValue(TortoiseEggBlock.VARIANT, tortoise.getLegacyVariantIndex());
                 }
                 else if (this.animal instanceof Alligator) {
                     eggState = this.animal.getEggBlock().defaultBlockState()

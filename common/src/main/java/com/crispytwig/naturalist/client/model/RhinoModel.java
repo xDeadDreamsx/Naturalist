@@ -18,18 +18,18 @@ public class RhinoModel extends GeoModel<Rhino> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Rhino rhino) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/rhino.geo.json");
+        return rhino.getVariantModel(Naturalist.location("geo/entity/rhino.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Rhino rhino) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/rhino.png");
+        return rhino.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Rhino rhino) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/rhino.animation.json");
+        return rhino.getVariantAnimation(Naturalist.location("animations/rhino.animation.json"));
     }
 
     @Override

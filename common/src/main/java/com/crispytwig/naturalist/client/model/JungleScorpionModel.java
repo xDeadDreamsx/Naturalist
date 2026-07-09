@@ -11,16 +11,16 @@ import software.bernie.geckolib.model.GeoModel;
 public class JungleScorpionModel extends GeoModel<JungleScorpion> {
     @Override
     public ResourceLocation getModelResource(JungleScorpion scorpion) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/jungle_scorpion.geo.json");
+        return scorpion.getVariantModel(Naturalist.location("geo/entity/jungle_scorpion.geo.json"));
     }
 
     @Override
     public ResourceLocation getTextureResource(JungleScorpion scorpion) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/scorpion/" + scorpion.getVariantName() + "_jungle_scorpion.png");
+        return scorpion.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(JungleScorpion scorpion) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/jungle_scorpion.animation.json");
+        return scorpion.getVariantAnimation(Naturalist.location("animations/jungle_scorpion.animation.json"));
     }
 }

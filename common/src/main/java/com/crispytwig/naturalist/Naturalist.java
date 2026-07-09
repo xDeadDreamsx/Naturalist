@@ -13,6 +13,7 @@ import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.core.dispenser.ProjectileDispenseBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,6 +45,10 @@ public final class Naturalist {
     private Naturalist() {
     }
 
+    public static ResourceLocation location(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    }
+
     public static void bootstrap() {
         touch(NaturalistSoundEvents.SOUND_EVENTS);
         touch(NaturalistEntityTypes.ENTITY_TYPES);
@@ -56,6 +61,7 @@ public final class Naturalist {
         touch(NaturalistRecipes.RECIPE_TYPES);
         touch(NaturalistRecipes.RECIPE_SERIALIZERS);
         touch(NaturalistCreativeTab.CREATIVE_MODE_TABS);
+        NaturalistMobVariants.bootstrap();
     }
 
     private static void touch(Object registry) {

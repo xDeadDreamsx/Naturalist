@@ -1,8 +1,10 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
@@ -24,6 +26,11 @@ public class Mammoth extends Elephant {
     public Mammoth(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
     }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/mammoth/mammoth.png");
+    }
     //endregion
 
     //region Spawning
@@ -35,7 +42,11 @@ public class Mammoth extends Elephant {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return NaturalistEntityTypes.MAMMOTH.get().create(serverLevel);
+        Mammoth baby = NaturalistEntityTypes.MAMMOTH.get().create(serverLevel);
+        if (baby != null) {
+            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+        }
+        return baby;
     }
     //endregion
 

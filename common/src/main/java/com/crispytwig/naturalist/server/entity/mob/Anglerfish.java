@@ -1,14 +1,20 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
-import com.crispytwig.naturalist.server.entity.base.VariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
+import com.crispytwig.naturalist.server.entity.variant.MobVariantUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -54,12 +60,11 @@ import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, HuntingAnimal, VariantAnimal {
+public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
-    public static final int VARIANTS = 2;
     public static final String[] VARIANT_NAMES = {"red", "glow"};
 
-    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Anglerfish.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Anglerfish.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> DATA_HAS_TARGET = SynchedEntityData.defineId(Anglerfish.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -87,7 +92,7 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, Hun
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, 0);
+        builder.define(DATA_VARIANT, NaturalistMobVariants.ANGLERFISH_RED.location().toString());
         builder.define(DATA_HAS_TARGET, false);
     }
 
@@ -96,35 +101,45 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, Hun
     }
 
     @Override
-    public int getVariant() {
+    public ResourceKey<MobVariant> defaultVariant() {
+        return NaturalistMobVariants.ANGLERFISH_RED;
+    }
+
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/anglerfish/red.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariant(int variant) {
-        this.entityData.set(DATA_VARIANT, variant);
-    }
-
-    @Override
-    public String[] getVariantNames() {
-        return VARIANT_NAMES;
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     public boolean isGlowing() {
-        return this.getVariant() == 1;
+        return NaturalistMobVariants.ANGLERFISH_GLOW.location().equals(this.getVariantId());
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
+        this.saveVariant(compound);
         this.addHuntingCooldownSaveData(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
+        this.loadVariant(compound);
         this.readHuntingCooldownSaveData(compound);
     }
 
@@ -150,18 +165,16 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, Hun
     @Override
     public void saveToBucketTag(@NotNull ItemStack stack) {
         super.saveToBucketTag(stack);
-        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag -> tag.putInt("Variant", this.getVariant()));
+        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, this::saveVariant);
         CompoundTag custom = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        custom.putInt("Variant", this.getVariant());
+        this.saveVariant(custom);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(custom));
     }
 
     @Override
     public void loadFromBucketTag(@NotNull CompoundTag tag) {
         super.loadFromBucketTag(tag);
-        if (tag.contains("Variant")) {
-            this.setVariant(tag.getInt("Variant"));
-        }
+        this.loadVariant(tag);
     }
 
     @Override
@@ -203,7 +216,12 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, Hun
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
         if (reason != MobSpawnType.BUCKET) {
-            this.setVariant(isGlowSquidWater(level, this.blockPosition()) ? 1 : 0);
+            if (isGlowSquidWater(level, this.blockPosition())) {
+                MobVariantUtil.byKey(level.registryAccess(), NaturalistMobVariants.ANGLERFISH_VARIANT, NaturalistMobVariants.ANGLERFISH_GLOW)
+                        .ifPresent(this::setVariant);
+            } else {
+                this.pickVariantForSpawn(level);
+            }
         }
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }

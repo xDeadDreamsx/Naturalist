@@ -1,15 +1,18 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.mojang.logging.LogUtils;
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.ai.goal.FlyingWanderGoal;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
+import com.crispytwig.naturalist.server.entity.variant.MobVariantUtil;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistTags;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -17,6 +20,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
@@ -47,7 +52,6 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -57,16 +61,14 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import org.jetbrains.annotations.Nullable;
-import java.util.Arrays;
-import java.util.Comparator;
 
 @SuppressWarnings("unused")
-public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, FlyingAnimal, Catchable {
+public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, FlyingAnimal, Catchable, DataDrivenVariantAnimal {
     //region Data
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final String[] VARIANT_NAMES = {"monarch", "clouded_yellow", "swallowtail", "blue_morpho", "jade_green_swallowtail", "purple_emperor", "red_admiral"};
 
     private static final EntityDataAccessor<Boolean> HAS_NECTAR = SynchedEntityData.defineId(Butterfly.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Butterfly.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Butterfly.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Butterfly.class, EntityDataSerializers.BOOLEAN);
 
     private int numCropsGrownSincePollination;
@@ -92,17 +94,34 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, 0);
+        builder.define(DATA_VARIANT, NaturalistMobVariants.BUTTERFLY_MONARCH.location().toString());
         builder.define(FROM_HAND, false);
         builder.define(HAS_NECTAR, false);
     }
 
-    public Butterfly.Variant getVariant() {
-        return Butterfly.Variant.BY_ID[this.entityData.get(DATA_VARIANT)];
+    @Override
+    public ResourceKey<MobVariant> defaultVariant() {
+        return NaturalistMobVariants.BUTTERFLY_MONARCH;
     }
 
-    public void setVariant(Butterfly.@NotNull Variant variant) {
-        this.entityData.set(DATA_VARIANT, variant.getId());
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/butterfly/monarch.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     public boolean fromHand() {
@@ -143,32 +162,27 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
 
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", getVariant().getId());
+        this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
     }
 
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(Butterfly.Variant.BY_ID[compound.getInt("Variant")]);
+        this.loadVariant(compound);
         this.setFromHand(compound.getBoolean("FromHand"));
     }
 
     public void saveToHandTag(@NotNull ItemStack stack) {
         Catchable.saveDefaultDataToHandTag(this, stack);
         CompoundTag compoundTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        compoundTag.putInt("Variant", this.getVariant().getId());
+        this.saveVariant(compoundTag);
         compoundTag.putInt("Age", this.getAge());
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compoundTag));
     }
 
     public void loadFromHandTag(@NotNull CompoundTag tag) {
         Catchable.loadDefaultDataFromHandTag(this, tag);
-        int i = tag.getInt("Variant");
-        if (i >= 0 && i < Butterfly.Variant.BY_ID.length) {
-            this.setVariant(Butterfly.Variant.BY_ID[i]);
-        } else {
-            LOGGER.error("Invalid variant: {}", i);
-        }
+        this.loadVariant(tag);
 
         if (tag.contains("Age")) {
             this.setAge(tag.getInt("Age"));
@@ -188,53 +202,6 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     public SoundEvent getPickupSound() {
         return null;
     }
-
-    public static final String[] VARIANT_NAMES = Arrays.stream(Variant.BY_ID).map(Variant::getName).toArray(String[]::new);
-
-    public enum Variant {
-        MONARCH(0, "monarch"),
-        CLOUDED_YELLOW(1, "clouded_yellow"),
-        SWALLOWTAIL(2, "swallowtail"),
-        BLUE_MORPHO(3, "blue_morpho"),
-        JADE_GREEN_SWALLOWTAIL(4, "jade_green_swallowtail"),
-        PURPLE_EMPEROR(5, "purple_emperor"),
-        RED_ADMIRAL(6, "red_admiral");
-
-        public static final Butterfly.Variant[] BY_ID = Arrays.stream(values()).sorted(Comparator.comparingInt(Variant::getId)).toArray(Variant[]::new);
-        private final int id;
-        private final String name;
-        private final boolean common;
-
-        Variant(int j, String string2) {
-            this.id = j;
-            this.name = string2;
-            this.common = true;
-        }
-
-        public int getId() {
-            return this.id;
-        }
-
-        public String getName() {
-            return this.name;
-        }
-
-        public static @NotNull Variant getTypeById(int id) {
-            for (Variant type : values()) {
-                if (type.id == id) return type;
-            }
-            return Variant.MONARCH;
-        }
-
-        public static Butterfly.@NotNull Variant getCommonSpawnVariant(RandomSource random) {
-            return getSpawnVariant(random);
-        }
-
-        private static Butterfly.@NotNull Variant getSpawnVariant(RandomSource random) {
-            Butterfly.Variant[] variants = Arrays.stream(BY_ID).filter((variant) -> variant.common).toArray(Variant[]::new);
-            return Util.getRandom(variants, random);
-        }
-    }
     //endregion
 
     //region Spawning
@@ -248,25 +215,31 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
             return spawnData;
         } else {
             RandomSource randomSource = level.getRandom();
-            {
-                spawnData = new Butterfly.ButterflyGroupData(Variant.getCommonSpawnVariant(randomSource), Variant.getCommonSpawnVariant(randomSource));
+            if (!(spawnData instanceof Butterfly.ButterflyGroupData)) {
+                spawnData = new Butterfly.ButterflyGroupData(this.pickSpawnVariantId(level), this.pickSpawnVariantId(level));
             }
 
-            this.setVariant(((Butterfly.ButterflyGroupData)spawnData).getVariant(randomSource));
+            this.setVariantRawId(((Butterfly.ButterflyGroupData)spawnData).getVariant(randomSource));
 
             return super.finalizeSpawn(level, difficulty, reason, spawnData);
         }
     }
 
-    public static class ButterflyGroupData extends AgeableMob.AgeableMobGroupData {
-        public final Butterfly.Variant[] types;
+    private String pickSpawnVariantId(ServerLevelAccessor level) {
+        return MobVariantUtil.selectVariantForSpawn(level, this.blockPosition(), NaturalistMobVariants.BUTTERFLY_VARIANT)
+                .flatMap(holder -> holder.unwrapKey().map(key -> key.location().toString()))
+                .orElseGet(() -> this.defaultVariant().location().toString());
+    }
 
-        public ButterflyGroupData(Butterfly.Variant... variants) {
+    public static class ButterflyGroupData extends AgeableMob.AgeableMobGroupData {
+        public final String[] types;
+
+        public ButterflyGroupData(String... variantIds) {
             super(false);
-            this.types = variants;
+            this.types = variantIds;
         }
 
-        public Butterfly.Variant getVariant(RandomSource random) {
+        public String getVariant(RandomSource random) {
             return this.types[random.nextInt(this.types.length)];
         }
     }

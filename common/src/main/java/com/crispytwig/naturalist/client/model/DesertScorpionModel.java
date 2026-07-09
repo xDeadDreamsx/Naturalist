@@ -11,16 +11,16 @@ import software.bernie.geckolib.model.GeoModel;
 public class DesertScorpionModel extends GeoModel<DesertScorpion> {
     @Override
     public ResourceLocation getModelResource(DesertScorpion scorpion) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/desert_scorpion.geo.json");
+        return scorpion.getVariantModel(Naturalist.location("geo/entity/desert_scorpion.geo.json"));
     }
 
     @Override
     public ResourceLocation getTextureResource(DesertScorpion scorpion) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/scorpion/desert_scorpion.png");
+        return scorpion.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(DesertScorpion scorpion) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/desert_scorpion.animation.json");
+        return scorpion.getVariantAnimation(Naturalist.location("animations/desert_scorpion.animation.json"));
     }
 }

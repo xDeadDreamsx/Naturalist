@@ -19,30 +19,33 @@ public class DuckModel extends GeoModel<Duck> {
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Duck animal) {
         if (animal.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/duck_baby.geo.json");
+            return animal.getVariantBabyModel(Naturalist.location("geo/entity/duck_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/duck.geo.json");
+        return animal.getVariantModel(Naturalist.location("geo/entity/duck.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Duck animal) {
+        if (animal.hasNonDefaultVariant()) {
+            return animal.isBaby() ? animal.getVariantBabyTexture() : animal.getVariantTexture();
+        }
         if (animal.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/duck_baby.png");
+            return Naturalist.location("textures/entity/duck/duck_baby.png");
         }
         if (animal.getName().getString().equalsIgnoreCase("Queso")) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/queso.png");
+            return Naturalist.location("textures/entity/duck/queso.png");
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/duck/duck.png");
+        return Naturalist.location("textures/entity/duck/duck.png");
     }
 
     @SuppressWarnings("unused")
     @Override
     public @NotNull ResourceLocation getAnimationResource(Duck animal) {
         if (animal.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/duck_baby.animation.json");
+            return animal.getVariantBabyAnimation(Naturalist.location("animations/duck_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/duck.animation.json");
+        return animal.getVariantAnimation(Naturalist.location("animations/duck.animation.json"));
     }
 
     @Override

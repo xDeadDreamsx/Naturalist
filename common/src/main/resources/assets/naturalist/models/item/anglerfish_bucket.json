@@ -1,19 +1,5 @@
 {
   "parent": "minecraft:item/generated",
-  "overrides": [
-    {
-      "model": "naturalist:item/anglerfish_bucket/red",
-      "predicate": {
-        "variant": 0.0
-      }
-    },
-    {
-      "model": "naturalist:item/anglerfish_bucket/glow",
-      "predicate": {
-        "variant": 1.0
-      }
-    }
-  ],
   "textures": {
     "layer0": "naturalist:item/bucket_anglerfish"
   }

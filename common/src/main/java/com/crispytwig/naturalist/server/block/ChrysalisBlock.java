@@ -1,7 +1,9 @@
 package com.crispytwig.naturalist.server.block;
 
 import com.crispytwig.naturalist.server.entity.mob.Butterfly;
+import com.crispytwig.naturalist.server.entity.variant.MobVariantUtil;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -64,7 +66,7 @@ public class ChrysalisBlock extends HorizontalDirectionalBlock {
             level.levelEvent(2001, pos, Block.getId(state));
             Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.get().create(level);
             assert butterfly != null;
-            butterfly.setVariant(Butterfly.Variant.getTypeById(random.nextInt(Butterfly.Variant.values().length)));
+            MobVariantUtil.selectVariantForSpawn(level, pos, NaturalistMobVariants.BUTTERFLY_VARIANT).ifPresent(butterfly::setVariant);
             butterfly.moveTo(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 0.0F, 0.0F);
             level.addFreshEntity(butterfly);
         }

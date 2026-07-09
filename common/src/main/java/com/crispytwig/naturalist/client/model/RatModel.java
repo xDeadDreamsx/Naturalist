@@ -16,18 +16,18 @@ public class RatModel extends GeoModel<Rat> {
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(Rat rat) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/rat/" + rat.getVariantName() + ".png");
+        return rat.getVariantTexture();
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getModelResource(Rat rat) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/rat.geo.json");
+        return rat.getVariantModel(Naturalist.location("geo/entity/rat.geo.json"));
     }
 
     @Override
     public ResourceLocation getAnimationResource(Rat rat) {
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/rat.animation.json");
+        return rat.getVariantAnimation(Naturalist.location("animations/rat.animation.json"));
     }
 
     @Override

@@ -1,9 +1,12 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
-import com.crispytwig.naturalist.server.entity.base.VariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,6 +14,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
@@ -47,12 +52,13 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Clam extends WaterAnimal implements NaturalistGeoEntity, VariantAnimal {
+public class Clam extends WaterAnimal implements NaturalistGeoEntity, DataDrivenVariantAnimal {
     //region Data
-    public static final int VARIANTS = 2;
     public static final String[] VARIANT_NAMES = {"brown", "white"};
 
-    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(Clam.class, EntityDataSerializers.INT);
+    private static final ResourceKey<MobVariant> DEFAULT_VARIANT = NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("clam"), "brown");
+
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Clam.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> DATA_OPEN = SynchedEntityData.defineId(Clam.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_HAS_TREASURE = SynchedEntityData.defineId(Clam.class, EntityDataSerializers.BOOLEAN);
 
@@ -85,24 +91,34 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, VariantAni
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, 0);
+        builder.define(DATA_VARIANT, DEFAULT_VARIANT.location().toString());
         builder.define(DATA_OPEN, false);
         builder.define(DATA_HAS_TREASURE, false);
     }
 
     @Override
-    public int getVariant() {
+    public ResourceKey<MobVariant> defaultVariant() {
+        return DEFAULT_VARIANT;
+    }
+
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/clam/brown_clam.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariant(int variant) {
-        this.entityData.set(DATA_VARIANT, variant);
-    }
-
-    @Override
-    public String[] getVariantNames() {
-        return VARIANT_NAMES;
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     public boolean isOpen() {
@@ -124,7 +140,7 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, VariantAni
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
+        this.saveVariant(compound);
         compound.putBoolean("Open", this.isOpen());
         compound.putBoolean("HasTreasure", this.hasTreasure());
     }
@@ -132,7 +148,7 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, VariantAni
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
+        this.loadVariant(compound);
         this.setOpen(compound.getBoolean("Open"));
         this.setHasTreasure(compound.getBoolean("HasTreasure"));
     }
@@ -158,7 +174,7 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, VariantAni
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.setVariant(this.random.nextInt(VARIANTS));
+        this.pickVariantForSpawn(level);
         if (this.random.nextFloat() < 0.05F) {
             this.setHasTreasure(true);
             this.setItemSlot(EquipmentSlot.MAINHAND, this.randomTreasure());

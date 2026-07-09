@@ -1,10 +1,15 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
-import com.crispytwig.naturalist.server.entity.base.VariantAnimal;
+import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -19,11 +24,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.RawAnimation;
 
-public class JungleScorpion extends Scorpion implements VariantAnimal {
+public class JungleScorpion extends Scorpion implements DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"black", "green"};
 
-    private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(JungleScorpion.class, EntityDataSerializers.INT);
+    private static final String DEFAULT_VARIANT_ID = "naturalist:black";
+
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(JungleScorpion.class, EntityDataSerializers.STRING);
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.jungle_scorpion.idle");
     protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.jungle_scorpion.walk");
@@ -44,41 +51,51 @@ public class JungleScorpion extends Scorpion implements VariantAnimal {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, 0);
+        builder.define(DATA_VARIANT, DEFAULT_VARIANT_ID);
     }
 
     @Override
-    public int getVariant() {
+    public ResourceKey<MobVariant> defaultVariant() {
+        return NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("jungle_scorpion"), "black");
+    }
+
+    @Override
+    public String[] legacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/scorpion/black_jungle_scorpion.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariant(int variant) {
-        this.entityData.set(DATA_VARIANT, variant);
-    }
-
-    @Override
-    public String[] getVariantNames() {
-        return VARIANT_NAMES;
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt(VARIANT_TAG, this.getVariant());
+        this.saveVariant(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt(VARIANT_TAG));
+        this.loadVariant(compound);
     }
     //endregion
 
     //region Spawning
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.setVariant(this.random.nextInt(VARIANT_NAMES.length));
+        this.pickVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion

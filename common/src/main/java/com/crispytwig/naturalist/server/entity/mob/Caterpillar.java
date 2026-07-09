@@ -1,7 +1,9 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.block.ChrysalisBlock;
 import com.crispytwig.naturalist.server.entity.base.*;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -46,8 +49,9 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, Catchable {
+public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, Catchable, DataDrivenVariantAnimal {
     //region Data
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Caterpillar.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Caterpillar.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -66,7 +70,23 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
         builder.define(FROM_HAND, false);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/caterpillar.png");
+    }
+
+    @Override
+    public String getVariantRawId() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    @Override
+    public void setVariantRawId(String id) {
+        this.entityData.set(DATA_VARIANT, id);
     }
 
     public boolean fromHand() {
@@ -87,23 +107,27 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
 
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
     }
 
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.loadVariant(compound);
         this.setFromHand(compound.getBoolean("FromHand"));
     }
 
     public void saveToHandTag(ItemStack stack) {
         Catchable.saveDefaultDataToHandTag(this, stack);
         CompoundTag compoundTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        this.saveVariant(compoundTag);
         compoundTag.putInt("Age", this.getAge());
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compoundTag));
     }
 
     public void loadFromHandTag(CompoundTag tag) {
         Catchable.loadDefaultDataFromHandTag(this, tag);
+        this.loadVariant(tag);
 
         if (tag.contains("Age")) {
             this.setAge(tag.getInt("Age"));
@@ -123,6 +147,7 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+        this.pickVariantForSpawn(level);
         this.setAge(0);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }

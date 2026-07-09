@@ -19,34 +19,23 @@ public class TortoiseModel extends GeoModel<Tortoise> {
     @SuppressWarnings("removal")
     public @NotNull ResourceLocation getModelResource(Tortoise tortoise) {
         if (tortoise.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/tortoise_baby.geo.json");
+            return tortoise.getVariantBabyModel(Naturalist.location("geo/entity/tortoise_baby.geo.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "geo/entity/tortoise.geo.json");
+        return tortoise.getVariantModel(Naturalist.location("geo/entity/tortoise.geo.json"));
     }
 
     @Override
     @SuppressWarnings("removal")
     public ResourceLocation getTextureResource(@NotNull Tortoise tortoise) {
-        if (tortoise.isBaby()) {
-            return switch (tortoise.getVariant()) {
-                case 1 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/green_baby.png");
-                case 2 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/black_baby.png");
-                default -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/brown_baby.png");
-            };
-        }
-        return switch (tortoise.getVariant()) {
-            case 1 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/green.png");
-            case 2 -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/black.png");
-            default -> ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/tortoise/brown.png");
-        };
+        return tortoise.isBaby() ? tortoise.getVariantBabyTexture() : tortoise.getVariantTexture();
     }
 
     @Override
     public ResourceLocation getAnimationResource(Tortoise tortoise) {
         if (tortoise.isBaby()) {
-            return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/tortoise_baby.animation.json");
+            return tortoise.getVariantBabyAnimation(Naturalist.location("animations/tortoise_baby.animation.json"));
         }
-        return ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "animations/tortoise.animation.json");
+        return tortoise.getVariantAnimation(Naturalist.location("animations/tortoise.animation.json"));
     }
 
     @Override

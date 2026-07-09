@@ -1,6 +1,8 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -13,6 +15,11 @@ public class BlackBear extends Bear {
     //region Behavior
     public BlackBear(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    public ResourceLocation fallbackVariantTexture() {
+        return Naturalist.location("textures/entity/black_bear/black_bear.png");
     }
 
     @Nullable
