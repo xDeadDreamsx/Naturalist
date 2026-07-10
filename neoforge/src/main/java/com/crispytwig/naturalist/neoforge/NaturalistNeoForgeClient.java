@@ -1,9 +1,11 @@
 package com.crispytwig.naturalist.neoforge;
 
 import com.crispytwig.naturalist.NaturalistClient;
+import com.crispytwig.naturalist.client.gui.tooltip.MobTooltipRenderer;
 import com.crispytwig.naturalist.client.model.item.VariantAwareItemModel;
 import com.crispytwig.naturalist.client.model.item.VariantItemModels;
 import com.crispytwig.naturalist.server.item.NaturalistBucketItem;
+import com.crispytwig.naturalist.server.item.tooltip.MobTooltipData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +14,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -23,6 +26,7 @@ public class NaturalistNeoForgeClient {
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modEventBus.addListener(NaturalistNeoForgeClient::registerRenderers);
         modEventBus.addListener(NaturalistNeoForgeClient::registerMenuScreens);
+        modEventBus.addListener(NaturalistNeoForgeClient::registerTooltipComponents);
         modEventBus.addListener(NaturalistNeoForgeClient::registerExtraModels);
         modEventBus.addListener(NaturalistNeoForgeClient::wrapVariantItemModels);
         modEventBus.addListener(NaturalistNeoForgeClient::clientSetup);
@@ -34,6 +38,10 @@ public class NaturalistNeoForgeClient {
 
     private static void registerMenuScreens(RegisterMenuScreensEvent event) {
         NaturalistClient.registerMenuScreens(event::register);
+    }
+
+    private static void registerTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(MobTooltipData.class, MobTooltipRenderer::new);
     }
 
     private static void registerExtraModels(ModelEvent.RegisterAdditional event) {

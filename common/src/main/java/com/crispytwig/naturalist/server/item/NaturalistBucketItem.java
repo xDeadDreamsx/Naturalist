@@ -2,6 +2,7 @@ package com.crispytwig.naturalist.server.item;
 
 import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.server.entity.variant.MobVariantUtil;
+import com.crispytwig.naturalist.server.item.tooltip.MobTooltipData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.MobBucketItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
@@ -113,6 +115,12 @@ public class NaturalistBucketItem extends MobBucketItem {
         this.playEmptySound(player, level, pos);
         player.awardStat(Stats.ITEM_USED.get(this));
         return InteractionResultHolder.sidedSuccess(getEmptySuccessItem(stack, player), level.isClientSide());
+    }
+
+    @Override
+    public @NotNull Optional<TooltipComponent> getTooltipImage(@NotNull ItemStack stack) {
+        Optional<TooltipComponent> mobPreview = MobTooltipData.forSingleMob(this.variantEntityType, stack);
+        return mobPreview.isPresent() ? mobPreview : super.getTooltipImage(stack);
     }
 
     @Override

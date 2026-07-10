@@ -6,6 +6,7 @@ import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.entity.ai.goal.BlobfishStayDeepGoal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -34,6 +35,7 @@ import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
@@ -140,6 +142,19 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity, DataD
     @Override
     public @NotNull ItemStack getBucketItemStack() {
         return new ItemStack(NaturalistRegistry.BLOBFISH_BUCKET.get());
+    }
+
+    @Override
+    public void saveToBucketTag(@NotNull ItemStack stack) {
+        super.saveToBucketTag(stack);
+        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, this::saveVariant);
+    }
+
+    @Override
+    public void loadFromBucketTag(@NotNull CompoundTag tag) {
+        super.loadFromBucketTag(tag);
+        this.loadVariant(tag);
+        this.setGray(false);
     }
     //endregion
 

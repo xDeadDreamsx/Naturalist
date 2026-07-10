@@ -668,6 +668,31 @@
 					"scale": [-0.1, 0.1, 0.3]
 				}
 			}
+		},
+		"animation.sf_nba.crab.tooltip": {
+			"loop": true,
+			"animation_length": 2.5417,
+			"bones": {
+				"root": {
+					"rotation": [5, -47.5, 0],
+					"position": [0, 3, 0]
+				},
+				"shell": {
+					"rotation": [-10, 0, 0]
+				},
+				"leftEye": {
+					"rotation": [2.8806, 29.8742, 5.7686]
+				},
+				"rightEye": {
+					"rotation": [-5.9637, 39.4897, -12.69]
+				},
+				"leftClaw": {
+					"rotation": [9.7675, -2.154, 12.316]
+				},
+				"rightClaw": {
+					"rotation": [14.8774, 1.936, -7.2472]
+				}
+			}
 		}
 	}
 }

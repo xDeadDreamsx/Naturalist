@@ -1,12 +1,15 @@
 package com.crispytwig.naturalist.fabric.client;
 
 import com.crispytwig.naturalist.NaturalistClient;
+import com.crispytwig.naturalist.client.gui.tooltip.MobTooltipRenderer;
 import com.crispytwig.naturalist.client.model.item.VariantAwareItemModel;
 import com.crispytwig.naturalist.client.model.item.VariantItemModels;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.server.item.NaturalistBucketItem;
+import com.crispytwig.naturalist.server.item.tooltip.MobTooltipData;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager;
 import net.fabricmc.fabric.api.client.model.loading.v1.PreparableModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -28,6 +31,9 @@ public class NaturalistFabricClient implements ClientModInitializer {
         NaturalistClient.registerMenuScreens(MenuScreens::register);
 
         registerVariantItemModels();
+
+        TooltipComponentCallback.EVENT.register(data ->
+                data instanceof MobTooltipData mobData ? new MobTooltipRenderer(mobData) : null);
 
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.ORANGE_STARFISH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.PURPLE_STARFISH.get(), RenderType.cutout());

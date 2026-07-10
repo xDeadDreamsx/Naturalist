@@ -204,7 +204,10 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     @Override
     public void saveToBucketTag(@NotNull ItemStack stack) {
         Bucketable.saveDefaultDataToBucketTag(this, stack);
-        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, this::saveVariant);
+        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag -> {
+            this.saveVariant(tag);
+            tag.putInt("Color", this.getSnailColor().getId());
+        });
         CompoundTag compoundTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         this.saveVariant(compoundTag);
         compoundTag.putInt("Color", this.getSnailColor().getId());

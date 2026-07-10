@@ -1267,6 +1267,30 @@
 					"position": [0, 1, 0]
 				}
 			}
+		},
+		"animation.sf_nba.rat.tooltip": {
+			"loop": true,
+			"bones": {
+				"root": {
+					"rotation": [15, -37.5, 0],
+					"position": [2, 3, 0]
+				},
+				"tail2": {
+					"rotation": [27.5, 0, 0]
+				},
+				"skull": {
+					"rotation": [-7.5, -15, 0]
+				},
+				"leftArm": {
+					"rotation": [22.0107, -4.5231, -15.3195]
+				},
+				"rightArm": {
+					"rotation": [47.5, 0, 0]
+				},
+				"rightLeg": {
+					"rotation": [24.0335, 13.6515, 2.948]
+				}
+			}
 		}
 	}
 }

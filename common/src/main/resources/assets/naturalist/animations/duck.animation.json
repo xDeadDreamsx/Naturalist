@@ -1,6 +1,61 @@
 {
   "format_version": "1.10.0",
   "animations": {
+    "animation.sf_nba.duck.tooltip": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "rotation": [
+            5,
+            10,
+            0
+          ]
+        },
+        "leftWing": {
+          "rotation": [
+            -15,
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0,
+            1
+          ]
+        },
+        "rightWing": {
+          "rotation": [
+            -15,
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0,
+            1
+          ]
+        },
+        "neck": {
+          "rotation": [
+            -10,
+            20,
+            0
+          ],
+          "position": [
+            0,
+            -0.25,
+            0.25
+          ]
+        },
+        "tail": {
+          "rotation": [
+            -10,
+            0,
+            0
+          ]
+        }
+      }
+    },
     "animation.sf_nba.duck.idle": {
       "loop": true,
       "bones": {
