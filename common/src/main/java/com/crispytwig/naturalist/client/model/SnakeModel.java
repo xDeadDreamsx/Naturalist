@@ -59,7 +59,7 @@ public class SnakeModel extends GeoModel<Snake> {
             tail2.resetStateChanges();
         });
 
-        this.getBone("tail4").ifPresent(tail4 -> tail4.setHidden(!entity.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get())));
+        this.getBone("tail4").ifPresent(tail4 -> tail4.setHidden(!entity.isRattlesnake()));
 
         boolean sleeping = entity.isSleeping();
         this.getBone("awake").ifPresent(bone -> bone.setHidden(sleeping));

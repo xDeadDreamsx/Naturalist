@@ -114,13 +114,15 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public ResourceLocation fallbackVariantTexture() {
-        if (this.getType().equals(NaturalistEntityTypes.CORAL_SNAKE.get())) {
-            return Naturalist.location("textures/entity/snake/coral_snake.png");
-        } else if (this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get())) {
-            return Naturalist.location("textures/entity/snake/rattle_snake.png");
-        } else {
-            return Naturalist.location("textures/entity/snake/green_snake.png");
-        }
+        return Naturalist.location("textures/entity/snake/green_snake.png");
+    }
+
+    public boolean isVenomous() {
+        return this.isRattlesnake() || this.getVariantId().getPath().equals("coral_snake");
+    }
+
+    public boolean isRattlesnake() {
+        return this.getVariantId().getPath().equals("rattlesnake");
     }
 
     @Override
@@ -320,7 +322,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public boolean doHurtTarget(@NotNull Entity entity) {
-        if ((this.getType().equals(NaturalistEntityTypes.CORAL_SNAKE.get()) || this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get())) && entity instanceof LivingEntity living) {
+        if (this.isVenomous() && entity instanceof LivingEntity living) {
             living.addEffect(new MobEffectInstance(MobEffects.POISON, 40));
         }
         return super.doHurtTarget(entity);
@@ -469,13 +471,14 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     }
 
     private boolean canRattle() {
+        boolean rattlesnake = this.isRattlesnake();
         List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
-        if(!players.isEmpty() && this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get()) && !players.getFirst().isCreative()){
+        if(!players.isEmpty() && rattlesnake && !players.getFirst().isCreative()){
             this.setTarget(players.getFirst());
         } else {
             this.setTarget(null);
         }
-        return !players.isEmpty() && this.getType().equals(NaturalistEntityTypes.RATTLESNAKE.get());
+        return !players.isEmpty() && rattlesnake;
     }
 
     @Nullable

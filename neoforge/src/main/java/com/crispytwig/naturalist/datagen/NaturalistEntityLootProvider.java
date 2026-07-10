@@ -40,12 +40,7 @@ public class NaturalistEntityLootProvider extends EntityLootSubProvider {
         add(NaturalistEntityTypes.CATFISH.get(), fishTable(NaturalistRegistry.CATFISH.get().asItem()));
         add(NaturalistEntityTypes.LIZARD_TAIL.get(), fishTable(NaturalistRegistry.LIZARD_TAIL.get()));
 
-        add(NaturalistEntityTypes.BLUEJAY.get(), featherTable(1, 2));
-        add(NaturalistEntityTypes.CANARY.get(), featherTable(1, 2));
-        add(NaturalistEntityTypes.CARDINAL.get(), featherTable(1, 2));
-        add(NaturalistEntityTypes.FINCH.get(), featherTable(1, 2));
-        add(NaturalistEntityTypes.ROBIN.get(), featherTable(1, 2));
-        add(NaturalistEntityTypes.SPARROW.get(), featherTable(1, 2));
+        add(NaturalistEntityTypes.BIRD.get(), featherTable(1, 2));
 
         add(NaturalistEntityTypes.BUTTERFLY.get(), simpleLootingTable(Items.BONE_MEAL, 0, 1));
         add(NaturalistEntityTypes.CATERPILLAR.get(), simpleLootingTable(Items.BONE_MEAL, 0, 1));
@@ -225,27 +220,22 @@ public class NaturalistEntityLootProvider extends EntityLootSubProvider {
         return Stream.of(
                 NaturalistEntityTypes.BASS.get(),
                 NaturalistEntityTypes.BEAR.get(),
-                NaturalistEntityTypes.BLUEJAY.get(),
+                NaturalistEntityTypes.BIRD.get(),
                 NaturalistEntityTypes.BOAR.get(),
                 NaturalistEntityTypes.BUTTERFLY.get(),
-                NaturalistEntityTypes.CANARY.get(),
-                NaturalistEntityTypes.CARDINAL.get(),
                 NaturalistEntityTypes.CATERPILLAR.get(),
                 NaturalistEntityTypes.CATFISH.get(),
                 NaturalistEntityTypes.DEER.get(),
                 NaturalistEntityTypes.DRAGONFLY.get(),
                 NaturalistEntityTypes.DUCK.get(),
                 NaturalistEntityTypes.ELEPHANT.get(),
-                NaturalistEntityTypes.FINCH.get(),
                 NaturalistEntityTypes.FIREFLY.get(),
                 NaturalistEntityTypes.GIRAFFE.get(),
                 NaturalistEntityTypes.HIPPO.get(),
                 NaturalistEntityTypes.LION.get(),
                 NaturalistEntityTypes.LIZARD_TAIL.get(),
                 NaturalistEntityTypes.RHINO.get(),
-                NaturalistEntityTypes.ROBIN.get(),
                 NaturalistEntityTypes.SNAIL.get(),
-                NaturalistEntityTypes.SPARROW.get(),
                 NaturalistEntityTypes.TORTOISE.get(),
                 NaturalistEntityTypes.VULTURE.get()
         );

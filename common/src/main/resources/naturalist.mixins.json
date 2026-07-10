@@ -18,6 +18,7 @@
     "BottleItemMixin",
     "CreeperMixin",
     "CropBlockMixin",
+    "EntityTypeMixin",
     "LevelMixin",
     "MapItemMixin",
     "MobMixin",

@@ -38,16 +38,9 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.BUTTERFLY.get(), ButterflyRenderer::new);
         r.register(NaturalistEntityTypes.FIREFLY.get(), FireflyRenderer::new);
         r.register(NaturalistEntityTypes.SNAKE.get(), SnakeRenderer::new);
-        r.register(NaturalistEntityTypes.CORAL_SNAKE.get(), SnakeRenderer::new);
-        r.register(NaturalistEntityTypes.RATTLESNAKE.get(), SnakeRenderer::new);
         r.register(NaturalistEntityTypes.CRAB.get(), CrabRenderer::new);
         r.register(NaturalistEntityTypes.DEER.get(), DeerRenderer::new);
-        r.register(NaturalistEntityTypes.BLUEJAY.get(), BirdRenderer::new);
-        r.register(NaturalistEntityTypes.CARDINAL.get(), BirdRenderer::new);
-        r.register(NaturalistEntityTypes.CANARY.get(), BirdRenderer::new);
-        r.register(NaturalistEntityTypes.ROBIN.get(), BirdRenderer::new);
-        r.register(NaturalistEntityTypes.FINCH.get(), BirdRenderer::new);
-        r.register(NaturalistEntityTypes.SPARROW.get(), BirdRenderer::new);
+        r.register(NaturalistEntityTypes.BIRD.get(), BirdRenderer::new);
         r.register(NaturalistEntityTypes.CATERPILLAR.get(), CaterpillarRenderer::new);
         r.register(NaturalistEntityTypes.RHINO.get(), RhinoRenderer::new);
         r.register(NaturalistEntityTypes.LION.get(), LionRenderer::new);

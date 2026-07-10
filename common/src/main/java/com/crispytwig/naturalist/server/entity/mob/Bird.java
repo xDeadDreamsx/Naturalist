@@ -47,6 +47,7 @@ import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -77,7 +78,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     private static final Ingredient TAME_FOOD = Ingredient.of(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS);
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.INT);
-    private static final Vec3 HEAD_ATTACHMENT = new Vec3(0.0D, 0.1D, 0.0D);
+    private static final Vec3 HEAD_ATTACHMENT = new Vec3(0.0D, -0.05D, 0.0D);
 
     private boolean followingOwner = true;
     public float flap;
@@ -89,9 +90,9 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.bird.idle");
-    protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.bird.fly");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.bird.sit");
+    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.passerine.idle");
+    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.passerine.walk");
+    protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.passerine.fly");
 
     public Bird(@NotNull EntityType<? extends ShoulderRidingEntity> entityType, @NotNull Level level) {
         super(entityType, level);
@@ -114,19 +115,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
 
     @Override
     public ResourceLocation fallbackVariantTexture() {
-        if (this.getType().equals(NaturalistEntityTypes.BLUEJAY.get())) {
-            return Naturalist.location("textures/entity/bird/bluejay.png");
-        } else if (this.getType().equals(NaturalistEntityTypes.CANARY.get())) {
-            return Naturalist.location("textures/entity/bird/canary.png");
-        } else if (this.getType().equals(NaturalistEntityTypes.CARDINAL.get())) {
-            return Naturalist.location("textures/entity/bird/cardinal.png");
-        } else if (this.getType().equals(NaturalistEntityTypes.FINCH.get())) {
-            return Naturalist.location("textures/entity/bird/finch.png");
-        } else if (this.getType().equals(NaturalistEntityTypes.SPARROW.get())) {
-            return Naturalist.location("textures/entity/bird/sparrow.png");
-        } else {
-            return Naturalist.location("textures/entity/bird/robin.png");
-        }
+        return Naturalist.location("textures/entity/bird/american_robin.png");
     }
 
     @Override
@@ -344,6 +333,10 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
             this.stopRiding();
             notifyCarrier(player);
         }
+
+        if (player.hasEffect(MobEffects.SLOW_FALLING)) {
+            player.resetFallDistance();
+        }
     }
 
     private static void notifyCarrier(@NotNull Player player) {
@@ -398,22 +391,15 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     protected SoundEvent getAmbientSound() {
         if (this.level().isNight()) {
             return null;
-        } else {
-            if (this.getType().equals(NaturalistEntityTypes.BLUEJAY.get())) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_BLUEJAY.get();
-            } else if (this.getType().equals(NaturalistEntityTypes.CANARY.get())) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_CANARY.get();
-            } else if (this.getType().equals(NaturalistEntityTypes.CARDINAL.get())) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_CARDINAL.get();
-            } else if (this.getType().equals((NaturalistEntityTypes.FINCH.get()))) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_FINCH.get();
-            } else if (this.getType().equals((NaturalistEntityTypes.SPARROW.get()))) {
-                return NaturalistSoundEvents.BIRD_AMBIENT_SPARROW.get();
-            }
-            else {
-                return NaturalistSoundEvents.BIRD_AMBIENT_ROBIN.get();
-            }
         }
+        return switch (this.getVariantId().getPath()) {
+            case "blue_jay", "stellers_jay" -> NaturalistSoundEvents.BIRD_AMBIENT_BLUEJAY.get();
+            case "northern_cardinal" -> NaturalistSoundEvents.BIRD_AMBIENT_CARDINAL.get();
+            case "carolina_chickadee", "tufted_titmouse" -> NaturalistSoundEvents.BIRD_AMBIENT_FINCH.get();
+            case "red_winged_blackbird" -> NaturalistSoundEvents.BIRD_AMBIENT_CANARY.get();
+            case "white_throated_sparrow" -> NaturalistSoundEvents.BIRD_AMBIENT_SPARROW.get();
+            default -> NaturalistSoundEvents.BIRD_AMBIENT_ROBIN.get();
+        };
     }
 
     @Override
@@ -697,13 +683,15 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
             event.getController().setAnimation(this.getVehicle().onGround() ? IDLE : FLY);
             return PlayState.CONTINUE;
         } else if (this.isInSittingPose()) {
-            event.getController().setAnimation(SIT);
+            event.getController().setAnimation(IDLE);
             return PlayState.CONTINUE;
         } else if (this.isFlying()) {
             event.getController().setAnimation(FLY);
             return PlayState.CONTINUE;
-        }
-        else {
+        } else if (event.isMoving()) {
+            event.getController().setAnimation(WALK);
+            return PlayState.CONTINUE;
+        } else {
             event.getController().setAnimation(IDLE);
             return PlayState.CONTINUE;
         }
