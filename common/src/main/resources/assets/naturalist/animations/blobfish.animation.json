@@ -1,6 +1,21 @@
 {
   "format_version": "1.10.0",
   "animations": {
+    "animation.sf_nba.blobfish_pink.tooltip": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "rotation": [10, -32, -6],
+          "position": [0, 1, 0]
+        },
+        "sf_head": {
+          "rotation": [-6, 0, 0]
+        },
+        "tail": {
+          "rotation": [10, 0, 0]
+        }
+      }
+    },
     "animation.sf_nba.blobfish_gray.swim": {
       "sound_effects": {
         "0.05": {

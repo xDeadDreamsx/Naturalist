@@ -1,6 +1,30 @@
 {
   "format_version": "1.10.0",
   "animations": {
+    "animation.sf_nba.catfish.tooltip": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "rotation": [16, -35, -8],
+          "position": [0, 1, 0]
+        },
+        "body": {
+          "rotation": [4, 0, 0]
+        },
+        "neck": {
+          "rotation": [-5, 0, 0]
+        },
+        "tail": {
+          "rotation": [12, 0, 0]
+        },
+        "left_fin": {
+          "rotation": [10, 0, 0]
+        },
+        "right_fin": {
+          "rotation": [16, 0, 0]
+        }
+      }
+    },
     "animation.sf_nba.catfish.swim": {
       "loop": true,
       "animation_length": 1,

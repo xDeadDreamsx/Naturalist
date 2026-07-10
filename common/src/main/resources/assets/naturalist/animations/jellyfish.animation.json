@@ -1,6 +1,20 @@
 {
   "format_version": "1.10.0",
   "animations": {
+    "animation.sf_nba.jellyfish.tooltip": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "rotation": [14, -18, 0]
+        },
+        "body": {
+          "rotation": [4, 0, 0]
+        },
+        "tentacles": {
+          "rotation": [6, 0, 0]
+        }
+      }
+    },
     "animation.sf_nba.jellyfish.idle": {
       "loop": true,
       "bones": {

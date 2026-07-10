@@ -1,6 +1,32 @@
 {
   "format_version": "1.10.0",
   "animations": {
+    "animation.sf_nba.anglerfish.tooltip": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "rotation": [10, -35, -6]
+        },
+        "body": {
+          "rotation": [3, 0, 0]
+        },
+        "dangly": {
+          "rotation": [10, 0, 0]
+        },
+        "jaw": {
+          "rotation": [8, 0, 0]
+        },
+        "leftFin": {
+          "rotation": [8, 0, 0]
+        },
+        "rightFin": {
+          "rotation": [14, 0, 0]
+        },
+        "tail": {
+          "rotation": [12, 0, 0]
+        }
+      }
+    },
     "animation.sf_nba.anglerfish.swim": {
       "sound_effects": {
         "0.05": {
