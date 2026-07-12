@@ -466,13 +466,13 @@
 				},
 				"shell": {
 					"rotation": [
-						"v.freq = 1; v.mag = 2; v.balloon = 1; v.offset = 1; v.time_offset = 0; return -Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset;",
+						"v.freq = 1; v.mag = 2; v.balloon = 1; v.offset = 1; v.time_offset = 0; -Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset;",
 						0,
 						0
 					],
 					"position": [
 						0,
-						"v.freq = 1; v.mag = -0.2; v.balloon = 1; v.offset = 0.0; v.time_offset = -0.2; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
+						"v.freq = 1; v.mag = -0.2; v.balloon = 1; v.offset = 0.0; v.time_offset = -0.2; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;",
 						0
 					]
 				},
@@ -480,19 +480,19 @@
 					"scale": [
 						1,
 						1,
-						"v.freq = 1; v.mag = 0.1; v.balloon = 1; v.offset = 1; v.time_offset = 0; return Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
+						"v.freq = 1; v.mag = 0.1; v.balloon = 1; v.offset = 1; v.time_offset = 0; Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag + v.offset;"
 					]
 				},
 				"rightEye": {
 					"rotation": [
-						"v.freq = 1; v.mag = 10; v.balloon = 1; v.offset = -5; v.time_offset = -0.3; return -Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset;",
+						"v.freq = 1; v.mag = 10; v.balloon = 1; v.offset = -5; v.time_offset = -0.3; -Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset;",
 						0,
 						0
 					]
 				},
 				"leftEye": {
 					"rotation": [
-						"v.freq = 1; v.mag = 10; v.balloon = 1; v.offset = -5; v.time_offset = -0.5; return -Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset;",
+						"v.freq = 1; v.mag = 10; v.balloon = 1; v.offset = -5; v.time_offset = -0.5; -Math.atan( v.balloon * Math.sin(( q.anim_time + v.time_offset ) * 180 * v.freq ) ) / Math.atan( v.balloon ) * v.mag - v.offset;",
 						0,
 						0
 					]

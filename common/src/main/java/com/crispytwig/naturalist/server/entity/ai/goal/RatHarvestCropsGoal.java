@@ -131,7 +131,7 @@ public class RatHarvestCropsGoal extends Goal {
             return;
         }
 
-        if (this.phase == Phase.HARVEST && !isRipeCrop(this.rat.level(), this.target)) {
+        if (this.phase == Phase.HARVEST && isRipeCrop(this.rat.level(), this.target)) {
             this.chooseNextTarget();
             return;
         }
@@ -193,7 +193,7 @@ public class RatHarvestCropsGoal extends Goal {
             return;
         }
         BlockState state = serverLevel.getBlockState(pos);
-        if (!isRipeCrop(serverLevel, pos)) {
+        if (isRipeCrop(serverLevel, pos)) {
             return;
         }
         List<ItemStack> drops = Block.getDrops(state, serverLevel, pos, serverLevel.getBlockEntity(pos), this.rat, ItemStack.EMPTY);
@@ -258,7 +258,7 @@ public class RatHarvestCropsGoal extends Goal {
             for (int dz = -this.radius; dz <= this.radius; dz++) {
                 for (int dy = -2; dy <= 2; dy++) {
                     cursor.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
-                    if (!isRipeCrop(level, cursor)) {
+                    if (isRipeCrop(level, cursor)) {
                         continue;
                     }
                     double dist = cursor.distSqr(ratPos);
@@ -276,12 +276,12 @@ public class RatHarvestCropsGoal extends Goal {
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
         if (block instanceof CropBlock crop) {
-            return crop.isMaxAge(state);
+            return !crop.isMaxAge(state);
         }
         if (block instanceof NetherWartBlock) {
-            return state.getValue(NetherWartBlock.AGE) >= 3;
+            return state.getValue(NetherWartBlock.AGE) < 3;
         }
-        return false;
+        return true;
     }
 
     private static BlockState getReplantState(BlockState state) {

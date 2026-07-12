@@ -61,9 +61,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
@@ -508,22 +508,27 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     protected <E extends Rat> @NotNull PlayState predicate(final AnimationState<E> event) {
         if (this.isInSittingPose()) {
             event.getController().setAnimation(SIT);
+            event.getController().setAnimationSpeed(1.0D);
         } else if (this.isSleeping()) {
             event.getController().setAnimation(SLEEP);
+            event.getController().setAnimationSpeed(1.0D);
         } else if (this.isInWater()) {
             event.getController().setAnimation(SWIM);
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
         } else if (event.isMoving()) {
             if (this.isSprinting() || this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
                 event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(1.0D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
             } else {
                 event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.5D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.5D));
             }
         } else if (this.isInterested()) {
             event.getController().setAnimation(STANDING);
+            event.getController().setAnimationSpeed(1.0D);
         } else {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
@@ -546,7 +551,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 4, this::predicate)
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 4, this::predicate)
                 .setSoundKeyframeHandler(this::soundListener));
     }
     //endregion

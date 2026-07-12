@@ -57,6 +57,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -319,10 +320,12 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
         if (this.canHide()) {
             this.hideAnimActive = true;
             controller.setAnimation(HIDE);
+            controller.setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
         if (this.hideAnimActive) {
             controller.setAnimation(HIDE_END);
+            controller.setAnimationSpeed(1.0D);
             if (!controller.hasAnimationFinished()) {
                 return PlayState.CONTINUE;
             }
@@ -330,17 +333,20 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
         }
         if (!this.onGround() && this.isInWater()) {
             controller.setAnimation(SWIM);
+            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             controller.setAnimation(WALK);
+            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
         } else {
             controller.setAnimation(IDLE);
+            controller.setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 0, this::predicate));
     }
     //endregion
 }

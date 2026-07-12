@@ -63,6 +63,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -994,15 +995,18 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
 
         if (this.isSleeping()) {
             event.getController().setAnimation(SLEEP);
+            event.getController().setAnimationSpeed(1.0D);
             this.wasSitting = sitting;
             return PlayState.CONTINUE;
         } else if (sitting) {
             event.getController().setAnimation(SIT);
+            event.getController().setAnimationSpeed(1.0D);
             this.wasSitting = true;
             return PlayState.CONTINUE;
         } else if (this.wasSitting) {
             this.wasSitting = false;
             event.getController().setAnimation(UNSIT);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (!event.getController().getAnimationState().equals(AnimationController.State.STOPPED)
                 && event.getController().getCurrentAnimation() != null
@@ -1011,14 +1015,15 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
                 event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.0D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
             } else {
                 event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.4D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.4D));
             }
             return PlayState.CONTINUE;
         } else {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
         }
         event.getController().forceAnimationReset();
 
@@ -1074,7 +1079,7 @@ public class Bear extends TamableAnimal implements NeutralMob, NaturalistGeoEnti
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "sniffController", 2, this::sniffPredicate));
         controllers.add(new AnimationController<>(this, "swingController", 2, this::attackPredicate).setSoundKeyframeHandler(this::soundListener));
         controllers.add(new AnimationController<>(this, "eatController", 5, this::eatPredicate).setSoundKeyframeHandler(this::soundListener));

@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.base.IKMount;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.util.TerrainLegSolver;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -384,31 +385,24 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
     }
 
     private <E extends Giraffe> PlayState predicate(final AnimationState<E> event) {
-        if (this.isBaby()) {
-            event.setControllerSpeed(1.4f + event.getLimbSwingAmount());
-        } else {
-            event.setControllerSpeed(1.0f + event.getLimbSwingAmount());
-        }
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting() || !this.getPassengers().isEmpty()) {
                 event.getController().setAnimation(RUN);
-                if (this.isBaby()) {
-                    event.getController().setAnimationSpeed(1.4D + event.getLimbSwingAmount());
-                } else {
-                    event.getController().setAnimationSpeed(1.2D + event.getLimbSwingAmount());
-                }
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, this.isBaby() ? 1.56D : 1.43D));
             } else {
                 event.getController().setAnimation(WALK);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, this.isBaby() ? 1.56D : 1.3D));
             }
         } else {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(this.isBaby() ? 1.4D : 1.0D);
         }
         return PlayState.CONTINUE;
     }
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 4, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 4, this::predicate));
     }
 
     @Override

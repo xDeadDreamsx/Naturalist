@@ -50,6 +50,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -524,8 +525,10 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
     private <E extends Snail> PlayState predicate(final @NotNull AnimationState<E> event) {
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6 || this.isClimbing()) {
             event.getController().setAnimation(CRAWL);
+            event.getController().setAnimationSpeed(this.isClimbing() ? 1.0D : this.movementAnimationSpeed(event, 1.0D));
         } else {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
@@ -572,7 +575,7 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
         controllers.add(new AnimationController<>(this, "hideController", 0, this::hidePredicate).setSoundKeyframeHandler(this::soundListener));
     }
     //endregion

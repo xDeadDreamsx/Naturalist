@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -347,10 +348,11 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     private <E extends Lizard> PlayState predicate(final AnimationState<E> event) {
         if (this.isInSittingPose()) {
             event.getController().setAnimation(SIT);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             event.getController().setAnimation(WALK);
-            event.getController().setAnimationSpeed(2.0D);
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
             return PlayState.CONTINUE;
         }
         event.getController().forceAnimationReset();
@@ -360,7 +362,7 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 0, this::predicate));
     }
     //endregion
 }

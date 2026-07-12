@@ -59,6 +59,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -537,17 +538,20 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
         boolean baby = this.isBaby();
         if (!this.isInWater()) {
             controller.setAnimation(baby ? BABY_FLOP : FLOP);
+            controller.setAnimationSpeed(1.0D);
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6 || event.isMoving()) {
             controller.setAnimation(baby ? BABY_SWIM : SWIM);
+            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
         } else {
             controller.setAnimation(baby ? BABY_IDLE : IDLE);
+            controller.setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
     }
     //endregion
 }

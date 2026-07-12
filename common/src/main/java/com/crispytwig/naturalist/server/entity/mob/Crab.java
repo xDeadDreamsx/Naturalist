@@ -74,6 +74,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -617,12 +618,16 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
     private <E extends Crab> PlayState predicate(final @NotNull AnimationState<E> event) {
         if (this.isDancing()) {
             event.getController().setAnimation(DANCE);
+            event.getController().setAnimationSpeed(1.0D);
         } else if (this.isInSittingPose()) {
             event.getController().setAnimation(this.isBaby() ? BABY_SIT : SIT);
+            event.getController().setAnimationSpeed(1.0D);
         } else if (event.isMoving()) {
             event.getController().setAnimation(this.isBaby() ? BABY_WALK : WALK);
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
         } else {
             event.getController().setAnimation(this.isBaby() ? BABY_IDLE : IDLE);
+            event.getController().setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
@@ -673,7 +678,7 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
         controllers.add(new AnimationController<>(this, "hideController", 0, this::hidePredicate));
         controllers.add(new AnimationController<>(this, "weaponController", 0, this::weaponPredicate));
         controllers.add(new AnimationController<>(this, "swingController", 0, this::swingPredicate));

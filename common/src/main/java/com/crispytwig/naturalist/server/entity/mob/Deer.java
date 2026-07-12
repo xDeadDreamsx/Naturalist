@@ -36,6 +36,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -238,17 +239,17 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity, DataD
             if (this.isSprinting()) {
                 if (this.isBaby()) {
                     event.getController().setAnimation(BABY_RUN);
-                    event.getController().setAnimationSpeed(1.0D);
+                    event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
                 } else {
                     event.getController().setAnimation(RUN);
-                    event.getController().setAnimationSpeed(2.3D);
+                    event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.3D));
                 }
             } else {
                 event.getController().setAnimation(WALK);
                 if (this.isBaby()) {
-                    event.getController().setAnimationSpeed(1.2D);
+                    event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.2D));
                 } else {
-                    event.getController().setAnimationSpeed(1.0D);
+                    event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
                 }
             }
         } else {
@@ -272,7 +273,7 @@ public class Deer extends NaturalistAnimal implements NaturalistGeoEntity, DataD
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "eat_controller", 5, this::eatPredicate));
     }
     //endregion

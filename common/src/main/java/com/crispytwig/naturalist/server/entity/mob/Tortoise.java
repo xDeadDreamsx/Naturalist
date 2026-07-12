@@ -44,6 +44,7 @@ import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -375,20 +376,23 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
     private <T extends Tortoise> PlayState predicate(final AnimationState<T> event) {
         if (this.isInSittingPose()) {
             event.getController().setAnimation(SIT);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (this.isLayingEgg())  {
             event.getController().setAnimation(DIG);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             event.getController().setAnimation(WALK);
             if (this.isBaby()) {
-                event.getController().setAnimationSpeed(2.0D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 6.8D));
             } else {
-                event.getController().setAnimationSpeed(1.3D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 4.8D));
             }
             return PlayState.CONTINUE;
         } else {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
     }
@@ -427,7 +431,7 @@ public class Tortoise extends TamableAnimal implements NaturalistGeoEntity, Hidi
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "hurtController", 5, this::hurtPredicate));
         controllers.add(new AnimationController<>(this, "hideController", 0, this::hidePredicate).setSoundKeyframeHandler(this::soundListener));
     }

@@ -54,6 +54,7 @@ import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -485,11 +486,12 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     private <E extends Hippo> PlayState predicate(final @NotNull AnimationState<E> event) {
         if (this.isInSittingPose()) {
             event.getController().setAnimation(this.isBaby() ? SIT : SLEEP);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
-        event.getController().setAnimationSpeed(0.8D + event.getLimbSwingAmount());
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (!this.isInWater()) {
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.8D));
                 if (this.isSprinting()) {
                     event.getController().setAnimation(RUN);
                 } else {
@@ -497,9 +499,11 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
                 }
             } else if (this.isInWater()) {
                 event.getController().setAnimation(SWIM);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.1D, LARGE_FISH_LIMB_SWING));
             }
             return PlayState.CONTINUE;
         } else {
+            event.getController().setAnimationSpeed(0.8D);
             if (this.isInWater()) {
                 event.getController().setAnimation(SWIM_IDLE);
             } else {
@@ -520,7 +524,7 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
     }
     //endregion

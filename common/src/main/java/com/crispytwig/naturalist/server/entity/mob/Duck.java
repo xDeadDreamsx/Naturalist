@@ -52,6 +52,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -406,20 +407,21 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     protected <E extends Duck> PlayState predicate(final AnimationState<E> event) {
         if (this.isInSittingPose()) {
             event.getController().setAnimation(this.isBaby() ? SIT : SIT_ADULT);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
         if (this.isInWater()) {
             event.getController().setAnimation(SWIM);
-            event.getController().setAnimationSpeed(1.0D);
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
             return PlayState.CONTINUE;
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
              if (this.isSprinting()) {
                 event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(2.0D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
                 return PlayState.CONTINUE;
             } else {
                 event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.5D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.5D));
                 return PlayState.CONTINUE;
             }
         } else {
@@ -442,7 +444,7 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "flapController", 2, this::flapPredicate));
     }
     //endregion

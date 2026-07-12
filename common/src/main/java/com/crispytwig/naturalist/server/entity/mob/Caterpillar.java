@@ -40,6 +40,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -271,17 +272,19 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             {
                 event.getController().setAnimation(CRAWL);
+                event.getController().setAnimationSpeed(this.isNaturalistClimbing() ? 1.0D : this.movementAnimationSpeed(event, 1.0D));
                 return PlayState.CONTINUE;
             }
         } else {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
     }
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
     }
     //endregion
 }

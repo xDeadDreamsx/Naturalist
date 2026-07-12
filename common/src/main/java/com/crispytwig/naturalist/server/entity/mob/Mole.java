@@ -59,6 +59,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -581,6 +582,11 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
             case STATE_UNROLLING -> event.getController().setAnimation(DIG_UP);
             default -> event.getController().setAnimation(event.isMoving() ? WALK : IDLE);
         }
+        if (this.getState() == STATE_UNROLLED && event.isMoving()) {
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
+        } else {
+            event.getController().setAnimationSpeed(1.0D);
+        }
         return PlayState.CONTINUE;
     }
 
@@ -634,7 +640,7 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 4, this::predicate)
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 4, this::predicate)
                 .setSoundKeyframeHandler(this::soundListener)
                 .setParticleKeyframeHandler(this::particleListener));
         controllers.add(new AnimationController<>(this, "idleEventController", 0, event -> PlayState.STOP)

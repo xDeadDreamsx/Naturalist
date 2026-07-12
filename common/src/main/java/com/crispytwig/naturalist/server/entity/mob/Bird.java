@@ -64,6 +64,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -681,25 +682,30 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     protected <E extends Bird> @NotNull PlayState predicate(final @NotNull AnimationState<E> event) {
         if (this.isPassenger()) {
             event.getController().setAnimation(this.getVehicle().onGround() ? IDLE : FLY);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (this.isInSittingPose()) {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (this.isFlying()) {
             event.getController().setAnimation(FLY);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (event.isMoving()) {
             event.getController().setAnimation(WALK);
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
             return PlayState.CONTINUE;
         } else {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
     }
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 0, this::predicate));
     }
     //endregion
 }

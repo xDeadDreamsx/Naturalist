@@ -44,6 +44,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -207,8 +208,10 @@ public class Turkey extends Animal implements NaturalistGeoEntity, DataDrivenVar
     protected <E extends Turkey> @NotNull PlayState predicate(final AnimationState<E> event) {
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             event.getController().setAnimation(this.isSprinting() ? RUN : WALK);
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
         } else {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
@@ -253,7 +256,7 @@ public class Turkey extends Animal implements NaturalistGeoEntity, DataDrivenVar
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate)
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
                 .setSoundKeyframeHandler(this::soundListener));
         controllers.add(new AnimationController<>(this, "attackController", 0, this::peckPredicate)
                 .setSoundKeyframeHandler(this::soundListener));

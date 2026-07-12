@@ -42,6 +42,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -500,10 +501,10 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
         } else if (event.isMoving()) {
             if (this.isSprinting()) {
                 event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(3.0F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 3.6D));
             } else {
                 event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.0F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.6D));
             }
         } else if (this.hasChargeCooldown() && this.hasTarget()) {
             event.getController().setAnimation(FOOT);
@@ -536,7 +537,7 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        AnimationController<Rhino> controller = new AnimationController<>(this, "controller", 5, this::predicate);
+        AnimationController<Rhino> controller = new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate);
         controller.setSoundKeyframeHandler(this::soundListener);
         controllers.add(controller);
         controllers.add(new AnimationController<>(this, "attackController", 5, this::attackPredicate));

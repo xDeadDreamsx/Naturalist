@@ -52,6 +52,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -317,7 +318,7 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
             event.getController().setAnimationSpeed(1.0F);
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             event.getController().setAnimation(WALK);
-            event.getController().setAnimationSpeed(this.isSprinting() ? 2.0F : 1.0F);
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, this.isSprinting() ? 2.5D : 1.5D));
         } else {
             event.getController().setAnimation(IDLE);
             event.getController().setAnimationSpeed(1.0F);
@@ -372,7 +373,7 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate)
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
                 .setSoundKeyframeHandler(this::soundListener));
         controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate)
                 .setSoundKeyframeHandler(this::soundListener));

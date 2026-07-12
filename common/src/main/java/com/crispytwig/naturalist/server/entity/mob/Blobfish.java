@@ -41,6 +41,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -247,7 +248,7 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity, DataD
         AnimationController<E> controller = event.getController();
         boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6;
         boolean idle = this.onGround() && !moving;
-        controller.setAnimationSpeed(idle ? 1.0 : 2.0);
+        controller.setAnimationSpeed(idle ? 1.0 : this.movementAnimationSpeed(event, 2.0D, SMALL_FISH_LIMB_SWING));
         controller.setAnimation(idle ? IDLE : SWIM);
         return PlayState.CONTINUE;
     }
@@ -261,7 +262,7 @@ public class Blobfish extends AbstractFish implements NaturalistGeoEntity, DataD
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
     }
 
     public float getXBodyRot(float partialTick) {

@@ -61,6 +61,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -489,16 +490,17 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
     protected <E extends Tiger> @NotNull PlayState predicate(final AnimationState<E> event) {
         if (this.isInSittingPose() || this.isSleeping()) {
             event.getController().setAnimation(this.usesAltSleepPose() ? SLEEP2 : SLEEP);
+            event.getController().setAnimationSpeed(1.0D);
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
                 event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.5F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.5D));
             } else if (this.isCrouching()) {
                 event.getController().setAnimation(PREY);
-                event.getController().setAnimationSpeed(0.8F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 0.8D));
             } else {
                 event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.0F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
             }
         } else {
             event.getController().setAnimation(IDLE);
@@ -553,7 +555,7 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate)
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
                 .setSoundKeyframeHandler(this::soundListener));
         controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate)
                 .setSoundKeyframeHandler(this::soundListener));

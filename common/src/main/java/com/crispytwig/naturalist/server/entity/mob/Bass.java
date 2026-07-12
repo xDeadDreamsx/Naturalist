@@ -26,9 +26,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.PlayState;
@@ -145,15 +145,17 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity, 
     protected <E extends Bass> @NotNull PlayState predicate(final AnimationState<E> event) {
         if (!this.isInWater()) {
             event.getController().setAnimation(FLOP);
+            event.getController().setAnimationSpeed(1.0D);
         } else {
             event.getController().setAnimation(SWIM);
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, SMALL_FISH_LIMB_SWING));
         }
         return PlayState.CONTINUE;
     }
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 2, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 2, this::predicate));
     }
     //endregion
 }

@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -255,10 +256,10 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity, 
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting() || this.getDeltaMovement().horizontalDistanceSqr() > 0.01) {
                 event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.0D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
             } else {
                 event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.0D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
             }
         } else {
             event.getController().setAnimation(IDLE);
@@ -269,7 +270,7 @@ public class Zebra extends AbstractChestedHorse implements NaturalistGeoEntity, 
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
     }
     //endregion
 }

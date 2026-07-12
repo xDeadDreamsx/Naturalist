@@ -55,6 +55,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.Path;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import org.jetbrains.annotations.NotNull;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -557,12 +558,15 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     private <E extends Snake> @NotNull PlayState predicate(final AnimationState<E> event) {
         if (this.isSleeping() || this.isInSittingPose()) {
             event.getController().setAnimation(SLEEP);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (this.isNaturalistClimbing()) {
             event.getController().setAnimation(CLIMB);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         } else if (!(event.getLimbSwingAmount() > -0.04F && event.getLimbSwingAmount() < 0.04F)) {
             event.getController().setAnimation(MOVE);
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
             return PlayState.CONTINUE;
         }
         event.getController().forceAnimationReset();
@@ -609,7 +613,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 10, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 10, this::predicate));
         controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
 
         AnimationController<Snake> tongueController = new AnimationController<>(this, "tongueController", 0, this::tonguePredicate);

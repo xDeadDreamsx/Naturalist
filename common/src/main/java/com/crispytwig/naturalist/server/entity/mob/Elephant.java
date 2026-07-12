@@ -56,6 +56,7 @@ import org.jetbrains.annotations.NotNull;
 import com.crispytwig.naturalist.server.entity.base.IKMount;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.util.TerrainLegSolver;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -599,10 +600,9 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
     }
 
     private <E extends Elephant> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.isBaby() || this.getTarget() != null || this.isVehicle()) {
-            event.setControllerSpeed(1.3f + event.getLimbSwingAmount());
-        }
         if (event.isMoving()) {
+            double tuned = this.isBaby() || this.getTarget() != null || this.isVehicle() ? 3.2D : 2.1D;
+            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, tuned));
             if (this.isSprinting()) {
                 event.getController().setAnimation(RUN);
             } else {
@@ -610,6 +610,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
             }
         }  else {
             event.getController().setAnimation(IDLE);
+            event.getController().setAnimationSpeed(1.0D);
         }
         return PlayState.CONTINUE;
     }
@@ -625,7 +626,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, NaturalistGeo
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "swingController", 0, this::swingPredicate));
     }
 

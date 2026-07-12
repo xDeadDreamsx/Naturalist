@@ -38,6 +38,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -306,10 +307,10 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
                 event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.0D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
             } else {
                 event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.5D);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.5D));
             }
         } else {
             event.getController().setAnimation(IDLE);
@@ -329,7 +330,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 10, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 10, this::predicate));
         controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
     }
     //endregion

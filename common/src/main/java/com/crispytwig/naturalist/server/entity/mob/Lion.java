@@ -47,6 +47,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -526,6 +527,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
 
     private <E extends Lion> PlayState predicate(final AnimationState<E> event) {
         if (this.isBaby() && (this.isInSittingPose() || this.wasSitting)) {
+            event.getController().setAnimationSpeed(1.0D);
             if (this.isInSittingPose()) {
                 event.getController().setAnimation(SIT);
                 this.wasSitting = true;
@@ -539,22 +541,25 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         }
         if (!this.isBaby() && this.isInSittingPose()) {
             event.getController().setAnimation(this.hasMane() ? SLEEP2 : SLEEP);
+            event.getController().setAnimationSpeed(1.0D);
             return PlayState.CONTINUE;
         }
         if (this.isSleeping() && this.hasMane()) {
             event.getController().setAnimation(SLEEP2);
+            event.getController().setAnimationSpeed(1.0D);
         } else if (this.isSleeping() && !this.hasMane()) {
             event.getController().setAnimation(SLEEP);
+            event.getController().setAnimationSpeed(1.0D);
         } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isSprinting()) {
                 event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(2.5F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.5D));
             } else if (this.isCrouching()) {
                 event.getController().setAnimation(PREY);
-                event.getController().setAnimationSpeed(0.8F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 0.8D));
             } else {
                 event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(1.0F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
             }
         } else {
             event.getController().setAnimation(IDLE);
@@ -574,7 +579,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
 
     @Override
     public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
     }
     //endregion

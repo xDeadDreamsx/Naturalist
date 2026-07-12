@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -167,10 +168,10 @@ public abstract class Scorpion extends Animal implements NaturalistGeoEntity, No
         if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isAggressive()) {
                 event.getController().setAnimation(this.runAnim);
-                event.getController().setAnimationSpeed(1.6F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.6D));
             } else {
                 event.getController().setAnimation(this.walkAnim);
-                event.getController().setAnimationSpeed(2.0F);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
             }
         } else {
             event.getController().setAnimation(this.idleAnim);
@@ -213,7 +214,7 @@ public abstract class Scorpion extends Animal implements NaturalistGeoEntity, No
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate)
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
                 .setSoundKeyframeHandler(this::soundListener));
         controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate)
                 .setSoundKeyframeHandler(this::soundListener));

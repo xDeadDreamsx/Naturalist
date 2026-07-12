@@ -38,6 +38,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.pathfinder.PathType;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -312,12 +313,11 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
          if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
             if (this.isInWater()) {
                 event.getController().setAnimation(SWIM);
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
             } else {
                 event.getController().setAnimation(WALK);
-                if (this.isBaby() || this.getTarget() != null) {
-                    event.getController().setAnimationSpeed(3.0D);
-                }
-                event.getController().setAnimationSpeed(2.0D);
+                double tuned = this.isBaby() || this.getTarget() != null ? 3.0D : 2.0D;
+                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, tuned));
             }
         } else {
             event.getController().setAnimation(IDLE);
@@ -337,7 +337,7 @@ public class Alligator extends NaturalistAnimal implements NaturalistGeoEntity, 
 
     @Override
     public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
         controllers.add(new AnimationController<>(this, "attackController", 2, this::attackPredicate));
     }
     //endregion
