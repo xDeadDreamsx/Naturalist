@@ -7,8 +7,10 @@ import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
+import com.crispytwig.naturalist.server.entity.ai.goal.RatHarvestCropsGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
+import com.crispytwig.naturalist.server.entity.base.ContainerBoundWorker;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
@@ -18,6 +20,8 @@ import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Containers;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -69,9 +73,15 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal {
+public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal, ContainerBoundWorker {
     //region Data
     public static final String[] VARIANT_NAMES = {"black", "brown", "white"};
+
+    private static final int WORK_RADIUS = 7;
+    private static final int CARRY_SLOTS = 27;
+    @Nullable
+    private BlockPos workstationPos;
+    private final SimpleContainer carriedItems = new SimpleContainer(CARRY_SLOTS);
 
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.RAT_FOOD);
 
@@ -164,6 +174,55 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
         this.followingOwner = following;
     }
 
+    @Nullable
+    public BlockPos getWorkstationPos() {
+        return this.workstationPos;
+    }
+
+    public void setWorkstation(@Nullable BlockPos pos) {
+        this.workstationPos = pos == null ? null : pos.immutable();
+        if (this.workstationPos != null) {
+            this.restrictTo(this.workstationPos, WORK_RADIUS);
+        } else {
+            this.clearRestriction();
+        }
+    }
+
+    @Override
+    public void tryAssignWorkstation(BlockPos pos) {
+        if (!this.isTame() || ContainerBoundWorker.getContainer(this.level(), pos) == null) {
+            return;
+        }
+        this.setWorkstation(pos);
+        this.setFollowingOwner(false);
+        this.setOrderedToSit(false);
+    }
+
+    public SimpleContainer getCarriedItems() {
+        return this.carriedItems;
+    }
+
+    public boolean isCarryFull() {
+        for (int i = 0; i < this.carriedItems.getContainerSize(); i++) {
+            if (this.carriedItems.getItem(i).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void dropCarriedItems() {
+        Containers.dropContents(this.level(), this.blockPosition(), this.carriedItems);
+    }
+
+    @Override
+    public void die(@NotNull DamageSource cause) {
+        if (!this.level().isClientSide) {
+            this.dropCarriedItems();
+        }
+        super.die(cause);
+    }
+
     @Override
     public boolean fromHand() {
         return this.entityData.get(FROM_HAND);
@@ -184,6 +243,10 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
+        if (this.workstationPos != null) {
+            compound.putLong("Workstation", this.workstationPos.asLong());
+        }
+        compound.put("CarriedItems", this.carriedItems.createTag(this.registryAccess()));
         FollowingPet.save(this, compound);
     }
 
@@ -192,6 +255,14 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.setFromHand(compound.getBoolean("FromHand"));
+        if (compound.contains("Workstation")) {
+            this.setWorkstation(BlockPos.of(compound.getLong("Workstation")));
+        } else {
+            this.setWorkstation(null);
+        }
+        if (compound.contains("CarriedItems", 9)) {
+            this.carriedItems.fromTag(compound.getList("CarriedItems", 10), this.registryAccess());
+        }
         FollowingPet.load(this, compound);
     }
 
@@ -267,6 +338,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
         this.goalSelector.addGoal(4, new RatBegGoal(this));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.25D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(6, new RatHarvestCropsGoal(this, 1.2D, WORK_RADIUS));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(7, new PetFollowOwnerGoal(this, 1.4D, 10.0F, 3.0F) {
             @Override

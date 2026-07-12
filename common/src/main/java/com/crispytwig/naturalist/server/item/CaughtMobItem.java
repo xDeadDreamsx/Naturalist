@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.item;
 
 import com.crispytwig.naturalist.server.entity.base.Catchable;
+import com.crispytwig.naturalist.server.entity.base.ContainerBoundWorker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -50,6 +51,10 @@ public class CaughtMobItem extends NaturalistBucketItem {
             CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
             catchable.loadFromHandTag(tag);
             catchable.setFromHand(true);
+        }
+
+        if (entity instanceof ContainerBoundWorker worker) {
+            worker.tryAssignWorkstation(pos);
         }
 
     }
