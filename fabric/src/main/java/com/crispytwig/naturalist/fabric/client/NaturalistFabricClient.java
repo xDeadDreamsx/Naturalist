@@ -4,7 +4,10 @@ import com.crispytwig.naturalist.NaturalistClient;
 import com.crispytwig.naturalist.client.gui.tooltip.MobTooltipRenderer;
 import com.crispytwig.naturalist.client.model.item.VariantAwareItemModel;
 import com.crispytwig.naturalist.client.model.item.VariantItemModels;
+import com.crispytwig.naturalist.client.particle.CaptureNetSwingParticle;
+import com.crispytwig.naturalist.registry.NaturalistParticleTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import com.crispytwig.naturalist.server.item.NaturalistBucketItem;
 import com.crispytwig.naturalist.server.item.tooltip.MobTooltipData;
 import net.fabricmc.api.ClientModInitializer;
@@ -33,6 +36,8 @@ public class NaturalistFabricClient implements ClientModInitializer {
         NaturalistClient.registerMenuScreens(MenuScreens::register);
 
         registerVariantItemModels();
+
+        ParticleFactoryRegistry.getInstance().register(NaturalistParticleTypes.CAPTURE_NET_SWING.get(), CaptureNetSwingParticle.Provider::new);
 
         TooltipComponentCallback.EVENT.register(data ->
                 data instanceof MobTooltipData mobData ? new MobTooltipRenderer(mobData) : null);

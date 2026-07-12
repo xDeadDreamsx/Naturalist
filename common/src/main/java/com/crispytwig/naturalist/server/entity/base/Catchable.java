@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.crispytwig.naturalist.server.util.*;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
+import com.crispytwig.naturalist.server.item.BugNetItem;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -114,6 +115,10 @@ public interface Catchable {
     static <T extends LivingEntity & Catchable> @NotNull Optional<InteractionResult> catchAnimal(Player player, @NotNull InteractionHand hand, T entity, boolean needsNet) {
         ItemStack itemStack = player.getItemInHand(hand);
         if ((needsNet ? itemStack.getItem().equals(NaturalistRegistry.CAPTURE_NET.get()) : itemStack.isEmpty()) && entity.isAlive()) {
+            if (needsNet) {
+                BugNetItem.swing(entity.level(), player);
+                BugNetItem.playCaughtEffects(entity.level(), entity);
+            }
             ItemStack caughtItemStack = entity.getCaughtItemStack();
             entity.saveToHandTag(caughtItemStack);
             if (needsNet) {

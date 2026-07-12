@@ -4,6 +4,8 @@ import com.crispytwig.naturalist.NaturalistClient;
 import com.crispytwig.naturalist.client.gui.tooltip.MobTooltipRenderer;
 import com.crispytwig.naturalist.client.model.item.VariantAwareItemModel;
 import com.crispytwig.naturalist.client.model.item.VariantItemModels;
+import com.crispytwig.naturalist.client.particle.CaptureNetSwingParticle;
+import com.crispytwig.naturalist.registry.NaturalistParticleTypes;
 import com.crispytwig.naturalist.server.item.NaturalistBucketItem;
 import com.crispytwig.naturalist.server.item.tooltip.MobTooltipData;
 import net.minecraft.client.Minecraft;
@@ -16,6 +18,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -29,7 +32,12 @@ public class NaturalistNeoForgeClient {
         modEventBus.addListener(NaturalistNeoForgeClient::registerTooltipComponents);
         modEventBus.addListener(NaturalistNeoForgeClient::registerExtraModels);
         modEventBus.addListener(NaturalistNeoForgeClient::wrapVariantItemModels);
+        modEventBus.addListener(NaturalistNeoForgeClient::registerParticleProviders);
         modEventBus.addListener(NaturalistNeoForgeClient::clientSetup);
+    }
+
+    private static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(NaturalistParticleTypes.CAPTURE_NET_SWING.get(), CaptureNetSwingParticle.Provider::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

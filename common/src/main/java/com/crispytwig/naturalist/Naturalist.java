@@ -51,6 +51,7 @@ public final class Naturalist {
 
     public static void bootstrap() {
         touch(NaturalistSoundEvents.SOUND_EVENTS);
+        touch(NaturalistParticleTypes.PARTICLE_TYPES);
         touch(NaturalistEntityTypes.ENTITY_TYPES);
         touch(NaturalistFeatures.FEATURES);
         NaturalistRegistry.init();
