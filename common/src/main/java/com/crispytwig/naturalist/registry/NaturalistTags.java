@@ -28,6 +28,7 @@ public class NaturalistTags {
         public static final TagKey<Block> KOMODO_DRAGONS_SPAWNABLE_ON = tag("komodo_dragons_spawnable_on");
         public static final TagKey<Block> OSTRICH_EGG_LAYABLE_ON = tag("ostrich_egg_layable_on");
         public static final TagKey<Block> SCORPIONS_SPAWNABLE_ON = tag("scorpions_spawnable_on");
+        public static final TagKey<Block> SNAIL_SHELL_BLACKLIST = tag("snail_shell_blacklist");
 
         private static TagKey<Block> tag(@NotNull String name) {
             return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));

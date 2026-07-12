@@ -994,18 +994,6 @@
     ],
     "subtitle": "naturalist.subtitles.entity.snail.move"
   },
-  "item.bucket.fill_snail": {
-    "sounds": [
-      "naturalist:mob/snail/bucket_fill"
-    ],
-    "subtitle": "naturalist.subtitles.item.bucket.fill_snail"
-  },
-  "item.bucket.empty_snail": {
-    "sounds": [
-      "naturalist:mob/snail/bucket_empty"
-    ],
-    "subtitle": "naturalist.subtitles.item.bucket.empty_snail"
-  },
   "entity.bear.hurt": {
     "sounds": [
       "naturalist:mob/bear/hurt1",

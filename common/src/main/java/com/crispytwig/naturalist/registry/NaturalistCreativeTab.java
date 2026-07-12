@@ -1,7 +1,9 @@
 package com.crispytwig.naturalist.registry;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.server.block.SnailShellBlock;
 import com.crispytwig.naturalist.server.entity.mob.Snail;
+import net.minecraft.world.item.DyeColor;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.item.NaturalistBucketItem;
 import net.minecraft.core.component.DataComponents;
@@ -28,8 +30,10 @@ public class NaturalistCreativeTab {
                     .title(Component.translatable("itemGroup.naturalist.tab"))
                     .displayItems((params, output) -> NaturalistRegistry.ITEMS.getEntries().forEach(entry -> {
                         Item item = entry.get();
-                        if (item == NaturalistRegistry.SNAIL_BUCKET.get()) {
+                        if (item == NaturalistRegistry.SNAIL.get()) {
                             acceptSnailColors(output, item);
+                        } else if (item == NaturalistRegistry.SNAIL_SHELL.get()) {
+                            acceptShellColors(output);
                         } else if (item == NaturalistRegistry.STARFISH_BUCKET.get()) {
                             acceptVariants(output, item, STARFISH_TAB_ORDER);
                         } else if (item instanceof NaturalistBucketItem bucketItem && bucketItem.getLegacyVariantNames() != null) {
@@ -54,6 +58,12 @@ public class NaturalistCreativeTab {
             CompoundTag tag = new CompoundTag();
             tag.putInt("Color", color.getId());
             acceptWithTag(output, item, tag);
+        }
+    }
+
+    private static void acceptShellColors(CreativeModeTab.Output output) {
+        for (DyeColor color : DyeColor.values()) {
+            output.accept(SnailShellBlock.getShellStack(color));
         }
     }
 

@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager;
 import net.fabricmc.fabric.api.client.model.loading.v1.PreparableModelLoadingPlugin;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -26,6 +27,7 @@ public class NaturalistFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         NaturalistClient.registerRenderers(EntityRendererRegistry::register);
+        NaturalistClient.registerBlockEntityRenderers(BlockEntityRendererRegistry::register);
 
         NaturalistClient.registerItemProperties();
         NaturalistClient.registerMenuScreens(MenuScreens::register);

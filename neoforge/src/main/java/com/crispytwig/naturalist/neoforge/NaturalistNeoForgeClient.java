@@ -34,6 +34,7 @@ public class NaturalistNeoForgeClient {
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         NaturalistClient.registerRenderers(event::registerEntityRenderer);
+        NaturalistClient.registerBlockEntityRenderers(event::registerBlockEntityRenderer);
     }
 
     private static void registerMenuScreens(RegisterMenuScreensEvent event) {

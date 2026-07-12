@@ -10,7 +10,7 @@ import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
-import net.minecraft.advancements.CriteriaTriggers;
+import com.crispytwig.naturalist.server.entity.climbing.*;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -20,9 +20,10 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -33,8 +34,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
@@ -46,6 +47,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -60,41 +62,57 @@ import software.bernie.geckolib.animation.AnimationState;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucketable, HidingAnimal, EggLayingAnimal, DataDrivenVariantAnimal {
+public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catchable, HidingAnimal, EggLayingAnimal, DataDrivenVariantAnimal, SurfaceCrawler {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BEETROOT);
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_COLOR = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Vector3f> ATTACH_NORMAL = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.VECTOR3);
 
     int layEggCounter;
+    int slimeBallTime;
 
+    private static final float BODY_LOOK_FOLLOW = -0.5F;
+    private static final float LOOK_LAG_BLEND = 0.15F;
+    private static final float TAIL_LOOK_BLEND = 0.15F;
+
+    private final SurfaceClimbing climbing = new SurfaceClimbing(this, ATTACH_NORMAL);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private boolean wasHiding;
+    private boolean playingHideEnd;
+    private float bodyLookYaw;
+    private float bodyLookYawO;
+    private float tailLookYaw;
+    private float tailLookYawO;
 
     protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.snail.idle");
     protected static final RawAnimation CRAWL = RawAnimation.begin().thenLoop("animation.sf_nba.snail.crawl");
-    protected static final RawAnimation CLIMB = RawAnimation.begin().thenLoop("animation.sf_nba.snail.climb");
     protected static final RawAnimation HIDE = RawAnimation.begin().thenPlay("animation.sf_nba.snail.hide_start").thenLoop("animation.sf_nba.snail.hide_idle");
+    protected static final RawAnimation HIDE_END = RawAnimation.begin().thenPlayAndHold("animation.sf_nba.snail.hide_end");
 
     public Snail(@NotNull EntityType<? extends NaturalistAnimal> type, Level level) {
         super(type, level);
+        this.moveControl = new SurfaceCrawlerMoveControl(this);
+        this.slimeBallTime = this.random.nextInt(1200) + 12000;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 2.0D).add(Attributes.MOVEMENT_SPEED, 0.1F);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 2.0D).add(Attributes.MOVEMENT_SPEED, 0.05F);
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
-        builder.define(FROM_BUCKET, false);
+        builder.define(FROM_HAND, false);
         builder.define(DATA_COLOR, Color.BROWN.getId());
         builder.define(HAS_EGG, false);
         builder.define(LAYING_EGG, false);
+        builder.define(ATTACH_NORMAL, new Vector3f(0.0F, 1.0F, 0.0F));
     }
 
     @Override
@@ -170,44 +188,42 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     }
 
     @Override
-    public boolean fromBucket() {
-        return this.entityData.get(FROM_BUCKET);
+    public boolean fromHand() {
+        return this.entityData.get(FROM_HAND);
     }
 
     @Override
-    public void setFromBucket(boolean fromBucket) {
-        this.entityData.set(FROM_BUCKET, fromBucket);
+    public void setFromHand(boolean fromHand) {
+        this.entityData.set(FROM_HAND, fromHand);
     }
 
     public boolean requiresCustomPersistence() {
-        return super.requiresCustomPersistence() || this.fromBucket();
+        return super.requiresCustomPersistence() || this.fromHand();
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
-        compound.putBoolean("FromBucket", this.fromBucket());
+        compound.putBoolean("FromHand", this.fromHand());
         compound.putByte("Color", (byte)this.getSnailColor().getId());
         compound.putBoolean("HasEgg", this.hasEgg());
+        this.climbing.save(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setFromBucket(compound.getBoolean("FromBucket"));
+        this.setFromHand(compound.getBoolean("FromHand"));
         this.setSnailColor(Color.BY_ID[compound.getInt("Color")]);
         this.setHasEgg(compound.getBoolean("HasEgg"));
+        this.climbing.load(compound);
     }
 
     @Override
-    public void saveToBucketTag(@NotNull ItemStack stack) {
-        Bucketable.saveDefaultDataToBucketTag(this, stack);
-        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag -> {
-            this.saveVariant(tag);
-            tag.putInt("Color", this.getSnailColor().getId());
-        });
+    public void saveToHandTag(@NotNull ItemStack stack) {
+        Catchable.saveDefaultDataToHandTag(this, stack);
         CompoundTag compoundTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         this.saveVariant(compoundTag);
         compoundTag.putInt("Color", this.getSnailColor().getId());
@@ -215,8 +231,8 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     }
 
     @Override
-    public void loadFromBucketTag(@NotNull CompoundTag tag) {
-        Bucketable.loadDefaultDataFromBucketTag(this, tag);
+    public void loadFromHandTag(@NotNull CompoundTag tag) {
+        Catchable.loadDefaultDataFromHandTag(this, tag);
         this.loadVariant(tag);
         if (tag.contains("Color", 3)) {
             int i = tag.getInt("Color");
@@ -229,13 +245,13 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     }
 
     @Override
-    public @NotNull ItemStack getBucketItemStack() {
-        return new ItemStack(NaturalistRegistry.SNAIL_BUCKET.get());
+    public @NotNull ItemStack getCaughtItemStack() {
+        return new ItemStack(NaturalistRegistry.SNAIL.get());
     }
 
     @Override
-    public @NotNull SoundEvent getPickupSound() {
-        return NaturalistSoundEvents.BUCKET_FILL_SNAIL.get();
+    public SoundEvent getPickupSound() {
+        return null;
     }
 
     public enum Color {
@@ -304,7 +320,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnType != MobSpawnType.BUCKET) {
             this.pickVariantForSpawn(level);
         }
@@ -322,11 +338,6 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
         this.goalSelector.addGoal(2, new SnailStrollGoal(this, 0.9D, 0.0F));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-    }
-
-    @Override
-    protected float getClimbSpeedMultiplier() {
-        return 0.5F;
     }
 
     @Override
@@ -348,27 +359,7 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
                     return InteractionResult.SUCCESS;
                 }
             }
-        return bucketMobPickup(player, hand, this).orElse(super.mobInteract(player, hand));
-    }
-
-    static <T extends LivingEntity & Bucketable> Optional<InteractionResult> bucketMobPickup(@NotNull Player player, @NotNull InteractionHand hand, T entity) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (stack.getItem() == Items.BUCKET && entity.isAlive()) {
-            entity.playSound(entity.getPickupSound(), 1.0F, 1.0F);
-            ItemStack bucketStack = entity.getBucketItemStack();
-            entity.saveToBucketTag(bucketStack);
-            ItemStack resultStack = ItemUtils.createFilledResult(stack, player, bucketStack, false);
-            player.setItemInHand(hand, resultStack);
-            Level level = entity.level();
-            if (!level.isClientSide) {
-                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, bucketStack);
-            }
-
-            entity.discard();
-            return Optional.of(InteractionResult.sidedSuccess(level.isClientSide));
-        } else {
-            return Optional.empty();
-        }
+        return Catchable.catchAnimal(player, hand, this, true).orElse(super.mobInteract(player, hand));
     }
 
     @Override
@@ -389,10 +380,14 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
 
     @Override
     public void travel(@NotNull Vec3 vec3) {
-        super.travel(vec3);
+        if (this.canHide() || this.isImmobile()) {
+            this.climbing.halt();
+        }
+        if (!this.isEffectiveAi() || !this.climbing.travel()) {
+            super.travel(vec3);
+        }
         if (this.canHide()) {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0, 1, 0));
-            vec3 = vec3.multiply(0, 1, 0);
         }
     }
 
@@ -405,11 +400,16 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
             this.zza = 0.0F;
         }
         this.checkCrush();
+        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && --this.slimeBallTime <= 0) {
+            this.playSound(SoundEvents.SLIME_SQUISH_SMALL, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+            this.spawnAtLocation(Items.SLIME_BALL);
+            this.slimeBallTime = this.random.nextInt(1200) + 12000;
+        }
     }
 
     private void checkCrush() {
         if (this.level().isClientSide || !NaturalistConfig.isSnailCrushingEnabled()
-                || !this.onGround() || this.hasCustomName() || this.fromBucket() || this.isPersistenceRequired()) {
+                || !this.onGround() || this.hasCustomName() || this.fromHand() || this.isPersistenceRequired()) {
             return;
         }
         List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(0.2D, 0.5D, 0.2D),
@@ -453,16 +453,77 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     }
     //endregion
 
+    //region Climbing
+    @Override
+    public SurfaceClimbing getClimbing() {
+        return this.climbing;
+    }
+
+    @Override
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
+        return new CrawlerNavigation(this, level);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        this.climbing.tick();
+        if (this.level().isClientSide) {
+            this.updateLookLag();
+        }
+    }
+
+    private void updateLookLag() {
+        this.bodyLookYawO = this.bodyLookYaw;
+        this.tailLookYawO = this.tailLookYaw;
+        float target = 0.0F;
+        if (!this.walkAnimation.isMoving()) {
+            target = Mth.wrapDegrees(this.getYHeadRot() - this.yBodyRot) * BODY_LOOK_FOLLOW;
+        }
+        this.bodyLookYaw = Mth.rotLerp(LOOK_LAG_BLEND, this.bodyLookYaw, target);
+        this.tailLookYaw = Mth.rotLerp(TAIL_LOOK_BLEND, this.tailLookYaw, this.bodyLookYaw);
+    }
+
+    public float getBodyLookYaw(float partialTick) {
+        return Mth.rotLerp(partialTick, this.bodyLookYawO, this.bodyLookYaw);
+    }
+
+    public float getTailLookYaw(float partialTick) {
+        return Mth.rotLerp(partialTick, this.tailLookYawO, this.tailLookYaw);
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return false;
+    }
+
+    @Override
+    protected float getJumpPower() {
+        return 0.0F;
+    }
+
+    @Override
+    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+        return false;
+    }
+
+    public boolean isClimbing() {
+        return this.climbing.isOnSide();
+    }
+
+    public boolean isHidden() {
+        return this.canHide() || this.isDeadOrDying();
+    }
+    //endregion
+
     //region Animation
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
     }
 
     private <E extends Snail> PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
+        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6 || this.isClimbing()) {
             event.getController().setAnimation(CRAWL);
-        } else if (this.isNaturalistClimbing()){
-            event.getController().setAnimation(CLIMB);
         } else {
             event.getController().setAnimation(IDLE);
         }
@@ -470,12 +531,27 @@ public class Snail extends ClimbingAnimal implements NaturalistGeoEntity, Bucket
     }
 
     private <E extends Snail> PlayState hidePredicate(final AnimationState<E> event) {
-        if( this.canHide()) {
-            event.getController().setAnimation(HIDE);
+        AnimationController<E> controller = event.getController();
+        if (this.isHidden()) {
+            this.wasHiding = true;
+            this.playingHideEnd = false;
+            controller.setAnimation(HIDE);
             return PlayState.CONTINUE;
         }
-        event.getController().forceAnimationReset();
-
+        if (this.wasHiding) {
+            this.wasHiding = false;
+            this.playingHideEnd = true;
+            controller.forceAnimationReset();
+            controller.setAnimation(HIDE_END);
+            return PlayState.CONTINUE;
+        }
+        if (this.playingHideEnd) {
+            if (controller.hasAnimationFinished()) {
+                this.playingHideEnd = false;
+                return PlayState.STOP;
+            }
+            return PlayState.CONTINUE;
+        }
         return PlayState.STOP;
     }
 

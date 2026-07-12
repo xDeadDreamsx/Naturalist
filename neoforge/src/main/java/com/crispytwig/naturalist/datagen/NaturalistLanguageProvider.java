@@ -136,7 +136,7 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("item.naturalist.rattlesnake_spawn_egg", "Rattlesnake Spawn Egg");
         add("item.naturalist.rhino_spawn_egg", "Rhino Spawn Egg");
         add("item.naturalist.robin_spawn_egg", "Robin Spawn Egg");
-        add("item.naturalist.snail_bucket", "Bucket of Snail");
+        add("item.naturalist.snail", "Snail");
         add("item.naturalist.snail_shell", "Snail Shell");
         add("item.naturalist.snail_spawn_egg", "Snail Spawn Egg");
         add("item.naturalist.snake_spawn_egg", "Snake Spawn Egg");
@@ -235,8 +235,6 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("naturalist.subtitles.entity.snail.hurt", "Snail hurts");
         add("naturalist.subtitles.entity.snail.crush", "Snail crushes");
         add("naturalist.subtitles.entity.snail.move", "Snail inches");
-        add("naturalist.subtitles.item.bucket.fill_snail", "Snail scooped");
-        add("naturalist.subtitles.item.bucket.empty_snail", "Bucket empties snail");
 
         add("naturalist.subtitles.entity.snake.ambient", "Snake slithers");
         add("naturalist.subtitles.entity.snake.hiss", "Snake hisses");

@@ -84,7 +84,7 @@ public class NaturalistItemModelProvider extends ItemModelProvider {
         spawnEgg("zebra_spawn_egg");
 
         butterflyItem();
-        snailBucketItem();
+        snailItem();
     }
 
     private void simpleItem(String name) {
@@ -120,7 +120,7 @@ public class NaturalistItemModelProvider extends ItemModelProvider {
         }
     }
 
-    private void snailBucketItem() {
+    private void snailItem() {
         String[] colors = {"white", "orange", "magenta", "light_blue", "yellow", "lime",
                 "pink", "gray", "light_gray", "cyan", "purple", "blue",
                 "brown", "green", "red", "black"};
@@ -128,11 +128,11 @@ public class NaturalistItemModelProvider extends ItemModelProvider {
         ModelFile[] colorModels = new ModelFile[colors.length];
         for (int i = 0; i < colors.length; i++) {
             colorModels[i] = withExistingParent("item/snail/" + colors[i], mcLoc("item/generated"))
-                    .texture("layer0", modLoc("item/bucket_" + colors[i] + "_snail"));
+                    .texture("layer0", modLoc("item/snail_" + colors[i]));
         }
 
-        ItemModelBuilder builder = withExistingParent("snail_bucket", mcLoc("item/generated"))
-                .texture("layer0", modLoc("item/bucket_snail"));
+        ItemModelBuilder builder = withExistingParent("snail", mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/snail_brown"));
 
         for (int i = 0; i < colors.length; i++) {
             builder.override()

@@ -30,8 +30,6 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> SNAIL_CRUSH = register("entity.snail.crush");
     public static final DeferredHolder<SoundEvent, SoundEvent> SNAIL_FORWARD = register("entity.snail.forward");
     public static final DeferredHolder<SoundEvent, SoundEvent> SNAIL_BACK = register("entity.snail.back");
-    public static final DeferredHolder<SoundEvent, SoundEvent> BUCKET_FILL_SNAIL = register("item.bucket.fill_snail");
-    public static final DeferredHolder<SoundEvent, SoundEvent> BUCKET_EMPTY_SNAIL = register("item.bucket.empty_snail");
     public static final DeferredHolder<SoundEvent, SoundEvent> BIRD_HURT = register("entity.bird.hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> BIRD_DEATH = register("entity.bird.death");
     public static final DeferredHolder<SoundEvent, SoundEvent> BIRD_EAT = register("entity.bird.eat");

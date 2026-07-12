@@ -2,6 +2,7 @@ package com.crispytwig.naturalist;
 
 import com.crispytwig.naturalist.client.gui.screens.ElephantInventoryScreen;
 import com.crispytwig.naturalist.client.renderer.*;
+import com.crispytwig.naturalist.registry.NaturalistBlockEntities;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistMenus;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
@@ -10,8 +11,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +24,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 @Environment(EnvType.CLIENT)
 public final class NaturalistClient {
@@ -93,16 +98,22 @@ public final class NaturalistClient {
         r.register(NaturalistMenus.ELEPHANT.get(), ElephantInventoryScreen::new);
     }
 
+    @FunctionalInterface
+    public interface BlockEntityRendererRegistrar {
+        <T extends BlockEntity> void register(BlockEntityType<? extends T> type, BlockEntityRendererProvider<T> provider);
+    }
+
+    public static void registerBlockEntityRenderers(BlockEntityRendererRegistrar r) {
+        r.register(NaturalistBlockEntities.SNAIL_SHELL.get(), SnailShellRenderer::new);
+    }
+
     public static void registerItemProperties() {
-        ItemProperties.register(NaturalistRegistry.SNAIL_BUCKET.get(),
-                ResourceLocation.withDefaultNamespace("color"),
-                (stack, level, entity, seed) -> {
-                    CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-                    if (customData != null) {
-                        return customData.copyTag().getInt("Color") / 15.0f;
-                    }
-                    return 0.0f;
-                });
+        ClampedItemPropertyFunction color = (stack, level, entity, seed) -> {
+            CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+            return customData != null ? customData.getUnsafe().getInt("Color") / 15.0f : 0.0f;
+        };
+        ItemProperties.register(NaturalistRegistry.SNAIL.get(), ResourceLocation.withDefaultNamespace("color"), color);
+        ItemProperties.register(NaturalistRegistry.SNAIL_SHELL.get(), ResourceLocation.withDefaultNamespace("color"), color);
 
         ItemProperties.register(NaturalistRegistry.KNAPSACK.get(),
                 Naturalist.location("filled"),

@@ -214,7 +214,7 @@ public final class Naturalist {
         DispenserBlock.registerBehavior(NaturalistRegistry.ANGLERFISH_BUCKET.get(), bucketDispenseBehavior);
         DispenserBlock.registerBehavior(NaturalistRegistry.RAY_BUCKET.get(), bucketDispenseBehavior);
 
-        DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL_BUCKET.get(), new DefaultDispenseItemBehavior() {
+        DispenserBlock.registerBehavior(NaturalistRegistry.SNAIL.get(), new DefaultDispenseItemBehavior() {
             public @NotNull ItemStack execute(@NotNull BlockSource source, @NotNull ItemStack stack) {
                 Direction direction = source.state().getValue(DispenserBlock.FACING);
                 BlockPos blockPos = source.pos().relative(direction);
@@ -224,7 +224,6 @@ public final class Naturalist {
                 Snail snail = entityType.spawn(serverLevel, blockPos, MobSpawnType.DISPENSER);
                 if (snail != null) {
                     stack.shrink(1);
-                    return new ItemStack(Items.BUCKET);
                 }
                 return stack;
             }
