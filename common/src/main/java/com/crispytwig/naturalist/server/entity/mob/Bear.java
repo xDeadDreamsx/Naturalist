@@ -585,6 +585,10 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     private void addEatingParticles() {
+        ItemStack eatingStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
+        if (eatingStack.isEmpty()) {
+            return;
+        }
         if (this.getEatCounter() % 5 == 0 || this.getEatCounter() == 1) {
             for(int i = 0; i < 6; ++i) {
                 Vec3 speedVec = new Vec3(((double)this.random.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double)this.random.nextFloat() - 0.5D) * 0.1D);
@@ -594,7 +598,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
                 Vec3 posVec = new Vec3(((double)this.random.nextFloat() - 0.5D) * 0.8D, y, 1.0D + ((double)this.random.nextFloat() - 0.5D) * 0.4D);
                 posVec = posVec.yRot(-this.yBodyRot * Mth.DEG_TO_RAD);
                 posVec = posVec.add(this.getX(), this.getEyeY() - 0.2D, this.getZ() - 0.1D);
-                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getItemBySlot(EquipmentSlot.MAINHAND)), posVec.x, posVec.y, posVec.z, speedVec .x, speedVec .y + 0.05D, speedVec .z);
+                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, eatingStack), posVec.x, posVec.y, posVec.z, speedVec .x, speedVec .y + 0.05D, speedVec .z);
             }
         }
     }
