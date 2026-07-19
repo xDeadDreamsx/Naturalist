@@ -50,6 +50,12 @@ dependencies {
     shadowBundle project(path: ":common", configuration: "transformProductionNeoForge")
 
     modLocalRuntime "maven.modrinth:spawn-mod:${project.spawn_version}"
+
+    modCompileOnly "maven.modrinth:justenoughbreeding:${project.justenoughbreeding_neoforge_version}"
+    modLocalRuntime "maven.modrinth:justenoughbreeding:${project.justenoughbreeding_neoforge_version}"
+
+    modCompileOnly "maven.modrinth:emi:${project.emi_neoforge_version}"
+    modLocalRuntime "maven.modrinth:emi:${project.emi_neoforge_version}"
 }
 
 processResources {
