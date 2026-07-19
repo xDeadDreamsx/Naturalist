@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
@@ -46,26 +47,18 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Lion extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
+public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.LION_FOOD_ITEMS);
-    private static final ResourceLocation BABY_SPEED_BOOST_ID = ResourceLocation.fromNamespaceAndPath("naturalist", "baby_speed_boost");
+    private static final ResourceLocation BABY_SPEED_BOOST_ID = Naturalist.location("baby_speed_boost");
     private static final AttributeModifier BABY_SPEED_BOOST = new AttributeModifier(BABY_SPEED_BOOST_ID, 0.05D, AttributeModifier.Operation.ADD_VALUE);
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Lion.class, EntityDataSerializers.STRING);
@@ -74,19 +67,16 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
 
     private boolean followingOwner = true;
     private int huntingCooldown;
-    private boolean wasSitting;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.lion.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.lion.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.lion.run");
-    protected static final RawAnimation PREY = RawAnimation.begin().thenLoop("animation.sf_nba.lion.prey");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.lion.attack");
-    protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.lion.sleep");
-    protected static final RawAnimation SLEEP2 = RawAnimation.begin().thenLoop("animation.sf_nba.lion.sleep2");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenPlay("animation.sf_nba.lion.sit").thenLoop("animation.sf_nba.lion.sit_idle");
-    protected static final RawAnimation UNSIT = RawAnimation.begin().thenPlay("animation.sf_nba.lion.unsit");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState preyAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sleepAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState sleep2AnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState sitAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(5);
 
     public Lion(@NotNull EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -103,24 +93,24 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(SLEEPING, false);
         builder.define(HAS_MANE, false);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/lion/lion.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -166,8 +156,8 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("Mane", this.hasMane());
-        FollowingPet.save(this, compound);
-        this.addHuntingCooldownSaveData(compound);
+        FollowingPet.savePet(this, compound);
+        this.saveHuntingCooldown(compound);
     }
 
     @Override
@@ -175,15 +165,15 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.setHasMane(compound.getBoolean("Mane"));
-        FollowingPet.load(this, compound);
-        this.readHuntingCooldownSaveData(compound);
+        FollowingPet.loadPet(this, compound);
+        this.loadHuntingCooldown(compound);
     }
     //endregion
 
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         super.finalizeSpawn(level, difficulty, reason, spawnData);
         AgeableMobGroupData ageableMobGroupData;
         if (spawnData == null) {
@@ -195,7 +185,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         }
         ageableMobGroupData.increaseGroupSizeByOne();
         RandomSource random = level.getRandom();
-        Objects.requireNonNull(this.getAttribute(Attributes.FOLLOW_RANGE)).addPermanentModifier(new AttributeModifier(ResourceLocation.fromNamespaceAndPath("naturalist", "random_spawn_bonus"), random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        Objects.requireNonNull(this.getAttribute(Attributes.FOLLOW_RANGE)).addPermanentModifier(new AttributeModifier(Naturalist.location("random_spawn_bonus"), random.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
         return spawnData;
     }
 
@@ -209,7 +199,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Lion baby = NaturalistEntityTypes.LION.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
         return baby;
     }
@@ -243,7 +233,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         this.targetSelector.addGoal(3, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
                 entity -> entity.getType().is(NaturalistTags.EntityTypes.LION_HOSTILES) && !entity.isBaby()
-                        && !this.isSleeping() && !this.isBaby() && this.isNightTime() && this.hasHuntingCooldown()));
+                        && !this.isSleeping() && !this.isBaby() && this.isNightTime() && this.canHunt()));
     }
 
     @Override
@@ -258,7 +248,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
 
     @Override
     public boolean canAttack(@NotNull LivingEntity target) {
-        return !PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
+        return PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
     }
 
     @Override
@@ -343,9 +333,8 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
         this.updateBabySpeed();
         if (this.getMoveControl().hasWanted()) {
             double speedModifier = this.getMoveControl().getSpeedModifier();
-            double sprintThreshold = 1.05D;
 
-                if (speedModifier >= sprintThreshold && this.onGround()) {
+            if (speedModifier >= 1.05D && this.onGround()) {
                 this.setPose(Pose.STANDING);
                 this.setSprinting(true);
             } else {
@@ -402,13 +391,17 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     }
 
     @Override
+    public float getVoicePitch() {
+        return NaturalistAnimal.defaultVoicePitch(this.random);
+    }
+
+    @Override
     public int getAmbientSoundInterval() {
         return 900;
     }
 
     static class LionFollowLeaderGoal extends Goal {
         private final Lion mob;
-        private final Predicate<Mob> followPredicate;
         @Nullable
         private Lion followingMob;
         private final double speedModifier;
@@ -420,7 +413,6 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
 
         public LionFollowLeaderGoal(Lion mob, double speedModifier, float stopDistance, float areaSize) {
             this.mob = mob;
-            this.followPredicate = followingMob -> followingMob != null && !followingMob.isBaby();
             this.speedModifier = speedModifier;
             this.navigation = mob.getNavigation();
             this.stopDistance = stopDistance;
@@ -433,7 +425,7 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
             if (this.mob.isBaby() || this.mob.hasMane()) {
                 return false;
             }
-            List<Lion> nearbyLions = this.mob.level().getEntitiesOfClass(Lion.class, this.mob.getBoundingBox().inflate(this.areaSize), this.followPredicate);
+            List<Lion> nearbyLions = this.mob.level().getEntitiesOfClass(Lion.class, this.mob.getBoundingBox().inflate(this.areaSize), followingMob -> followingMob != null && !followingMob.isBaby());
             if (!nearbyLions.isEmpty()) {
                 for (Lion lion : nearbyLions) {
                     if (!lion.hasMane()) continue;
@@ -521,66 +513,32 @@ public class Lion extends TamableAnimal implements NaturalistGeoEntity, Sleeping
     //endregion
 
     //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Lion> PlayState predicate(final AnimationState<E> event) {
-        if (this.isBaby() && (this.isInSittingPose() || this.wasSitting)) {
-            event.getController().setAnimationSpeed(1.0D);
-            if (this.isInSittingPose()) {
-                event.getController().setAnimation(SIT);
-                this.wasSitting = true;
-            } else {
-                event.getController().setAnimation(UNSIT);
-                if (event.getController().hasAnimationFinished()) {
-                    this.wasSitting = false;
-                }
-            }
-            return PlayState.CONTINUE;
-        }
-        if (!this.isBaby() && this.isInSittingPose()) {
-            event.getController().setAnimation(this.hasMane() ? SLEEP2 : SLEEP);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        }
-        if (this.isSleeping() && this.hasMane()) {
-            event.getController().setAnimation(SLEEP2);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (this.isSleeping() && !this.hasMane()) {
-            event.getController().setAnimation(SLEEP);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            if (this.isSprinting()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.5D));
-            } else if (this.isCrouching()) {
-                event.getController().setAnimation(PREY);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 0.8D));
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0F);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private <E extends Lion> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
     @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
+    }
+
+    private void setupAnimationStates() {
+        boolean baby = this.isBaby();
+        boolean sitting = baby && this.isInSittingPose();
+        boolean sleeping = this.isSleeping() || (!baby && this.isInSittingPose());
+        boolean maned = this.hasMane() && !baby;
+        boolean posing = sitting || sleeping;
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+
+        this.sitAnimationState.animateWhen(sitting, this.tickCount);
+        this.sleepAnimationState.animateWhen(sleeping && !maned, this.tickCount);
+        this.sleep2AnimationState.animateWhen(sleeping && maned, this.tickCount);
+
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
+
+        this.runAnimationState.animateWhen(!posing && moving && this.isSprinting(), this.tickCount);
+        this.preyAnimationState.animateWhen(!posing && moving && !this.isSprinting() && this.isCrouching(), this.tickCount);
+        this.walkAnimationState.animateWhen(!posing && moving && !this.isSprinting() && !this.isCrouching(), this.tickCount);
+        this.idleAnimationState.animateWhen(!posing && !moving, this.tickCount);
     }
     //endregion
 }

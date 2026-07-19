@@ -10,7 +10,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -40,12 +39,10 @@ public class SnailShellRenderer implements BlockEntityRenderer<SnailShellBlockEn
             ResourceLocation.withDefaultNamespace("block/potted_flowering_azalea_bush_top"));
 
     private final BlockRenderDispatcher dispatcher;
-    private final ModelBlockRenderer modelRenderer;
     private final RandomSource random = RandomSource.create();
 
     public SnailShellRenderer(BlockEntityRendererProvider.Context context) {
         this.dispatcher = context.getBlockRenderDispatcher();
-        this.modelRenderer = this.dispatcher.getModelRenderer();
     }
 
     @Override
@@ -60,7 +57,7 @@ public class SnailShellRenderer implements BlockEntityRenderer<SnailShellBlockEn
         poseStack.translate(0.0D, -0.28125D, 0.15625D);
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
         poseStack.translate(-0.5D, -0.21875D, -0.65625D);
-        this.modelRenderer.renderModel(poseStack.last(), bufferSource.getBuffer(RENDER_TYPE), state, this.dispatcher.getBlockModel(state), 1.0F, 1.0F, 1.0F, packedLight, packedOverlay);
+        this.dispatcher.getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(RENDER_TYPE), state, this.dispatcher.getBlockModel(state), 1.0F, 1.0F, 1.0F, packedLight, packedOverlay);
         poseStack.popPose();
 
         Block potted = SnailShellBlock.getPottedBlock(blockEntity.getFlower());

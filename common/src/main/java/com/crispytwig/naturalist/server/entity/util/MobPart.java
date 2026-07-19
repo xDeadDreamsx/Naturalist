@@ -19,8 +19,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-
 @SuppressWarnings("unused")
 public class MobPart extends Entity {
     private final Mob parent;
@@ -65,9 +63,8 @@ public class MobPart extends Entity {
 
     public static void pushEntities(Mob parent, MobPart[] parts) {
         for (MobPart part : parts) {
-            List<Entity> list = parent.level().getEntities(part, part.getBoundingBox(),
-                    e -> !e.is(parent) && !(e instanceof MobPart) && e.isPushable());
-            for (Entity entity : list) {
+            for (Entity entity : parent.level().getEntities(part, part.getBoundingBox(),
+                    e -> !e.is(parent) && !(e instanceof MobPart) && e.isPushable())) {
                 part.push(entity);
             }
         }

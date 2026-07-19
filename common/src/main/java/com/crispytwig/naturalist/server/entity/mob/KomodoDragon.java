@@ -8,8 +8,11 @@ import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -52,19 +55,11 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-public class KomodoDragon extends Animal implements NaturalistGeoEntity, SleepingAnimal, DataDrivenVariantAnimal {
+public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.KOMODO_DRAGON_FOOD_ITEMS);
     private static final int PLAYER_TARGETING_TIME = 400;
@@ -75,13 +70,27 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
     private int playerNearbyTicks;
     private boolean playerTargeting;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState baskAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState biteAnimationState = SmoothAnimationState.instant();
+    private static final int BITE_ANIM_TICKS = 7;
+    private int biteAnimTicks;
+    public final SmoothAnimationState babyTransformAnimationState = SmoothAnimationState.pose();
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.komodo_dragon.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.komodo_dragon.walk");
-    protected static final RawAnimation BASK = RawAnimation.begin().thenLoop("animation.sf_nba.komodo_dragon.bask");
-    protected static final RawAnimation BITE = RawAnimation.begin().thenPlay("animation.sf_nba.komodo_dragon.bite");
-    protected static final RawAnimation BABY_TRANSFORM = RawAnimation.begin().thenLoop("animation.sf_nba.komodo_dragon.baby_transform");
+    private static final AnimationSoundTrack WALK_SOUNDS = AnimationSoundTrack.builder(1.2917F, true)
+            .at(0.2917F, NaturalistSoundEvents.KOMODO_DRAGON_STEP, 0.4F, 1.0F)
+            .at(0.3333F, NaturalistSoundEvents.KOMODO_DRAGON_STEP, 0.15F, 1.0F)
+            .at(0.7917F, NaturalistSoundEvents.KOMODO_DRAGON_STEP, 0.4F, 1.0F)
+            .at(0.8333F, NaturalistSoundEvents.KOMODO_DRAGON_STEP, 0.15F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack BITE_SOUNDS = AnimationSoundTrack.builder(0.3125F, false)
+            .at(0.0F, NaturalistSoundEvents.KOMODO_DRAGON_ATTACK, 1.0F, 1.0F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.walkAnimationState, WALK_SOUNDS)
+            .add(this.biteAnimationState, BITE_SOUNDS);
 
     public KomodoDragon(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -98,23 +107,23 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(BASKING, false);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/komodo_dragon.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -150,8 +159,8 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }
@@ -168,7 +177,7 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         KomodoDragon baby = NaturalistEntityTypes.KOMODO_DRAGON.get().create(level);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }
         return baby;
     }
@@ -308,76 +317,27 @@ public class KomodoDragon extends Animal implements NaturalistGeoEntity, Sleepin
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
+        }
     }
 
-    protected <E extends KomodoDragon> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.isSleeping()) {
-            event.getController().setAnimation(BASK);
-            event.getController().setAnimationSpeed(1.0F);
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimation(WALK);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, this.isSprinting() ? 2.5D : 1.5D));
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0F);
+    private void setupAnimationStates() {
+        boolean sleeping = this.isSleeping();
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        if (this.swinging && this.biteAnimTicks <= 0) {
+            this.biteAnimTicks = BITE_ANIM_TICKS;
+        } else if (this.biteAnimTicks > 0) {
+            this.biteAnimTicks--;
         }
-        return PlayState.CONTINUE;
-    }
-
-    protected <E extends KomodoDragon> @NotNull PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(BITE);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
-    protected <E extends KomodoDragon> @NotNull PlayState babyPredicate(final AnimationState<E> event) {
-        if (this.isBaby()) {
-            event.getController().setAnimation(BABY_TRANSFORM);
-            return PlayState.CONTINUE;
-        }
-        event.getController().forceAnimationReset();
-        return PlayState.STOP;
-    }
-
-    private void soundListener(@NotNull SoundKeyframeEvent<KomodoDragon> event) {
-        KomodoDragon komodoDragon = event.getAnimatable();
-        if (!komodoDragon.level().isClientSide) {
-            return;
-        }
-        SoundEvent sound;
-        float volume;
-        switch (event.getKeyframeData().getSound()) {
-            case "bite" -> {
-                sound = NaturalistSoundEvents.KOMODO_DRAGON_ATTACK.get();
-                volume = 1.0F;
-            }
-            case "step" -> {
-                sound = NaturalistSoundEvents.KOMODO_DRAGON_STEP.get();
-                volume = 0.4F;
-            }
-            case "step_-12dB" -> {
-                sound = NaturalistSoundEvents.KOMODO_DRAGON_STEP.get();
-                volume = 0.15F;
-            }
-            default -> {
-                return;
-            }
-        }
-        komodoDragon.level().playLocalSound(komodoDragon.getX(), komodoDragon.getY(), komodoDragon.getZ(), sound, komodoDragon.getSoundSource(), volume, 1.0F, false);
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
-                .setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate)
-                .setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "babyController", 0, this::babyPredicate));
+        this.biteAnimationState.animateWhen(this.biteAnimTicks > 0, this.tickCount);
+        this.babyTransformAnimationState.animateWhen(this.isBaby(), this.tickCount);
+        this.baskAnimationState.animateWhen(sleeping, this.tickCount);
+        this.walkAnimationState.animateWhen(!sleeping && moving, this.tickCount);
+        this.idleAnimationState.animateWhen(!sleeping && !moving, this.tickCount);
     }
     //endregion
 }

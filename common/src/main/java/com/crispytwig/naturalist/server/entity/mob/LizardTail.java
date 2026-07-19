@@ -2,7 +2,6 @@ package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistMobVariants;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.nbt.CompoundTag;
@@ -18,16 +17,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
-import software.bernie.geckolib.animation.AnimationState;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
-public class LizardTail extends Mob implements NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class LizardTail extends Mob implements DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"green", "brown", "beardie", "leopard_gecko"};
 
@@ -35,9 +28,7 @@ public class LizardTail extends Mob implements NaturalistGeoEntity, DataDrivenVa
 
     private static final EntityDataAccessor<String> VARIANT_ID = SynchedEntityData.defineId(LizardTail.class, EntityDataSerializers.STRING);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.lizard_tail.flop");
+    public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
 
     public LizardTail(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
@@ -54,28 +45,28 @@ public class LizardTail extends Mob implements NaturalistGeoEntity, DataDrivenVa
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("lizard_tail"), "green");
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/lizard/green_tail.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(VARIANT_ID);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(VARIANT_ID, id);
+    public void setVariantString(String location) {
+        this.entityData.set(VARIANT_ID, location);
     }
 
     @Override
@@ -115,18 +106,16 @@ public class LizardTail extends Mob implements NaturalistGeoEntity, DataDrivenVa
     //endregion
 
     //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends LizardTail> @NotNull PlayState predicate(final @NotNull AnimationState<E> event) {
-        event.getController().setAnimation(FLOP);
-        return PlayState.CONTINUE;
-    }
-
     @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
+    }
+
+    private void setupAnimationStates() {
+        this.flopAnimationState.animateWhen(true, this.tickCount);
     }
     //endregion
 }

@@ -2,7 +2,6 @@ package com.crispytwig.naturalist.registry;
 
 import com.crispytwig.naturalist.Naturalist;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import com.crispytwig.naturalist.platform.registry.DeferredHolder;
 import com.crispytwig.naturalist.platform.registry.DeferredRegister;
@@ -256,7 +255,6 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBER_DUCKY_DEATH = register("entity.rubber_ducky.death");
 
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name);
-        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Naturalist.location(name)));
     }
 }

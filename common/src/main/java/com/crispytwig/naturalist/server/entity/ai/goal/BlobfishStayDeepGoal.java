@@ -19,8 +19,7 @@ public class BlobfishStayDeepGoal extends RandomSwimmingGoal {
     protected Vec3 getPosition() {
         int deepY = this.blobfish.getDeepY();
         if (this.blobfish.getY() > deepY) {
-            Vec3 deepTarget = new Vec3(this.blobfish.getX(), deepY - 4, this.blobfish.getZ());
-            return DefaultRandomPos.getPosTowards(this.blobfish, 10, 7, deepTarget, Math.PI / 2.0);
+            return DefaultRandomPos.getPosTowards(this.blobfish, 10, 7, new Vec3(this.blobfish.getX(), deepY - 4, this.blobfish.getZ()), Math.PI / 2.0);
         }
         Vec3 pos = super.getPosition();
         return pos != null && pos.y <= deepY ? pos : null;

@@ -21,8 +21,7 @@ public class FabricRegistrationProvider<T> implements RegistrationProvider<T> {
 
     @Override
     public <I extends T> DeferredHolder<T, I> register(String name, Supplier<I> supplier) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(modId, name);
-        I value = Registry.register(registry, id, supplier.get());
+        I value = Registry.register(registry, ResourceLocation.fromNamespaceAndPath(modId, name), supplier.get());
         return new DeferredHolder<>(() -> value);
     }
 

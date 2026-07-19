@@ -29,8 +29,7 @@ public abstract class ParrotModelMixin {
             return;
         }
         int tickCount = args.get(1);
-        float flap = Mth.sin((tickCount + ParrotFlight.shoulderPartialTick) * 1.5F) + 1.0F;
         args.set(0, ParrotModel.State.FLYING);
-        args.set(4, flap);
+        args.set(4, Mth.sin((tickCount + ParrotFlight.shoulderPartialTick) * 1.5F) + 1.0F);
     }
 }

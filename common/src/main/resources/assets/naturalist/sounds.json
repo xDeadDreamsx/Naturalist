@@ -220,10 +220,10 @@
   },
   "entity.rat.swim": {
     "sounds": [
-      "naturalist:mob/duck/swim1",
-      "naturalist:mob/duck/swim2",
-      "naturalist:mob/duck/swim3",
-      "naturalist:mob/duck/swim4"
+      {
+        "name": "minecraft:entity.generic.swim",
+        "type": "event"
+      }
     ],
     "subtitle": "naturalist.subtitles.entity.rat.swim"
   },

@@ -49,8 +49,7 @@ public class KnapsackItem extends Item {
         if (target.isBaby()) {
             return true;
         }
-        ResourceLocation key = BuiltInRegistries.ENTITY_TYPE.getKey(target.getType());
-        return Naturalist.MOD_ID.equals(key.getNamespace());
+        return Naturalist.MOD_ID.equals(BuiltInRegistries.ENTITY_TYPE.getKey(target.getType()).getNamespace());
     }
 
     @Override
@@ -68,6 +67,8 @@ public class KnapsackItem extends Item {
         ItemStack filled = new ItemStack(NaturalistRegistry.KNAPSACK.get());
         filled.set(DataComponents.CUSTOM_DATA, CustomData.of(entityTag));
 
+        BugNetItem.swing(player.level(), player);
+        BugNetItem.playCaughtEffects(player.level(), mob);
         mob.discard();
         player.swing(hand);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), NaturalistSoundEvents.KNAPSACK_PICKUP.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);

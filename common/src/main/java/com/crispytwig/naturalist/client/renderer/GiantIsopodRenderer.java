@@ -5,30 +5,35 @@ import com.crispytwig.naturalist.client.model.GiantIsopodModel;
 import com.crispytwig.naturalist.server.entity.mob.GiantIsopod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class GiantIsopodRenderer extends GeoEntityRenderer<GiantIsopod> {
-    public GiantIsopodRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new GiantIsopodModel());
-        this.shadowRadius = 0.4F;
+public class GiantIsopodRenderer extends MobRenderer<GiantIsopod, HierarchicalModel<GiantIsopod>> {
+    public GiantIsopodRenderer(EntityRendererProvider.Context context) {
+        super(context, new GiantIsopodModel(context.bakeLayer(GiantIsopodModel.LAYER_LOCATION)), 0.4F);
     }
 
     @Override
-    public float getMotionAnimThreshold(GiantIsopod animatable) {
-        return 0.000001f;
+    public @NotNull ResourceLocation getTextureLocation(@NotNull GiantIsopod entity) {
+        return entity.getVariantTexture();
     }
 
     @Override
-    public void render(GiantIsopod entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        this.shadowRadius = entity.isBaby() ? 0.2F : 0.4F;
+    protected void scale(@NotNull GiantIsopod entity, @NotNull PoseStack poseStack, float partialTick) {
         if (entity.isBaby()) {
             poseStack.scale(0.5F, 0.5F, 0.5F);
         }
+    }
+
+    @Override
+    public void render(@NotNull GiantIsopod entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
+        this.shadowRadius = entity.isBaby() ? 0.2F : 0.4F;
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 }

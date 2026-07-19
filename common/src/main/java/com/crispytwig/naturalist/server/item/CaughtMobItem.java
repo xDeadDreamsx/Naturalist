@@ -48,8 +48,7 @@ public class CaughtMobItem extends NaturalistBucketItem {
     private void spawn(ServerLevel serverLevel, ItemStack itemStack, BlockPos pos) {
         Entity entity = this.type().spawn(serverLevel, itemStack, null, pos, MobSpawnType.BUCKET, true, false);
         if (entity instanceof Catchable catchable) {
-            CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-            catchable.loadFromHandTag(tag);
+            catchable.loadFromHandTag(itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag());
             catchable.setFromHand(true);
         }
 
@@ -79,8 +78,7 @@ public class CaughtMobItem extends NaturalistBucketItem {
         } else {
             BlockPos pos = blockhitresult.getBlockPos();
             Direction direction = blockhitresult.getDirection();
-            BlockPos blockpos1 = pos.relative(direction);
-            if (level.mayInteract(player, pos) && player.mayUseItemAt(blockpos1, direction, itemstack)) {
+            if (level.mayInteract(player, pos) && player.mayUseItemAt(pos.relative(direction), direction, itemstack)) {
                 this.checkExtraContent(player, level, itemstack, pos);
                 this.playEmptySound(player, level, pos);
                 player.awardStat(Stats.ITEM_USED.get(this));

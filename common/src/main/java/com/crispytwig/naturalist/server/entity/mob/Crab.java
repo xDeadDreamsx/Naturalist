@@ -7,11 +7,14 @@ import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.HidingAnimal;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
@@ -74,15 +77,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -90,7 +84,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal {
+public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal {
 
     //region Data
     public static final String[] VARIANT_NAMES = {"blue", "brown", "orange", "red", "yellow"};
@@ -102,29 +96,35 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
     private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.crab.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.crab.walk");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.crab.sit_loop");
-    protected static final RawAnimation DANCE = RawAnimation.begin().thenLoop("animation.sf_nba.crab.dance");
-    protected static final RawAnimation HIDE_INTRO = RawAnimation.begin().thenPlay("animation.sf_nba.crab.hide").thenLoop("animation.sf_nba.crab.hide_loop");
-    protected static final RawAnimation HIDE_LOOP = RawAnimation.begin().thenLoop("animation.sf_nba.crab.hide_loop");
-    protected static final RawAnimation PEEK = RawAnimation.begin().thenPlay("animation.sf_nba.crab.hide_peek").thenLoop("animation.sf_nba.crab.hide_loop");
-    protected static final RawAnimation UNHIDE = RawAnimation.begin().thenPlay("animation.sf_nba.crab.unhide");
-    protected static final RawAnimation SWING = RawAnimation.begin().thenPlay("animation.sf_nba.crab.swing_right");
-    protected static final RawAnimation HOLDING_WEAPON = RawAnimation.begin().thenLoop("animation.sf_nba.crab.holding_weapon");
-    protected static final RawAnimation BABY_IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.crab_baby.idle");
-    protected static final RawAnimation BABY_WALK = RawAnimation.begin().thenLoop("animation.sf_nba.crab_baby.walk");
-    protected static final RawAnimation BABY_SIT = RawAnimation.begin().thenLoop("animation.sf_nba.crab_baby.sit_idle");
+    private static final int SWING_ANIM_TICKS = 13;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private boolean followingOwner = true;
     private boolean wasHiding;
     private int unhideAnimTicks;
     private int hideElapsed;
     private int peekTicksLeft;
     private int peekCooldown = 50;
+    private int swingAnimTicks;
     private boolean hideCache;
     private long hideCacheTick = -1L;
+
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState danceAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sitAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState hideAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState hideLoopAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState peekAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState unhideAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swingAnimationState = SmoothAnimationState.instant();
+
+    private static final AnimationSoundTrack WALK_SOUNDS = AnimationSoundTrack.builder(0.5F, true)
+            .at(0.0F, NaturalistSoundEvents.CRAB_STEP, 0.3F, 1.0F)
+            .at(0.25F, NaturalistSoundEvents.CRAB_STEP, 0.3F, 1.0F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.walkAnimationState, WALK_SOUNDS);
 
     public Crab(@NotNull EntityType<? extends TamableAnimal> type, Level level) {
         super(type, level);
@@ -140,28 +140,28 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return DEFAULT_VARIANT;
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/crab/blue_crab.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     public boolean isDancing() {
@@ -197,7 +197,7 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
-        FollowingPet.save(this, compound);
+        FollowingPet.savePet(this, compound);
     }
 
     @Override
@@ -205,7 +205,7 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.setFromHand(compound.getBoolean("FromHand"));
-        FollowingPet.load(this, compound);
+        FollowingPet.loadPet(this, compound);
     }
 
     @Override
@@ -272,7 +272,7 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
     public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.setCanPickUpLoot(true);
         if (spawnType != MobSpawnType.BUCKET) {
-            this.pickVariantForSpawn(level);
+            this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
@@ -295,7 +295,7 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
     public Crab getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Crab baby = NaturalistEntityTypes.CRAB.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
             if (this.isTame()) {
                 baby.setOwnerUUID(this.getOwnerUUID());
                 baby.setTame(true, true);
@@ -457,6 +457,41 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
         if (!this.level().isClientSide && this.tickCount % 20 == 0) {
             this.setDancing(this.isTame() && !this.isOrderedToSit() && this.isJukeboxNearby());
         }
+
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
+        }
+    }
+
+    private void setupAnimationStates() {
+        boolean hiding = this.canHide();
+        boolean unhiding = !hiding && this.unhideAnimTicks > 0;
+        boolean peeking = hiding && this.peekTicksLeft > 0;
+        boolean hideLoop = hiding && !peeking && this.hideElapsed > 38;
+
+        this.hideAnimationState.animateWhen(hiding && !peeking && !hideLoop, this.tickCount);
+        this.hideLoopAnimationState.animateWhen(hideLoop, this.tickCount);
+        this.peekAnimationState.animateWhen(peeking, this.tickCount);
+        this.unhideAnimationState.animateWhen(unhiding, this.tickCount);
+
+        boolean hidden = hiding || unhiding;
+        boolean dancing = !hidden && this.isDancing();
+        boolean sitting = !hidden && !dancing && this.isInSittingPose();
+        boolean posing = hidden || dancing || sitting;
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+
+        this.danceAnimationState.animateWhen(dancing, this.tickCount);
+        this.sitAnimationState.animateWhen(sitting, this.tickCount);
+        this.walkAnimationState.animateWhen(!posing && moving, this.tickCount);
+        this.idleAnimationState.animateWhen(!posing && !moving, this.tickCount);
+
+        if (this.swinging && this.swingAnimTicks <= 0) {
+            this.swingAnimTicks = SWING_ANIM_TICKS;
+        } else if (this.swingAnimTicks > 0) {
+            this.swingAnimTicks--;
+        }
+        this.swingAnimationState.animateWhen(this.swingAnimTicks > 0 && !this.isDancing(), this.tickCount);
     }
 
     private boolean isJukeboxNearby() {
@@ -609,79 +644,4 @@ public class Crab extends TamableAnimal implements NaturalistGeoEntity, HidingAn
     }
     //endregion
 
-    //region Animation
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Crab> PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.isDancing()) {
-            event.getController().setAnimation(DANCE);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (this.isInSittingPose()) {
-            event.getController().setAnimation(this.isBaby() ? BABY_SIT : SIT);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (event.isMoving()) {
-            event.getController().setAnimation(this.isBaby() ? BABY_WALK : WALK);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
-        } else {
-            event.getController().setAnimation(this.isBaby() ? BABY_IDLE : IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private <E extends Crab> PlayState hidePredicate(final @NotNull AnimationState<E> event) {
-        if (this.canHide()) {
-            if (this.peekTicksLeft > 0) {
-                event.getController().setAnimation(PEEK);
-            } else if (this.hideElapsed > 38) {
-                event.getController().setAnimation(HIDE_LOOP);
-            } else {
-                event.getController().setAnimation(HIDE_INTRO);
-            }
-            return PlayState.CONTINUE;
-        }
-        if (this.unhideAnimTicks > 0) {
-            event.getController().setAnimation(UNHIDE);
-            return PlayState.CONTINUE;
-        }
-        event.getController().forceAnimationReset();
-        return PlayState.STOP;
-    }
-
-    private <E extends Crab> PlayState weaponPredicate(final @NotNull AnimationState<E> event) {
-        if (!this.getMainHandItem().isEmpty() && !this.isDancing()) {
-            event.getController().setAnimation(HOLDING_WEAPON);
-            return PlayState.CONTINUE;
-        }
-        event.getController().forceAnimationReset();
-        return PlayState.STOP;
-    }
-
-    private <E extends Crab> PlayState swingPredicate(final @NotNull AnimationState<E> event) {
-        if (this.swinging && !this.isDancing()) {
-            event.getController().setAnimation(SWING);
-            return PlayState.CONTINUE;
-        }
-        event.getController().forceAnimationReset();
-        return PlayState.STOP;
-    }
-
-    private void soundListener(@NotNull SoundKeyframeEvent<Crab> event) {
-        Crab crab = event.getAnimatable();
-        if (crab.level().isClientSide && "step".equals(event.getKeyframeData().getSound())) {
-            crab.level().playLocalSound(crab.getX(), crab.getY(), crab.getZ(), NaturalistSoundEvents.CRAB_STEP.get(), crab.getSoundSource(), 0.3F, 1.0F, false);
-        }
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "hideController", 0, this::hidePredicate));
-        controllers.add(new AnimationController<>(this, "weaponController", 0, this::weaponPredicate));
-        controllers.add(new AnimationController<>(this, "swingController", 0, this::swingPredicate));
-    }
-    //endregion
 }

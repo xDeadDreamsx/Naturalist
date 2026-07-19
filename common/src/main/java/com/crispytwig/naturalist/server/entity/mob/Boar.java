@@ -2,7 +2,6 @@ package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
@@ -38,20 +37,14 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import java.util.UUID;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
@@ -62,12 +55,11 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     @Nullable
     private UUID persistentAngerTarget;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.boar.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.boar.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.boar.run");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.boar.attack");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(7);
 
     public Boar(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
@@ -80,22 +72,22 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/boar.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -135,10 +127,8 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.pickVariantForSpawn(level);
-        super.finalizeSpawn(level, difficulty, reason, spawnData);
-
-        return spawnData;
+        this.selectVariantForSpawn(level);
+        return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
     @Override
@@ -151,7 +141,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Boar baby = NaturalistEntityTypes.BOAR.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
         return baby;
     }
@@ -249,7 +239,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
 
     @Override
     public float getVoicePitch() {
-        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.5F;
+        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + (this.isBaby() ? 1.0F : 0.5F);
     }
 
     static class BoarMeleeAttackGoal extends MeleeAttackGoal {
@@ -299,39 +289,21 @@ public class Boar extends NaturalistAnimal implements NeutralMob, NaturalistGeoE
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Boar> PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            if (this.isSprinting()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.5D));
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
         }
-        return PlayState.CONTINUE;
     }
 
-    private <E extends Boar> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
+    private void setupAnimationStates() {
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
 
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 10, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
+
+        this.walkAnimationState.animateWhen(moving && !this.isSprinting(), this.tickCount);
+        this.runAnimationState.animateWhen(moving && this.isSprinting(), this.tickCount);
+        this.idleAnimationState.animateWhen(!moving, this.tickCount);
     }
     //endregion
 }

@@ -18,7 +18,7 @@ public class BlackBear extends Bear {
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/black_bear/black_bear.png");
     }
 

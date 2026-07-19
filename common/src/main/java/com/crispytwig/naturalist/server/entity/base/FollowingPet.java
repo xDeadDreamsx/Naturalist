@@ -18,11 +18,11 @@ public interface FollowingPet {
 
     void setFollowingOwner(boolean following);
 
-    static void save(FollowingPet pet, CompoundTag tag) {
+    static void savePet(FollowingPet pet, CompoundTag tag) {
         tag.putBoolean("FollowingOwner", pet.isFollowingOwner());
     }
 
-    static void load(FollowingPet pet, CompoundTag tag) {
+    static void loadPet(FollowingPet pet, CompoundTag tag) {
         if (tag.contains("FollowingOwner")) {
             pet.setFollowingOwner(tag.getBoolean("FollowingOwner"));
         }

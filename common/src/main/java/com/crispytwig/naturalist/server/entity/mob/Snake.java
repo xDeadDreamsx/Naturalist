@@ -10,7 +10,6 @@ import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SearchForItemsGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
-import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
@@ -52,25 +51,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.pathfinder.Path;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import org.jetbrains.annotations.NotNull;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, NaturalistGeoEntity, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
+public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
     private static final Ingredient TAME_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS);
@@ -86,14 +76,15 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     @Nullable
     private UUID persistentAngerTarget;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private int tongueTicks;
 
-    protected static final RawAnimation MOVE = RawAnimation.begin().thenPlay("animation.sf_nba.snake.move");
-    protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.snake.sleep");
-    protected static final RawAnimation CLIMB = RawAnimation.begin().thenLoop("animation.sf_nba.snake.climb");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.snake.attack");
-    protected static final RawAnimation TONGUE = RawAnimation.begin().thenPlay("animation.sf_nba.snake.tongue");
-    protected static final RawAnimation RATTLE = RawAnimation.begin().thenLoop("animation.sf_nba.snake.rattle");
+    public final SmoothAnimationState moveAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState climbAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sleepAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(10);
+    public final SmoothAnimationState tongueAnimationState = SmoothAnimationState.instant();
+    public final SmoothAnimationState rattleAnimationState = new SmoothAnimationState();
 
     public Snake(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -107,33 +98,33 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(SLEEPING, false);
         builder.define(EAT_COUNTER, 0);
         builder.define(REMAINING_ANGER_TIME, 0);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/snake/green_snake.png");
     }
 
     public boolean isVenomous() {
-        return this.isRattlesnake() || this.getVariantId().getPath().equals("coral_snake");
+        return this.isRattlesnake() || this.getVariantLocation().getPath().equals("coral_snake");
     }
 
     public boolean isRattlesnake() {
-        return this.getVariantId().getPath().equals("rattlesnake");
+        return this.getVariantLocation().getPath().equals("rattlesnake");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -160,8 +151,8 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         return this.entityData.get(EAT_COUNTER) > 0;
     }
 
-    public void eat(boolean eat) {
-        this.entityData.set(EAT_COUNTER, eat ? 1 : 0);
+    public void setEating(boolean eating) {
+        this.entityData.set(EAT_COUNTER, eating ? 1 : 0);
     }
 
     private int getEatCounter() {
@@ -208,8 +199,8 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         this.addPersistentAngerSaveData(compound);
-        FollowingPet.save(this, compound);
-        this.addHuntingCooldownSaveData(compound);
+        FollowingPet.savePet(this, compound);
+        this.saveHuntingCooldown(compound);
     }
 
     @Override
@@ -217,8 +208,8 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
-        FollowingPet.load(this, compound);
-        this.readHuntingCooldownSaveData(compound);
+        FollowingPet.loadPet(this, compound);
+        this.loadHuntingCooldown(compound);
     }
     //endregion
 
@@ -229,7 +220,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         this.populateDefaultEquipmentSlots(random, difficulty);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
@@ -289,7 +280,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, livingEntity -> this.hasHuntingCooldown() && (livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny()))));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, livingEntity -> this.canHunt() && (livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny()))));
         this.targetSelector.addGoal(6, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
@@ -331,7 +322,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public boolean canAttack(@NotNull LivingEntity target) {
-        return !PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
+        return PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
     }
 
     @Override
@@ -356,8 +347,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
             return whistle;
         }
         if (this.level().isClientSide) {
-            boolean canInteract = this.isOwnedBy(player) || this.isTame() || (this.isTameFood(stack) && !this.isTame());
-            return canInteract ? InteractionResult.CONSUME : InteractionResult.PASS;
+            return (this.isOwnedBy(player) || this.isTame() || (this.isTameFood(stack) && !this.isTame())) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         if (this.isTame()) {
             if (this.isTameFood(stack) && this.getHealth() < this.getMaxHealth()) {
@@ -442,9 +432,9 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     private void handleEating() {
         if (!this.isEating() && !this.isSleeping() && !this.getMainHandItem().isEmpty()) {
-            this.eat(true);
+            this.setEating(true);
         } else if (this.getMainHandItem().isEmpty()) {
-            this.eat(false);
+            this.setEating(false);
         }
         if (this.isEating()) {
             if (!this.level().isClientSide && this.getEatCounter() > 6000) {
@@ -454,7 +444,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
                         this.gameEvent(GameEvent.EAT);
                     }
                 }
-                this.eat(false);
+                this.setEating(false);
                 return;
             }
             this.setEatCounter(this.getEatCounter() + 1);
@@ -529,8 +519,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
                 } else if (!livingEntity.isAlive()) {
                     return false;
                 } else {
-                    Path path = this.mob.getNavigation().createPath(livingEntity, 0);
-                    if (path != null) {
+                    if (this.mob.getNavigation().createPath(livingEntity, 0) != null) {
                         return true;
                     } else {
                         return this.getAttackReachSqr(livingEntity) >= this.mob.distanceToSqr(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
@@ -551,75 +540,28 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     //endregion
 
     //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Snake> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.isSleeping() || this.isInSittingPose()) {
-            event.getController().setAnimation(SLEEP);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        } else if (this.isNaturalistClimbing()) {
-            event.getController().setAnimation(CLIMB);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        } else if (!(event.getLimbSwingAmount() > -0.04F && event.getLimbSwingAmount() < 0.04F)) {
-            event.getController().setAnimation(MOVE);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
-            return PlayState.CONTINUE;
-        }
-        event.getController().forceAnimationReset();
-
-        return PlayState.STOP;
-    }
-
-    private <E extends Snake> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private <E extends Snake> @NotNull PlayState tonguePredicate(final AnimationState<E> event) {
-        if (this.random.nextInt(1000) < this.ambientSoundTime && !this.isSleeping() && event.getController().getAnimationState().equals(AnimationController.State.STOPPED)) {
-            event.getController().forceAnimationReset();
-
-            event.getController().setAnimation(TONGUE);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private <E extends Snake> @NotNull PlayState rattlePredicate(final AnimationState<E> event) {
-        if (this.canRattle() && !this.isSleeping()) {
-            event.getController().setAnimation(RATTLE);
-            return PlayState.CONTINUE;
-        }
-        event.getController().forceAnimationReset();
-
-        return PlayState.STOP;
-    }
-
-    private void soundListener(@NotNull SoundKeyframeEvent<Snake> event) {
-        Snake snake = event.getAnimatable();
-        if (snake.level().isClientSide) {
-            if (event.getKeyframeData().getSound().equals("hiss")) {
-                snake.level().playLocalSound(snake.getX(), snake.getY(), snake.getZ(), NaturalistSoundEvents.SNAKE_HISS.get(), snake.getSoundSource(), snake.getSoundVolume(), snake.getVoicePitch(), false);
-            }
-        }
-    }
-
     @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 10, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
+    }
 
-        AnimationController<Snake> tongueController = new AnimationController<>(this, "tongueController", 0, this::tonguePredicate);
-        tongueController.setSoundKeyframeHandler(this::soundListener);
-        controllers.add(tongueController);
-        controllers.add(new AnimationController<>(this, "rattleController", 0, this::rattlePredicate));
+    private void setupAnimationStates() {
+        boolean sleeping = this.isSleeping() || this.isInSittingPose();
+        boolean climbing = this.isClimbing();
+        if (this.tongueTicks > 0) {
+            this.tongueTicks--;
+        } else if (!this.isSleeping() && this.random.nextInt(1000) < this.ambientSoundTime) {
+            this.tongueTicks = 15;
+        }
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
+        this.tongueAnimationState.animateWhen(this.tongueTicks > 0, this.tickCount);
+        this.rattleAnimationState.animateWhen(this.canRattle() && !this.isSleeping(), this.tickCount);
+        this.sleepAnimationState.animateWhen(sleeping, this.tickCount);
+        this.climbAnimationState.animateWhen(!sleeping && climbing, this.tickCount);
+        this.moveAnimationState.animateWhen(!sleeping && !climbing && this.walkAnimation.speed() > 0.04F, this.tickCount);
     }
     //endregion
 }

@@ -9,12 +9,15 @@ import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.RatHarvestCropsGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
 import com.crispytwig.naturalist.server.entity.base.ContainerBoundWorker;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
 import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
@@ -61,19 +64,12 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal, ContainerBoundWorker {
+public class Rat extends TamableClimbingAnimal implements SleepingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal, ContainerBoundWorker {
     //region Data
     public static final String[] VARIANT_NAMES = {"black", "brown", "white"};
 
@@ -92,15 +88,28 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
 
     private boolean followingOwner = true;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState standingAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sleepAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState sitAnimationState = SmoothAnimationState.pose();
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.rat.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.rat.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.rat.run");
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.rat.swim");
-    protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.rat.sleep");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.rat.sit");
-    protected static final RawAnimation STANDING = RawAnimation.begin().thenLoop("animation.sf_nba.rat.standing");
+    private static final AnimationSoundTrack WALK_SOUNDS = AnimationSoundTrack.builder(0.5F, true)
+            .at(0.06F, NaturalistSoundEvents.RAT_STEP, 0.25F, 1.0F)
+            .at(0.19F, NaturalistSoundEvents.RAT_STEP, 0.15F, 1.0F)
+            .at(0.31F, NaturalistSoundEvents.RAT_STEP, 0.25F, 1.0F)
+            .at(0.44F, NaturalistSoundEvents.RAT_STEP, 0.15F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack RUN_SOUNDS = AnimationSoundTrack.builder(0.625F, true)
+            .at(0.42F, NaturalistSoundEvents.RAT_STEP, 0.25F, 1.0F)
+            .at(0.58F, NaturalistSoundEvents.RAT_STEP, 0.15F, 1.0F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.walkAnimationState, WALK_SOUNDS)
+            .add(this.runAnimationState, RUN_SOUNDS);
 
     public Rat(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -122,28 +131,28 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return NaturalistMobVariants.RAT_BLACK;
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/rat/black.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -247,7 +256,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
             compound.putLong("Workstation", this.workstationPos.asLong());
         }
         compound.put("CarriedItems", this.carriedItems.createTag(this.registryAccess()));
-        FollowingPet.save(this, compound);
+        FollowingPet.savePet(this, compound);
     }
 
     @Override
@@ -263,7 +272,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
         if (compound.contains("CarriedItems", 9)) {
             this.carriedItems.fromTag(compound.getList("CarriedItems", 10), this.registryAccess());
         }
-        FollowingPet.load(this, compound);
+        FollowingPet.loadPet(this, compound);
     }
 
     @Override
@@ -307,7 +316,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         Rat baby = NaturalistEntityTypes.RAT.get().create(level);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(mob, this.random));
             if (this.isTame()) {
                 baby.setOwnerUUID(this.getOwnerUUID());
                 baby.setTame(true, true);
@@ -317,9 +326,9 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnType != MobSpawnType.BUCKET) {
-            this.pickVariantForSpawn(level);
+            this.selectVariantForSpawn(level);
         }
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
@@ -365,7 +374,7 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
             return false;
         }
         return this.level().getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(12.0D, 6.0D, 12.0D),
-                mob -> mob != this && !(mob instanceof Rat)).isEmpty();
+                mob -> !(mob instanceof Rat)).isEmpty();
     }
 
     @Override
@@ -501,58 +510,30 @@ public class Rat extends TamableClimbingAnimal implements NaturalistGeoEntity, S
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
+        }
     }
 
-    protected <E extends Rat> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.isInSittingPose()) {
-            event.getController().setAnimation(SIT);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (this.isSleeping()) {
-            event.getController().setAnimation(SLEEP);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (this.isInWater()) {
-            event.getController().setAnimation(SWIM);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
-        } else if (event.isMoving()) {
-            if (this.isSprinting() || this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.5D));
-            }
-        } else if (this.isInterested()) {
-            event.getController().setAnimation(STANDING);
-            event.getController().setAnimationSpeed(1.0D);
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
+    private void setupAnimationStates() {
+        boolean sitting = this.isInSittingPose();
+        boolean sleeping = !sitting && this.isSleeping();
+        boolean swimming = !sitting && !sleeping && this.isInWater();
+        boolean posing = sitting || sleeping || swimming;
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        boolean running = moving && (this.isSprinting() || this.getDeltaMovement().horizontalDistanceSqr() > 0.01D);
 
-    private void soundListener(@NotNull SoundKeyframeEvent<Rat> event) {
-        Rat rat = event.getAnimatable();
-        if (!rat.level().isClientSide) {
-            return;
-        }
-        float volume;
-        switch (event.getKeyframeData().getSound()) {
-            case "step_-6dB" -> volume = 0.25F;
-            case "step_-12dB" -> volume = 0.15F;
-            default -> {
-                return;
-            }
-        }
-        rat.level().playLocalSound(rat.getX(), rat.getY(), rat.getZ(), NaturalistSoundEvents.RAT_STEP.get(), rat.getSoundSource(), volume, 1.0F, false);
-    }
+        this.sitAnimationState.animateWhen(sitting, this.tickCount);
+        this.sleepAnimationState.animateWhen(sleeping, this.tickCount);
+        this.swimAnimationState.animateWhen(swimming, this.tickCount);
 
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 4, this::predicate)
-                .setSoundKeyframeHandler(this::soundListener));
+        this.walkAnimationState.animateWhen(!posing && moving && !running, this.tickCount);
+        this.runAnimationState.animateWhen(!posing && running, this.tickCount);
+        this.standingAnimationState.animateWhen(!posing && !moving && this.isInterested(), this.tickCount);
+        this.idleAnimationState.animateWhen(!posing && !moving && !this.isInterested(), this.tickCount);
     }
     //endregion
 }

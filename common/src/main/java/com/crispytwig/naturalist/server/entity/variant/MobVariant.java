@@ -20,10 +20,6 @@ public final class MobVariant {
             RegistryCodecs.homogeneousList(Registries.BIOME).optionalFieldOf("biomes").forGetter(MobVariant::biomes),
             ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("weight", 1).forGetter(MobVariant::weight),
             Codec.INT.optionalFieldOf("priority", 0).forGetter(MobVariant::priority),
-            ResourceLocation.CODEC.optionalFieldOf("model").forGetter(MobVariant::model),
-            ResourceLocation.CODEC.optionalFieldOf("animation").forGetter(MobVariant::animation),
-            ResourceLocation.CODEC.optionalFieldOf("baby_model").forGetter(MobVariant::babyModel),
-            ResourceLocation.CODEC.optionalFieldOf("baby_animation").forGetter(MobVariant::babyAnimation),
             ComponentSerialization.CODEC.optionalFieldOf("tooltip").forGetter(MobVariant::tooltip),
             ResourceLocation.CODEC.optionalFieldOf("item_model").forGetter(MobVariant::itemModel)
     ).apply(instance, MobVariant::new));
@@ -33,10 +29,6 @@ public final class MobVariant {
     private final Optional<HolderSet<Biome>> biomes;
     private final int weight;
     private final int priority;
-    private final Optional<ResourceLocation> model;
-    private final Optional<ResourceLocation> animation;
-    private final Optional<ResourceLocation> babyModel;
-    private final Optional<ResourceLocation> babyAnimation;
     private final Optional<Component> tooltip;
     private final Optional<ResourceLocation> itemModel;
     private final ResourceLocation textureFull;
@@ -44,18 +36,12 @@ public final class MobVariant {
 
     public MobVariant(ResourceLocation texture, Optional<ResourceLocation> babyTexture,
                       Optional<HolderSet<Biome>> biomes, int weight, int priority,
-                      Optional<ResourceLocation> model, Optional<ResourceLocation> animation,
-                      Optional<ResourceLocation> babyModel, Optional<ResourceLocation> babyAnimation,
                       Optional<Component> tooltip, Optional<ResourceLocation> itemModel) {
         this.texture = texture;
         this.babyTexture = babyTexture;
         this.biomes = biomes;
         this.weight = weight;
         this.priority = priority;
-        this.model = model;
-        this.animation = animation;
-        this.babyModel = babyModel;
-        this.babyAnimation = babyAnimation;
         this.tooltip = tooltip;
         this.itemModel = itemModel;
         this.textureFull = fullTextureId(texture);
@@ -80,22 +66,6 @@ public final class MobVariant {
 
     public int priority() {
         return this.priority;
-    }
-
-    public Optional<ResourceLocation> model() {
-        return this.model;
-    }
-
-    public Optional<ResourceLocation> animation() {
-        return this.animation;
-    }
-
-    public Optional<ResourceLocation> babyModel() {
-        return this.babyModel;
-    }
-
-    public Optional<ResourceLocation> babyAnimation() {
-        return this.babyAnimation;
     }
 
     public Optional<Component> tooltip() {

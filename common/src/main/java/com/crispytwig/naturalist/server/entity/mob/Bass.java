@@ -23,26 +23,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
-public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bass.class, EntityDataSerializers.STRING);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.bass.swim");
-    protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.bass.flop");
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
 
     public Bass(EntityType<? extends AbstractSchoolingFish> entityType, Level level) {
         super(entityType, level);
@@ -51,22 +42,22 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity, 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/bass.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -91,7 +82,7 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity, 
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnType != MobSpawnType.BUCKET) {
-            this.pickVariantForSpawn(level);
+            this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
@@ -112,7 +103,7 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity, 
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.SALMON_AMBIENT;
+        return null;
     }
 
     @Override
@@ -133,29 +124,17 @@ public class Bass extends AbstractSchoolingFish implements NaturalistGeoEntity, 
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    @Override
-    public double getBoneResetTime() {
-        return 2;
-    }
-
-    protected <E extends Bass> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (!this.isInWater()) {
-            event.getController().setAnimation(FLOP);
-            event.getController().setAnimationSpeed(1.0D);
-        } else {
-            event.getController().setAnimation(SWIM);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, SMALL_FISH_LIMB_SWING));
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
         }
-        return PlayState.CONTINUE;
     }
 
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 2, this::predicate));
+    private void setupAnimationStates() {
+        boolean inWater = this.isInWater();
+        this.flopAnimationState.animateWhen(!inWater, this.tickCount);
+        this.swimAnimationState.animateWhen(inWater, this.tickCount);
     }
     //endregion
 }

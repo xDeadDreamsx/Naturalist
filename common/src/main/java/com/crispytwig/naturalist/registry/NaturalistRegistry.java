@@ -20,7 +20,6 @@ import com.crispytwig.naturalist.server.entity.mob.GiantIsopod;
 import com.crispytwig.naturalist.server.entity.mob.Jellyfish;
 import com.crispytwig.naturalist.server.entity.mob.Anglerfish;
 import com.crispytwig.naturalist.server.entity.mob.Ray;
-import com.crispytwig.naturalist.server.block.StarfishBlock;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;

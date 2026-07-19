@@ -2,7 +2,6 @@ package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.ai.goal.FlyingWanderGoal;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
@@ -52,18 +51,13 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import org.jetbrains.annotations.Nullable;
 
+
 @SuppressWarnings("unused")
-public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, FlyingAnimal, Catchable, DataDrivenVariantAnimal {
+public class Butterfly extends NaturalistAnimal implements FlyingAnimal, Catchable, DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"monarch", "clouded_yellow", "swallowtail", "blue_morpho", "jade_green_swallowtail", "purple_emperor", "red_admiral"};
 
@@ -73,9 +67,7 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
 
     private int numCropsGrownSincePollination;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.butterfly.fly");
+    public final SmoothAnimationState flyAnimationState = new SmoothAnimationState();
 
     public Butterfly(@NotNull EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
@@ -100,28 +92,28 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return NaturalistMobVariants.BUTTERFLY_MONARCH;
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/butterfly/monarch.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     public boolean fromHand() {
@@ -212,23 +204,22 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
         if (reason == MobSpawnType.BUCKET) {
-            return spawnData;
+            return super.finalizeSpawn(level, difficulty, reason, spawnData);
         } else {
-            RandomSource randomSource = level.getRandom();
             if (!(spawnData instanceof Butterfly.ButterflyGroupData)) {
-                spawnData = new Butterfly.ButterflyGroupData(this.pickSpawnVariantId(level), this.pickSpawnVariantId(level));
+                spawnData = new Butterfly.ButterflyGroupData(this.selectSpawnVariantId(level), this.selectSpawnVariantId(level));
             }
 
-            this.setVariantRawId(((Butterfly.ButterflyGroupData)spawnData).getVariant(randomSource));
+            this.setVariantString(((Butterfly.ButterflyGroupData)spawnData).getVariant(level.getRandom()));
 
             return super.finalizeSpawn(level, difficulty, reason, spawnData);
         }
     }
 
-    private String pickSpawnVariantId(ServerLevelAccessor level) {
+    private String selectSpawnVariantId(ServerLevelAccessor level) {
         return MobVariantUtil.selectVariantForSpawn(level, this.blockPosition(), NaturalistMobVariants.BUTTERFLY_VARIANT)
                 .flatMap(holder -> holder.unwrapKey().map(key -> key.location().toString()))
-                .orElseGet(() -> this.defaultVariant().location().toString());
+                .orElseGet(() -> this.getDefaultVariant().location().toString());
     }
 
     public static class ButterflyGroupData extends AgeableMob.AgeableMobGroupData {
@@ -325,6 +316,9 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     @Override
     public void tick() {
         super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
         if (this.hasNectar() && this.getCropsGrownSincePollination() < 10 && this.random.nextFloat() < 0.05F) {
             for(int i = 0; i < this.random.nextInt(2) + 1; ++i) {
                 this.spawnFluidParticle(this.level(), this.getX() - 0.3F, this.getX() + 0.3F, this.getZ() - 0.3F, this.getZ() + 0.3F, this.getY(0.5D));
@@ -452,19 +446,8 @@ public class Butterfly extends NaturalistAnimal implements NaturalistGeoEntity, 
     //endregion
 
     //region Animation
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Butterfly> PlayState predicate(final AnimationState<E> event) {
-        event.getController().setAnimation(FLY);
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+    private void setupAnimationStates() {
+        this.flyAnimationState.animateWhen(true, this.tickCount);
     }
     //endregion
 }

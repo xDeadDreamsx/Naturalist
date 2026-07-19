@@ -40,25 +40,16 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
-public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, Catchable, DataDrivenVariantAnimal {
+public class Caterpillar extends ClimbingAnimal implements Catchable, DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Caterpillar.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Caterpillar.class, EntityDataSerializers.BOOLEAN);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.caterpillar.idle");
-    protected static final RawAnimation CRAWL = RawAnimation.begin().thenLoop("animation.sf_nba.caterpillar.crawl");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState crawlAnimationState = new SmoothAnimationState();
 
     public Caterpillar(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
@@ -71,23 +62,23 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(FROM_HAND, false);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/caterpillar.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     public boolean fromHand() {
@@ -148,7 +139,7 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         this.setAge(0);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
@@ -264,27 +255,17 @@ public class Caterpillar extends ClimbingAnimal implements NaturalistGeoEntity, 
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Caterpillar> PlayState predicate(final AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            {
-                event.getController().setAnimation(CRAWL);
-                event.getController().setAnimationSpeed(this.isNaturalistClimbing() ? 1.0D : this.movementAnimationSpeed(event, 1.0D));
-                return PlayState.CONTINUE;
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
         }
     }
 
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
+    private void setupAnimationStates() {
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        this.crawlAnimationState.animateWhen(moving, this.tickCount);
+        this.idleAnimationState.animateWhen(!moving, this.tickCount);
     }
     //endregion
 }

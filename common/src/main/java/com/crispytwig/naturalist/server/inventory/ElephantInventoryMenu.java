@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Predicate;
 
@@ -44,8 +45,8 @@ public class ElephantInventoryMenu extends AbstractContainerMenu {
                 this.addSlot(new ChestSlot(container, chestIndex++, 80 + col * 18, 18 + row * 18));
             }
         }
-        this.addSlot(new RestrictedSlot(container, SADDLE_SLOT, 8, 90, stack -> stack.is(Items.SADDLE)));
-        this.addSlot(new RestrictedSlot(container, BANNER_SLOT, 26, 90, stack -> stack.is(ItemTags.BANNERS)));
+        this.addSlot(new RestrictedSlot(container, SADDLE_SLOT, 8, stack -> stack.is(Items.SADDLE)));
+        this.addSlot(new RestrictedSlot(container, BANNER_SLOT, 26, stack -> stack.is(ItemTags.BANNERS)));
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
@@ -81,7 +82,7 @@ public class ElephantInventoryMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
+    public @NonNull ItemStack quickMoveStack(Player player, int index) {
         ItemStack result = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot.hasItem()) {
@@ -136,8 +137,8 @@ public class ElephantInventoryMenu extends AbstractContainerMenu {
     private static class RestrictedSlot extends Slot {
         private final Predicate<ItemStack> filter;
 
-        RestrictedSlot(Container container, int index, int x, int y, Predicate<ItemStack> filter) {
-            super(container, index, x, y);
+        RestrictedSlot(Container container, int index, int x, Predicate<ItemStack> filter) {
+            super(container, index, x, 90);
             this.filter = filter;
         }
 

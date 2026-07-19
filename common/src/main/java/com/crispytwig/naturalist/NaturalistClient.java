@@ -1,5 +1,7 @@
 package com.crispytwig.naturalist;
 
+import com.crispytwig.naturalist.client.model.*;
+
 import com.crispytwig.naturalist.client.gui.screens.ElephantInventoryScreen;
 import com.crispytwig.naturalist.client.renderer.*;
 import com.crispytwig.naturalist.registry.NaturalistBlockEntities;
@@ -12,6 +14,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import java.util.function.Supplier;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
@@ -30,6 +35,82 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 @Environment(EnvType.CLIENT)
 public final class NaturalistClient {
     private NaturalistClient() {
+    }
+
+    @FunctionalInterface
+    public interface LayerRegistrar {
+        void register(ModelLayerLocation location, Supplier<LayerDefinition> definition);
+    }
+
+    public static void registerLayerDefinitions(LayerRegistrar r) {
+        r.register(AlligatorBabyModel.LAYER_LOCATION, AlligatorBabyModel::createBodyLayer);
+        r.register(AlligatorModel.LAYER_LOCATION, AlligatorModel::createBodyLayer);
+        r.register(AnglerfishModel.LAYER_LOCATION, AnglerfishModel::createBodyLayer);
+        r.register(AntModel.LAYER_LOCATION, AntModel::createBodyLayer);
+        r.register(BassModel.LAYER_LOCATION, BassModel::createBodyLayer);
+        r.register(BearBabyModel.LAYER_LOCATION, BearBabyModel::createBodyLayer);
+        r.register(BearModel.LAYER_LOCATION, BearModel::createBodyLayer);
+        r.register(BirdBabyModel.LAYER_LOCATION, BirdBabyModel::createBodyLayer);
+        r.register(BirdModel.LAYER_LOCATION, BirdModel::createBodyLayer);
+        r.register(BlackBearBabyModel.LAYER_LOCATION, BlackBearBabyModel::createBodyLayer);
+        r.register(BlackBearModel.LAYER_LOCATION, BlackBearModel::createBodyLayer);
+        r.register(BlobfishGrayModel.LAYER_LOCATION, BlobfishGrayModel::createBodyLayer);
+        r.register(BlobfishPinkModel.LAYER_LOCATION, BlobfishPinkModel::createBodyLayer);
+        r.register(BoarBabyModel.LAYER_LOCATION, BoarBabyModel::createBodyLayer);
+        r.register(BoarModel.LAYER_LOCATION, BoarModel::createBodyLayer);
+        r.register(ButterflyModel.LAYER_LOCATION, ButterflyModel::createBodyLayer);
+        r.register(CaterpillarModel.LAYER_LOCATION, CaterpillarModel::createBodyLayer);
+        r.register(CatfishModel.LAYER_LOCATION, CatfishModel::createBodyLayer);
+        r.register(ClamModel.LAYER_LOCATION, ClamModel::createBodyLayer);
+        r.register(CrabBabyModel.LAYER_LOCATION, CrabBabyModel::createBodyLayer);
+        r.register(CrabModel.LAYER_LOCATION, CrabModel::createBodyLayer);
+        r.register(DeerBabyModel.LAYER_LOCATION, DeerBabyModel::createBodyLayer);
+        r.register(DeerModel.LAYER_LOCATION, DeerModel::createBodyLayer);
+        r.register(DesertScorpionModel.LAYER_LOCATION, DesertScorpionModel::createBodyLayer);
+        r.register(DirtTrailModel.LAYER_LOCATION, DirtTrailModel::createBodyLayer);
+        r.register(DragonflyModel.LAYER_LOCATION, DragonflyModel::createBodyLayer);
+        r.register(DuckBabyModel.LAYER_LOCATION, DuckBabyModel::createBodyLayer);
+        r.register(DuckModel.LAYER_LOCATION, DuckModel::createBodyLayer);
+        r.register(ElephantBabyModel.LAYER_LOCATION, ElephantBabyModel::createBodyLayer);
+        r.register(ElephantModel.LAYER_LOCATION, ElephantModel::createBodyLayer);
+        r.register(FireflyBabyModel.LAYER_LOCATION, FireflyBabyModel::createBodyLayer);
+        r.register(FireflyModel.LAYER_LOCATION, FireflyModel::createBodyLayer);
+        r.register(GiantIsopodModel.LAYER_LOCATION, GiantIsopodModel::createBodyLayer);
+        r.register(GiraffeBabyModel.LAYER_LOCATION, GiraffeBabyModel::createBodyLayer);
+        r.register(GiraffeModel.LAYER_LOCATION, GiraffeModel::createBodyLayer);
+        r.register(GreatWhiteSharkModel.LAYER_LOCATION, GreatWhiteSharkModel::createBodyLayer);
+        r.register(HippoBabyModel.LAYER_LOCATION, HippoBabyModel::createBodyLayer);
+        r.register(HippoModel.LAYER_LOCATION, HippoModel::createBodyLayer);
+        r.register(JellyfishModel.LAYER_LOCATION, JellyfishModel::createBodyLayer);
+        r.register(JungleScorpionModel.LAYER_LOCATION, JungleScorpionModel::createBodyLayer);
+        r.register(KomodoDragonModel.LAYER_LOCATION, KomodoDragonModel::createBodyLayer);
+        r.register(LionBabyModel.LAYER_LOCATION, LionBabyModel::createBodyLayer);
+        r.register(LionModel.LAYER_LOCATION, LionModel::createBodyLayer);
+        r.register(LizardModel.LAYER_LOCATION, LizardModel::createBodyLayer);
+        r.register(LizardTailModel.LAYER_LOCATION, LizardTailModel::createBodyLayer);
+        r.register(MammothBabyModel.LAYER_LOCATION, MammothBabyModel::createBodyLayer);
+        r.register(MammothModel.LAYER_LOCATION, MammothModel::createBodyLayer);
+        r.register(MoleModel.LAYER_LOCATION, MoleModel::createBodyLayer);
+        r.register(OstrichBabyModel.LAYER_LOCATION, OstrichBabyModel::createBodyLayer);
+        r.register(OstrichModel.LAYER_LOCATION, OstrichModel::createBodyLayer);
+        r.register(PiranhaModel.LAYER_LOCATION, PiranhaModel::createBodyLayer);
+        r.register(RatModel.LAYER_LOCATION, RatModel::createBodyLayer);
+        r.register(RayModel.LAYER_LOCATION, RayModel::createBodyLayer);
+        r.register(RhinoModel.LAYER_LOCATION, RhinoModel::createBodyLayer);
+        r.register(SnailModel.LAYER_LOCATION, SnailModel::createBodyLayer);
+        r.register(SnakeModel.LAYER_LOCATION, SnakeModel::createBodyLayer);
+        r.register(StarfishModel.LAYER_LOCATION, StarfishModel::createBodyLayer);
+        r.register(TigerBabyModel.LAYER_LOCATION, TigerBabyModel::createBodyLayer);
+        r.register(TigerModel.LAYER_LOCATION, TigerModel::createBodyLayer);
+        r.register(TortoiseBabyModel.LAYER_LOCATION, TortoiseBabyModel::createBodyLayer);
+        r.register(TortoiseModel.LAYER_LOCATION, TortoiseModel::createBodyLayer);
+        r.register(TurkeyModel.LAYER_LOCATION, TurkeyModel::createBodyLayer);
+        r.register(VultureBabyModel.LAYER_LOCATION, VultureBabyModel::createBodyLayer);
+        r.register(VultureModel.LAYER_LOCATION, VultureModel::createBodyLayer);
+        r.register(WhaleBabyModel.LAYER_LOCATION, WhaleBabyModel::createBodyLayer);
+        r.register(WhaleModel.LAYER_LOCATION, WhaleModel::createBodyLayer);
+        r.register(ZebraBabyModel.LAYER_LOCATION, ZebraBabyModel::createBodyLayer);
+        r.register(ZebraModel.LAYER_LOCATION, ZebraModel::createBodyLayer);
     }
 
     @FunctionalInterface

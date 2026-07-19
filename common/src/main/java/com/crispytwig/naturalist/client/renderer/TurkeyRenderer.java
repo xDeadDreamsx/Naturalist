@@ -5,17 +5,23 @@ import com.crispytwig.naturalist.server.entity.mob.Turkey;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class TurkeyRenderer extends GeoEntityRenderer<Turkey> {
-    public TurkeyRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new TurkeyModel());
-        this.shadowRadius = 0.3F;
+public class TurkeyRenderer extends MobRenderer<Turkey, HierarchicalModel<Turkey>> {
+    public TurkeyRenderer(EntityRendererProvider.Context context) {
+        super(context, new TurkeyModel(context.bakeLayer(TurkeyModel.LAYER_LOCATION)), 0.3F);
+    }
+
+    @Override
+    public @NotNull ResourceLocation getTextureLocation(@NotNull Turkey entity) {
+        return entity.getVariantTexture();
     }
 
     @Override
@@ -25,10 +31,5 @@ public class TurkeyRenderer extends GeoEntityRenderer<Turkey> {
             poseStack.scale(0.5F, 0.5F, 0.5F);
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
-
-    @Override
-    public float getMotionAnimThreshold(Turkey animatable) {
-        return 0.000001f;
     }
 }

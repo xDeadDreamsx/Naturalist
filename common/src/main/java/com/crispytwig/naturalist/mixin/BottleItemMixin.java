@@ -31,8 +31,7 @@ public class BottleItemMixin extends Item {
         List<AreaEffectCloud> list = level.getEntitiesOfClass(AreaEffectCloud.class, player.getBoundingBox().inflate(2.0), areaEffectCloud -> areaEffectCloud != null && areaEffectCloud.isAlive() && areaEffectCloud.getOwner() instanceof Dragonfly);
         ItemStack itemStack = player.getItemInHand(usedHand);
         if (!list.isEmpty()) {
-            AreaEffectCloud areaEffectCloud2 = list.getFirst();
-            areaEffectCloud2.discard();
+            list.getFirst().discard();
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundSource.NEUTRAL, 1.0f, 1.0f);
             level.gameEvent(player, GameEvent.FLUID_PICKUP, player.position());
             cir.setReturnValue(InteractionResultHolder.sidedSuccess(this.naturalist$onTurnBottleIntoItem(itemStack, player, new ItemStack(Items.DRAGON_BREATH)), level.isClientSide()));

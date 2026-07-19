@@ -1,9 +1,5 @@
 package com.crispytwig.naturalist.server.entity.ai.goal;
 
-import com.crispytwig.naturalist.server.block.AlligatorEggBlock;
-import com.crispytwig.naturalist.server.block.TortoiseEggBlock;
-import com.crispytwig.naturalist.server.entity.mob.Alligator;
-import com.crispytwig.naturalist.server.entity.mob.Tortoise;
 import com.crispytwig.naturalist.server.entity.base.EggLayingAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -13,7 +9,6 @@ import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.TurtleEggBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,21 +52,7 @@ public class LayEggGoal<T extends Animal & EggLayingAnimal> extends MoveToBlockG
                         SoundSource.BLOCKS, 0.3f,
                         0.9f + level.random.nextFloat() * 0.2f);
 
-                BlockState eggState;
-                int eggCount = this.animal.getRandom().nextInt(4) + 1;
-
-                if (this.animal instanceof Tortoise tortoise) {
-                    eggState = this.animal.getEggBlock().defaultBlockState()
-                            .setValue(TurtleEggBlock.EGGS, eggCount)
-                            .setValue(TortoiseEggBlock.VARIANT, tortoise.getLegacyVariantIndex());
-                }
-                else if (this.animal instanceof Alligator) {
-                    eggState = this.animal.getEggBlock().defaultBlockState()
-                            .setValue(AlligatorEggBlock.EGGS, eggCount);
-                }
-                else {
-                    eggState = this.animal.getEggBlock().defaultBlockState();
-                }
+                BlockState eggState = this.animal.createEggBlockState(this.animal.getRandom().nextInt(4) + 1);
 
                 BlockPos eggPos = this.blockPos.above();
                 level.setBlock(eggPos, eggState, 3);

@@ -50,20 +50,12 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
-import software.bernie.geckolib.animation.AnimationState;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catchable, HidingAnimal, EggLayingAnimal, DataDrivenVariantAnimal, SurfaceCrawler {
+public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, EggLayingAnimal, DataDrivenVariantAnimal, SurfaceCrawler {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.BEETROOT);
 
@@ -80,20 +72,20 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
     private static final float BODY_LOOK_FOLLOW = -0.5F;
     private static final float LOOK_LAG_BLEND = 0.15F;
     private static final float TAIL_LOOK_BLEND = 0.15F;
+    private static final int HIDE_END_TICKS = 16;
 
     private final SurfaceClimbing climbing = new SurfaceClimbing(this, ATTACH_NORMAL);
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private boolean wasHiding;
-    private boolean playingHideEnd;
+    private int hideEndTicks;
     private float bodyLookYaw;
     private float bodyLookYawO;
     private float tailLookYaw;
     private float tailLookYawO;
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.snail.idle");
-    protected static final RawAnimation CRAWL = RawAnimation.begin().thenLoop("animation.sf_nba.snail.crawl");
-    protected static final RawAnimation HIDE = RawAnimation.begin().thenPlay("animation.sf_nba.snail.hide_start").thenLoop("animation.sf_nba.snail.hide_idle");
-    protected static final RawAnimation HIDE_END = RawAnimation.begin().thenPlayAndHold("animation.sf_nba.snail.hide_end");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState crawlAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState hideAnimationState = SmoothAnimationState.instant();
+    public final SmoothAnimationState hideEndAnimationState = SmoothAnimationState.instant();
 
     public Snail(@NotNull EntityType<? extends NaturalistAnimal> type, Level level) {
         super(type, level);
@@ -108,7 +100,7 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(FROM_HAND, false);
         builder.define(DATA_COLOR, Color.BROWN.getId());
         builder.define(HAS_EGG, false);
@@ -117,18 +109,18 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/snail/brown.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -315,7 +307,7 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Snail baby = NaturalistEntityTypes.SNAIL.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
         return baby;
     }
@@ -323,7 +315,7 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnType != MobSpawnType.BUCKET) {
-            this.pickVariantForSpawn(level);
+            this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
@@ -402,7 +394,7 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
         }
         this.checkCrush();
         if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && --this.slimeBallTime <= 0) {
-            this.playSound(SoundEvents.SLIME_SQUISH_SMALL, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+            this.playSound(SoundEvents.SLIME_SQUISH_SMALL, 1.0F, NaturalistAnimal.defaultVoicePitch(this.random));
             this.spawnAtLocation(Items.SLIME_BALL);
             this.slimeBallTime = this.random.nextInt(1200) + 12000;
         }
@@ -471,6 +463,7 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
         this.climbing.tick();
         if (this.level().isClientSide) {
             this.updateLookLag();
+            this.setupAnimationStates();
         }
     }
 
@@ -518,65 +511,23 @@ public class Snail extends NaturalistAnimal implements NaturalistGeoEntity, Catc
     //endregion
 
     //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
+    private void setupAnimationStates() {
+        boolean hidden = this.isHidden();
+        if (this.wasHiding && !hidden) {
+            this.hideEndTicks = HIDE_END_TICKS;
+        }
+        this.wasHiding = hidden;
+        boolean hideEnd = !hidden && this.hideEndTicks > 0;
+        if (this.hideEndTicks > 0) {
+            --this.hideEndTicks;
+        }
+        this.hideAnimationState.animateWhen(hidden, this.tickCount);
+        this.hideEndAnimationState.animateWhen(hideEnd, this.tickCount);
 
-    private <E extends Snail> PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6 || this.isClimbing()) {
-            event.getController().setAnimation(CRAWL);
-            event.getController().setAnimationSpeed(this.isClimbing() ? 1.0D : this.movementAnimationSpeed(event, 1.0D));
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private <E extends Snail> PlayState hidePredicate(final AnimationState<E> event) {
-        AnimationController<E> controller = event.getController();
-        if (this.isHidden()) {
-            this.wasHiding = true;
-            this.playingHideEnd = false;
-            controller.setAnimation(HIDE);
-            return PlayState.CONTINUE;
-        }
-        if (this.wasHiding) {
-            this.wasHiding = false;
-            this.playingHideEnd = true;
-            controller.forceAnimationReset();
-            controller.setAnimation(HIDE_END);
-            return PlayState.CONTINUE;
-        }
-        if (this.playingHideEnd) {
-            if (controller.hasAnimationFinished()) {
-                this.playingHideEnd = false;
-                return PlayState.STOP;
-            }
-            return PlayState.CONTINUE;
-        }
-        return PlayState.STOP;
-    }
-
-    private void soundListener(@NotNull SoundKeyframeEvent<Snail> event) {
-        Snail snail = event.getAnimatable();
-        if (snail.level().isClientSide) {
-            if (event.getKeyframeData().getSound().equals("forward")) {
-                snail.level().playLocalSound(snail.getX(), snail.getY(), snail.getZ(), NaturalistSoundEvents.SNAIL_FORWARD.get(), snail.getSoundSource(), 0.5F, 1.0F, false);
-            }
-            if (event.getKeyframeData().getSound().equals("back")) {
-                snail.level().playLocalSound(snail.getX(), snail.getY(), snail.getZ(), NaturalistSoundEvents.SNAIL_BACK.get(), snail.getSoundSource(), 0.5F, 1.0F, false);
-            }
-            if (event.getKeyframeData().getSound().equals("hide")) {
-                snail.level().playLocalSound(snail.getX(), snail.getY(), snail.getZ(), NaturalistSoundEvents.TORTOISE_HIDE.get(), snail.getSoundSource(), 0.2F, 1.7F, false);
-            }
-        }
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "hideController", 0, this::hidePredicate).setSoundKeyframeHandler(this::soundListener));
+        boolean locomotion = !hidden && !hideEnd;
+        boolean crawling = locomotion && (NaturalistAnimal.isVisiblyMoving(this) || this.isClimbing());
+        this.crawlAnimationState.animateWhen(crawling, this.tickCount);
+        this.idleAnimationState.animateWhen(locomotion && !crawling, this.tickCount);
     }
     //endregion
 }

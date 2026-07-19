@@ -1,53 +1,49 @@
 package com.crispytwig.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import com.crispytwig.naturalist.client.model.VultureBabyModel;
 import com.crispytwig.naturalist.client.model.VultureModel;
 import com.crispytwig.naturalist.server.entity.mob.Vulture;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Quaternionf;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class VultureRenderer extends GeoEntityRenderer<Vulture> {
-    public VultureRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new VultureModel());
-        this.shadowRadius = 0.65F;
+public class VultureRenderer extends NaturalistMobRenderer<Vulture> {
+    public VultureRenderer(EntityRendererProvider.Context context) {
+        super(context, new VultureModel(context.bakeLayer(VultureModel.LAYER_LOCATION)), new VultureBabyModel(context.bakeLayer(VultureBabyModel.LAYER_LOCATION)), 0.65F, 0.3F);
+        this.addLayer(new VultureHeldItemLayer(this, context.getItemInHandRenderer()));
     }
 
-    @Override
-    public float getMotionAnimThreshold(Vulture animatable) {
-        return 0.000001f;
-    }
+    private static class VultureHeldItemLayer extends RenderLayer<Vulture, HierarchicalModel<Vulture>> {
+        private final ItemInHandRenderer itemInHandRenderer;
 
-    @Override
-    public void render(Vulture entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        this.shadowRadius = entity.isBaby() ? 0.3F : 0.65F;
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
-
-    @Override
-    public void renderRecursively(PoseStack stack, Vulture entity, GeoBone bone, RenderType renderType, @NotNull MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-                                  int packedOverlay, int packedColour) {
-        if (bone.getName().equals("held_item")) {
-            stack.pushPose();
-            stack.mulPose(new Quaternionf(-0.7071f, 0.0f, 0.0f, 0.7071f));
-            stack.translate(0.0D, 1.1D, 0.25D);
-
-            Minecraft.getInstance().getItemRenderer().renderStatic(entity.getItemBySlot(EquipmentSlot.MAINHAND), ItemDisplayContext.GROUND, packedLight, packedOverlay, stack, bufferSource, animatable.level(), 0);
-            stack.popPose();
-            buffer = bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
+        VultureHeldItemLayer(VultureRenderer parent, ItemInHandRenderer itemInHandRenderer) {
+            super(parent);
+            this.itemInHandRenderer = itemInHandRenderer;
         }
-        super.renderRecursively(stack, entity, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, packedColour);
+
+        @Override
+        public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, @NotNull Vulture entity, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+            ItemStack stack = entity.getItemBySlot(EquipmentSlot.MAINHAND);
+            if (stack.isEmpty() || !(this.getParentModel() instanceof VultureModel vultureModel)) {
+                return;
+            }
+            poseStack.pushPose();
+            vultureModel.translateToHeldItem(poseStack);
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+            this.itemInHandRenderer.renderItem(entity, stack, ItemDisplayContext.GROUND, false, poseStack, bufferSource, packedLight);
+            poseStack.popPose();
+        }
     }
 }

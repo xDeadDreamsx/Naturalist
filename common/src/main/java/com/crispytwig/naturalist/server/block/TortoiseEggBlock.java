@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.block;
 
 import com.crispytwig.naturalist.server.entity.mob.Tortoise;
+import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
@@ -52,7 +53,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     public @NotNull ItemStack getCloneItemStack(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state) {
         ItemStack stack = super.getCloneItemStack(level, pos, state);
         CompoundTag tag = new CompoundTag();
-        tag.putInt("Variant", state.getValue(VARIANT));
+        tag.putInt(DataDrivenVariantAnimal.VARIANT_TAG, state.getValue(VARIANT));
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return stack;
     }
@@ -79,10 +80,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
                 if (baby != null) {
                     baby.setVariantByLegacyIndex(variant);
                     baby.setAge(-24000);
-                    double x = pos.getX() + 0.3 + i * 0.2;
-                    double y = pos.getY();
-                    double z = pos.getZ() + 0.3;
-                    baby.moveTo(x, y, z, 0.0F, 0.0F);
+                    baby.moveTo(pos.getX() + 0.3 + i * 0.2, pos.getY(), pos.getZ() + 0.3, 0.0F, 0.0F);
                     level.addFreshEntity(baby);
                 }
             }
@@ -145,10 +143,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
                 if (baby != null) {
                     baby.setVariantByLegacyIndex(variant);
                     baby.setAge(-24000);
-                    double dx = pos.getX() + 0.3 + i * 0.2;
-                    double dy = pos.getY();
-                    double dz = pos.getZ() + 0.3;
-                    baby.moveTo(dx, dy, dz, 0F, 0F);
+                    baby.moveTo(pos.getX() + 0.3 + i * 0.2, pos.getY(), pos.getZ() + 0.3, 0F, 0F);
                     level.addFreshEntity(baby);
                 }
             }

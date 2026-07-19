@@ -8,8 +8,8 @@ import com.crispytwig.naturalist.server.entity.ai.goal.WhaleDiveGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.WhaleSeekDeeperWaterGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.WhaleSurfaceGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.WhaleSwimGoal;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.MultipartMob;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.util.BeachedMob;
 import com.crispytwig.naturalist.server.entity.util.BodyChain;
 import com.crispytwig.naturalist.server.entity.util.MobPart;
@@ -59,17 +59,10 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
-public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, DataDrivenVariantAnimal {
+public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Whale.class, EntityDataSerializers.STRING);
 
@@ -80,7 +73,6 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
     private static final float BREACH_TILT = 60.0F;
     private static final int BODY_PUSH_BAIL = 20;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int blowholeCooldown;
     private boolean diving;
     private int bodyPushTicks;
@@ -102,16 +94,13 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
             new float[]{0.24F, 0.12F, 0.1F, 0.08F},
             5.0F, 30.0F, 0.06F);
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.whale.idle");
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.whale.swim");
-    protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.whale.flop");
-    protected static final RawAnimation BABY_IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.whale_baby.swim_idle");
-    protected static final RawAnimation BABY_SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.whale_baby.swim");
-    protected static final RawAnimation BABY_FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.whale_baby.flop");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
 
     public Whale(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new WhaleMoveControl(this, 45, 4, 0.02F, 0.1F);
+        this.moveControl = new WhaleMoveControl(this);
         this.lookControl = new SmoothSwimmingLookControl(this, 6);
         this.setPathfindingMalus(PathType.WATER, 0.0F);
         this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
@@ -137,22 +126,22 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/whale/whale.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -228,7 +217,7 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
 
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         AgeableMobGroupData groupData;
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(false);
@@ -257,7 +246,7 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Whale baby = NaturalistEntityTypes.WHALE.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
         return baby;
     }
@@ -325,7 +314,17 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
         MobPart.pushEntities(this, this.parts);
         if (!this.level().isClientSide) {
             this.resolveBodyCollisions();
+        } else {
+            this.setupAnimationStates();
         }
+    }
+
+    private void setupAnimationStates() {
+        boolean inWater = this.isInWater();
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        this.flopAnimationState.animateWhen(!inWater, this.tickCount);
+        this.swimAnimationState.animateWhen(inWater && moving, this.tickCount);
+        this.idleAnimationState.animateWhen(inWater && !moving, this.tickCount);
     }
 
     @Override
@@ -392,8 +391,8 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
 
         this.finLag += (this.xBodyRot - this.finLag) * 0.1F;
 
-        this.frontDroop += ((this.isInWater() && this.isPartInWater(this.parts[0]) ? 1.0F : 0.0F) - this.frontDroop) * 0.08F;
-        this.backDroop += ((this.isInWater() && this.isPartInWater(this.parts[3]) ? 1.0F : 0.0F) - this.backDroop) * 0.08F;
+        this.frontDroop += ((this.isInWater() && this.isPartAboveWater(this.parts[0]) ? 1.0F : 0.0F) - this.frontDroop) * 0.08F;
+        this.backDroop += ((this.isInWater() && this.isPartAboveWater(this.parts[3]) ? 1.0F : 0.0F) - this.backDroop) * 0.08F;
 
         if (!this.level().isClientSide) {
             if (this.blowholeCooldown > 0) {
@@ -462,30 +461,24 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
         return this.bodyPushTicks >= BODY_PUSH_BAIL;
     }
 
-    private boolean isPartInWater(MobPart part) {
-        return !this.isWaterAt(BlockPos.containing(part.getX(), part.getY() + part.getBbHeight() * 0.5D, part.getZ()));
+    private boolean isPartAboveWater(MobPart part) {
+        return !this.level().isWaterAt(BlockPos.containing(part.getX(), part.getY() + part.getBbHeight() * 0.5D, part.getZ()));
     }
 
-    public float getSegYawOffset(int index, float partialTick) {
-        return this.chain.getSegYawOffset(index, partialTick);
+    public float getSegmentYawOffset(int index, float partialTick) {
+        return this.chain.getSegmentYawOffset(index, partialTick);
     }
 
-    public float getSegPitchOffset(int index, float partialTick) {
-        return this.chain.getSegPitchOffset(index, partialTick, this.getXBodyRot(partialTick));
+    public float getSegmentPitchOffset(int index, float partialTick) {
+        return this.chain.getSegmentPitchOffset(index, partialTick, this.getXBodyRot(partialTick));
     }
 
     static class WhaleMoveControl extends MoveControl {
         private final int maxTurnX;
-        private final int maxTurnY;
-        private final float inWaterSpeedModifier;
-        private final float outsideWaterSpeedModifier;
 
-        WhaleMoveControl(Whale whale, int maxTurnX, int maxTurnY, float inWaterSpeedModifier, float outsideWaterSpeedModifier) {
+        WhaleMoveControl(Whale whale) {
             super(whale);
-            this.maxTurnX = maxTurnX;
-            this.maxTurnY = maxTurnY;
-            this.inWaterSpeedModifier = inWaterSpeedModifier;
-            this.outsideWaterSpeedModifier = outsideWaterSpeedModifier;
+            this.maxTurnX = 45;
         }
 
         @Override
@@ -505,12 +498,12 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
                 this.mob.setZza(0.0F);
                 return;
             }
-            this.mob.setYRot(this.rotlerp(this.mob.getYRot(), (float) (Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90.0F, this.maxTurnY));
+            this.mob.setYRot(this.rotlerp(this.mob.getYRot(), (float) (Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90.0F, 4));
             this.mob.yBodyRot = this.mob.getYRot();
             this.mob.yHeadRot = this.mob.getYRot();
             float speed = (float) (this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
             if (this.mob.isInWater()) {
-                this.mob.setSpeed(speed * this.inWaterSpeedModifier);
+                this.mob.setSpeed(speed * 0.02F);
                 double horizontal = Math.sqrt(dx * dx + dz * dz);
                 float pitch = 0.0F;
                 if (Math.abs(dy) > 1.0E-5D || Math.abs(horizontal) > 1.0E-5D) {
@@ -521,37 +514,9 @@ public class Whale extends Animal implements NaturalistGeoEntity, MultipartMob, 
                 this.mob.zza = Mth.cos(pitch * Mth.DEG_TO_RAD) * speed;
                 this.mob.yya = -Mth.sin(pitch * Mth.DEG_TO_RAD) * speed;
             } else {
-                this.mob.setSpeed(speed * this.outsideWaterSpeedModifier);
+                this.mob.setSpeed(speed * 0.1F);
             }
         }
-    }
-    //endregion
-
-    //region Animation
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Whale> @NotNull PlayState predicate(final AnimationState<E> event) {
-        AnimationController<E> controller = event.getController();
-        boolean baby = this.isBaby();
-        if (!this.isInWater()) {
-            controller.setAnimation(baby ? BABY_FLOP : FLOP);
-            controller.setAnimationSpeed(1.0D);
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6 || event.isMoving()) {
-            controller.setAnimation(baby ? BABY_SWIM : SWIM);
-            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
-        } else {
-            controller.setAnimation(baby ? BABY_IDLE : IDLE);
-            controller.setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
     }
     //endregion
 }

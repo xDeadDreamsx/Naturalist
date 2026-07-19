@@ -18,8 +18,7 @@ public abstract class ClientLevelMixin {
             at = @At(value = "RETURN"),
             cancellable = true)
     private void glowGoopInSurvival(CallbackInfoReturnable<Block> cir) {
-        Minecraft instance = Minecraft.getInstance();
-        Player player = instance.player;
+        Player player = Minecraft.getInstance().player;
         if (player != null) {
             Item item = player.getMainHandItem().getItem();
             if (item instanceof BlockItem blockItem && item == NaturalistRegistry.GLOW_GOOP.get()) {

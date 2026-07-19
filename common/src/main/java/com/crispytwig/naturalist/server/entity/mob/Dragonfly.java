@@ -2,7 +2,6 @@ package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistMobVariants;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import com.crispytwig.naturalist.registry.NaturalistTags;
@@ -32,26 +31,18 @@ import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
-public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"blue", "green", "red"};
 
@@ -63,9 +54,7 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity, Dat
     private BlockPos targetPosition;
     private int hoverTicks;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.dragonfly.fly");
+    public final SmoothAnimationState flyAnimationState = new SmoothAnimationState();
 
     public Dragonfly(@NotNull EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
@@ -84,28 +73,28 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity, Dat
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("dragonfly"), "blue");
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/dragonfly/blue_dragonfly.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(VARIANT_ID);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(VARIANT_ID, id);
+    public void setVariantString(String location) {
+        this.entityData.set(VARIANT_ID, location);
     }
 
     public int getHoverTicks() {
@@ -137,7 +126,7 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity, Dat
     @Override
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
     //endregion
@@ -213,6 +202,9 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity, Dat
     public void tick() {
         super.tick();
         this.setDeltaMovement(this.getDeltaMovement().multiply(1.0, 0.6, 1.0));
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
     }
 
     @Override
@@ -230,16 +222,14 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity, Dat
                     (int)(this.getZ() + this.random.nextInt(7) - this.random.nextInt(7))
             ));
             assert randomPos != null;
-            Vec3i randomPos2 = new Vec3i((int)randomPos.x, (int)randomPos.y, (int)randomPos.z);
-            this.targetPosition = new BlockPos(randomPos2);
+            this.targetPosition = new BlockPos(new Vec3i((int)randomPos.x, (int)randomPos.y, (int)randomPos.z));
             this.setHoverTicks(15);
         }
         if (this.targetPosition != null && this.getHoverTicks() <= 0) {
             Vec3 vec32 = getVec3();
             this.setDeltaMovement(vec32);
             this.zza = 5.0f;
-            float g = (float) (Mth.atan2(vec32.z, vec32.x) * Mth.RAD_TO_DEG) - 90.0f;
-            float h = Mth.wrapDegrees(g - this.getYRot());
+            float h = Mth.wrapDegrees((float) (Mth.atan2(vec32.z, vec32.x) * Mth.RAD_TO_DEG) - 90.0f - this.getYRot());
             this.setYRot(this.getYRot() + h);
         }
     }
@@ -273,19 +263,8 @@ public class Dragonfly extends PathfinderMob implements NaturalistGeoEntity, Dat
     //endregion
 
     //region Animation
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Dragonfly> PlayState predicate(final AnimationState<E> event) {
-        event.getController().setAnimation(FLY);
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+    private void setupAnimationStates() {
+        this.flyAnimationState.animateWhen(true, this.tickCount);
     }
     //endregion
 }

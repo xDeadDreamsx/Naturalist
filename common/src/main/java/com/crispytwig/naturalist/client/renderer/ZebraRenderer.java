@@ -1,31 +1,16 @@
 package com.crispytwig.naturalist.client.renderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.crispytwig.naturalist.client.model.ZebraBabyModel;
 import com.crispytwig.naturalist.client.model.ZebraModel;
 import com.crispytwig.naturalist.server.entity.mob.Zebra;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class ZebraRenderer extends GeoEntityRenderer<Zebra> {
-    public ZebraRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new ZebraModel());
-        this.shadowRadius = 1.1F;
-    }
-
-    @Override
-    public float getMotionAnimThreshold(Zebra animatable) {
-        return 0.000001f;
-    }
-
-    @Override
-    public void render(Zebra entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        this.shadowRadius = entity.isBaby() ? 0.55F : 1.1F;
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+public class ZebraRenderer extends NaturalistMobRenderer<Zebra> {
+    public ZebraRenderer(EntityRendererProvider.Context context) {
+        super(context, new ZebraModel(context.bakeLayer(ZebraModel.LAYER_LOCATION)), new ZebraBabyModel(context.bakeLayer(ZebraBabyModel.LAYER_LOCATION)), 1.1F);
     }
 }

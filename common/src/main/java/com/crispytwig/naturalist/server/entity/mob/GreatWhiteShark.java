@@ -3,9 +3,9 @@ package com.crispytwig.naturalist.server.entity.mob;
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
 import com.crispytwig.naturalist.server.entity.base.MultipartMob;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.util.BeachedMob;
 import com.crispytwig.naturalist.server.entity.util.BodyChain;
 import com.crispytwig.naturalist.server.entity.util.MobPart;
@@ -60,19 +60,15 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
 
-public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, MultipartMob, HuntingAnimal, DataDrivenVariantAnimal {
+public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(GreatWhiteShark.class, EntityDataSerializers.STRING);
 
@@ -86,7 +82,6 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
 
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GREAT_WHITE_SHARK_FOOD_ITEMS);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int flopCooldown;
     private int huntingCooldown;
 
@@ -100,11 +95,31 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
             new float[]{0.24F, 0.12F, 0.1F},
             4.0F, 25.0F, 0.1F);
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.shark.idle");
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.shark.swim");
-    protected static final RawAnimation SWIM_FAST = RawAnimation.begin().thenLoop("animation.sf_nba.shark.swim_fast");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.shark.attack");
-    protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.shark.flop");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimFastAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
+
+    private static final AnimationSoundTrack SWIM_SOUNDS = AnimationSoundTrack.builder(1.5F, true)
+            .at(0.0F, NaturalistSoundEvents.GREAT_WHITE_SHARK_SWIM, 1.0F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack SWIM_FAST_SOUNDS = AnimationSoundTrack.builder(0.9167F, true)
+            .at(0.0F, NaturalistSoundEvents.GREAT_WHITE_SHARK_SWIM_FAST, 1.0F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack ATTACK_SOUNDS = AnimationSoundTrack.builder(0.7F, false)
+            .at(0.0F, NaturalistSoundEvents.GREAT_WHITE_SHARK_ATTACK, 1.0F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack FLOP_SOUNDS = AnimationSoundTrack.builder(0.5833F, true)
+            .at(0.0F, NaturalistSoundEvents.GREAT_WHITE_SHARK_FLOP, 1.0F, 1.0F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.swimAnimationState, SWIM_SOUNDS)
+            .add(this.swimFastAnimationState, SWIM_FAST_SOUNDS)
+            .add(this.attackAnimationState, ATTACK_SOUNDS)
+            .add(this.flopAnimationState, FLOP_SOUNDS);
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(14);
 
     public GreatWhiteShark(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -133,22 +148,22 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/great_white_shark.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -185,14 +200,14 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
-        this.addHuntingCooldownSaveData(compound);
+        this.saveHuntingCooldown(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.readHuntingCooldownSaveData(compound);
+        this.loadHuntingCooldown(compound);
     }
 
     @Override
@@ -224,8 +239,8 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
@@ -238,13 +253,13 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new SharkAttackGoal(this, 2.25D));
+        this.goalSelector.addGoal(1, new SharkAttackGoal(this));
         this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0D, 10));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false,
-                entity -> this.hasHuntingCooldown() && entity.getType().is(NaturalistTags.EntityTypes.GREAT_WHITE_SHARK_HOSTILES) && entity.isInWater()));
+                entity -> this.canHunt() && entity.getType().is(NaturalistTags.EntityTypes.GREAT_WHITE_SHARK_HOSTILES) && entity.isInWater()));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false,
-                player -> this.hasHuntingCooldown() && player.isInWater() && this.getLightLevelDependentMagicValue() < 0.5F));
+                player -> this.canHunt() && player.isInWater() && this.getLightLevelDependentMagicValue() < 0.5F));
     }
 
     @Override
@@ -293,9 +308,25 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
         }
         this.positionParts();
         MobPart.pushEntities(this, this.parts);
-        if (!this.level().isClientSide && MobPart.resolveBodyCollisions(this, this.parts)) {
-            this.positionParts();
+        if (!this.level().isClientSide) {
+            if (MobPart.resolveBodyCollisions(this, this.parts)) {
+                this.positionParts();
+            }
+        } else {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
         }
+    }
+
+    private void setupAnimationStates() {
+        boolean inWater = this.isInWater();
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        boolean aggressive = this.isAggressive();
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
+        this.flopAnimationState.animateWhen(!inWater, this.tickCount);
+        this.swimFastAnimationState.animateWhen(inWater && moving && aggressive, this.tickCount);
+        this.swimAnimationState.animateWhen(inWater && moving && !aggressive, this.tickCount);
+        this.idleAnimationState.animateWhen(inWater && !moving, this.tickCount);
     }
 
     @Override
@@ -369,8 +400,7 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
         if (toTarget.lengthSqr() < 1.0E-4D) {
             return true;
         }
-        Vec3 facing = Vec3.directionFromRotation(this.xBodyRot, this.chain.getRenderYaw());
-        return facing.dot(toTarget.normalize()) >= ATTACK_CONE_COS;
+        return Vec3.directionFromRotation(this.xBodyRot, this.chain.getRenderYaw()).dot(toTarget.normalize()) >= ATTACK_CONE_COS;
     }
 
     @Nullable
@@ -399,15 +429,13 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
         private static final int FUMBLE_TIME_LIMIT = 15;
 
         private final GreatWhiteShark shark;
-        private final double chargeSpeed;
         private boolean charging;
         private int retreatTicks;
         private int fumbleTicks;
         private int pathRecalcTicks;
 
-        SharkAttackGoal(GreatWhiteShark shark, double chargeSpeed) {
+        SharkAttackGoal(GreatWhiteShark shark) {
             this.shark = shark;
-            this.chargeSpeed = chargeSpeed;
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
         }
 
@@ -455,7 +483,7 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
             this.shark.getLookControl().setLookAt(target, 30.0F, 30.0F);
             if (--this.pathRecalcTicks <= 0) {
                 this.pathRecalcTicks = 4;
-                this.shark.getNavigation().moveTo(target, this.chargeSpeed);
+                this.shark.getNavigation().moveTo(target, 2.25);
             }
             if (this.shark.isWithinMeleeAttackRange(target) && this.shark.getSensing().hasLineOfSight(target) && this.shark.isFacing(target)) {
                 this.shark.swing(InteractionHand.MAIN_HAND);
@@ -499,59 +527,6 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
     //endregion
 
     //region Animation
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends GreatWhiteShark> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (!this.isInWater()) {
-            event.getController().setAnimation(FLOP);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6 || event.isMoving()) {
-            event.getController().setAnimation(this.isAggressive() ? SWIM_FAST : SWIM);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    protected <E extends GreatWhiteShark> @NotNull PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private void soundListener(@NotNull SoundKeyframeEvent<GreatWhiteShark> event) {
-        GreatWhiteShark shark = event.getAnimatable();
-        if (!shark.level().isClientSide) {
-            return;
-        }
-        SoundEvent sound = switch (event.getKeyframeData().getSound()) {
-            case "swim" -> NaturalistSoundEvents.GREAT_WHITE_SHARK_SWIM.get();
-            case "swim_fast" -> NaturalistSoundEvents.GREAT_WHITE_SHARK_SWIM_FAST.get();
-            case "attack" -> NaturalistSoundEvents.GREAT_WHITE_SHARK_ATTACK.get();
-            case "flop" -> NaturalistSoundEvents.GREAT_WHITE_SHARK_FLOP.get();
-            default -> null;
-        };
-        if (sound != null) {
-            shark.level().playLocalSound(shark.getX(), shark.getY(), shark.getZ(), sound, shark.getSoundSource(), 1.0F, 1.0F, false);
-        }
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
-                .setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate)
-                .setSoundKeyframeHandler(this::soundListener));
-    }
-
     public float getXBodyRot(float partialTick) {
         return Mth.lerp(partialTick, this.xBodyRotO, this.xBodyRot);
     }
@@ -564,12 +539,12 @@ public class GreatWhiteShark extends Animal implements NaturalistGeoEntity, Mult
         return this.chain.getRoll(partialTick);
     }
 
-    public float getSegYawOffset(int index, float partialTick) {
-        return this.chain.getSegYawOffset(index, partialTick);
+    public float getSegmentYawOffset(int index, float partialTick) {
+        return this.chain.getSegmentYawOffset(index, partialTick);
     }
 
-    public float getSegPitchOffset(int index, float partialTick) {
-        return this.chain.getSegPitchOffset(index, partialTick, this.getXBodyRot(partialTick));
+    public float getSegmentPitchOffset(int index, float partialTick) {
+        return this.chain.getSegmentPitchOffset(index, partialTick, this.getXBodyRot(partialTick));
     }
     //endregion
 }

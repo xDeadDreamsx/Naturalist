@@ -31,8 +31,7 @@ public class BetterWallClimberNavigation extends GroundPathNavigation {
 
     @Override
     public boolean moveTo(@NotNull Entity entity, double speed) {
-        Path path = this.createPath(entity, 0);
-        return this.moveTo(path, speed);
+        return this.moveTo(this.createPath(entity, 0), speed);
     }
 
     @Override

@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -22,7 +23,7 @@ public class NaturalistItemTagsProvider extends ItemTagsProvider {
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider provider) {
+    protected void addTags(HolderLookup.@NonNull Provider provider) {
         tag(NaturalistTags.ItemTags.ALLIGATOR_FOOD_ITEMS)
                 .add(Items.BEEF, Items.PORKCHOP, Items.CHICKEN, Items.RABBIT);
 

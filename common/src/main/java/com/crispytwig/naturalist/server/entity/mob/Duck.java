@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
@@ -51,18 +52,11 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("unused")
-public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet, Bucketable, DataDrivenVariantAnimal {
+public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, Bucketable, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
 
@@ -79,14 +73,12 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     private float nextFlap = 1.0F;
     public int eggTime;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.duck.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.duck.walk");
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.duck.swim");
-    protected static final RawAnimation FLAP = RawAnimation.begin().thenLoop("animation.sf_nba.duck.flap");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenPlay("animation.sf_nba.duck.sit").thenLoop("animation.sf_nba.duck.sit_idle");
-    protected static final RawAnimation SIT_ADULT = RawAnimation.begin().thenLoop("animation.sf_nba.duck.sit");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sitAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState flapAnimationState = new SmoothAnimationState();
 
     public Duck(@NotNull EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -100,24 +92,24 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(DATA_DYE, -1);
         builder.define(FROM_BUCKET, false);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/duck/duck.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Nullable
@@ -153,7 +145,7 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
         this.saveVariant(compound);
         compound.putInt("EggLayTime", this.eggTime);
         DyeableAnimal.saveDye(this, compound);
-        FollowingPet.save(this, compound);
+        FollowingPet.savePet(this, compound);
     }
 
     @Override
@@ -164,7 +156,7 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
             this.eggTime = compound.getInt("EggLayTime");
         }
         DyeableAnimal.loadDye(this, compound);
-        FollowingPet.load(this, compound);
+        FollowingPet.loadPet(this, compound);
     }
 
     @Override
@@ -224,15 +216,15 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     public Duck getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Duck baby = NaturalistEntityTypes.DUCK.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
         return baby;
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnType != MobSpawnType.BUCKET) {
-            this.pickVariantForSpawn(level);
+            this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
@@ -288,8 +280,7 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
             this.playSound(this.getPickupSound(), 1.0F, 1.0F);
             ItemStack bucketStack = this.getBucketItemStack();
             this.saveToBucketTag(bucketStack);
-            ItemStack resultStack = ItemUtils.createFilledResult(stack, player, bucketStack, false);
-            player.setItemInHand(hand, resultStack);
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, bucketStack, false));
             if (!this.level().isClientSide) {
                 CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer) player, bucketStack);
             }
@@ -348,6 +339,27 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
+    }
+
+    private void setupAnimationStates() {
+        boolean sitting = this.isInSittingPose();
+        boolean swimming = !sitting && this.isInWater();
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        boolean grounded = !sitting && !swimming && moving;
+        this.sitAnimationState.animateWhen(sitting, this.tickCount);
+        this.swimAnimationState.animateWhen(swimming, this.tickCount);
+        this.walkAnimationState.animateWhen(grounded && !this.isSprinting(), this.tickCount);
+        this.runAnimationState.animateWhen(grounded && this.isSprinting(), this.tickCount);
+        this.idleAnimationState.animateWhen(!sitting && !swimming && !moving, this.tickCount);
+        this.flapAnimationState.animateWhen(!this.onGround() && !this.isInWater(), this.tickCount);
+    }
+
+    @Override
     public void aiStep() {
         super.aiStep();
         this.oFlap = this.flap;
@@ -366,7 +378,7 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
 
         this.flap += this.flapping * 2.0F;
         if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && --this.eggTime <= 0) {
-            this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+            this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, NaturalistAnimal.defaultVoicePitch(this.random));
             this.spawnAtLocation(NaturalistRegistry.DUCK_EGG.get());
             this.gameEvent(GameEvent.ENTITY_PLACE);
             this.eggTime = this.random.nextInt(6000) + 6000;
@@ -393,59 +405,14 @@ public class Duck extends TamableAnimal implements NaturalistGeoEntity, DyeableA
     }
 
     @Override
+    public float getVoicePitch() {
+        return NaturalistAnimal.defaultVoicePitch(this.random);
+    }
+
+    @Override
     protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
         this.playSound(NaturalistSoundEvents.DUCK_STEP.get(), 0.1f, 1.2f);
     }
     //endregion
 
-    //region Animation
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Duck> PlayState predicate(final AnimationState<E> event) {
-        if (this.isInSittingPose()) {
-            event.getController().setAnimation(this.isBaby() ? SIT : SIT_ADULT);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        }
-        if (this.isInWater()) {
-            event.getController().setAnimation(SWIM);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
-            return PlayState.CONTINUE;
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-             if (this.isSprinting()) {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
-                return PlayState.CONTINUE;
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.5D));
-                return PlayState.CONTINUE;
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    protected <E extends Duck> PlayState flapPredicate(final AnimationState<E> event) {
-        if (!this.onGround() && !this.isInWater()) {
-            event.getController().setAnimation(FLAP);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        }
-        event.getController().forceAnimationReset();
-
-        return PlayState.STOP;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "flapController", 2, this::flapPredicate));
-    }
-    //endregion
 }

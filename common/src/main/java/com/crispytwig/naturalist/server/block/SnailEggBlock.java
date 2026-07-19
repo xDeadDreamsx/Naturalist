@@ -39,9 +39,7 @@ public class SnailEggBlock extends Block {
     }
 
     private static int getSnailEggHatchDelay(@NotNull RandomSource random) {
-        int minHatchTickDelay = 600;
-        int maxHatchTickDelay = 2400;
-        return random.nextInt(minHatchTickDelay, maxHatchTickDelay);
+        return random.nextInt(600, 2400);
     }
 
     public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
@@ -76,9 +74,7 @@ public class SnailEggBlock extends Block {
             Snail snail = NaturalistEntityTypes.SNAIL.get().create(level);
             if (snail != null) {
                 double d = (double)pos.getX() + this.getRandomSnailPositionOffset(random);
-                double e = (double)pos.getZ() + this.getRandomSnailPositionOffset(random);
-                int k = random.nextInt(1, 361);
-                snail.moveTo(d, pos.getY(), e, (float)k, 0.0F);
+                snail.moveTo(d, pos.getY(), (double)pos.getZ() + this.getRandomSnailPositionOffset(random), (float)random.nextInt(1, 361), 0.0F);
                 snail.setPersistenceRequired();
                 snail.setAge(-6000);
                 level.addFreshEntity(snail);

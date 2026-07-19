@@ -6,9 +6,10 @@ import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.HidingAnimal;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.VariantBucketable;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -57,19 +58,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
-public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAnimal, VariantBucketable {
+public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketable {
     //region Data
     public static final String[] VARIANT_NAMES = {"brown", "blue"};
 
@@ -79,18 +70,19 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(GiantIsopod.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(GiantIsopod.class, EntityDataSerializers.BOOLEAN);
 
+    private static final int HIDE_END_ANIM_TICKS = 14;
+
     private boolean wasHiding;
-    private boolean hideAnimActive;
+    private boolean wasHidingClient;
+    private int hideEndTicks;
     private long hideCacheTick = -1L;
     private boolean hideCache;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.giant_isopod.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.giant_isopod.walk");
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.giant_isopod.swim");
-    protected static final RawAnimation HIDE = RawAnimation.begin().thenPlay("animation.sf_nba.giant_isopod.hide_start").thenLoop("animation.sf_nba.giant_isopod.hide_idle");
-    protected static final RawAnimation HIDE_END = RawAnimation.begin().thenPlay("animation.sf_nba.giant_isopod.hide_end");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState hideAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState hideEndAnimationState = new SmoothAnimationState();
 
     public GiantIsopod(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -110,28 +102,28 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return DEFAULT_VARIANT;
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/giant_isopod/brown.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -190,7 +182,7 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
         if (reason != MobSpawnType.BUCKET) {
-            this.pickVariantForSpawn(level);
+            this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
@@ -205,7 +197,7 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
     public GiantIsopod getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         GiantIsopod baby = NaturalistEntityTypes.GIANT_ISOPOD.get().create(level);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }
         return baby;
     }
@@ -214,8 +206,8 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
     //region Behavior
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new PanicGoal(this, 2.0D));
-        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 5.0F, 1.5D, 2.5D));
+        this.goalSelector.addGoal(0, new PanicGoal(this, 1.25D));
+        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 5.0F, 1.25D, 1.5D));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.1D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1D));
@@ -260,10 +252,9 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
         if (this.isBaby()) {
             return false;
         }
-        List<Player> players = this.level().getNearbyPlayers(
+        return !this.level().getNearbyPlayers(
                 TargetingConditions.forNonCombat().range(3.0D).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test),
-                this, this.getBoundingBox().inflate(3.0D, 2.0D, 3.0D));
-        return !players.isEmpty();
+                this, this.getBoundingBox().inflate(3.0D, 2.0D, 3.0D)).isEmpty();
     }
 
     @Override
@@ -306,47 +297,35 @@ public class GiantIsopod extends Animal implements NaturalistGeoEntity, HidingAn
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
     }
 
-    @Override
-    public double getBoneResetTime() {
-        return 0.0;
-    }
+    private void setupAnimationStates() {
+        boolean hiding = this.canHide();
+        if (!hiding && this.wasHidingClient) {
+            this.hideEndTicks = HIDE_END_ANIM_TICKS;
+        } else if (this.hideEndTicks > 0) {
+            this.hideEndTicks--;
+        }
+        this.wasHidingClient = hiding;
+        if (hiding) {
+            this.hideEndTicks = 0;
+        }
 
-    protected <E extends GiantIsopod> @NotNull PlayState predicate(final AnimationState<E> event) {
-        AnimationController<E> controller = event.getController();
-        if (this.canHide()) {
-            this.hideAnimActive = true;
-            controller.setAnimation(HIDE);
-            controller.setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        }
-        if (this.hideAnimActive) {
-            controller.setAnimation(HIDE_END);
-            controller.setAnimationSpeed(1.0D);
-            if (!controller.hasAnimationFinished()) {
-                return PlayState.CONTINUE;
-            }
-            this.hideAnimActive = false;
-        }
-        if (!this.onGround() && this.isInWater()) {
-            controller.setAnimation(SWIM);
-            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            controller.setAnimation(WALK);
-            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
-        } else {
-            controller.setAnimation(IDLE);
-            controller.setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
+        boolean hideEnding = !hiding && this.hideEndTicks > 0;
+        boolean posing = hiding || hideEnding;
+        boolean swimming = !posing && !this.onGround() && this.isInWater();
+        boolean moving = !posing && !swimming && NaturalistAnimal.isVisiblyMoving(this);
 
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 0, this::predicate));
+        this.hideAnimationState.animateWhen(hiding, this.tickCount);
+        this.hideEndAnimationState.animateWhen(hideEnding, this.tickCount);
+        this.swimAnimationState.animateWhen(swimming, this.tickCount);
+        this.walkAnimationState.animateWhen(moving, this.tickCount);
+        this.idleAnimationState.animateWhen(!posing && !swimming && !moving, this.tickCount);
     }
     //endregion
 }

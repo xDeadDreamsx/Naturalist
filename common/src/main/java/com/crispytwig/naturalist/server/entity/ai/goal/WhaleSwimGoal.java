@@ -82,7 +82,7 @@ public class WhaleSwimGoal extends RandomSwimmingGoal {
 
     @Nullable
     private Vec3 keepSubmerged(@Nullable Vec3 pos) {
-        if (pos != null && !this.whale.isWaterAt(BlockPos.containing(pos).above(3))) {
+        if (pos != null && !this.whale.level().isWaterAt(BlockPos.containing(pos).above(3))) {
             return pos.add(0.0D, -3.0D, 0.0D);
         }
         return pos;
@@ -105,8 +105,8 @@ public class WhaleSwimGoal extends RandomSwimmingGoal {
 
     private boolean isOpenWater(Vec3 pos) {
         BlockPos center = BlockPos.containing(pos);
-        return this.whale.isWaterAt(center) && this.whale.isWaterAt(center.above(3)) && this.whale.isWaterAt(center.below())
-                && this.whale.isWaterAt(center.offset(2, 0, 0)) && this.whale.isWaterAt(center.offset(-2, 0, 0))
-                && this.whale.isWaterAt(center.offset(0, 0, 2)) && this.whale.isWaterAt(center.offset(0, 0, -2));
+        return this.whale.level().isWaterAt(center) && this.whale.level().isWaterAt(center.above(3)) && this.whale.level().isWaterAt(center.below())
+                && this.whale.level().isWaterAt(center.offset(2, 0, 0)) && this.whale.level().isWaterAt(center.offset(-2, 0, 0))
+                && this.whale.level().isWaterAt(center.offset(0, 0, 2)) && this.whale.level().isWaterAt(center.offset(0, 0, -2));
     }
 }

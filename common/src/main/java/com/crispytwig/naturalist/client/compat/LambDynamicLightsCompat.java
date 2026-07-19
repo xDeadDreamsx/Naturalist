@@ -13,7 +13,7 @@ public class LambDynamicLightsCompat implements DynamicLightsInitializer {
     public void onInitializeDynamicLights(DynamicLightsContext context) {
         context.entityLightSourceManager().onRegisterEvent()
                 .register(
-                        ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "firefly"),
+                        Naturalist.location("firefly"),
                         registerContext -> registerContext.register(
                                 NaturalistEntityTypes.FIREFLY.get(),
                                 FireflyLuminance.INSTANCE

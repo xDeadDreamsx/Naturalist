@@ -1,60 +1,92 @@
 package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.client.model.animation.RayAnimations;
 import com.crispytwig.naturalist.server.entity.mob.Ray;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
+import org.jspecify.annotations.NonNull;
 
-@Environment(EnvType.CLIENT)
-public class RayModel extends GeoModel<Ray> {
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getTextureResource(Ray ray) {
-        return ray.getVariantTexture();
-    }
+public class RayModel extends NaturalistEntityModel<Ray> {
+	private static final float COUNTER_GAIN = 1.6F;
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+			Naturalist.location("ray"), "main");
+	private final ModelPart root;
+	private final ModelPart body;
+	private final ModelPart leftFin;
+	private final ModelPart rightFin;
+	private final ModelPart tail;
 
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getModelResource(Ray ray) {
-        return ray.getVariantModel(Naturalist.location("geo/entity/ray.geo.json"));
-    }
+	public RayModel(ModelPart root) {
+		this.root = root.getChild("root");
+		this.body = this.root.getChild("body");
+		this.leftFin = this.body.getChild("leftFin");
+		this.rightFin = this.body.getChild("rightFin");
+		this.tail = this.body.getChild("tail");
+	}
 
-    @Override
-    public ResourceLocation getAnimationResource(Ray ray) {
-        return ray.getVariantAnimation(Naturalist.location("animations/ray.animation.json"));
-    }
+	@Override
+	public @NonNull ModelPart root() {
+		return this.root;
+	}
 
-    @Override
-    public void setCustomAnimations(Ray ray, long instanceId, @Nullable AnimationState<Ray> animationState) {
-        super.setCustomAnimations(ray, instanceId, animationState);
+	public static LayerDefinition createBodyLayer() {
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-        if (animationState == null) return;
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
+		.texOffs(0, 0).addBox(-5.5F, -2.0F, -7.0F, 11.0F, 4.0F, 15.0F, new CubeDeformation(0.0F))
+		.texOffs(38, 4).addBox(0.0F, -3.0F, -1.0F, 0.0F, 1.0F, 9.0F, new CubeDeformation(0.0F))
+		.texOffs(23, 43).addBox(-2.5F, -1.0F, -10.0F, 5.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.0F, 0.0F));
+		PartDefinition mantaMouth = body.addOrReplaceChild("mantaMouth", CubeListBuilder.create(), PartPose.offset(4.5F, -0.5F, -7.0F));
+		PartDefinition leftMouth = mantaMouth.addOrReplaceChild("leftMouth", CubeListBuilder.create()
+		.texOffs(0, 0).addBox(-1.0F, -1.5F, -4.0F, 2.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition rightMouth = mantaMouth.addOrReplaceChild("rightMouth", CubeListBuilder.create()
+		.texOffs(0, 0).mirror().addBox(-1.0F, -1.5F, -4.0F, 2.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-9.0F, 0.0F, 0.0F));
+		PartDefinition leftFin = body.addOrReplaceChild("leftFin", CubeListBuilder.create()
+		.texOffs(0, 29).addBox(0.0F, 0.0F, -5.0F, 6.0F, 2.0F, 10.0F, new CubeDeformation(0.01F))
+		.texOffs(49, 26).addBox(0.0F, 0.0F, -7.0F, 6.0F, 2.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offset(5.5F, 0.0F, 0.0F));
+		PartDefinition leftFin2 = leftFin.addOrReplaceChild("leftFin2", CubeListBuilder.create()
+		.texOffs(0, 19).addBox(0.0F, 0.0F, -4.0F, 13.0F, 1.0F, 8.0F, new CubeDeformation(0.0F))
+		.texOffs(51, 9).addBox(0.0F, 0.0F, -5.0F, 5.0F, 1.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(6.0F, 0.0F, -1.0F));
+		PartDefinition rightFin = body.addOrReplaceChild("rightFin", CubeListBuilder.create()
+		.texOffs(0, 29).mirror().addBox(-6.0F, 0.0F, -5.0F, 6.0F, 2.0F, 10.0F, new CubeDeformation(0.01F)).mirror(false)
+		.texOffs(49, 26).mirror().addBox(-6.0F, 0.0F, -7.0F, 6.0F, 2.0F, 14.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-5.5F, 0.0F, 0.0F));
+		PartDefinition rightFin2 = rightFin.addOrReplaceChild("rightFin2", CubeListBuilder.create()
+		.texOffs(0, 19).mirror().addBox(-13.0F, 0.0F, -4.0F, 13.0F, 1.0F, 8.0F, new CubeDeformation(0.0F)).mirror(false)
+		.texOffs(51, 9).mirror().addBox(-5.0F, 0.0F, -5.0F, 5.0F, 1.0F, 12.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-6.0F, 0.0F, -1.0F));
+		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create()
+		.texOffs(23, 29).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 2.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.0F, 8.0F));
+		PartDefinition tail2 = tail.addOrReplaceChild("tail2", CubeListBuilder.create()
+		.texOffs(37, 0).addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 1.0F, 7.0F));
+		PartDefinition tail3 = tail2.addOrReplaceChild("tail3", CubeListBuilder.create()
+		.texOffs(54, 0).addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 7.0F));
 
-        float counterGain = 1.6F;
-        float partialTick = animationState.getPartialTick();
-        float body = ray.getXBodyRot(partialTick);
-        float finCounter = (body - ray.getFinLag(partialTick)) * Mth.DEG_TO_RAD * counterGain;
-        float tailCounter = (body - ray.getTailLag(partialTick)) * Mth.DEG_TO_RAD * counterGain;
+		return LayerDefinition.create(meshdefinition, 128, 64);
+	}
 
-        this.getBone("body").ifPresent(bone -> {
-            bone.setRotX(bone.getRotX() - body * Mth.DEG_TO_RAD);
-            bone.setRotZ(bone.getRotZ() + ray.getZBodyRot(partialTick) * Mth.DEG_TO_RAD);
-            bone.resetStateChanges();
-        });
-        this.counterRotate("leftFin", finCounter);
-        this.counterRotate("rightFin", finCounter);
-        this.counterRotate("tail", tailCounter);
-    }
+	@Override
+	protected void setupAnimations(Ray entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch) {
 
-    private void counterRotate(String bone, float radians) {
-        this.getBone(bone).ifPresent(b -> {
-            b.setRotX(b.getRotX() + radians);
-            b.resetStateChanges();
-        });
-    }
+		this.animateSmooth(entity.idleAnimationState, RayAnimations.RAY_IDLE, ageInTicks, partialTick);
+		this.animateSmooth(entity.swimAnimationState, RayAnimations.RAY_SWIM_IDLE_EVENT, ageInTicks, partialTick);
+
+		float bodyRot = entity.getXBodyRot(partialTick);
+		float finCounter = (bodyRot - entity.getFinLag(partialTick)) * Mth.DEG_TO_RAD * COUNTER_GAIN;
+		float tailCounter = (bodyRot - entity.getTailLag(partialTick)) * Mth.DEG_TO_RAD * COUNTER_GAIN;
+
+		this.body.xRot += bodyRot * Mth.DEG_TO_RAD;
+		this.body.zRot += entity.getZBodyRot(partialTick) * Mth.DEG_TO_RAD;
+		this.leftFin.xRot -= finCounter;
+		this.rightFin.xRot -= finCounter;
+		this.tail.xRot -= tailCounter;
+	}
 }

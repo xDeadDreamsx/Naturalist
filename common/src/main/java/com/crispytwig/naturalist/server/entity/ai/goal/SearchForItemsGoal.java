@@ -4,7 +4,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.EnumSet;
@@ -38,8 +37,7 @@ public class SearchForItemsGoal extends Goal {
     @Override
     public void tick() {
         List<ItemEntity> list = mob.level().getEntitiesOfClass(ItemEntity.class, mob.getBoundingBox().inflate(horizontalSearchRange, verticalSearchRange, horizontalSearchRange), itemEntity -> ingredient.test(itemEntity.getItem()));
-        ItemStack itemstack = mob.getItemBySlot(EquipmentSlot.MAINHAND);
-        if (itemstack.isEmpty() && !list.isEmpty()) {
+        if (mob.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && !list.isEmpty()) {
             mob.getNavigation().moveTo(list.getFirst(), speedModifier);
         }
 

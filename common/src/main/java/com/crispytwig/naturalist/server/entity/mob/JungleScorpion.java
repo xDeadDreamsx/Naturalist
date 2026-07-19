@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animation.RawAnimation;
+import org.jspecify.annotations.NonNull;
 
 public class JungleScorpion extends Scorpion implements DataDrivenVariantAnimal {
     //region Data
@@ -32,13 +32,8 @@ public class JungleScorpion extends Scorpion implements DataDrivenVariantAnimal 
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(JungleScorpion.class, EntityDataSerializers.STRING);
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.jungle_scorpion.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.jungle_scorpion.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.jungle_scorpion.run");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.jungle_scorpion.attack");
-
     public JungleScorpion(EntityType<? extends Animal> entityType, Level level) {
-        super(entityType, level, IDLE, WALK, RUN, ATTACK);
+        super(entityType, level);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -55,28 +50,28 @@ public class JungleScorpion extends Scorpion implements DataDrivenVariantAnimal 
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("jungle_scorpion"), "black");
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/scorpion/black_jungle_scorpion.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -94,8 +89,8 @@ public class JungleScorpion extends Scorpion implements DataDrivenVariantAnimal 
 
     //region Spawning
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion

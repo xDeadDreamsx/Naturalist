@@ -30,22 +30,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animation.RawAnimation;
-
-import java.util.Optional;
+import org.jspecify.annotations.NonNull;
 
 public class DesertScorpion extends Scorpion implements Catchable, DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(DesertScorpion.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(DesertScorpion.class, EntityDataSerializers.BOOLEAN);
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.desert_scorpion.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.desert_scorpion.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.desert_scorpion.run");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.desert_scorpion.attack");
-
     public DesertScorpion(EntityType<? extends Animal> entityType, Level level) {
-        super(entityType, level, IDLE, WALK, RUN, ATTACK);
+        super(entityType, level);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -58,23 +51,23 @@ public class DesertScorpion extends Scorpion implements Catchable, DataDrivenVar
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(FROM_HAND, false);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/scorpion/desert_scorpion.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -134,8 +127,8 @@ public class DesertScorpion extends Scorpion implements Catchable, DataDrivenVar
 
     //region Spawning
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
@@ -155,8 +148,7 @@ public class DesertScorpion extends Scorpion implements Catchable, DataDrivenVar
 
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
-        Optional<InteractionResult> caught = Catchable.catchAnimal(player, hand, this, true);
-        return caught.orElseGet(() -> super.mobInteract(player, hand));
+        return Catchable.catchAnimal(player, hand, this, true).orElseGet(() -> super.mobInteract(player, hand));
     }
     //endregion
 }

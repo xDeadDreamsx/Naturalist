@@ -12,7 +12,7 @@ import org.jspecify.annotations.NonNull;
 public final class FireflyLuminance implements EntityLuminance {
     public static final FireflyLuminance INSTANCE = new FireflyLuminance();
     public static final EntityLuminance.Type TYPE = EntityLuminance.Type.registerSimple(
-            ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "firefly"),
+            Naturalist.location("firefly"),
             INSTANCE
     );
 

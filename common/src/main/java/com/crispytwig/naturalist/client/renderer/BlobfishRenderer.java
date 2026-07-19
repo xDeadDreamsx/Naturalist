@@ -1,32 +1,45 @@
 package com.crispytwig.naturalist.client.renderer;
 
-import com.crispytwig.naturalist.client.model.BlobfishModel;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.client.model.BlobfishGrayModel;
+import com.crispytwig.naturalist.client.model.BlobfishPinkModel;
 import com.crispytwig.naturalist.server.entity.mob.Blobfish;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class BlobfishRenderer extends GeoEntityRenderer<Blobfish> {
-    public BlobfishRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new BlobfishModel());
-        this.shadowRadius = 0.4F;
+public class BlobfishRenderer extends MobRenderer<Blobfish, HierarchicalModel<Blobfish>> {
+    private static final ResourceLocation GRAY = Naturalist.location("textures/entity/blobfish/gray.png");
+    private static final ResourceLocation PINK = Naturalist.location("textures/entity/blobfish/pink.png");
+
+    private final HierarchicalModel<Blobfish> pinkModel;
+    private final HierarchicalModel<Blobfish> grayModel;
+
+    public BlobfishRenderer(EntityRendererProvider.Context context) {
+        super(context, new BlobfishPinkModel(context.bakeLayer(BlobfishPinkModel.LAYER_LOCATION)), 0.4F);
+        this.pinkModel = this.model;
+        this.grayModel = new BlobfishGrayModel(context.bakeLayer(BlobfishGrayModel.LAYER_LOCATION));
     }
 
     @Override
-    public float getMotionAnimThreshold(Blobfish animatable) {
-        return 0.000001f;
+    public @NotNull ResourceLocation getTextureLocation(@NotNull Blobfish entity) {
+        if (entity.hasNonDefaultVariant()) {
+            return entity.getVariantTexture();
+        }
+        return entity.isGray() ? GRAY : PINK;
     }
 
     @Override
-    public @NotNull RenderType getRenderType(Blobfish animatable, @NotNull ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return RenderType.entityCutoutNoCull(texture);
+    public void render(@NotNull Blobfish entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
+        this.model = entity.isGray() ? this.grayModel : this.pinkModel;
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 }

@@ -6,7 +6,6 @@ import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.entity.ai.goal.HideGoal;
 import com.crispytwig.naturalist.server.entity.base.HidingAnimal;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.misc.DirtTrail;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
@@ -59,20 +58,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.ParticleKeyframeEvent;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
 
-public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, HidingAnimal, DataDrivenVariantAnimal {
+public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final int STATE_UNROLLED = 0;
     private static final int STATE_DIGGING = 1;
@@ -107,15 +100,40 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     @Nullable
     private BlockPos lastMoundPos;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private int clientStateTicks;
+    private int lastClientState = -1;
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.mole.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.mole.walk");
-    protected static final RawAnimation IDLE_EVENT = RawAnimation.begin().thenPlay("animation.sf_nba.mole.idle_event");
-    protected static final RawAnimation DIG_DOWN = RawAnimation.begin().thenPlayAndHold("animation.sf_nba.mole.dig_down");
-    protected static final RawAnimation UNDERGROUND_HIDDEN = RawAnimation.begin().thenPlayAndHold("animation.sf_nba.mole.underground_hidden");
-    protected static final RawAnimation PEEK = RawAnimation.begin().thenPlay("animation.sf_nba.mole.spawn").thenPlayAndHold("animation.sf_nba.mole.peek");
-    protected static final RawAnimation DIG_UP = RawAnimation.begin().thenPlayAndHold("animation.sf_nba.mole.dig_up");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState digDownAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState undergroundAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState spawnAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState peekAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState digUpAnimationState = SmoothAnimationState.pose();
+
+    private static final int DIRT_PUFF_PARTICLES = 16;
+
+    private static final AnimationSoundTrack WALK_SOUNDS = AnimationSoundTrack.builder(1.0F, true)
+            .at(0.13F, NaturalistSoundEvents.MOLE_STEP, 0.15F, 1.0F)
+            .at(0.21F, NaturalistSoundEvents.MOLE_STEP, 0.25F, 1.0F)
+            .at(0.63F, NaturalistSoundEvents.MOLE_STEP, 0.15F, 1.0F)
+            .at(0.71F, NaturalistSoundEvents.MOLE_STEP, 0.25F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack DIG_DOWN_SOUNDS = AnimationSoundTrack.builder(1.0F, false)
+            .at(0.0F, NaturalistSoundEvents.MOLE_DIG_DOWN, 0.7F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack DIG_UP_SOUNDS = AnimationSoundTrack.builder(1.0F, false)
+            .at(0.0F, NaturalistSoundEvents.MOLE_DIG_UP, 0.7F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack PEEK_SOUNDS = AnimationSoundTrack.builder(2.1667F, false)
+            .at(0.0F, NaturalistSoundEvents.MOLE_PEEK, 0.7F, 1.0F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.walkAnimationState, WALK_SOUNDS)
+            .add(this.digDownAnimationState, DIG_DOWN_SOUNDS)
+            .add(this.digUpAnimationState, DIG_UP_SOUNDS)
+            .add(this.peekAnimationState, PEEK_SOUNDS);
 
     public Mole(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
@@ -130,23 +148,23 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(DATA_STATE, STATE_UNROLLED);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/mole.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     private int getState() {
@@ -232,14 +250,14 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         Mole baby = NaturalistEntityTypes.MOLE.get().create(level);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }
         return baby;
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }
@@ -315,9 +333,6 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
         }
         int state = this.getState();
         if (state == STATE_UNROLLED) {
-            if (this.random.nextInt(600) == 0 && this.getDeltaMovement().horizontalDistanceSqr() < 1.0E-6) {
-                this.triggerAnim("idleEventController", "idle_event");
-            }
             if (this.threatDetected) {
                 this.tryRollUp();
             }
@@ -393,7 +408,7 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
     }
 
     public boolean isBeingDugOut() {
-        return this.dugOutHoldTicks > 0;
+        return this.dugOutHoldTicks <= 0;
     }
 
     public boolean canBeDugOut() {
@@ -533,12 +548,12 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
 
         @Override
         public boolean canUse() {
-            return !this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canUse();
+            return this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canUse();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return !this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canContinueToUse();
+            return this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canContinueToUse();
         }
 
         @Nullable
@@ -558,93 +573,55 @@ public class Mole extends NaturalistAnimal implements NaturalistGeoEntity, Hidin
 
         @Override
         public boolean canUse() {
-            return !this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canUse();
+            return this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canUse();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return !this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canContinueToUse();
+            return this.mole.isBeingDugOut() && this.mole.getState() == STATE_UNDERGROUND && super.canContinueToUse();
         }
     }
     //endregion
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
+        }
     }
 
-    protected <E extends Mole> @NotNull PlayState predicate(final AnimationState<E> event) {
-        switch (this.getState()) {
-            case STATE_DIGGING -> event.getController().setAnimation(DIG_DOWN);
-            case STATE_UNDERGROUND -> event.getController().setAnimation(UNDERGROUND_HIDDEN);
-            case STATE_PEEKING -> event.getController().setAnimation(PEEK);
-            case STATE_UNROLLING -> event.getController().setAnimation(DIG_UP);
-            default -> event.getController().setAnimation(event.isMoving() ? WALK : IDLE);
-        }
-        if (this.getState() == STATE_UNROLLED && event.isMoving()) {
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
+    private void setupAnimationStates() {
+        int state = this.getState();
+        if (state != this.lastClientState) {
+            this.lastClientState = state;
+            this.clientStateTicks = 0;
+            if (state == STATE_DIGGING || state == STATE_UNROLLING) {
+                this.spawnDirtPuff();
+            }
         } else {
-            event.getController().setAnimationSpeed(1.0D);
+            this.clientStateTicks++;
         }
-        return PlayState.CONTINUE;
+        boolean unrolled = state == STATE_UNROLLED;
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        boolean peeking = state == STATE_PEEKING;
+        this.digDownAnimationState.animateWhen(state == STATE_DIGGING, this.tickCount);
+        this.undergroundAnimationState.animateWhen(state == STATE_UNDERGROUND, this.tickCount);
+        this.spawnAnimationState.animateWhen(peeking && this.clientStateTicks < MOUND_SPAWN_TIME, this.tickCount);
+        this.peekAnimationState.animateWhen(peeking && this.clientStateTicks >= MOUND_SPAWN_TIME, this.tickCount);
+        this.digUpAnimationState.animateWhen(state == STATE_UNROLLING, this.tickCount);
+        this.walkAnimationState.animateWhen(unrolled && moving, this.tickCount);
+        this.idleAnimationState.animateWhen(unrolled && !moving, this.tickCount);
     }
 
-    private void soundListener(@NotNull SoundKeyframeEvent<Mole> event) {
-        Mole mole = event.getAnimatable();
-        if (!mole.level().isClientSide) {
-            return;
-        }
-        SoundEvent sound;
-        float volume;
-        switch (event.getKeyframeData().getSound()) {
-            case "dig_down" -> {
-                sound = NaturalistSoundEvents.MOLE_DIG_DOWN.get();
-                volume = 0.7F;
-            }
-            case "dig_up" -> {
-                sound = NaturalistSoundEvents.MOLE_DIG_UP.get();
-                volume = 0.7F;
-            }
-            case "peek" -> {
-                sound = NaturalistSoundEvents.MOLE_PEEK.get();
-                volume = 0.7F;
-            }
-            case "step_-6dB" -> {
-                sound = NaturalistSoundEvents.MOLE_STEP.get();
-                volume = 0.25F;
-            }
-            case "step_-12dB" -> {
-                sound = NaturalistSoundEvents.MOLE_STEP.get();
-                volume = 0.15F;
-            }
-            default -> {
-                return;
-            }
-        }
-        mole.level().playLocalSound(mole.getX(), mole.getY(), mole.getZ(), sound, mole.getSoundSource(), volume, 1.0F, false);
-    }
-
-    private void particleListener(@NotNull ParticleKeyframeEvent<Mole> event) {
-        Mole mole = event.getAnimatable();
-        Level level = mole.level();
-        if (!level.isClientSide) {
-            return;
-        }
+    private void spawnDirtPuff() {
         BlockParticleOption particle = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState());
-        for (int i = 0; i < 16; i++) {
-            level.addParticle(particle, mole.getRandomX(0.75D), mole.getY() + 0.1D, mole.getRandomZ(0.75D),
-                    mole.random.nextGaussian() * 0.05D, 0.1D + mole.random.nextFloat() * 0.15D, mole.random.nextGaussian() * 0.05D);
+        for (int i = 0; i < DIRT_PUFF_PARTICLES; i++) {
+            this.level().addParticle(particle, this.getRandomX(0.75D), this.getY() + 0.1D, this.getRandomZ(0.75D),
+                    this.random.nextGaussian() * 0.05D, 0.1D + this.random.nextFloat() * 0.15D, this.random.nextGaussian() * 0.05D);
         }
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 4, this::predicate)
-                .setSoundKeyframeHandler(this::soundListener)
-                .setParticleKeyframeHandler(this::particleListener));
-        controllers.add(new AnimationController<>(this, "idleEventController", 0, event -> PlayState.STOP)
-                .triggerableAnim("idle_event", IDLE_EVENT));
     }
     //endregion
 }

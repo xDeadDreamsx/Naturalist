@@ -1,13 +1,12 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.ai.goal.FollowAdultGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
-import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
@@ -55,6 +54,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -64,17 +64,11 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("unused")
-public class Bird extends ShoulderRidingEntity implements FlyingAnimal, NaturalistGeoEntity, DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
+public class Bird extends ShoulderRidingEntity implements FlyingAnimal, DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient TAME_FOOD = Ingredient.of(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS);
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.STRING);
@@ -89,11 +83,12 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     private float flapping = 1.0F;
     private float nextFlap = 1.0F;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private float flyPitch;
+    private float flyPitchO;
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.passerine.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.passerine.walk");
-    protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.passerine.fly");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState flyAnimationState = new SmoothAnimationState();
 
     public Bird(@NotNull EntityType<? extends ShoulderRidingEntity> entityType, @NotNull Level level) {
         super(entityType, level);
@@ -110,23 +105,23 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(DATA_DYE, -1);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/bird/american_robin.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -156,7 +151,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         DyeableAnimal.saveDye(this, compound);
-        FollowingPet.save(this, compound);
+        FollowingPet.savePet(this, compound);
     }
 
     @Override
@@ -164,7 +159,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         DyeableAnimal.loadDye(this, compound);
-        FollowingPet.load(this, compound);
+        FollowingPet.loadPet(this, compound);
     }
     //endregion
 
@@ -174,8 +169,8 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 
@@ -315,6 +310,41 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
         if (this.getVehicle() instanceof Player player) {
             this.rideOnHead(player);
         }
+        if (this.level().isClientSide) {
+            this.tickFlyPitch();
+            this.setupAnimationStates();
+        }
+    }
+
+    private void tickFlyPitch() {
+        this.flyPitchO = this.flyPitch;
+        float target = this.onGround() ? 0.0F : this.getXRot() * (Mth.PI / 360F) - (float) this.getDeltaMovement().y * 3.0F;
+        this.flyPitch += (target - this.flyPitch) * 0.3F;
+    }
+
+    public float getFlyPitch(float partialTick) {
+        return Mth.lerp(partialTick, this.flyPitchO, this.flyPitch);
+    }
+
+    private void setupAnimationStates() {
+        boolean flying;
+        boolean walking;
+        if (this.isPassenger()) {
+            flying = !Objects.requireNonNull(Objects.requireNonNull(this.getVehicle())).onGround();
+            walking = false;
+        } else if (this.isInSittingPose()) {
+            flying = false;
+            walking = false;
+        } else if (this.isFlying()) {
+            flying = true;
+            walking = false;
+        } else {
+            flying = false;
+            walking = NaturalistAnimal.isVisiblyMoving(this);
+        }
+        this.flyAnimationState.animateWhen(flying, this.tickCount);
+        this.walkAnimationState.animateWhen(walking, this.tickCount);
+        this.idleAnimationState.animateWhen(!flying && !walking, this.tickCount);
     }
 
     private void rideOnHead(@NotNull Player player) {
@@ -393,7 +423,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
         if (this.level().isNight()) {
             return null;
         }
-        return switch (this.getVariantId().getPath()) {
+        return switch (this.getVariantLocation().getPath()) {
             case "blue_jay", "stellers_jay" -> NaturalistSoundEvents.BIRD_AMBIENT_BLUEJAY.get();
             case "northern_cardinal" -> NaturalistSoundEvents.BIRD_AMBIENT_CARDINAL.get();
             case "carolina_chickadee", "tufted_titmouse" -> NaturalistSoundEvents.BIRD_AMBIENT_FINCH.get();
@@ -540,7 +570,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
 
         @Nullable
         private Vec3 getFleePosition() {
-            Vec3 away = this.bird.position().subtract(this.toAvoid.position());
+            Vec3 away = this.bird.position().subtract(Objects.requireNonNull(this.toAvoid).position());
             Vec3 pos = HoverRandomPos.getPos(this.bird, 16, 7, away.x, away.z, (float) (Math.PI / 2), 3, 1);
             return pos != null ? pos : AirAndWaterRandomPos.getPos(this.bird, 16, 4, -2, away.x, away.z, (float) (Math.PI / 2));
         }
@@ -595,7 +625,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
         private void eatSeed() {
             this.eatCooldown = 20;
             Level level = this.bird.level();
-            ItemStack stack = this.targetSeeds.getItem();
+            ItemStack stack = Objects.requireNonNull(this.targetSeeds).getItem();
             if (!this.bird.isSilent()) {
                 level.playSound(null, this.bird.getX(), this.bird.getY(), this.bird.getZ(),
                         NaturalistSoundEvents.BIRD_EAT.get(), this.bird.getSoundSource(),
@@ -624,7 +654,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
             List<ItemEntity> list = this.bird.level().getEntitiesOfClass(ItemEntity.class,
                     this.bird.getBoundingBox().inflate(8.0D, 4.0D, 8.0D),
                     item -> item.isAlive() && TAME_FOOD.test(item.getItem()));
-            return list.isEmpty() ? null : list.get(0);
+            return list.isEmpty() ? null : list.getFirst();
         }
     }
 
@@ -668,44 +698,4 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, Naturali
     }
     //endregion
 
-    //region Animation
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    @Override
-    public double getBoneResetTime() {
-        return 2;
-    }
-
-    protected <E extends Bird> @NotNull PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.isPassenger()) {
-            event.getController().setAnimation(this.getVehicle().onGround() ? IDLE : FLY);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        } else if (this.isInSittingPose()) {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        } else if (this.isFlying()) {
-            event.getController().setAnimation(FLY);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        } else if (event.isMoving()) {
-            event.getController().setAnimation(WALK);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
-            return PlayState.CONTINUE;
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        }
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 0, this::predicate));
-    }
-    //endregion
 }

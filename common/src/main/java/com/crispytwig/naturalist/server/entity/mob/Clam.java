@@ -4,7 +4,7 @@ import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
@@ -41,18 +41,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Clam extends WaterAnimal implements NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"brown", "white"};
 
@@ -62,18 +55,22 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, DataDriven
     private static final EntityDataAccessor<Boolean> DATA_OPEN = SynchedEntityData.defineId(Clam.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_HAS_TREASURE = SynchedEntityData.defineId(Clam.class, EntityDataSerializers.BOOLEAN);
 
+    private static final int OPEN_ANIM_TICKS = 25;
+    private static final int CLOSE_ANIM_TICKS = 10;
+
     private int stateTimer;
     private int snapCooldown;
     private int launchPushDelay;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private boolean openStateInitialised;
+    private boolean lastOpenClient;
+    private int openAnimTicks;
+    private int closeAnimTicks;
 
-    protected static final RawAnimation IDLE_CLOSED = RawAnimation.begin().thenLoop("animation.sf_nba.clam.idle_closed");
-    protected static final RawAnimation IDLE_OPEN = RawAnimation.begin().thenLoop("animation.sf_nba.clam.idle_open");
-    protected static final RawAnimation OPEN = RawAnimation.begin().thenPlay("animation.sf_nba.clam.open");
-    protected static final RawAnimation CLOSE = RawAnimation.begin().thenPlay("animation.sf_nba.clam.close");
-    protected static final RawAnimation LAUNCH = RawAnimation.begin().thenPlay("animation.sf_nba.clam.launch");
-    protected static final RawAnimation SLAM_SHUT = RawAnimation.begin().thenPlay("animation.sf_nba.clam.slam_shut");
+    public final SmoothAnimationState idleOpenAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState idleClosedAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState openAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState closeAnimationState = new SmoothAnimationState();
 
     public Clam(EntityType<? extends WaterAnimal> entityType, Level level) {
         super(entityType, level);
@@ -97,28 +94,28 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, DataDriven
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return DEFAULT_VARIANT;
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/clam/brown_clam.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     public boolean isOpen() {
@@ -174,7 +171,7 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, DataDriven
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         if (this.random.nextFloat() < 0.05F) {
             this.setHasTreasure(true);
             this.setItemSlot(EquipmentSlot.MAINHAND, this.randomTreasure());
@@ -233,19 +230,16 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, DataDriven
     private void openShell() {
         this.setOpen(true);
         this.stateTimer = 100 + this.random.nextInt(101);
-        this.triggerAnim("main", "open");
     }
 
     private void closeShell() {
         this.setOpen(false);
         this.stateTimer = 200 + this.random.nextInt(201);
-        this.triggerAnim("main", "close");
     }
 
     private void slamShut() {
         this.setOpen(false);
         this.stateTimer = 200 + this.random.nextInt(201);
-        this.triggerAnim("main", "slam_shut");
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(), NaturalistSoundEvents.CLAM_LAUNCH.get(), this.getSoundSource(), 1.0F, 1.0F);
     }
 
@@ -258,7 +252,6 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, DataDriven
         this.setOpen(true);
         this.stateTimer = 100 + this.random.nextInt(101);
         this.launchPushDelay = 4;
-        this.triggerAnim("main", "launch");
     }
 
     private void launchBurst() {
@@ -291,9 +284,6 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, DataDriven
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         if (player.isCreative() && player.getItemInHand(hand).is(Items.DEBUG_STICK)) {
             if (!this.level().isClientSide) {
-                if (!this.isOpen()) {
-                    this.triggerAnim("main", "open");
-                }
                 this.setOpen(true);
                 this.stateTimer = 200;
                 this.snapCooldown = 200;
@@ -347,22 +337,43 @@ public class Clam extends WaterAnimal implements NaturalistGeoEntity, DataDriven
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
     }
 
-    protected <E extends Clam> @NotNull PlayState predicate(final AnimationState<E> event) {
-        event.getController().setAnimation(this.isOpen() ? IDLE_OPEN : IDLE_CLOSED);
-        return PlayState.CONTINUE;
-    }
+    private void setupAnimationStates() {
+        boolean open = this.isOpen();
+        if (!this.openStateInitialised) {
+            this.openStateInitialised = true;
+            this.lastOpenClient = open;
+        } else if (open != this.lastOpenClient) {
+            this.lastOpenClient = open;
+            if (open) {
+                this.openAnimTicks = OPEN_ANIM_TICKS;
+                this.closeAnimTicks = 0;
+            } else {
+                this.closeAnimTicks = CLOSE_ANIM_TICKS;
+                this.openAnimTicks = 0;
+            }
+        } else {
+            if (this.openAnimTicks > 0) {
+                this.openAnimTicks--;
+            }
+            if (this.closeAnimTicks > 0) {
+                this.closeAnimTicks--;
+            }
+        }
 
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main", 5, this::predicate)
-                .triggerableAnim("open", OPEN)
-                .triggerableAnim("close", CLOSE)
-                .triggerableAnim("launch", LAUNCH)
-                .triggerableAnim("slam_shut", SLAM_SHUT));
+        boolean opening = this.openAnimTicks > 0;
+        boolean closing = this.closeAnimTicks > 0;
+
+        this.openAnimationState.animateWhen(opening, this.tickCount);
+        this.closeAnimationState.animateWhen(closing, this.tickCount);
+        this.idleOpenAnimationState.animateWhen(!opening && !closing && open, this.tickCount);
+        this.idleClosedAnimationState.animateWhen(!opening && !closing && !open, this.tickCount);
     }
     //endregion
 }

@@ -63,7 +63,7 @@ public class WhaleSeekDeeperWaterGoal extends Goal {
     }
 
     private boolean hasWaterAbove(double height) {
-        return !this.whale.isWaterAt(BlockPos.containing(this.whale.getX(), this.whale.getY() + height, this.whale.getZ()));
+        return !this.whale.level().isWaterAt(BlockPos.containing(this.whale.getX(), this.whale.getY() + height, this.whale.getZ()));
     }
 
     @Nullable
@@ -75,7 +75,7 @@ public class WhaleSeekDeeperWaterGoal extends Goal {
                 double x = this.whale.getX() + Mth.sin(angle) * dist;
                 double z = this.whale.getZ() + Mth.cos(angle) * dist;
                 BlockPos pos = BlockPos.containing(x, this.whale.getY(), z);
-                if (this.whale.isWaterAt(pos) && this.whale.isWaterAt(pos.below(2))) {
+                if (this.whale.level().isWaterAt(pos) && this.whale.level().isWaterAt(pos.below(2))) {
                     return new Vec3(x, this.whale.getY() - 2.0D, z);
                 }
             }

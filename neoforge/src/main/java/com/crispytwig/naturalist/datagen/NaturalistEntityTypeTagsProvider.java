@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -19,7 +20,7 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider provider) {
+    protected void addTags(HolderLookup.@NonNull Provider provider) {
         tag(NaturalistTags.EntityTypes.ALLIGATOR_HOSTILES)
                 .add(NaturalistEntityTypes.DEER.get())
                 .add(NaturalistEntityTypes.SNAKE.get())

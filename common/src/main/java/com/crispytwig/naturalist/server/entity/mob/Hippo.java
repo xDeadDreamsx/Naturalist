@@ -6,6 +6,7 @@ import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.DistancedFollowParentGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SmoothFloatGoal;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import net.minecraft.nbt.CompoundTag;
@@ -53,21 +54,14 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Hippo extends TamableAnimal implements NaturalistGeoEntity, FollowingPet, DataDrivenVariantAnimal {
+public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Blocks.MELON.asItem());
 
@@ -76,16 +70,16 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     private boolean followingOwner = true;
     private int eatingTicks;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.run");
-    protected static final RawAnimation BITE = RawAnimation.begin().thenPlay("animation.sf_nba.hippo.bite");
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.swim");
-    protected static final RawAnimation SWIM_IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.swim_idle");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenPlay("animation.sf_nba.hippo.sit").thenLoop("animation.sf_nba.hippo.sit_idle");
-    protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.hippo.sleep");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimIdleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sitAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState sleepAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState biteAnimationState = SmoothAnimationState.instant();
+    private static final int BITE_ANIM_TICKS = 20;
+    private int biteAnimTicks;
 
     public Hippo(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -105,22 +99,22 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/hippo/hippo.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -137,14 +131,14 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
-        FollowingPet.save(this, compound);
+        FollowingPet.savePet(this, compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        FollowingPet.load(this, compound);
+        FollowingPet.loadPet(this, compound);
     }
     //endregion
 
@@ -184,14 +178,14 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Hippo baby = NaturalistEntityTypes.HIPPO.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
         return baby;
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
@@ -225,8 +219,7 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     @Override
     public void knockback(double strength, double x, double z) {
         if (this.isBaby()) {
-            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
-            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
+            super.knockback(strength / Math.max(1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.01), x, z);
         } else {
             super.knockback(strength, x, z);
         }
@@ -248,7 +241,7 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
 
     @Override
     public boolean canAttack(@NotNull LivingEntity target) {
-        return !PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
+        return PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
     }
 
     @Override
@@ -419,8 +412,7 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
 
         @Override
         public void stop() {
-            LivingEntity livingEntity = this.mob.getTarget();
-            if (!EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity)) {
+            if (!EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(this.mob.getTarget())) {
                 this.mob.setTarget(null);
             }
             this.mob.setAggressive(false);
@@ -460,8 +452,7 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
         }
 
         protected void checkAndPerformAttack(Entity enemy, double distToEnemySqr) {
-            double reach = this.getAttackReachSqr(enemy);
-            if (distToEnemySqr <= reach && this.ticksUntilNextAttack <= 0) {
+            if (distToEnemySqr <= this.getAttackReachSqr(enemy) && this.ticksUntilNextAttack <= 0) {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
                 this.mob.doHurtTarget(enemy);
@@ -479,53 +470,35 @@ public class Hippo extends TamableAnimal implements NaturalistGeoEntity, Followi
     //endregion
 
     //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Hippo> PlayState predicate(final @NotNull AnimationState<E> event) {
-        if (this.isInSittingPose()) {
-            event.getController().setAnimation(this.isBaby() ? SIT : SLEEP);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        }
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            if (!this.isInWater()) {
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.8D));
-                if (this.isSprinting()) {
-                    event.getController().setAnimation(RUN);
-                } else {
-                    event.getController().setAnimation(WALK);
-                }
-            } else if (this.isInWater()) {
-                event.getController().setAnimation(SWIM);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.1D, LARGE_FISH_LIMB_SWING));
-            }
-            return PlayState.CONTINUE;
-        } else {
-            event.getController().setAnimationSpeed(0.8D);
-            if (this.isInWater()) {
-                event.getController().setAnimation(SWIM_IDLE);
-            } else {
-                event.getController().setAnimation(IDLE);
-            }
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private <E extends Hippo> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(BITE);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
     @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
+    }
+
+    private void setupAnimationStates() {
+        boolean posing = this.isInSittingPose();
+        boolean baby = this.isBaby();
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        boolean inWater = this.isInWater();
+
+        this.sitAnimationState.animateWhen(posing && baby, this.tickCount);
+        this.sleepAnimationState.animateWhen(posing && !baby, this.tickCount);
+
+        if (this.swinging && this.biteAnimTicks <= 0) {
+            this.biteAnimTicks = BITE_ANIM_TICKS;
+        } else if (this.biteAnimTicks > 0) {
+            this.biteAnimTicks--;
+        }
+        this.biteAnimationState.animateWhen(this.biteAnimTicks > 0, this.tickCount);
+
+        this.swimAnimationState.animateWhen(!posing && moving && inWater, this.tickCount);
+        this.runAnimationState.animateWhen(!posing && moving && !inWater && this.isSprinting(), this.tickCount);
+        this.walkAnimationState.animateWhen(!posing && moving && !inWater && !this.isSprinting(), this.tickCount);
+        this.swimIdleAnimationState.animateWhen(!posing && !moving && inWater, this.tickCount);
+        this.idleAnimationState.animateWhen(!posing && !moving && !inWater, this.tickCount);
     }
     //endregion
 }

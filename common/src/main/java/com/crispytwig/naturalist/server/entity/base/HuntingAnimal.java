@@ -10,7 +10,7 @@ public interface HuntingAnimal {
 
     void setHuntingCooldown(int ticks);
 
-    default boolean hasHuntingCooldown() {
+    default boolean canHunt() {
         return this.getHuntingCooldown() <= 0;
     }
 
@@ -25,11 +25,11 @@ public interface HuntingAnimal {
         }
     }
 
-    default void addHuntingCooldownSaveData(CompoundTag compound) {
+    default void saveHuntingCooldown(CompoundTag compound) {
         compound.putInt(HUNTING_COOLDOWN_TAG, this.getHuntingCooldown());
     }
 
-    default void readHuntingCooldownSaveData(CompoundTag compound) {
+    default void loadHuntingCooldown(CompoundTag compound) {
         this.setHuntingCooldown(compound.getInt(HUNTING_COOLDOWN_TAG));
     }
 }

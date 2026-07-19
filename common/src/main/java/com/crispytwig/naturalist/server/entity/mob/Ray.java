@@ -4,7 +4,6 @@ import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.component.DataComponents;
@@ -43,17 +42,12 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
-public class Ray extends AbstractFish implements NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"eagle_ray", "mobula_ray", "stingray"};
 
@@ -61,7 +55,18 @@ public class Ray extends AbstractFish implements NaturalistGeoEntity, DataDriven
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Ray.class, EntityDataSerializers.STRING);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+
+    private static final AnimationSoundTrack SWIM_SOUNDS = AnimationSoundTrack.builder(6.0833F, true)
+            .at(0.0F, NaturalistSoundEvents.RAY_SWIM, 0.3F, 1.0F)
+            .at(1.0F, NaturalistSoundEvents.RAY_SWIM, 0.3F, 1.0F)
+            .at(2.25F, NaturalistSoundEvents.RAY_SWIM, 0.3F, 1.0F)
+            .at(3.5F, NaturalistSoundEvents.RAY_SWIM, 0.3F, 1.0F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.swimAnimationState, SWIM_SOUNDS);
 
     private static final float MAX_TILT = 22.0F;
     private static final float MAX_ROLL = 25.0F;
@@ -77,9 +82,6 @@ public class Ray extends AbstractFish implements NaturalistGeoEntity, DataDriven
     public float zBodyRotO;
     private float lastYRot;
     private Vec3 lastMoveDir = Vec3.ZERO;
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.ray.idle");
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.ray.swim_idle_event");
 
     public Ray(EntityType<? extends AbstractFish> entityType, Level level) {
         super(entityType, level);
@@ -98,28 +100,28 @@ public class Ray extends AbstractFish implements NaturalistGeoEntity, DataDriven
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return DEFAULT_VARIANT;
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/ray/eagle_ray.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -138,7 +140,7 @@ public class Ray extends AbstractFish implements NaturalistGeoEntity, DataDriven
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
         if (reason != MobSpawnType.BUCKET) {
-            this.pickVariantForSpawn(level);
+            this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
@@ -263,31 +265,18 @@ public class Ray extends AbstractFish implements NaturalistGeoEntity, DataDriven
 
     //region Animation
     @Override
-    public double getBoneResetTime() {
-        return 5;
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Ray> @NotNull PlayState predicate(final AnimationState<E> event) {
-        AnimationController<E> controller = event.getController();
-        controller.setAnimation(this.isInWater() ? SWIM : IDLE);
-        return PlayState.CONTINUE;
-    }
-
-    private void soundListener(SoundKeyframeEvent<Ray> event) {
-        Ray ray = event.getAnimatable();
-        if (ray.level().isClientSide && "swim".equals(event.getKeyframeData().getSound())) {
-            ray.level().playLocalSound(ray.getX(), ray.getY(), ray.getZ(), NaturalistSoundEvents.RAY_SWIM.get(), ray.getSoundSource(), 0.3F, 1.0F, false);
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
         }
     }
 
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
+    private void setupAnimationStates() {
+        boolean inWater = this.isInWater();
+        this.swimAnimationState.animateWhen(inWater, this.tickCount);
+        this.idleAnimationState.animateWhen(!inWater, this.tickCount);
     }
     //endregion
 }

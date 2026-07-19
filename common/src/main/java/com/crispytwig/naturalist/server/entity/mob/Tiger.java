@@ -9,9 +9,9 @@ import com.crispytwig.naturalist.server.entity.ai.goal.BabyHurtByTargetGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.SleepGoal;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.NocturnalHostile;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.SleepingAnimal;
@@ -61,21 +61,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
-public class Tiger extends TamableAnimal implements NaturalistGeoEntity, SleepingAnimal, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal, NocturnalHostile {
+public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal, NocturnalHostile {
     //region Data
     public static final String[] VARIANT_NAMES = {"black_panther", "leopard", "tiger", "white_tiger"};
 
@@ -88,15 +84,51 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
     private int huntingCooldown;
     private boolean stalking;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState preyAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sleepAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState sleep2AnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.tiger.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.tiger.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.tiger.run");
-    protected static final RawAnimation PREY = RawAnimation.begin().thenLoop("animation.sf_nba.tiger.prey");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.tiger.attack");
-    protected static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("animation.sf_nba.tiger.sleep");
-    protected static final RawAnimation SLEEP2 = RawAnimation.begin().thenLoop("animation.sf_nba.tiger.sleep2");
+    private static final AnimationSoundTrack WALK_SOUNDS = AnimationSoundTrack.builder(1.0F, true)
+            .at(0.0F, NaturalistSoundEvents.TIGER_STEP, 0.4F, 1.0F)
+            .at(0.25F, NaturalistSoundEvents.TIGER_STEP, 0.4F, 1.0F)
+            .at(0.5F, NaturalistSoundEvents.TIGER_STEP, 0.4F, 1.0F)
+            .at(0.75F, NaturalistSoundEvents.TIGER_STEP, 0.4F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack RUN_SOUNDS = AnimationSoundTrack.builder(0.9167F, true)
+            .at(0.2083F, NaturalistSoundEvents.TIGER_STEP, 0.25F, 1.0F)
+            .at(0.25F, NaturalistSoundEvents.TIGER_STEP, 0.4F, 1.0F)
+            .at(0.7083F, NaturalistSoundEvents.TIGER_STEP, 0.25F, 1.0F)
+            .at(0.875F, NaturalistSoundEvents.TIGER_STEP, 0.4F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack PREY_SOUNDS = AnimationSoundTrack.builder(1.0F, true)
+            .at(0.0F, NaturalistSoundEvents.TIGER_PREY, 1.0F, 1.0F)
+            .at(0.2917F, NaturalistSoundEvents.TIGER_STEP, 0.25F, 1.0F)
+            .at(0.5F, NaturalistSoundEvents.TIGER_STEP, 0.25F, 1.0F)
+            .at(0.7917F, NaturalistSoundEvents.TIGER_STEP, 0.25F, 1.0F)
+            .at(0.9167F, NaturalistSoundEvents.TIGER_STEP, 0.25F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack ATTACK_SOUNDS = AnimationSoundTrack.builder(0.25F, false)
+            .at(0.0F, NaturalistSoundEvents.TIGER_ATTACK, 1.0F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack SLEEP_SOUNDS = AnimationSoundTrack.builder(5.0F, true)
+            .at(0.0F, NaturalistSoundEvents.TIGER_SLEEP, 0.7F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack SLEEP2_SOUNDS = AnimationSoundTrack.builder(2.0F, true)
+            .at(0.0F, NaturalistSoundEvents.TIGER_SLEEP, 0.7F, 1.0F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.walkAnimationState, WALK_SOUNDS)
+            .add(this.runAnimationState, RUN_SOUNDS)
+            .add(this.preyAnimationState, PREY_SOUNDS)
+            .add(this.attackAnimationState, ATTACK_SOUNDS)
+            .add(this.sleepAnimationState, SLEEP_SOUNDS)
+            .add(this.sleep2AnimationState, SLEEP2_SOUNDS);
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(5);
 
     public Tiger(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -119,28 +151,28 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return NaturalistMobVariants.TIGER_BLACK_PANTHER;
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/tiger/tiger.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -198,16 +230,16 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
-        FollowingPet.save(this, compound);
-        this.addHuntingCooldownSaveData(compound);
+        FollowingPet.savePet(this, compound);
+        this.saveHuntingCooldown(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        FollowingPet.load(this, compound);
-        this.readHuntingCooldownSaveData(compound);
+        FollowingPet.loadPet(this, compound);
+        this.loadHuntingCooldown(compound);
     }
     //endregion
 
@@ -222,17 +254,17 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         Tiger baby = NaturalistEntityTypes.TIGER.get().create(level);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }
         return baby;
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
@@ -260,7 +292,7 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
         this.targetSelector.addGoal(4, new HurtByTargetGoal(this).setAlertOthers(Tiger.class));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
                 entity -> entity.getType().is(NaturalistTags.EntityTypes.TIGER_HOSTILES) && !entity.isBaby()
-                        && !this.isSleeping() && !this.isBaby() && !this.isStalking() && this.isNightTime() && this.hasHuntingCooldown()));
+                        && !this.isSleeping() && !this.isBaby() && !this.isStalking() && this.isNightTime() && this.canHunt()));
     }
 
     @Override
@@ -275,7 +307,7 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
 
     @Override
     public boolean canAttack(@NotNull LivingEntity target) {
-        return !PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
+        return PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
     }
 
     @Override
@@ -426,7 +458,7 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
 
         @Override
         public boolean canUse() {
-            if (this.tiger.isBaby() || this.tiger.isTame() || this.tiger.getTarget() != null || !this.tiger.hasHuntingCooldown()) {
+            if (this.tiger.isBaby() || this.tiger.isTame() || this.tiger.getTarget() != null || !this.tiger.canHunt()) {
                 return false;
             }
             if (this.tiger.tickCount % 10 != 0) {
@@ -483,82 +515,28 @@ public class Tiger extends TamableAnimal implements NaturalistGeoEntity, Sleepin
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
+        }
     }
 
-    protected <E extends Tiger> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.isInSittingPose() || this.isSleeping()) {
-            event.getController().setAnimation(this.usesAltSleepPose() ? SLEEP2 : SLEEP);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            if (this.isSprinting()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.5D));
-            } else if (this.isCrouching()) {
-                event.getController().setAnimation(PREY);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 0.8D));
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0F);
-        }
-        return PlayState.CONTINUE;
-    }
+    private void setupAnimationStates() {
+        boolean sleeping = this.isInSittingPose() || this.isSleeping();
+        boolean altSleep = this.usesAltSleepPose();
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
 
-    protected <E extends Tiger> @NotNull PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
+        this.sleepAnimationState.animateWhen(sleeping && !altSleep, this.tickCount);
+        this.sleep2AnimationState.animateWhen(sleeping && altSleep, this.tickCount);
 
-    private void soundListener(@NotNull SoundKeyframeEvent<Tiger> event) {
-        Tiger tiger = event.getAnimatable();
-        if (!tiger.level().isClientSide) {
-            return;
-        }
-        SoundEvent sound;
-        float volume;
-        switch (event.getKeyframeData().getSound()) {
-            case "attack" -> {
-                sound = NaturalistSoundEvents.TIGER_ATTACK.get();
-                volume = 1.0F;
-            }
-            case "sleep" -> {
-                sound = NaturalistSoundEvents.TIGER_SLEEP.get();
-                volume = 0.7F;
-            }
-            case "prey" -> {
-                sound = NaturalistSoundEvents.TIGER_PREY.get();
-                volume = 1.0F;
-            }
-            case "step" -> {
-                sound = NaturalistSoundEvents.TIGER_STEP.get();
-                volume = 0.4F;
-            }
-            case "step_-6dB" -> {
-                sound = NaturalistSoundEvents.TIGER_STEP.get();
-                volume = 0.25F;
-            }
-            default -> {
-                return;
-            }
-        }
-        tiger.level().playLocalSound(tiger.getX(), tiger.getY(), tiger.getZ(), sound, tiger.getSoundSource(), volume, 1.0F, false);
-    }
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
 
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
-                .setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate)
-                .setSoundKeyframeHandler(this::soundListener));
+        this.runAnimationState.animateWhen(!sleeping && moving && this.isSprinting(), this.tickCount);
+        this.preyAnimationState.animateWhen(!sleeping && moving && !this.isSprinting() && this.isCrouching(), this.tickCount);
+        this.walkAnimationState.animateWhen(!sleeping && moving && !this.isSprinting() && !this.isCrouching(), this.tickCount);
+        this.idleAnimationState.animateWhen(!sleeping && !moving, this.tickCount);
     }
     //endregion
 }

@@ -1,13 +1,11 @@
 package com.crispytwig.naturalist.neoforge;
 
 import com.crispytwig.naturalist.NaturalistClient;
-import com.crispytwig.naturalist.client.gui.tooltip.MobTooltipRenderer;
 import com.crispytwig.naturalist.client.model.item.VariantAwareItemModel;
 import com.crispytwig.naturalist.client.model.item.VariantItemModels;
 import com.crispytwig.naturalist.client.particle.CaptureNetSwingParticle;
 import com.crispytwig.naturalist.registry.NaturalistParticleTypes;
 import com.crispytwig.naturalist.server.item.NaturalistBucketItem;
-import com.crispytwig.naturalist.server.item.tooltip.MobTooltipData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +14,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
@@ -28,8 +25,8 @@ public class NaturalistNeoForgeClient {
     public static void init(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modEventBus.addListener(NaturalistNeoForgeClient::registerRenderers);
+        modEventBus.addListener(NaturalistNeoForgeClient::registerLayerDefinitions);
         modEventBus.addListener(NaturalistNeoForgeClient::registerMenuScreens);
-        modEventBus.addListener(NaturalistNeoForgeClient::registerTooltipComponents);
         modEventBus.addListener(NaturalistNeoForgeClient::registerExtraModels);
         modEventBus.addListener(NaturalistNeoForgeClient::wrapVariantItemModels);
         modEventBus.addListener(NaturalistNeoForgeClient::registerParticleProviders);
@@ -38,6 +35,10 @@ public class NaturalistNeoForgeClient {
 
     private static void registerParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(NaturalistParticleTypes.CAPTURE_NET_SWING.get(), CaptureNetSwingParticle.Provider::new);
+    }
+
+    private static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        NaturalistClient.registerLayerDefinitions(event::registerLayerDefinition);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -49,10 +50,6 @@ public class NaturalistNeoForgeClient {
         NaturalistClient.registerMenuScreens(event::register);
     }
 
-    private static void registerTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
-        event.register(MobTooltipData.class, MobTooltipRenderer::new);
-    }
-
     private static void registerExtraModels(ModelEvent.RegisterAdditional event) {
         for (ResourceLocation model : VariantItemModels.scanExtraModels(Minecraft.getInstance().getResourceManager())) {
             event.register(ModelResourceLocation.standalone(model));
@@ -61,8 +58,7 @@ public class NaturalistNeoForgeClient {
 
     private static void wrapVariantItemModels(ModelEvent.ModifyBakingResult event) {
         for (Map.Entry<ResourceLocation, NaturalistBucketItem> entry : VariantItemModels.collectVariantItems().entrySet()) {
-            ModelResourceLocation key = ModelResourceLocation.inventory(entry.getKey());
-            event.getModels().computeIfPresent(key, (id, model) -> new VariantAwareItemModel(model, entry.getValue(),
+            event.getModels().computeIfPresent(ModelResourceLocation.inventory(entry.getKey()), (id, model) -> new VariantAwareItemModel(model, entry.getValue(),
                     modelId -> Minecraft.getInstance().getModelManager().getModel(ModelResourceLocation.standalone(modelId))));
         }
     }

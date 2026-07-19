@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 @Environment(EnvType.CLIENT)
 public class ElephantInventoryScreen extends AbstractContainerScreen<ElephantInventoryMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/gui/container/elephant.png");
+    private static final ResourceLocation TEXTURE = Naturalist.location("textures/gui/container/elephant.png");
 
     private static final int TEXTURE_SIZE = 288;
 

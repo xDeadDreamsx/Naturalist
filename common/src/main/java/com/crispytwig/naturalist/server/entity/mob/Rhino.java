@@ -41,23 +41,15 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Rhino.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> CHARGE_COOLDOWN_TICKS = SynchedEntityData.defineId(Rhino.class, EntityDataSerializers.INT);
@@ -66,14 +58,13 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
     private int stunnedTick;
     private boolean canBePushed = true;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.rhino.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.rhino.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.rhino.run");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.rhino.attack");
-    protected static final RawAnimation FOOT = RawAnimation.begin().thenPlay("animation.sf_nba.rhino.foot");
-    protected static final RawAnimation STUNNED = RawAnimation.begin().thenLoop("animation.sf_nba.rhino.stunned");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState footAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState stunnedAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(10);
 
     public Rhino(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
@@ -86,24 +77,24 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(CHARGE_COOLDOWN_TICKS, 0);
         builder.define(HAS_TARGET, false);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/rhino.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     public void setChargeCooldownTicks(int ticks) {
@@ -119,7 +110,7 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
     }
 
     public void resetChargeCooldownTicks() {
-        this.entityData.set(CHARGE_COOLDOWN_TICKS, 50);
+        this.entityData.set(CHARGE_COOLDOWN_TICKS, 42);
     }
 
     public void setHasTarget(boolean hasTarget) {
@@ -148,7 +139,7 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         if (spawnData == null) {
             spawnData = new AgeableMobGroupData(1.0F);
         }
@@ -166,7 +157,7 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Rhino baby = NaturalistEntityTypes.RHINO.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
         return baby;
     }
@@ -242,9 +233,9 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
 
     private void stunEffect() {
         if (this.random.nextInt(6) == 0) {
-            double d = this.getX() - (double)this.getBbWidth() * Math.sin(this.yBodyRot * ((float)Math.PI / 180)) + (this.random.nextDouble() * 0.6 - 0.3);
+            double d = this.getX() - (double)this.getBbWidth() * Math.sin(this.yBodyRot * Mth.DEG_TO_RAD) + (this.random.nextDouble() * 0.6 - 0.3);
             double e = this.getY() + (double)this.getBbHeight() - 0.3;
-            double f = this.getZ() + (double)this.getBbWidth() * Math.cos(this.yBodyRot * ((float)Math.PI / 180)) + (this.random.nextDouble() * 0.6 - 0.3);
+            double f = this.getZ() + (double)this.getBbWidth() * Math.cos(this.yBodyRot * Mth.DEG_TO_RAD) + (this.random.nextDouble() * 0.6 - 0.3);
             this.level().addParticle(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, 0.4980392156862745F, 0.5137254901960784F, 0.5725490196078431F), d, e, f, 0.0, 0.0, 0.0);
         }
     }
@@ -294,7 +285,7 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
 
     @Override
     public float getVoicePitch() {
-        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.0f;
+        return NaturalistAnimal.defaultVoicePitch(this.random);
     }
 
     static class RhinoPrepareChargeGoal extends Goal {
@@ -490,57 +481,27 @@ public class Rhino extends NaturalistAnimal implements NaturalistGeoEntity, Data
     //endregion
 
     //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Rhino> PlayState predicate(final AnimationState<E> event) {
-        if (this.stunnedTick > 0) {
-            event.getController().setAnimation(STUNNED);
-            event.getController().setAnimationSpeed(1.0F);
-        } else if (event.isMoving()) {
-            if (this.isSprinting()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 3.6D));
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.6D));
-            }
-        } else if (this.hasChargeCooldown() && this.hasTarget()) {
-            event.getController().setAnimation(FOOT);
-            event.getController().setAnimationSpeed(1.0F);
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0F);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private <E extends Rhino> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimationSpeed(1.3F);
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private void soundListener(SoundKeyframeEvent<Rhino> event) {
-        Rhino rhino = event.getAnimatable();
-        if (rhino.level().isClientSide) {
-            if (event.getKeyframeData().getSound().equals("scrape")) {
-                rhino.level().playLocalSound(rhino.getX(), rhino.getY(), rhino.getZ(), NaturalistSoundEvents.RHINO_SCRAPE.get(), rhino.getSoundSource(), 1.0F, rhino.getVoicePitch(), false);
-            }
-        }
-    }
-
     @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        AnimationController<Rhino> controller = new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate);
-        controller.setSoundKeyframeHandler(this::soundListener);
-        controllers.add(controller);
-        controllers.add(new AnimationController<>(this, "attackController", 5, this::attackPredicate));
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
+    }
+
+    private void setupAnimationStates() {
+        boolean stunned = this.stunnedTick > 0;
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        boolean stomping = !stunned && !moving && this.hasChargeCooldown() && this.hasTarget();
+
+        this.stunnedAnimationState.animateWhen(stunned, this.tickCount);
+        this.footAnimationState.animateWhen(stomping, this.tickCount);
+
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
+
+        this.walkAnimationState.animateWhen(!stunned && moving && !this.isSprinting(), this.tickCount);
+        this.runAnimationState.animateWhen(!stunned && moving && this.isSprinting(), this.tickCount);
+        this.idleAnimationState.animateWhen(!stunned && !moving && !stomping, this.tickCount);
     }
     //endregion
 }

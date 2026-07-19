@@ -19,23 +19,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntityRenderDispatcher.class)
 public class EntityRenderDispatcherMixin {
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void naturalist$skipBakedRider(Entity entity, double x, double y, double z, float rotationYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
+    private void naturalist$skipBakedRider(Entity entity, double x, double y, double z, float rotationYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
         if (entity instanceof Player && entity.getVehicle() instanceof IKMount) {
             ci.cancel();
         }
     }
 
     @Inject(method = "renderHitbox", at = @At("TAIL"))
-    private static void naturalist$renderMobPartHitboxes(PoseStack poseStack, VertexConsumer buffer, Entity entity, float partialTicks, float red, float green, float blue, CallbackInfo ci) {
+    private static void naturalist$renderMobPartHitboxes(PoseStack poseStack, VertexConsumer buffer, Entity entity, float partialTick, float red, float green, float blue, CallbackInfo ci) {
         if (entity instanceof MultipartMob multipart) {
-            double x = -Mth.lerp(partialTicks, entity.xOld, entity.getX());
-            double y = -Mth.lerp(partialTicks, entity.yOld, entity.getY());
-            double z = -Mth.lerp(partialTicks, entity.zOld, entity.getZ());
+            double x = -Mth.lerp(partialTick, entity.xOld, entity.getX());
+            double y = -Mth.lerp(partialTick, entity.yOld, entity.getY());
+            double z = -Mth.lerp(partialTick, entity.zOld, entity.getZ());
             for (MobPart part : multipart.getParts()) {
                 poseStack.pushPose();
-                double px = x + Mth.lerp(partialTicks, part.xOld, part.getX());
-                double py = y + Mth.lerp(partialTicks, part.yOld, part.getY());
-                double pz = z + Mth.lerp(partialTicks, part.zOld, part.getZ());
+                double px = x + Mth.lerp(partialTick, part.xOld, part.getX());
+                double py = y + Mth.lerp(partialTick, part.yOld, part.getY());
+                double pz = z + Mth.lerp(partialTick, part.zOld, part.getZ());
                 poseStack.translate(px, py, pz);
                 LevelRenderer.renderLineBox(poseStack, buffer, part.getBoundingBox().move(-part.getX(), -part.getY(), -part.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
                 poseStack.popPose();

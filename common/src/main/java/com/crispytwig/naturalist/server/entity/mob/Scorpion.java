@@ -3,8 +3,12 @@ package com.crispytwig.naturalist.server.entity.mob;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.NocturnalHostile;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -35,31 +39,42 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
-public abstract class Scorpion extends Animal implements NaturalistGeoEntity, NocturnalHostile {
+public abstract class Scorpion extends Animal implements NocturnalHostile {
     //region Data
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(15);
 
-    private final RawAnimation idleAnim;
-    private final RawAnimation walkAnim;
-    private final RawAnimation runAnim;
-    private final RawAnimation attackAnim;
 
-    protected Scorpion(EntityType<? extends Animal> entityType, Level level, RawAnimation idleAnim, RawAnimation walkAnim, RawAnimation runAnim, RawAnimation attackAnim) {
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
+
+    private static final AnimationSoundTrack.SoundParam STEP_VOLUME = entity -> 0.63F;
+    private static final AnimationSoundTrack.SoundParam SOUND_VOLUME = entity -> ((Scorpion) entity).getSoundVolume();
+    private static final AnimationSoundTrack.SoundParam VOICE_PITCH = LivingEntity::getVoicePitch;
+
+    private static final AnimationSoundTrack WALK_SOUNDS = AnimationSoundTrack.builder(0.5F, true)
+            .at(0.0F, NaturalistSoundEvents.SCORPION_STEP, STEP_VOLUME, VOICE_PITCH)
+            .at(0.13F, NaturalistSoundEvents.SCORPION_STEP, STEP_VOLUME, VOICE_PITCH)
+            .at(0.38F, NaturalistSoundEvents.SCORPION_STEP, STEP_VOLUME, VOICE_PITCH)
+            .build();
+    private static final AnimationSoundTrack RUN_SOUNDS = AnimationSoundTrack.builder(0.25F, true)
+            .at(0.0F, NaturalistSoundEvents.SCORPION_STEP, STEP_VOLUME, VOICE_PITCH)
+            .at(0.06F, NaturalistSoundEvents.SCORPION_STEP, STEP_VOLUME, VOICE_PITCH)
+            .at(0.19F, NaturalistSoundEvents.SCORPION_STEP, STEP_VOLUME, VOICE_PITCH)
+            .build();
+    private static final AnimationSoundTrack ATTACK_SOUNDS = AnimationSoundTrack.builder(0.75F, false)
+            .at(0.08F, NaturalistSoundEvents.SCORPION_ATTACK, SOUND_VOLUME, VOICE_PITCH)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.walkAnimationState, WALK_SOUNDS)
+            .add(this.runAnimationState, RUN_SOUNDS)
+            .add(this.attackAnimationState, ATTACK_SOUNDS);
+
+    protected Scorpion(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.idleAnim = idleAnim;
-        this.walkAnim = walkAnim;
-        this.runAnim = runAnim;
-        this.attackAnim = attackAnim;
     }
     //endregion
 
@@ -160,64 +175,22 @@ public abstract class Scorpion extends Animal implements NaturalistGeoEntity, No
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
+        }
     }
 
-    protected <E extends Scorpion> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            if (this.isAggressive()) {
-                event.getController().setAnimation(this.runAnim);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.6D));
-            } else {
-                event.getController().setAnimation(this.walkAnim);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
-            }
-        } else {
-            event.getController().setAnimation(this.idleAnim);
-            event.getController().setAnimationSpeed(1.0F);
-        }
-        return PlayState.CONTINUE;
-    }
+    private void setupAnimationStates() {
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
 
-    protected <E extends Scorpion> @NotNull PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(this.attackAnim);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
 
-    private void soundListener(@NotNull SoundKeyframeEvent<Scorpion> event) {
-        Scorpion scorpion = event.getAnimatable();
-        if (!scorpion.level().isClientSide) {
-            return;
-        }
-        SoundEvent sound;
-        float volume;
-        switch (event.getKeyframeData().getSound()) {
-            case "attack" -> {
-                sound = NaturalistSoundEvents.SCORPION_ATTACK.get();
-                volume = scorpion.getSoundVolume();
-            }
-            case "step" -> {
-                sound = NaturalistSoundEvents.SCORPION_STEP.get();
-                volume = 0.63F;
-            }
-            default -> {
-                return;
-            }
-        }
-        scorpion.level().playLocalSound(scorpion.getX(), scorpion.getY(), scorpion.getZ(), sound, scorpion.getSoundSource(), volume, scorpion.getVoicePitch(), false);
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
-                .setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate)
-                .setSoundKeyframeHandler(this::soundListener));
+        this.walkAnimationState.animateWhen(moving && !this.isAggressive(), this.tickCount);
+        this.runAnimationState.animateWhen(moving && this.isAggressive(), this.tickCount);
+        this.idleAnimationState.animateWhen(!moving, this.tickCount);
     }
     //endregion
 }

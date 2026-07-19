@@ -13,15 +13,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
 
 @Mixin(CropBlock.class)
 public class CropBlockMixin {
     @Inject(at = @At(value = "HEAD"), method = "randomTick", cancellable = true)
     @SuppressWarnings("unused")
     public void naturalist$onRandomTick(BlockState state, ServerLevel level, @NotNull BlockPos pos, RandomSource random, CallbackInfo ci) {
-        List<Snail> snails = level.getEntitiesOfClass(Snail.class, new AABB(pos).inflate(2.0D));
-        if (!snails.isEmpty() && random.nextBoolean()) {
+        if (!level.getEntitiesOfClass(Snail.class, new AABB(pos).inflate(2.0D)).isEmpty() && random.nextBoolean()) {
             ci.cancel();
         }
     }

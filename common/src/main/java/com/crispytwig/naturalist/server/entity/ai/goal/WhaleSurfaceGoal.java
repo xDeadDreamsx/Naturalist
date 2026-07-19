@@ -93,7 +93,7 @@ public class WhaleSurfaceGoal extends Goal {
         }
         Vec3 forward = Vec3.directionFromRotation(0.0F, this.whale.yBodyRot);
         if (this.breach && this.surfaceY - (this.whale.getY() + this.whale.getBbHeight()) < 2.0D) {
-            if (this.whale.isWaterAt(BlockPos.containing(this.whale.position().add(forward.scale(12.0D))))) {
+            if (this.whale.level().isWaterAt(BlockPos.containing(this.whale.position().add(forward.scale(12.0D))))) {
                 this.whale.setDeltaMovement(forward.x * 0.6D, 0.85D, forward.z * 0.6D);
                 this.lunged = true;
                 return;
@@ -118,7 +118,7 @@ public class WhaleSurfaceGoal extends Goal {
         BlockPos.MutableBlockPos pos = BlockPos.containing(
                 this.whale.getX(), this.whale.getY() + this.whale.getBbHeight(), this.whale.getZ()).mutable();
         for (int i = 0; i < 48; i++) {
-            if (!this.whale.isWaterAt(pos)) {
+            if (!this.whale.level().isWaterAt(pos)) {
                 return this.whale.level().getBlockState(pos).isAir() ? pos.getY() : Integer.MIN_VALUE;
             }
             pos.move(0, 1, 0);

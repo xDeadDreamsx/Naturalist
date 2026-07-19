@@ -1,52 +1,47 @@
 package com.crispytwig.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.crispytwig.naturalist.client.model.HippoBabyModel;
 import com.crispytwig.naturalist.client.model.HippoModel;
 import com.crispytwig.naturalist.server.entity.mob.Hippo;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.item.BlockItem;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Quaternionf;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class HippoRenderer extends GeoEntityRenderer<Hippo> {
-    public HippoRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new HippoModel());
-        this.shadowRadius = 1.1F;
+public class HippoRenderer extends NaturalistMobRenderer<Hippo> {
+    public HippoRenderer(EntityRendererProvider.Context context) {
+        super(context, new HippoModel(context.bakeLayer(HippoModel.LAYER_LOCATION)), new HippoBabyModel(context.bakeLayer(HippoBabyModel.LAYER_LOCATION)), 1.1F);
+        this.addLayer(new HippoJawBlockLayer(this));
     }
 
-    @Override
-    public float getMotionAnimThreshold(Hippo animatable) {
-        return 0.000001f;
-    }
-
-    @Override
-    public void render(Hippo entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        this.shadowRadius = entity.isBaby() ? 0.55F : 1.1F;
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
-
-    @Override
-    public void renderRecursively(PoseStack stack, Hippo entity, @NotNull GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-                                  int packedOverlay, int packedColour) {
-        if (bone.getName().equals("botjaw") && animatable.getMainHandItem().getItem() instanceof BlockItem blockItem) {
-            stack.pushPose();
-            stack.mulPose(new Quaternionf());
-            stack.translate(-0.4D, 0.76D, -1.8D);
-            stack.scale(0.675F,0.675F,0.675F);
-            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(blockItem.getBlock().defaultBlockState(), stack, bufferSource, packedLight, packedOverlay);
-            stack.popPose();
-            buffer = bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
+    private static class HippoJawBlockLayer extends RenderLayer<Hippo, HierarchicalModel<Hippo>> {
+        HippoJawBlockLayer(HippoRenderer parent) {
+            super(parent);
         }
-        super.renderRecursively(stack, entity, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, packedColour);
+
+        @Override
+        public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, @NotNull Hippo entity, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+            if (!(entity.getMainHandItem().getItem() instanceof BlockItem blockItem)) {
+                return;
+            }
+            if (!(this.getParentModel() instanceof HippoModel hippoModel)) {
+                return;
+            }
+            poseStack.pushPose();
+            hippoModel.translateToBotJaw(poseStack);
+            poseStack.translate(-0.4D, 0.76D, -1.8D);
+            poseStack.scale(0.675F, 0.675F, 0.675F);
+            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(blockItem.getBlock().defaultBlockState(), poseStack, bufferSource, packedLight, OverlayTexture.NO_OVERLAY);
+            poseStack.popPose();
+        }
     }
 }

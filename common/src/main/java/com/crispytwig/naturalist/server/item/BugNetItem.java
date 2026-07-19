@@ -57,8 +57,7 @@ public class BugNetItem extends Item {
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack stack, Player player, @NotNull LivingEntity interactionTarget, @NotNull InteractionHand usedHand) {
-        var recipeManager = player.level().getRecipeManager();
-        Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = recipeManager.getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
+        Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = player.level().getRecipeManager().getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
                 .stream()
                 .filter(r -> r.value().entityType() == interactionTarget.getType())
                 .findFirst();

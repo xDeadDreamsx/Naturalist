@@ -4,19 +4,21 @@ import com.crispytwig.naturalist.client.model.ButterflyModel;
 import com.crispytwig.naturalist.server.entity.mob.Butterfly;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class ButterflyRenderer extends GeoEntityRenderer<Butterfly> {
-    public ButterflyRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new ButterflyModel());
-        this.shadowRadius = 0.4F;
+public class ButterflyRenderer extends MobRenderer<Butterfly, HierarchicalModel<Butterfly>> {
+    public ButterflyRenderer(EntityRendererProvider.Context context) {
+        super(context, new ButterflyModel(context.bakeLayer(ButterflyModel.LAYER_LOCATION)), 0.4F);
     }
 
     @Override
-    public float getMotionAnimThreshold(Butterfly animatable) {
-        return 0.000001f;
+    public @NotNull ResourceLocation getTextureLocation(@NotNull Butterfly entity) {
+        return entity.getVariantTexture();
     }
 }

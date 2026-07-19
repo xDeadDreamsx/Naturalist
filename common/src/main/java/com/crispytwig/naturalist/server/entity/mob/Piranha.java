@@ -4,7 +4,6 @@ import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -39,17 +38,10 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
-public class Piranha extends AbstractSchoolingFish implements NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Piranha.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> DATA_HAS_TARGET = SynchedEntityData.defineId(Piranha.class, EntityDataSerializers.BOOLEAN);
@@ -60,11 +52,9 @@ public class Piranha extends AbstractSchoolingFish implements NaturalistGeoEntit
     @Nullable
     private AbstractSchoolingFish schoolLeader;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.piranha.swim");
-    protected static final RawAnimation SWIM_FAST = RawAnimation.begin().thenLoop("animation.sf_nba.piranha.swim_fast");
-    protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.piranha.flop");
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimFastAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
 
     public Piranha(EntityType<? extends AbstractSchoolingFish> entityType, Level level) {
         super(entityType, level);
@@ -79,7 +69,7 @@ public class Piranha extends AbstractSchoolingFish implements NaturalistGeoEntit
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(DATA_HAS_TARGET, false);
     }
 
@@ -88,18 +78,18 @@ public class Piranha extends AbstractSchoolingFish implements NaturalistGeoEntit
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/piranha.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -124,7 +114,7 @@ public class Piranha extends AbstractSchoolingFish implements NaturalistGeoEntit
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnType != MobSpawnType.BUCKET) {
-            this.pickVariantForSpawn(level);
+            this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
@@ -234,33 +224,19 @@ public class Piranha extends AbstractSchoolingFish implements NaturalistGeoEntit
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    @Override
-    public double getBoneResetTime() {
-        return 5;
-    }
-
-    protected <E extends Piranha> @NotNull PlayState predicate(final AnimationState<E> event) {
-        AnimationController<E> controller = event.getController();
-        if (!this.isInWater()) {
-            controller.setAnimation(FLOP);
-            controller.setAnimationSpeed(1.0D);
-        } else if (this.hasSwimTarget()) {
-            controller.setAnimation(SWIM_FAST);
-            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
-        } else {
-            controller.setAnimation(SWIM);
-            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, SMALL_FISH_LIMB_SWING));
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
         }
-        return PlayState.CONTINUE;
     }
 
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate));
+    private void setupAnimationStates() {
+        boolean inWater = this.isInWater();
+        boolean hasTarget = this.hasSwimTarget();
+        this.flopAnimationState.animateWhen(!inWater, this.tickCount);
+        this.swimFastAnimationState.animateWhen(inWater && hasTarget, this.tickCount);
+        this.swimAnimationState.animateWhen(inWater && !hasTarget, this.tickCount);
     }
 
     public float getXBodyRot(float partialTick) {

@@ -55,22 +55,12 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unused")
-public class Vulture extends PathfinderMob implements NaturalistGeoEntity, FlyingAnimal, DataDrivenVariantAnimal {
+public class Vulture extends PathfinderMob implements FlyingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.ROTTEN_FLESH);
     private static final int PERCH_COOLDOWN_AFTER_HURT = 200;
@@ -82,10 +72,8 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     @Nullable
     private BlockPos perchTarget;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.vulture.fly");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.vulture.sit");
+    public final SmoothAnimationState flyAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sitAnimationState = new SmoothAnimationState();
 
     public Vulture(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
@@ -107,23 +95,23 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(PERCHED, false);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/vulture.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -172,7 +160,7 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
 
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
@@ -233,11 +221,10 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     @Override
     public boolean doHurtTarget(Entity target) {
         boolean shouldHurt = true;
-        float damage = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         float knockback = (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-        if (shouldHurt == target.hurt(target.damageSources().mobAttack(this), damage)) {
+        if (shouldHurt == target.hurt(target.damageSources().mobAttack(this), (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
             if (knockback > 0.0f && target instanceof LivingEntity) {
-                ((LivingEntity)target).knockback(knockback * 0.5f, Mth.sin(this.getYRot() * ((float)Math.PI / 180)), -Mth.cos(this.getYRot() * ((float)Math.PI / 180)));
+                ((LivingEntity)target).knockback(knockback * 0.5f, Mth.sin(this.getYRot() * Mth.DEG_TO_RAD), -Mth.cos(this.getYRot() * Mth.DEG_TO_RAD));
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 1.0, 0.6));
             }
             this.setLastHurtMob(target);
@@ -321,6 +308,20 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
+    }
+
+    private void setupAnimationStates() {
+        boolean perched = this.isPerched();
+        this.sitAnimationState.animateWhen(perched, this.tickCount);
+        this.flyAnimationState.animateWhen(!perched, this.tickCount);
+    }
+
+    @Override
     public void aiStep() {
         super.aiStep();
         this.level().getProfiler().push("looting");
@@ -360,7 +361,7 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
             ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
             if (!itemStack.isEmpty()) {
                 for (int i = 0; i < 8; ++i) {
-                    Vec3 vec3 = new Vec3(((double)this.random.nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0).xRot(-this.getXRot() * ((float)Math.PI / 180)).yRot(-this.getYRot() * ((float)Math.PI / 180));
+                    Vec3 vec3 = new Vec3(((double)this.random.nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0).xRot(-this.getXRot() * Mth.DEG_TO_RAD).yRot(-this.getYRot() * Mth.DEG_TO_RAD);
                     this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, itemStack), this.getX() + this.getLookAngle().x / 2.0, this.getY(), this.getZ() + this.getLookAngle().z / 2.0, vec3.x, vec3.y + 0.05, vec3.z);
                 }
             }
@@ -481,7 +482,7 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
 
         @Override
         public void start() {
-            this.vulture.startle(this.toAvoid.position());
+            this.vulture.startle(Objects.requireNonNull(this.toAvoid).position());
             this.recalcTimer = RECALC_INTERVAL;
             this.fleeAway();
         }
@@ -500,7 +501,7 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
         }
 
         private void fleeAway() {
-            Vec3 fleeTo = DefaultRandomPos.getPosAway(this.vulture, 16, 7, this.toAvoid.position());
+            Vec3 fleeTo = DefaultRandomPos.getPosAway(this.vulture, 16, 7, Objects.requireNonNull(this.toAvoid).position());
             if (fleeTo != null && this.toAvoid.distanceToSqr(fleeTo) >= this.toAvoid.distanceToSqr(this.vulture)
                     && this.vulture.getNavigation().moveTo(fleeTo.x, fleeTo.y, fleeTo.z, this.speedModifier)) {
                 return;
@@ -670,9 +671,8 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
                 Level level = mob.level();
 
                 int groundY = level.getHeight(Types.WORLD_SURFACE, mobPos.getX(), mobPos.getZ());
-                int maxY = level.getMaxBuildHeight();
                 int minAltitude = groundY + MIN_ALTITUDE_ABOVE_GROUND;
-                int maxAltitude = Math.min(groundY + MAX_ALTITUDE_ABOVE_GROUND, maxY - ALTITUDE_MARGIN_FROM_BUILD_LIMIT);
+                int maxAltitude = Math.min(groundY + MAX_ALTITUDE_ABOVE_GROUND, level.getMaxBuildHeight() - ALTITUDE_MARGIN_FROM_BUILD_LIMIT);
                 preferredAltitude = Mth.nextInt(mob.getRandom(), minAltitude, maxAltitude);
                 wanderAttemptsUntilAltitudeChange = ALTITUDE_CHANGE_INTERVAL_MIN + mob.getRandom().nextInt(ALTITUDE_CHANGE_INTERVAL_RANGE);
             } else {
@@ -687,19 +687,4 @@ public class Vulture extends PathfinderMob implements NaturalistGeoEntity, Flyin
     }
     //endregion
 
-    //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Vulture> PlayState predicate(final AnimationState<E> event) {
-        event.getController().setAnimation(this.isPerched() ? SIT : FLY);
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-    }
-    //endregion
 }

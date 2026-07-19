@@ -1,33 +1,39 @@
 package com.crispytwig.naturalist.client.renderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.client.model.DuckBabyModel;
 import com.crispytwig.naturalist.client.model.DuckModel;
-import com.crispytwig.naturalist.client.renderer.layers.DyeOverlayLayer;
+import com.crispytwig.naturalist.client.renderer.layers.DyeOverlayRenderLayer;
 import com.crispytwig.naturalist.server.entity.mob.Duck;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class DuckRenderer extends GeoEntityRenderer<Duck> {
-    public DuckRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new DuckModel());
-        this.shadowRadius = 0.3F;
-        this.addRenderLayer(new DyeOverlayLayer<>(this, "duck"));
+public class DuckRenderer extends NaturalistMobRenderer<Duck> {
+    private static final ResourceLocation DUCK = Naturalist.location("textures/entity/duck/duck.png");
+    private static final ResourceLocation DUCK_BABY = Naturalist.location("textures/entity/duck/duck_baby.png");
+    private static final ResourceLocation QUESO = Naturalist.location("textures/entity/duck/queso.png");
+
+    public DuckRenderer(EntityRendererProvider.Context context) {
+        super(context, new DuckModel(context.bakeLayer(DuckModel.LAYER_LOCATION)), new DuckBabyModel(context.bakeLayer(DuckBabyModel.LAYER_LOCATION)), 0.3F);
+        this.addLayer(new DyeOverlayRenderLayer<>(this, "duck"));
     }
 
     @Override
-    public float getMotionAnimThreshold(Duck animatable) {
-        return 0.000001f;
-    }
-
-    @Override
-    public void render(Duck entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        this.shadowRadius = entity.isBaby() ? 0.15F : 0.3F;
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+    public @NotNull ResourceLocation getTextureLocation(@NotNull Duck entity) {
+        if (entity.hasNonDefaultVariant()) {
+            return entity.isBaby() ? entity.getVariantBabyTexture() : entity.getVariantTexture();
+        }
+        if (entity.isBaby()) {
+            return DUCK_BABY;
+        }
+        if (entity.hasCustomName() && entity.getName().getString().equalsIgnoreCase("Queso")) {
+            return QUESO;
+        }
+        return DUCK;
     }
 }

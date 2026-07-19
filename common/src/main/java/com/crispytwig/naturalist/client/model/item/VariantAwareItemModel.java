@@ -17,6 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -33,12 +34,12 @@ public class VariantAwareItemModel implements BakedModel {
     }
 
     @Override
-    public ItemOverrides getOverrides() {
+    public @NonNull ItemOverrides getOverrides() {
         return this.overrides;
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
+    public @NonNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction direction, RandomSource random) {
         return this.parent.getQuads(state, direction, random);
     }
 
@@ -63,12 +64,12 @@ public class VariantAwareItemModel implements BakedModel {
     }
 
     @Override
-    public TextureAtlasSprite getParticleIcon() {
+    public @NonNull TextureAtlasSprite getParticleIcon() {
         return this.parent.getParticleIcon();
     }
 
     @Override
-    public ItemTransforms getTransforms() {
+    public @NonNull ItemTransforms getTransforms() {
         return this.parent.getTransforms();
     }
 

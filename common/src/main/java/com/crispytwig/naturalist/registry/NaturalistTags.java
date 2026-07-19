@@ -31,7 +31,7 @@ public class NaturalistTags {
         public static final TagKey<Block> SNAIL_SHELL_BLACKLIST = tag("snail_shell_blacklist");
 
         private static TagKey<Block> tag(@NotNull String name) {
-            return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
+            return TagKey.create(Registries.BLOCK, Naturalist.location(name));
         }
     }
 
@@ -66,7 +66,7 @@ public class NaturalistTags {
         public static final TagKey<Item> BEAR_FURS = tag("bear_furs");
 
         private static TagKey<Item> tag(String name) {
-            return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
+            return TagKey.create(Registries.ITEM, Naturalist.location(name));
         }
     }
 
@@ -93,7 +93,7 @@ public class NaturalistTags {
         public static final TagKey<EntityType<?>> NATURALIST_ENTITIES = tag("naturalist_entities");
 
         private static @NotNull TagKey<EntityType<?>> tag(String name) {
-            return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
+            return TagKey.create(Registries.ENTITY_TYPE, Naturalist.location(name));
         }
     }
 
@@ -204,7 +204,7 @@ public class NaturalistTags {
         public static final TagKey<Biome> BLACKLIST_FOREST_RABBITS = tag("blacklist/blacklist_forest_rabbits");
 
         private static @NotNull TagKey<Biome> tag(String name) {
-            return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name));
+            return TagKey.create(Registries.BIOME, Naturalist.location(name));
         }
     }
 }

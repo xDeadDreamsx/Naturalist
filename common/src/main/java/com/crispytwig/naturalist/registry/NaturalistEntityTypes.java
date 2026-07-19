@@ -68,6 +68,6 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Whale>> WHALE = register("whale", EntityType.Builder.of(Whale::new, MobCategory.WATER_CREATURE).sized(3.0F, 2.5F).clientTrackingRange(10));
 
     private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> register(String id, EntityType.Builder<T> builder) {
-        return ENTITY_TYPES.register(id, () -> builder.build(ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, id).toString()));
+        return ENTITY_TYPES.register(id, () -> builder.build(Naturalist.location(id).toString()));
     }
 }

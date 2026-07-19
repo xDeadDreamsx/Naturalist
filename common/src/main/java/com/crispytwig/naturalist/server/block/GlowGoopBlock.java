@@ -74,8 +74,7 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
         if (blockState.is(this)) {
             return blockState.setValue(GOOP, Math.min(MAX_GOOP, blockState.getValue(GOOP) + 1));
         } else {
-            FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
-            boolean bl = fluidState.getType() == Fluids.WATER;
+            boolean bl = context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER;
             return Objects.requireNonNull(super.getStateForPlacement(context)).setValue(WATERLOGGED, bl);
         }
     }
@@ -98,8 +97,7 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
 
         if (!stack.is(this.asItem())) {
             if (!level.isClientSide()) {
-                ItemStack itemStack = new ItemStack(NaturalistRegistry.GLOW_GOOP.get(), currentGoop);
-                popResource(level, pos, itemStack);
+                popResource(level, pos, new ItemStack(NaturalistRegistry.GLOW_GOOP.get(), currentGoop));
 
                 level.removeBlock(pos, false);
             }

@@ -6,7 +6,6 @@ import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.base.HuntingAnimal;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import com.crispytwig.naturalist.server.entity.variant.MobVariantUtil;
@@ -50,35 +49,41 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
-public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, HuntingAnimal, DataDrivenVariantAnimal {
+public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"red", "glow"};
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Anglerfish.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> DATA_HAS_TARGET = SynchedEntityData.defineId(Anglerfish.class, EntityDataSerializers.BOOLEAN);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int huntingCooldown;
 
     public float xBodyRot;
     public float xBodyRotO;
     private Vec3 lastMoveDir = Vec3.ZERO;
 
-    protected static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.sf_nba.anglerfish.swim");
-    protected static final RawAnimation SWIM_FAST = RawAnimation.begin().thenLoop("animation.sf_nba.anglerfish.swim_fast");
-    protected static final RawAnimation FLOP = RawAnimation.begin().thenLoop("animation.sf_nba.anglerfish.flop");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.anglerfish.attack");
+    public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState swimFastAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
+
+    private static final AnimationSoundTrack SWIM_SOUNDS = AnimationSoundTrack.builder(1.0F, true)
+            .at(0.05F, NaturalistSoundEvents.ANGLERFISH_SWIM, 0.3F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack SWIM_FAST_SOUNDS = AnimationSoundTrack.builder(0.5F, true)
+            .at(0.05F, NaturalistSoundEvents.ANGLERFISH_SWIM, 0.3F, 1.0F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.swimAnimationState, SWIM_SOUNDS)
+            .add(this.swimFastAnimationState, SWIM_FAST_SOUNDS);
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(7);
 
     public Anglerfish(EntityType<? extends AbstractFish> entityType, Level level) {
         super(entityType, level);
@@ -102,46 +107,46 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, Hun
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return NaturalistMobVariants.ANGLERFISH_RED;
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/anglerfish/red.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     public boolean isGlowing() {
-        return NaturalistMobVariants.ANGLERFISH_GLOW.location().equals(this.getVariantId());
+        return NaturalistMobVariants.ANGLERFISH_GLOW.location().equals(this.getVariantLocation());
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
-        this.addHuntingCooldownSaveData(compound);
+        this.saveHuntingCooldown(compound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.readHuntingCooldownSaveData(compound);
+        this.loadHuntingCooldown(compound);
     }
 
     @Override
@@ -221,7 +226,7 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, Hun
                 MobVariantUtil.byKey(level.registryAccess(), NaturalistMobVariants.ANGLERFISH_VARIANT, NaturalistMobVariants.ANGLERFISH_GLOW)
                         .ifPresent(this::setVariant);
             } else {
-                this.pickVariantForSpawn(level);
+                this.selectVariantForSpawn(level);
             }
         }
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
@@ -245,7 +250,7 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, Hun
         this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0D, 20));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false,
-                entity -> this.hasHuntingCooldown() && entity.getType().is(NaturalistTags.EntityTypes.ANGLERFISH_HOSTILES)));
+                entity -> this.canHunt() && entity.getType().is(NaturalistTags.EntityTypes.ANGLERFISH_HOSTILES)));
     }
 
     @Override
@@ -292,50 +297,21 @@ public class Anglerfish extends AbstractFish implements NaturalistGeoEntity, Hun
 
     //region Animation
     @Override
-    public double getBoneResetTime() {
-        return 5;
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Anglerfish> @NotNull PlayState predicate(final AnimationState<E> event) {
-        AnimationController<E> controller = event.getController();
-        if (!this.isInWater()) {
-            controller.setAnimation(FLOP);
-            controller.setAnimationSpeed(1.0D);
-        } else if (this.hasSwimTarget()) {
-            controller.setAnimation(SWIM_FAST);
-            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, LARGE_FISH_LIMB_SWING));
-        } else {
-            controller.setAnimation(SWIM);
-            controller.setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, SMALL_FISH_LIMB_SWING));
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private void soundListener(SoundKeyframeEvent<Anglerfish> event) {
-        Anglerfish anglerfish = event.getAnimatable();
-        if (anglerfish.level().isClientSide && "swim".equals(event.getKeyframeData().getSound())) {
-            anglerfish.level().playLocalSound(anglerfish.getX(), anglerfish.getY(), anglerfish.getZ(), NaturalistSoundEvents.ANGLERFISH_SWIM.get(), anglerfish.getSoundSource(), 0.3F, 1.0F, false);
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
         }
     }
 
-    private <E extends Anglerfish> PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate).setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+    private void setupAnimationStates() {
+        boolean inWater = this.isInWater();
+        boolean hasTarget = this.hasSwimTarget();
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
+        this.flopAnimationState.animateWhen(!inWater, this.tickCount);
+        this.swimFastAnimationState.animateWhen(inWater && hasTarget, this.tickCount);
+        this.swimAnimationState.animateWhen(inWater && !hasTarget, this.tickCount);
     }
     //endregion
 }

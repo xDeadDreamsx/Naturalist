@@ -3,8 +3,8 @@ package com.crispytwig.naturalist.server.entity.mob;
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.VariantBucketable;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,16 +38,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 @SuppressWarnings("unused")
-public class Starfish extends WaterAnimal implements NaturalistGeoEntity, VariantBucketable {
+public class Starfish extends WaterAnimal implements VariantBucketable {
     //region Data
     public static final String[] VARIANT_NAMES = {"orange", "purple", "blue", "red"};
 
@@ -56,9 +49,7 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Varian
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Starfish.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Starfish.class, EntityDataSerializers.BOOLEAN);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.starfish.idle");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
 
     public Starfish(EntityType<? extends WaterAnimal> entityType, Level level) {
         super(entityType, level);
@@ -76,28 +67,28 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Varian
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return DEFAULT_VARIANT;
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/starfish/orange.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -156,7 +147,7 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Varian
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
         if (reason != MobSpawnType.BUCKET) {
-            this.pickVariantForSpawn(level);
+            this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
@@ -191,18 +182,15 @@ public class Starfish extends WaterAnimal implements NaturalistGeoEntity, Varian
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
     }
 
-    protected <E extends Starfish> @NotNull PlayState predicate(final AnimationState<E> event) {
-        event.getController().setAnimation(IDLE);
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
+    private void setupAnimationStates() {
+        this.idleAnimationState.animateWhen(true, this.tickCount);
     }
     //endregion
 }

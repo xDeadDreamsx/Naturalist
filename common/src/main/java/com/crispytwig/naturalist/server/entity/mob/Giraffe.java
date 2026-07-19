@@ -9,6 +9,7 @@ import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
@@ -38,20 +39,14 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.IKMount;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.util.TerrainLegSolver;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("unused")
-public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMount, DataDrivenVariantAnimal {
+public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS);
 
@@ -59,11 +54,9 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
 
     public final TerrainLegSolver legSolver = new TerrainLegSolver(0.75F, 0.4F, 1.3F);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.giraffe.run");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
 
     public Giraffe(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -76,22 +69,22 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/giraffe/giraffe.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -123,14 +116,14 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Giraffe baby = NaturalistEntityTypes.GIRAFFE.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
         return baby;
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
@@ -162,7 +155,8 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
         this.yRotO = this.getYRot();
         this.setXRot(livingEntity.getXRot() * 0.5f);
         this.setRot(this.getYRot(), this.getXRot());
-        this.yHeadRot = this.yBodyRot = this.getYRot();
+        this.yHeadRot = this.getYRot();
+        this.yBodyRot = Mth.rotLerp(0.35F, this.yBodyRot, this.getYRot());
         float f = livingEntity.xxa * 0.5f;
         float g = livingEntity.zza;
 
@@ -326,6 +320,7 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
         super.tick();
         if (this.level().isClientSide) {
             this.legSolver.update(this, this.getScale() * (this.isBaby() ? 0.5F : 1.0F));
+            this.setupAnimationStates();
         }
     }
 
@@ -377,32 +372,21 @@ public class Giraffe extends TamableAnimal implements NaturalistGeoEntity, IKMou
     protected SoundEvent getDeathSound() {
         return this.isBaby() ? NaturalistSoundEvents.GIRAFFE_DEATH_BABY.get() : NaturalistSoundEvents.GIRAFFE_DEATH.get();
     }
+
+    @Override
+    public float getVoicePitch() {
+        return NaturalistAnimal.defaultVoicePitch(this.random);
+    }
     //endregion
 
     //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
+    private void setupAnimationStates() {
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        boolean running = moving && (this.isSprinting() || this.isVehicle());
 
-    private <E extends Giraffe> PlayState predicate(final AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            if (this.isSprinting() || !this.getPassengers().isEmpty()) {
-                event.getController().setAnimation(RUN);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, this.isBaby() ? 1.56D : 1.43D));
-            } else {
-                event.getController().setAnimation(WALK);
-                event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, this.isBaby() ? 1.56D : 1.3D));
-            }
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(this.isBaby() ? 1.4D : 1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 4, this::predicate));
+        this.walkAnimationState.animateWhen(moving && !running, this.tickCount);
+        this.runAnimationState.animateWhen(running, this.tickCount);
+        this.idleAnimationState.animateWhen(!moving, this.tickCount);
     }
 
     @Override

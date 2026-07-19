@@ -1,59 +1,77 @@
 package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.client.model.animation.TortoiseAnimations;
 import com.crispytwig.naturalist.server.entity.mob.Tortoise;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.model.data.EntityModelData;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import org.jspecify.annotations.NonNull;
 
-@Environment(EnvType.CLIENT)
-public class TortoiseModel extends GeoModel<Tortoise> {
-    @Override
-    @SuppressWarnings("removal")
-    public @NotNull ResourceLocation getModelResource(Tortoise tortoise) {
-        if (tortoise.isBaby()) {
-            return tortoise.getVariantBabyModel(Naturalist.location("geo/entity/tortoise_baby.geo.json"));
-        }
-        return tortoise.getVariantModel(Naturalist.location("geo/entity/tortoise.geo.json"));
-    }
+public class TortoiseModel extends NaturalistEntityModel<Tortoise> {
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+			Naturalist.location("tortoise"), "main");
+	private final ModelPart root;
+    private final ModelPart neck;
 
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getTextureResource(@NotNull Tortoise tortoise) {
-        return tortoise.isBaby() ? tortoise.getVariantBabyTexture() : tortoise.getVariantTexture();
-    }
+	public TortoiseModel(ModelPart root) {
+		this.root = root.getChild("root");
+        ModelPart body = this.root.getChild("body");
+        ModelPart skullRot = body.getChild("skullRot");
+		this.neck = skullRot.getChild("neck");
+	}
 
-    @Override
-    public ResourceLocation getAnimationResource(Tortoise tortoise) {
-        if (tortoise.isBaby()) {
-            return tortoise.getVariantBabyAnimation(Naturalist.location("animations/tortoise_baby.animation.json"));
-        }
-        return tortoise.getVariantAnimation(Naturalist.location("animations/tortoise.animation.json"));
-    }
+	@Override
+	public @NonNull ModelPart root() {
+		return this.root;
+	}
 
-    @Override
-    public void setCustomAnimations(@NotNull Tortoise entity, long instanceId, AnimationState<Tortoise> animationState) {
-        super.setCustomAnimations(entity, instanceId, animationState);
+	public static LayerDefinition createBodyLayer() {
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-        if (animationState == null) return;
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 17.0F, 0.0F));
+		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offset(0.0F, -2.0F, 0.0F));
+		PartDefinition body_r1 = body.addOrReplaceChild("body_r1", CubeListBuilder.create()
+		.texOffs(60, 13).addBox(-8.0F, -11.0F, -19.0F, 16.0F, 16.0F, 9.0F, new CubeDeformation(0.5F))
+		.texOffs(0, 0).addBox(-8.0F, -11.0F, -19.0F, 16.0F, 16.0F, 9.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 26).addBox(-5.5F, -10.0F, -22.0F, 11.0F, 14.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -15.0F, 3.0F, 1.5708F, 0.0F, 0.0F));
+		PartDefinition skullRot = body.addOrReplaceChild("skullRot", CubeListBuilder.create(), PartPose.offset(0.0F, 3.0F, -8.0F));
+		PartDefinition neck = skullRot.addOrReplaceChild("neck", CubeListBuilder.create()
+		.texOffs(29, 26).addBox(-3.0F, -3.0F, -6.0F, 6.0F, 5.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition mask = neck.addOrReplaceChild("mask", CubeListBuilder.create()
+		.texOffs(28, 39).addBox(-3.0F, -7.0F, -14.0F, 6.0F, 5.0F, 7.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, 4.0F, 8.0F));
+		PartDefinition legs = root.addOrReplaceChild("legs", CubeListBuilder.create(), PartPose.offset(0.0F, 7.0F, 0.0F));
+		PartDefinition front_legs = legs.addOrReplaceChild("front_legs", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition left_arm = front_legs.addOrReplaceChild("left_arm", CubeListBuilder.create()
+		.texOffs(51, 0).addBox(-2.0F, -2.0F, -3.0F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(8.0F, -5.0F, -8.0F, 0.0F, -0.3927F, 0.0F));
+		PartDefinition right_arm = front_legs.addOrReplaceChild("right_arm", CubeListBuilder.create()
+		.texOffs(51, 0).mirror().addBox(-3.0F, -2.0F, -3.0F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-8.0F, -5.0F, -8.0F, 0.0F, 0.3927F, 0.0F));
+		PartDefinition back_legs = legs.addOrReplaceChild("back_legs", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition left_leg = back_legs.addOrReplaceChild("left_leg", CubeListBuilder.create()
+		.texOffs(51, 0).addBox(-2.0F, -2.0F, -3.0F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(7.0F, -5.0F, 8.0F, 0.0F, -0.3927F, 0.0F));
+		PartDefinition right_leg = back_legs.addOrReplaceChild("right_leg", CubeListBuilder.create()
+		.texOffs(51, 0).mirror().addBox(-3.0F, -2.0F, -3.0F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-7.0F, -5.0F, 8.0F, 0.0F, 0.3927F, 0.0F));
 
-        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("neck").orElse(null);
+		return LayerDefinition.create(meshdefinition, 128, 128);
+	}
 
-        if (head != null) {
-            head.setRotX(head.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-            head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
-            head.resetStateChanges();
-        }
+	@Override
+	protected void setupAnimations(Tortoise entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch) {
 
-        GeoBone asleep = this.getBone("asleep").orElse(null);
-        if (asleep != null) asleep.setHidden(true);
-    }
+		this.animateSmooth(entity.hurtAnimationState, TortoiseAnimations.TORTOISE_HURT, ageInTicks, partialTick);
+		this.animateSmooth(entity.hideAnimationState, TortoiseAnimations.TORTOISE_HIDE, ageInTicks, partialTick);
+
+		this.animateSmooth(entity.sitAnimationState, TortoiseAnimations.TORTOISE_SIT, ageInTicks, partialTick);
+		this.animateSmooth(entity.digAnimationState, TortoiseAnimations.TORTOISE_DIG, ageInTicks, partialTick);
+		this.animateIdleSmooth(entity.idleAnimationState, TortoiseAnimations.TORTOISE_IDLE, ageInTicks, partialTick, limbSwingAmount);
+		this.animateSmooth(entity.walkAnimationState, TortoiseAnimations.TORTOISE_WALK, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 6.0F));
+
+		applyHeadLook(this.neck, netHeadYaw, headPitch);
+	}
 }

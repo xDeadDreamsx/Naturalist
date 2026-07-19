@@ -40,26 +40,20 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("unused")
-public class Firefly extends NaturalistAnimal implements FlyingAnimal, NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class Firefly extends NaturalistAnimal implements FlyingAnimal, DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> GLOW_TICKS_REMAINING = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> GLOW_START_TICK = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> SUN_TICKS = SynchedEntityData.defineId(Firefly.class, EntityDataSerializers.INT);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation FLY = RawAnimation.begin().thenLoop("animation.sf_nba.firefly.fly");
+    public final SmoothAnimationState flyAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
 
     public Firefly(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
@@ -78,25 +72,25 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(GLOW_TICKS_REMAINING, 0);
         builder.define(GLOW_START_TICK, 0);
         builder.define(SUN_TICKS, 0);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/firefly.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -165,8 +159,8 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
@@ -253,10 +247,8 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
     @Override
     protected boolean isSunBurnTick() {
         if (this.level().isDay() && !this.hasCustomName() && !this.level().isClientSide) {
-            BlockPos eyePos = BlockPos.containing(this.getX(), this.getEyeY(), this.getZ());
-            float f = (float) this.level().getMaxLocalRawBrightness(eyePos) / 15.0F;
-            float f1 = f / (4.0F - 3.0F * f);
-            return Mth.lerp(this.level().dimensionType().ambientLight(), f1, 1.0F) > 0.5F;
+            float f = (float) this.level().getMaxLocalRawBrightness(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())) / 15.0F;
+            return Mth.lerp(this.level().dimensionType().ambientLight(), f / (4.0F - 3.0F * f), 1.0F) > 0.5F;
         }
 
         return false;
@@ -319,23 +311,19 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, Naturalis
     //endregion
 
     //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
     @Override
-    public double getBoneResetTime() {
-        return 2;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
     }
 
-    private <E extends Firefly> PlayState predicate(final AnimationState<E> event) {
-        event.getController().setAnimation(FLY);
-        return PlayState.CONTINUE;
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 2, this::predicate));
+    private void setupAnimationStates() {
+        this.flyAnimationState.animateWhen(!this.isBaby(), this.tickCount);
+        boolean moving = this.isBaby() && NaturalistAnimal.isVisiblyMoving(this);
+        this.walkAnimationState.animateWhen(moving, this.tickCount);
+        this.idleAnimationState.animateWhen(this.isBaby() && !moving, this.tickCount);
     }
     //endregion
 }

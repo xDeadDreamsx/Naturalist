@@ -14,8 +14,7 @@ public class CloseMeleeAttackGoal extends MeleeAttackGoal {
 
     @Override
     protected void checkAndPerformAttack(@NotNull LivingEntity target) {
-        double reach = Mth.square(this.mob.getBbWidth() * 1.2f);
-        if (this.mob.distanceToSqr(target) <= reach && this.isTimeToAttack()) {
+        if (this.mob.distanceToSqr(target) <= Mth.square(this.mob.getBbWidth() * 1.2f) && this.isTimeToAttack()) {
             this.resetAttackCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(target);

@@ -79,7 +79,7 @@ public class WhaleDiveGoal extends Goal {
     private int findFloorAt(double x, double z) {
         BlockPos.MutableBlockPos pos = BlockPos.containing(x, this.whale.getY(), z).mutable();
         for (int i = 0; i <= 32; i++) {
-            if (!this.whale.isWaterAt(pos) && !this.whale.level().getBlockState(pos).isAir()) {
+            if (!this.whale.level().isWaterAt(pos) && !this.whale.level().getBlockState(pos).isAir()) {
                 return pos.getY();
             }
             pos.move(0, -1, 0);

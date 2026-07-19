@@ -23,7 +23,8 @@ import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Catchable {
+public interface
+Catchable {
     boolean fromHand();
 
     void setFromHand(boolean fromHand);

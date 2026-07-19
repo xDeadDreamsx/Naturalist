@@ -40,7 +40,7 @@ public class NaturalistEntityLootProvider extends EntityLootSubProvider {
         add(NaturalistEntityTypes.CATFISH.get(), fishTable(NaturalistRegistry.CATFISH.get().asItem()));
         add(NaturalistEntityTypes.LIZARD_TAIL.get(), fishTable(NaturalistRegistry.LIZARD_TAIL.get()));
 
-        add(NaturalistEntityTypes.BIRD.get(), featherTable(1, 2));
+        add(NaturalistEntityTypes.BIRD.get(), featherTable());
 
         add(NaturalistEntityTypes.BUTTERFLY.get(), simpleLootingTable(Items.BONE_MEAL, 0, 1));
         add(NaturalistEntityTypes.CATERPILLAR.get(), simpleLootingTable(Items.BONE_MEAL, 0, 1));
@@ -192,11 +192,11 @@ public class NaturalistEntityLootProvider extends EntityLootSubProvider {
         );
     }
 
-    private LootTable.Builder featherTable(int min, int max) {
+    private LootTable.Builder featherTable() {
         return LootTable.lootTable().withPool(
                 LootPool.lootPool().setRolls(ConstantValue.exactly(1)).setBonusRolls(ConstantValue.exactly(0))
                         .add(LootItem.lootTableItem(Items.FEATHER)
-                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(min, max)))
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)))
                                 .apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.lookupProvider, UniformGenerator.between(0, 1))))
         );
     }

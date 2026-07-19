@@ -1,97 +1,120 @@
 package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.client.model.animation.SnailAnimations;
 import com.crispytwig.naturalist.server.entity.climbing.SurfaceClimbing;
 import com.crispytwig.naturalist.server.entity.mob.Snail;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
+import org.jspecify.annotations.NonNull;
 
-@Environment(EnvType.CLIENT)
-public class SnailModel extends GeoModel<Snail> {
-    private static final float TAIL_STRENGTH = -1.4F;
-    private static final float TAIL_MAX = 0.6F;
-    private static final float TAIL_LOOK_STRENGTH = 3.0F;
-    private static final float MAX_EYE_PITCH = Mth.DEG_TO_RAD * 22.5F;
-    private static final float MAX_EYE_YAW = Mth.DEG_TO_RAD * 90.0F;
+public class SnailModel extends NaturalistEntityModel<Snail> {
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+			Naturalist.location("snail"), "main");
+	private static final float TAIL_STRENGTH = -1.4F;
+	private static final float TAIL_MAX = 0.6F;
+	private static final float TAIL_LOOK_STRENGTH = 3.0F;
+	private static final float MAX_EYE_PITCH = Mth.DEG_TO_RAD * 22.5F;
+	private static final float MAX_EYE_YAW = Mth.DEG_TO_RAD * 90.0F;
+	private final ModelPart root;
+	private final ModelPart body;
+    private final ModelPart eyes;
+	private final ModelPart rightEye;
+	private final ModelPart leftEye;
+	private final ModelPart tail;
+	private final ModelPart shell;
 
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getModelResource(Snail snail) {
-        return snail.getVariantModel(Naturalist.location("geo/entity/snail.geo.json"));
-    }
+	public SnailModel(ModelPart root) {
+		this.root = root.getChild("root");
+		this.body = this.root.getChild("body");
+        ModelPart front = this.body.getChild("front");
+		this.eyes = front.getChild("eyes");
+		this.rightEye = this.eyes.getChild("rightEye");
+		this.leftEye = this.eyes.getChild("leftEye");
+		this.tail = this.body.getChild("tail");
+		this.shell = this.root.getChild("shell");
+	}
 
-    @Override
-    @SuppressWarnings("removal")
-    public @NotNull ResourceLocation getTextureResource(@NotNull Snail snail) {
-        if (snail.hasNonDefaultVariant()) {
-            return snail.getVariantTexture();
-        }
-        int color = snail.getSnailColor().getId();
-        return Naturalist.location("textures/entity/snail/" + DyeColor.byId(color).getName() + ".png");
-    }
+	@Override
+	public @NonNull ModelPart root() {
+		return this.root;
+	}
 
-    @Override
-    public ResourceLocation getAnimationResource(Snail snail) {
-        return snail.getVariantAnimation(Naturalist.location("animations/snail.animation.json"));
-    }
+	public static LayerDefinition createBodyLayer() {
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-    @Override
-    public void setCustomAnimations(Snail animatable, long instanceId, @Nullable AnimationState<Snail> animationState) {
-        super.setCustomAnimations(animatable, instanceId, animationState);
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 23.0F, 1.0F));
+		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition front = body.addOrReplaceChild("front", CubeListBuilder.create()
+		.texOffs(0, 14).addBox(-1.5F, -2.0F, -7.0F, 3.0F, 3.0F, 7.0F, new CubeDeformation(0.0F))
+		.texOffs(23, 8).addBox(-2.0F, -2.0F, -7.25F, 4.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition eyes = front.addOrReplaceChild("eyes", CubeListBuilder.create(), PartPose.offset(0.0F, -2.0F, -7.0F));
+		PartDefinition rightEye = eyes.addOrReplaceChild("rightEye", CubeListBuilder.create()
+		.texOffs(20, 21).addBox(-1.5F, -4.0F, 0.0F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-1.0F, 0.0F, 0.0F));
+		PartDefinition leftEye = eyes.addOrReplaceChild("leftEye", CubeListBuilder.create()
+		.texOffs(20, 21).mirror().addBox(-0.5F, -4.0F, 0.0F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(1.0F, 0.0F, 0.0F));
+		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create()
+		.texOffs(20, 14).addBox(-1.5F, -1.0F, 0.0F, 3.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition shell = root.addOrReplaceChild("shell", CubeListBuilder.create()
+		.texOffs(0, 0).addBox(-2.0F, -3.5F, -3.5F, 4.0F, 7.0F, 7.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 24).addBox(-2.0F, -3.5F, -3.5F, 4.0F, 7.0F, 7.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, -4.5F, -0.5F));
 
-        if (animationState == null) return;
+		return LayerDefinition.create(meshdefinition, 64, 64);
+	}
 
-        float eyeScale = animatable.isBaby() ? 1.5F : 1.0F;
-        this.getBone("eyes").ifPresent(eyes -> {
-            eyes.setScaleX(eyeScale);
-            eyes.setScaleY(eyeScale);
-            eyes.setScaleZ(eyeScale);
-            eyes.resetStateChanges();
-        });
+	@Override
+	protected void setupAnimations(Snail entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch) {
+		float eyeScale = entity.isBaby() ? 1.5F : 1.0F;
+		this.eyes.xScale = eyeScale;
+		this.eyes.yScale = eyeScale;
+		this.eyes.zScale = eyeScale;
 
-        if (animatable.isHidden()) return;
+		this.animateSmooth(entity.hideAnimationState, SnailAnimations.SNAIL_HIDE_START, ageInTicks, partialTick);
+		this.animateSmooth(entity.hideEndAnimationState, SnailAnimations.SNAIL_HIDE_END, ageInTicks, partialTick);
 
-        float partialTick = animationState.getPartialTick();
-        float bodyLookYaw = animatable.getBodyLookYaw(partialTick);
-        float bodyYaw = bodyLookYaw * Mth.DEG_TO_RAD;
-        this.rotateBone("body", 0.0F, bodyYaw);
-        this.rotateBone("shell", 0.0F, bodyYaw);
+		this.animateIdleSmooth(entity.idleAnimationState, SnailAnimations.SNAIL_IDLE, ageInTicks, partialTick, limbSwingAmount);
+		this.animateSmooth(entity.crawlAnimationState, SnailAnimations.SNAIL_CRAWL, ageInTicks, partialTick,
+				entity.isClimbing() ? 1.0F : movementAnimationSpeed(entity, limbSwingAmount, 5.0F));
 
-        SurfaceClimbing climbing = animatable.getClimbing();
-        Vec3 normal = climbing.getRenderNormal(partialTick);
-        Vec3 forward = climbing.getRenderForwardFlattened(partialTick, normal);
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        Vec3 toCamera = camera.getPosition().subtract(animatable.position());
-        Vec3 plane = SurfaceClimbing.projectOntoPlane(toCamera, normal);
-        double planeLen = plane.length();
-        Vec3 cameraDir = planeLen < 1.0E-4D ? forward : plane.normalize();
+		if (entity.isHidden()) {
+			return;
+		}
+		this.applyLook(entity, partialTick);
+	}
 
-        float eyeYaw = (float) Math.atan2(forward.cross(cameraDir).dot(normal), forward.dot(cameraDir)) - bodyYaw;
-        eyeYaw = Mth.clamp(Mth.wrapDegrees(eyeYaw * Mth.RAD_TO_DEG) * Mth.DEG_TO_RAD, -MAX_EYE_YAW, MAX_EYE_YAW);
-        float eyePitch = Mth.clamp((float) Math.atan2(toCamera.dot(normal), planeLen), -MAX_EYE_PITCH, MAX_EYE_PITCH);
-        this.rotateBone("leftEye", eyePitch, eyeYaw);
-        this.rotateBone("rightEye", eyePitch, eyeYaw);
+	private void applyLook(Snail entity, float partialTick) {
+		float bodyLookYaw = entity.getBodyLookYaw(partialTick);
+		float bodyYaw = bodyLookYaw * Mth.DEG_TO_RAD;
+		this.body.yRot -= bodyYaw;
+		this.shell.yRot -= bodyYaw;
 
-        float tailXLag = Mth.clamp(climbing.getTailLag(partialTick) * TAIL_STRENGTH, -TAIL_MAX, TAIL_MAX);
-        float tailYLag = (animatable.getTailLookYaw(partialTick) - bodyLookYaw) * TAIL_LOOK_STRENGTH * Mth.DEG_TO_RAD;
-        this.rotateBone("tail", tailXLag, tailYLag);
-    }
+		SurfaceClimbing climbing = entity.getClimbing();
+		Vec3 normal = climbing.getRenderNormal(partialTick);
+		Vec3 forward = climbing.getRenderForwardFlattened(partialTick, normal);
+		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
+		Vec3 plane = SurfaceClimbing.projectOntoPlane(toCamera, normal);
+		double planeLen = plane.length();
+		Vec3 cameraDir = planeLen < 1.0E-4D ? forward : plane.normalize();
 
-    private void rotateBone(String name, float pitch, float yaw) {
-        this.getBone(name).ifPresent(bone -> {
-            bone.setRotX(bone.getRotX() + pitch);
-            bone.setRotY(bone.getRotY() + yaw);
-            bone.resetStateChanges();
-        });
-    }
+		float eyeYaw = (float) Math.atan2(forward.cross(cameraDir).dot(normal), forward.dot(cameraDir)) - bodyYaw;
+		eyeYaw = Mth.clamp(Mth.wrapDegrees(eyeYaw * Mth.RAD_TO_DEG) * Mth.DEG_TO_RAD, -MAX_EYE_YAW, MAX_EYE_YAW);
+		float eyePitch = Mth.clamp((float) Math.atan2(toCamera.dot(normal), planeLen), -MAX_EYE_PITCH, MAX_EYE_PITCH);
+		this.leftEye.xRot -= eyePitch;
+		this.leftEye.yRot -= eyeYaw;
+		this.rightEye.xRot -= eyePitch;
+		this.rightEye.yRot -= eyeYaw;
+
+		this.tail.xRot -= Mth.clamp(climbing.getTailLag(partialTick) * TAIL_STRENGTH, -TAIL_MAX, TAIL_MAX);
+		this.tail.yRot -= (entity.getTailLookYaw(partialTick) - bodyLookYaw) * TAIL_LOOK_STRENGTH * Mth.DEG_TO_RAD;
+	}
 }

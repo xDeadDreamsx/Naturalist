@@ -1,69 +1,109 @@
 package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.client.model.animation.SnakeAnimations;
 import com.crispytwig.naturalist.server.entity.mob.Snake;
-import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.model.data.EntityModelData;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import org.jspecify.annotations.NonNull;
 
-@Environment(EnvType.CLIENT)
-public class SnakeModel extends GeoModel<Snake> {
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getModelResource(Snake snake) {
-        return snake.getVariantModel(Naturalist.location("geo/entity/snake.geo.json"));
-    }
+public class SnakeModel extends NaturalistEntityModel<Snake> {
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+			Naturalist.location("snake"), "main");
+	private final ModelPart main;
+    private final ModelPart skull;
+	private final ModelPart awake;
+	private final ModelPart asleep;
+    private final ModelPart tail2;
+    private final ModelPart tail4;
 
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getTextureResource(@NotNull Snake snake) {
-        return snake.getVariantTexture();
-    }
+	public SnakeModel(ModelPart root) {
+		this.main = root.getChild("main");
+        ModelPart neck = this.main.getChild("neck");
+		this.skull = neck.getChild("skull");
+		this.awake = this.skull.getChild("awake");
+		this.asleep = this.skull.getChild("asleep");
+        ModelPart tail = this.main.getChild("tail");
+		this.tail2 = tail.getChild("tail2");
+        ModelPart tail3 = this.tail2.getChild("tail3");
+		this.tail4 = tail3.getChild("tail4");
+	}
 
-    @Override
-    public ResourceLocation getAnimationResource(Snake snake) {
-        return snake.getVariantAnimation(Naturalist.location("animations/snake.animation.json"));
-    }
+	@Override
+	public @NonNull ModelPart root() {
+		return this.main;
+	}
 
-    @Override
-    public void setCustomAnimations(Snake entity, long instanceId, AnimationState<Snake> animationState) {
-        super.setCustomAnimations(entity, instanceId, animationState);
+	@Override
+	protected String getRootPartName() {
+		return "main";
+	}
 
-        if (animationState == null) return;
+	public static LayerDefinition createBodyLayer() {
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+		PartDefinition main = partdefinition.addOrReplaceChild("main", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+		PartDefinition neck = main.addOrReplaceChild("neck", CubeListBuilder.create()
+		.texOffs(0, 15).addBox(-1.5F, -5.75F, -1.5F, 3.0F, 7.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.25F, -3.5F));
+		PartDefinition skull = neck.addOrReplaceChild("skull", CubeListBuilder.create()
+		.texOffs(12, 9).addBox(-2.0F, -1.0F, -1.0F, 4.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 9).addBox(-1.5F, -1.0F, -5.0F, 3.0F, 1.0F, 4.0F, new CubeDeformation(0.0F))
+		.texOffs(31, 21).addBox(-3.0F, -5.0F, -5.0F, 6.0F, 2.0F, 6.0F, new CubeDeformation(0.0F))
+		.texOffs(28, 57).addBox(-3.0F, -1.0F, -1.0F, 6.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 47).addBox(-2.5F, -1.0F, -5.0F, 5.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -5.75F, 0.5F));
+		PartDefinition jaw = skull.addOrReplaceChild("jaw", CubeListBuilder.create()
+		.texOffs(21, 9).addBox(-2.0F, 0.0F, -4.0F, 4.0F, 1.0F, 4.0F, new CubeDeformation(0.01F))
+		.texOffs(7, 55).addBox(-3.0F, 0.0F, -4.0F, 6.0F, 1.0F, 4.0F, new CubeDeformation(0.01F)), PartPose.offset(0.0F, -1.0F, -1.0F));
+		PartDefinition tongue = jaw.addOrReplaceChild("tongue", CubeListBuilder.create()
+		.texOffs(21, 2).addBox(-0.5F, 0.0F, -3.0F, 1.0F, 0.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.1F, 0.0F));
+		PartDefinition awake = skull.addOrReplaceChild("awake", CubeListBuilder.create()
+		.texOffs(21, 0).addBox(-2.0F, -10.0F, -8.0F, 4.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 7.0F, 3.0F));
+		PartDefinition awakeWide = awake.addOrReplaceChild("awakeWide", CubeListBuilder.create()
+		.texOffs(12, 46).addBox(-3.0F, -10.0F, -8.0F, 6.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition asleep = skull.addOrReplaceChild("asleep", CubeListBuilder.create()
+		.texOffs(0, 0).addBox(-2.0F, -10.0F, -8.0F, 4.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 7.0F, 3.0F));
+		PartDefinition asleepWide = asleep.addOrReplaceChild("asleepWide", CubeListBuilder.create()
+		.texOffs(37, 46).addBox(-3.0F, -10.0F, -8.0F, 6.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition tail = main.addOrReplaceChild("tail", CubeListBuilder.create()
+		.texOffs(13, 16).addBox(-2.0F, -1.5F, 0.0F, 4.0F, 3.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.5F, -2.0F));
+		PartDefinition tail2 = tail.addOrReplaceChild("tail2", CubeListBuilder.create()
+		.texOffs(32, 11).addBox(-2.0F, -1.5F, 0.0F, 4.0F, 3.0F, 6.0F, new CubeDeformation(0.01F)), PartPose.offset(0.0F, 0.0F, 6.0F));
+		PartDefinition tail3 = tail2.addOrReplaceChild("tail3", CubeListBuilder.create()
+		.texOffs(48, 7).addBox(-1.0F, -1.0F, 0.0F, 2.0F, 2.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.5F, 6.0F));
+		PartDefinition tail4 = tail3.addOrReplaceChild("tail4", CubeListBuilder.create()
+		.texOffs(50, 17).addBox(-1.0F, -1.0F, 0.0F, 2.0F, 2.0F, 4.0F, new CubeDeformation(0.01F)), PartPose.offset(0.0F, 0.0F, 6.0F));
 
-        this.getBone("skull").ifPresent(head -> {
-            if (!entity.isSleeping()) {
-                head.setRotX(head.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-                head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
-                head.resetStateChanges();
-            }
-        });
+		return LayerDefinition.create(meshdefinition, 64, 64);
+	}
 
-        this.getBone("tail2").ifPresent(tail2 -> {
-            if (!entity.getMainHandItem().isEmpty()) {
-                tail2.setScaleX(1.5F);
-                tail2.setScaleY(1.5F);
-            } else {
-                tail2.setScaleX(1.0F);
-                tail2.setScaleY(1.0F);
-            }
-            tail2.resetStateChanges();
-        });
+	@Override
+	protected void setupAnimations(Snake entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch) {
+		boolean sleeping = entity.isSleeping();
+		this.awake.visible = !sleeping;
+		this.asleep.visible = sleeping;
+		this.tail4.visible = entity.isRattlesnake();
+		if (!entity.getMainHandItem().isEmpty()) {
+			this.tail2.xScale = 1.5F;
+			this.tail2.yScale = 1.5F;
+		}
 
-        this.getBone("tail4").ifPresent(tail4 -> tail4.setHidden(!entity.isRattlesnake()));
+		this.animateSmooth(entity.attackAnimationState, SnakeAnimations.SNAKE_ATTACK, ageInTicks, partialTick);
+		this.animateSmooth(entity.tongueAnimationState, SnakeAnimations.SNAKE_TONGUE, ageInTicks, partialTick);
+		this.animateSmooth(entity.rattleAnimationState, SnakeAnimations.SNAKE_RATTLE, ageInTicks, partialTick);
 
-        boolean sleeping = entity.isSleeping();
-        this.getBone("awake").ifPresent(bone -> bone.setHidden(sleeping));
-        this.getBone("asleep").ifPresent(bone -> bone.setHidden(!sleeping));
-        this.getBone("sleep").ifPresent(bone -> bone.setHidden(!sleeping));
-    }
+		this.animateSmooth(entity.sleepAnimationState, SnakeAnimations.SNAKE_SLEEP, ageInTicks, partialTick);
+		this.animateSmooth(entity.climbAnimationState, SnakeAnimations.SNAKE_CLIMB, ageInTicks, partialTick);
+		this.animateSmooth(entity.moveAnimationState, SnakeAnimations.SNAKE_MOVE, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 2.5F));
+
+		if (!sleeping) {
+			applyHeadLook(this.skull, netHeadYaw, headPitch);
+		}
+	}
 }

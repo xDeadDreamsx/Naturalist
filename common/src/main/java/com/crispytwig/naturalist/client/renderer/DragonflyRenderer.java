@@ -4,20 +4,21 @@ import com.crispytwig.naturalist.client.model.DragonflyModel;
 import com.crispytwig.naturalist.server.entity.mob.Dragonfly;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class DragonflyRenderer extends GeoEntityRenderer<Dragonfly> {
-    public DragonflyRenderer(EntityRendererProvider.@NotNull Context renderManager) {
-        super(renderManager, new DragonflyModel());
-        this.shadowRadius = 0.4F;
+public class DragonflyRenderer extends MobRenderer<Dragonfly, HierarchicalModel<Dragonfly>> {
+    public DragonflyRenderer(EntityRendererProvider.@NotNull Context context) {
+        super(context, new DragonflyModel(context.bakeLayer(DragonflyModel.LAYER_LOCATION)), 0.4F);
     }
 
     @Override
-    public float getMotionAnimThreshold(Dragonfly animatable) {
-        return 0.000001f;
+    public @NotNull ResourceLocation getTextureLocation(@NotNull Dragonfly entity) {
+        return entity.getVariantTexture();
     }
 }

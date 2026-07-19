@@ -7,6 +7,7 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
+import org.jspecify.annotations.NonNull;
 
 public class CaptureNetSwingParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
@@ -26,7 +27,7 @@ public class CaptureNetSwingParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
+    public @NonNull ParticleRenderType getRenderType() {
         return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 

@@ -32,7 +32,7 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
-configurations.all {
+configurations.configureEach {
     resolutionStrategy.force "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 }
 
@@ -40,7 +40,6 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    modImplementation "software.bernie.geckolib:geckolib-fabric-${project.minecraft_version}:${project.geckolib_version}"
 
     modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${project.lambdynamiclights_version}")
     modLocalRuntime("dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:${project.lambdynamiclights_version}")
@@ -58,8 +57,7 @@ processResources {
             "mod_description"        : project.mod_description,
             "mod_authors"            : project.mod_authors,
             "minecraft_version"      : project.minecraft_version,
-            "fabric_loader_version"  : project.fabric_loader_version,
-            "geckolib_version"       : project.geckolib_version
+            "fabric_loader_version"  : project.fabric_loader_version
     ]
 
     filesMatching("fabric.mod.json") {

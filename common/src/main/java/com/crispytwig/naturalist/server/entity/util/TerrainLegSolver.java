@@ -76,8 +76,7 @@ public class TerrainLegSolver {
             this.prevHeight = this.height;
             double x = entity.getX() + sideX * this.side + forwardX * this.forward;
             double z = entity.getZ() + sideZ * this.side + forwardZ * this.forward;
-            float settledHeight = this.settle(entity, x, entity.getY() - 1, z, this.height);
-            this.height = Mth.clamp(settledHeight, -this.range * scale, this.range * scale);
+            this.height = Mth.clamp(this.settle(entity, x, entity.getY() - 1, z, this.height), -this.range * scale, this.range * scale);
         }
 
         private float settle(LivingEntity entity, double x, double y, double z, float height) {
@@ -90,21 +89,19 @@ public class TerrainLegSolver {
                 lastDistance = this.getDistance(entity.level(), pos, vec3);
                 dist += lastDistance;
             }
-            boolean settling = (entity.onGround() && height <= dist) || height > 0.0F;
-            return settling ? Mth.lerp(SMOOTHING, height, dist) : height;
+            return ((entity.onGround() && height <= dist) || height > 0.0F) ? Mth.lerp(SMOOTHING, height, dist) : height;
         }
 
-        private float getDistance(Level world, BlockPos pos, Vec3 position) {
-            if (pos.getY() < world.getMinBuildHeight()) {
+        private float getDistance(Level level, BlockPos pos, Vec3 position) {
+            if (pos.getY() < level.getMinBuildHeight()) {
                 return 0.0F;
             }
-            BlockState state = world.getBlockState(pos);
-            VoxelShape shape = state.getCollisionShape(world, pos);
+            BlockState state = level.getBlockState(pos);
+            VoxelShape shape = state.getCollisionShape(level, pos);
             if (shape.isEmpty()) {
                 return 1.0F;
             }
-            Vec3 modIn = new Vec3(position.x % 1.0D, position.y, position.z % 1.0D);
-            Optional<Vec3> closest = shape.closestPointTo(modIn);
+            Optional<Vec3> closest = shape.closestPointTo(new Vec3(position.x % 1.0D, position.y, position.z % 1.0D));
             if (closest.isEmpty()) {
                 return 1.0F;
             }

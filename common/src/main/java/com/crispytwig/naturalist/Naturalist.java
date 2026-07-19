@@ -222,8 +222,7 @@ public final class Naturalist {
                 ServerLevel serverLevel = source.level();
 
                 EntityType<Snail> entityType = NaturalistEntityTypes.SNAIL.get();
-                Snail snail = entityType.spawn(serverLevel, blockPos, MobSpawnType.DISPENSER);
-                if (snail != null) {
+                if (entityType.spawn(serverLevel, blockPos, MobSpawnType.DISPENSER) != null) {
                     stack.shrink(1);
                 }
                 return stack;
@@ -237,8 +236,7 @@ public final class Naturalist {
                 ServerLevel serverLevel = source.level();
 
                 EntityType<Butterfly> entityType = NaturalistEntityTypes.BUTTERFLY.get();
-                Butterfly butterfly = entityType.spawn(serverLevel, blockPos, MobSpawnType.DISPENSER);
-                if (butterfly != null) {
+                if (entityType.spawn(serverLevel, blockPos, MobSpawnType.DISPENSER) != null) {
                     stack.shrink(1);
                 }
                 return stack;

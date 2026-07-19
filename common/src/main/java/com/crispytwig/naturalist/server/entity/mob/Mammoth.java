@@ -28,7 +28,7 @@ public class Mammoth extends Elephant {
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/mammoth/mammoth.png");
     }
     //endregion
@@ -44,7 +44,7 @@ public class Mammoth extends Elephant {
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         Mammoth baby = NaturalistEntityTypes.MAMMOTH.get().create(serverLevel);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(ageableMob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
         return baby;
     }

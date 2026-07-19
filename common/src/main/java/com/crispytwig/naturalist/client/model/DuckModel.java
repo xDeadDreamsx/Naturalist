@@ -1,66 +1,76 @@
 package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.client.model.animation.DuckAnimations;
 import com.crispytwig.naturalist.server.entity.mob.Duck;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.data.EntityModelData;
-import software.bernie.geckolib.model.GeoModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import org.jspecify.annotations.NonNull;
 
-@Environment(EnvType.CLIENT)
-public class DuckModel extends GeoModel<Duck> {
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getModelResource(Duck animal) {
-        if (animal.isBaby()) {
-            return animal.getVariantBabyModel(Naturalist.location("geo/entity/duck_baby.geo.json"));
-        }
-        return animal.getVariantModel(Naturalist.location("geo/entity/duck.geo.json"));
-    }
+public class DuckModel extends NaturalistEntityModel<Duck> {
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+			Naturalist.location("duck"), "main");
+	private final ModelPart root;
+	private final ModelPart neck;
 
-    @Override
-    @SuppressWarnings("removal")
-    public ResourceLocation getTextureResource(Duck animal) {
-        if (animal.hasNonDefaultVariant()) {
-            return animal.isBaby() ? animal.getVariantBabyTexture() : animal.getVariantTexture();
-        }
-        if (animal.isBaby()) {
-            return Naturalist.location("textures/entity/duck/duck_baby.png");
-        }
-        if (animal.getName().getString().equalsIgnoreCase("Queso")) {
-            return Naturalist.location("textures/entity/duck/queso.png");
-        }
-        return Naturalist.location("textures/entity/duck/duck.png");
-    }
+	public DuckModel(ModelPart root) {
+		this.root = root.getChild("root");
+		this.neck = this.root.getChild("body").getChild("neck");
+	}
 
-    @SuppressWarnings("unused")
-    @Override
-    public @NotNull ResourceLocation getAnimationResource(Duck animal) {
-        if (animal.isBaby()) {
-            return animal.getVariantBabyAnimation(Naturalist.location("animations/duck_baby.animation.json"));
-        }
-        return animal.getVariantAnimation(Naturalist.location("animations/duck.animation.json"));
-    }
+	@Override
+	public @NonNull ModelPart root() {
+		return this.root;
+	}
 
-    @Override
-    public void setCustomAnimations(Duck entity, long instanceId, AnimationState<Duck> animationState) {
-        super.setCustomAnimations(entity, instanceId, animationState);
+	public static LayerDefinition createBodyLayer() {
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-        if (animationState == null) return;
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
+		.texOffs(0, 0).addBox(-3.0F, -2.0F, -3.5F, 6.0F, 4.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -6.0F, -0.5F));
+		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create()
+		.texOffs(27, 5).addBox(-2.0F, -1.0F, 0.0F, 4.0F, 2.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 1.0F, 3.5F));
+		PartDefinition neck = body.addOrReplaceChild("neck", CubeListBuilder.create()
+		.texOffs(52, 11).addBox(-1.5F, -7.0F, -1.5F, 3.0F, 8.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.0F, -3.0F));
+		PartDefinition bill = neck.addOrReplaceChild("bill", CubeListBuilder.create()
+		.texOffs(26, 0).addBox(-1.5F, -0.5F, -3.0F, 3.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.5F, -1.5F));
+		PartDefinition bowtie = neck.addOrReplaceChild("bowtie", CubeListBuilder.create()
+		.texOffs(0, 19).addBox(-3.0F, -1.5F, 0.0F, 6.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.5F, -1.75F));
+		PartDefinition leftWing = body.addOrReplaceChild("leftWing", CubeListBuilder.create()
+		.texOffs(42, 0).addBox(0.0F, 0.0F, -3.0F, 1.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(3.0F, -2.0F, 0.5F));
+		PartDefinition rightWing = body.addOrReplaceChild("rightWing", CubeListBuilder.create()
+		.texOffs(42, 0).mirror().addBox(-1.0F, 0.0F, -3.0F, 1.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-3.0F, -2.0F, 0.5F));
+		PartDefinition leftLeg = root.addOrReplaceChild("leftLeg", CubeListBuilder.create()
+		.texOffs(19, 0).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 4.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(1.5F, -4.0F, 1.0F));
+		PartDefinition leftFoot = leftLeg.addOrReplaceChild("leftFoot", CubeListBuilder.create()
+		.texOffs(29, 12).addBox(-1.5F, 0.0F, -3.0F, 3.0F, 0.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 4.0F, 0.0F));
+		PartDefinition rightLeg = root.addOrReplaceChild("rightLeg", CubeListBuilder.create()
+		.texOffs(38, 0).mirror().addBox(-1.5F, 0.0F, 0.0F, 3.0F, 4.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-1.5F, -4.0F, 1.0F));
+		PartDefinition rightFoot = rightLeg.addOrReplaceChild("rightFoot", CubeListBuilder.create()
+		.texOffs(29, 12).mirror().addBox(-1.5F, 0.0F, -3.0F, 3.0F, 0.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 4.0F, 0.0F));
 
-        EntityModelData extraDataOfType = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-        GeoBone head = this.getBone("neck").orElse(null);
+		return LayerDefinition.create(meshdefinition, 64, 32);
+	}
 
-        if (head != null) {
-            head.setRotX(head.getRotX() + extraDataOfType.headPitch() * Mth.DEG_TO_RAD);
-            head.setRotY(head.getRotY() + extraDataOfType.netHeadYaw() * Mth.DEG_TO_RAD);
-            head.resetStateChanges();
-        }
-    }
+	@Override
+	protected void setupAnimations(Duck entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch) {
+
+		this.animateSmooth(entity.sitAnimationState, DuckAnimations.DUCK_SIT, ageInTicks, partialTick);
+
+		this.animateIdleSmooth(entity.idleAnimationState, DuckAnimations.DUCK_IDLE, ageInTicks, partialTick, limbSwingAmount);
+		this.animateSmooth(entity.swimAnimationState, DuckAnimations.DUCK_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, LARGE_SWIMMER_LIMB_SWING));
+		this.animateSmooth(entity.walkAnimationState, DuckAnimations.DUCK_WALK, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.5F));
+		this.animateSmooth(entity.runAnimationState, DuckAnimations.DUCK_WALK, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 2.0F));
+		this.animateSmooth(entity.flapAnimationState, DuckAnimations.DUCK_FLAP, ageInTicks, partialTick);
+
+		applyHeadLook(this.neck, netHeadYaw, headPitch);
+	}
 }

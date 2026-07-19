@@ -17,77 +17,61 @@ import java.util.Optional;
 public interface DataDrivenVariantAnimal {
     String VARIANT_TAG = "Variant";
 
-    default ResourceKey<Registry<MobVariant>> variantRegistryKey() {
+    default ResourceKey<Registry<MobVariant>> getVariantRegistryKey() {
         return NaturalistMobVariants.registryFor(((Mob) this).getType());
     }
 
-    default ResourceKey<MobVariant> defaultVariant() {
+    default ResourceKey<MobVariant> getDefaultVariant() {
         return NaturalistMobVariants.defaultFor(((Mob) this).getType());
     }
 
-    default String[] legacyVariantNames() {
-        return new String[]{this.defaultVariant().location().getPath()};
+    default String[] getLegacyVariantNames() {
+        return new String[]{this.getDefaultVariant().location().getPath()};
     }
 
-    ResourceLocation fallbackVariantTexture();
+    ResourceLocation getFallbackVariantTexture();
 
-    String getVariantRawId();
+    String getVariantString();
 
-    void setVariantRawId(String id);
+    void setVariantString(String location);
 
-    default ResourceLocation getVariantId() {
-        ResourceLocation id = ResourceLocation.tryParse(this.getVariantRawId());
-        return id != null ? id : this.defaultVariant().location();
+    default ResourceLocation getVariantLocation() {
+        ResourceLocation location = ResourceLocation.tryParse(this.getVariantString());
+        return location != null ? location : this.getDefaultVariant().location();
     }
 
     default void setVariant(Holder<MobVariant> variant) {
-        variant.unwrapKey().ifPresent(key -> this.setVariantRawId(key.location().toString()));
+        variant.unwrapKey().ifPresent(key -> this.setVariantString(key.location().toString()));
     }
 
     default Optional<Holder.Reference<MobVariant>> getVariantHolder() {
-        return MobVariantUtil.byId(((Mob) this).level().registryAccess(), this.variantRegistryKey(), this.getVariantId());
+        return MobVariantUtil.byId(((Mob) this).level().registryAccess(), this.getVariantRegistryKey(), this.getVariantLocation());
     }
 
     default boolean hasNonDefaultVariant() {
-        return !this.getVariantId().equals(this.defaultVariant().location());
+        return !this.getVariantLocation().equals(this.getDefaultVariant().location());
     }
 
     default ResourceLocation getVariantTexture() {
-        return this.getVariantHolder().map(holder -> holder.value().texture()).orElseGet(this::fallbackVariantTexture);
+        return this.getVariantHolder().map(holder -> holder.value().texture()).orElseGet(this::getFallbackVariantTexture);
     }
 
     default ResourceLocation getVariantBabyTexture() {
-        return this.getVariantHolder().map(holder -> holder.value().babyTexture()).orElseGet(this::fallbackVariantTexture);
-    }
-
-    default ResourceLocation getVariantModel(ResourceLocation fallback) {
-        return this.getVariantHolder().flatMap(holder -> holder.value().model()).orElse(fallback);
-    }
-
-    default ResourceLocation getVariantAnimation(ResourceLocation fallback) {
-        return this.getVariantHolder().flatMap(holder -> holder.value().animation()).orElse(fallback);
-    }
-
-    default ResourceLocation getVariantBabyModel(ResourceLocation fallback) {
-        return this.getVariantHolder().flatMap(holder -> holder.value().babyModel()).orElse(fallback);
-    }
-
-    default ResourceLocation getVariantBabyAnimation(ResourceLocation fallback) {
-        return this.getVariantHolder().flatMap(holder -> holder.value().babyAnimation()).orElse(fallback);
+        return this.getVariantHolder().map(holder -> holder.value().babyTexture()).orElseGet(this::getFallbackVariantTexture);
     }
 
     default void saveVariant(CompoundTag tag) {
-        tag.putString(VARIANT_TAG, this.getVariantId().toString());
+        tag.putString(VARIANT_TAG, this.getVariantLocation().toString());
     }
 
     default void loadVariant(CompoundTag tag) {
-        MobVariantUtil.readVariantId(tag, this.legacyVariantNames())
-                .ifPresent(id -> this.setVariantRawId(id.toString()));
+        MobVariantUtil.readVariantId(tag, this.getLegacyVariantNames())
+                .ifPresent(location -> this.setVariantString(location.toString()));
     }
 
     default int getLegacyVariantIndex() {
-        String path = this.getVariantId().getPath();
-        String[] legacy = this.legacyVariantNames();
+        String path = this.getVariantLocation().getPath();
+        String[] legacy = this.getLegacyVariantNames();
         for (int i = 0; i < legacy.length; i++) {
             if (legacy[i].equals(path)) {
                 return i;
@@ -97,19 +81,18 @@ public interface DataDrivenVariantAnimal {
     }
 
     default void setVariantByLegacyIndex(int index) {
-        String[] legacy = this.legacyVariantNames();
-        String name = legacy[Math.floorMod(index, legacy.length)];
-        this.setVariantRawId(Naturalist.location(name).toString());
+        String[] legacy = this.getLegacyVariantNames();
+        this.setVariantString(Naturalist.location(legacy[Math.floorMod(index, legacy.length)]).toString());
     }
 
-    default void pickVariantForSpawn(ServerLevelAccessor level) {
-        MobVariantUtil.selectVariantForSpawn(level, ((Mob) this).blockPosition(), this.variantRegistryKey())
+    default void selectVariantForSpawn(ServerLevelAccessor level) {
+        MobVariantUtil.selectVariantForSpawn(level, ((Mob) this).blockPosition(), this.getVariantRegistryKey())
                 .ifPresent(this::setVariant);
     }
 
-    default String inheritVariantFrom(AgeableMob otherParent, RandomSource random) {
+    default String getOffspringVariantId(AgeableMob otherParent, RandomSource random) {
         return otherParent instanceof DataDrivenVariantAnimal other && random.nextBoolean()
-                ? other.getVariantRawId()
-                : this.getVariantRawId();
+                ? other.getVariantString()
+                : this.getVariantString();
     }
 }

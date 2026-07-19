@@ -70,7 +70,7 @@ public class BodyChain {
         return Mth.lerp(partialTick, this.rollO, this.roll);
     }
 
-    public float getSegYawOffset(int index, float partialTick) {
+    public float getSegmentYawOffset(int index, float partialTick) {
         float current = Mth.rotLerp(partialTick, this.segYawO[index], this.segYaw[index]);
         float reference = index <= 1
                 ? this.getRenderYaw(partialTick)
@@ -78,7 +78,7 @@ public class BodyChain {
         return Mth.wrapDegrees(current - reference);
     }
 
-    public float getSegPitchOffset(int index, float partialTick, float bodyPitch) {
+    public float getSegmentPitchOffset(int index, float partialTick, float bodyPitch) {
         float current = Mth.lerp(partialTick, this.segPitchO[index], this.segPitch[index]);
         float reference = index <= 1
                 ? bodyPitch

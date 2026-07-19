@@ -39,7 +39,6 @@ configurations {
 dependencies {
     neoForge "net.neoforged:neoforge:${project.neo_version}"
 
-    modImplementation "software.bernie.geckolib:geckolib-neoforge-${project.minecraft_version}:${project.geckolib_version}"
 
     modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${project.lambdynamiclights_version}") {
         attributes {

@@ -63,8 +63,7 @@ public record BugNetInteractionRecipe(EntityType<?> entityType, ItemStack dropSt
                 },
                 buf -> {
                     EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(buf.readResourceLocation());
-                    ItemStack output = ItemStack.STREAM_CODEC.decode(buf);
-                    return new BugNetInteractionRecipe(entityType, output);
+                    return new BugNetInteractionRecipe(entityType, ItemStack.STREAM_CODEC.decode(buf));
                 }
         );
 

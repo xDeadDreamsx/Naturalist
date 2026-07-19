@@ -1,41 +1,65 @@
 package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.client.model.animation.PiranhaAnimations;
 import com.crispytwig.naturalist.server.entity.mob.Piranha;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
+import org.jspecify.annotations.NonNull;
 
-@Environment(EnvType.CLIENT)
-public class PiranhaModel extends GeoModel<Piranha> {
-    @Override
-    public ResourceLocation getTextureResource(Piranha piranha) {
-        return piranha.getVariantTexture();
-    }
+public class PiranhaModel extends NaturalistEntityModel<Piranha> {
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+			Naturalist.location("piranha"), "main");
+	private final ModelPart root;
 
-    @Override
-    public ResourceLocation getModelResource(Piranha piranha) {
-        return piranha.getVariantModel(Naturalist.location("geo/entity/piranha.geo.json"));
-    }
+	public PiranhaModel(ModelPart root) {
+		this.root = root.getChild("root");
+	}
 
-    @Override
-    public ResourceLocation getAnimationResource(Piranha piranha) {
-        return piranha.getVariantAnimation(Naturalist.location("animations/piranha.animation.json"));
-    }
+	@Override
+	public @NonNull ModelPart root() {
+		return this.root;
+	}
 
-    @Override
-    public void setCustomAnimations(Piranha piranha, long instanceId, @Nullable AnimationState<Piranha> animationState) {
-        super.setCustomAnimations(piranha, instanceId, animationState);
+	public static LayerDefinition createBodyLayer() {
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-        if (animationState == null) return;
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 20.0F, 1.0F));
+		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
+		.texOffs(0, 18).addBox(-1.0F, -3.0F, -5.0F, 2.0F, 6.0F, 8.0F, new CubeDeformation(0.0F))
+		.texOffs(12, 12).addBox(-1.0F, -3.0F, -5.0F, 2.0F, 6.0F, 8.0F, new CubeDeformation(0.2F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition jaw = body.addOrReplaceChild("jaw", CubeListBuilder.create()
+		.texOffs(0, 2).addBox(-1.5F, -1.0F, -4.0F, 3.0F, 1.0F, 5.0F, new CubeDeformation(0.0F))
+		.texOffs(16, 0).addBox(-1.5F, 0.0F, -4.0F, 3.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 3.0F, -2.0F));
+		PartDefinition right_fin = body.addOrReplaceChild("right_fin", CubeListBuilder.create()
+		.texOffs(2, 16).addBox(-2.0F, -2.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.0F, 3.0F, 0.0F, 0.0F, 0.7854F, 0.0F));
+		PartDefinition left_fin = body.addOrReplaceChild("left_fin", CubeListBuilder.create()
+		.texOffs(2, 12).addBox(0.0F, -2.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0F, 3.0F, 0.0F, 0.0F, -0.7854F, 0.0F));
+		PartDefinition fin_top = body.addOrReplaceChild("fin_top", CubeListBuilder.create()
+		.texOffs(20, 2).addBox(0.0F, -4.0F, 0.0F, 0.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -3.0F, -3.0F));
+		PartDefinition fin_bottom = body.addOrReplaceChild("fin_bottom", CubeListBuilder.create()
+		.texOffs(20, 12).addBox(0.0F, 0.0F, 1.0F, 0.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 3.0F, -3.0F));
+		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create()
+		.texOffs(6, 3).addBox(0.0F, -3.0F, 0.0F, 0.0F, 6.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 3.0F));
 
-        this.getBone("root").ifPresent(root -> {
-            root.setRotX(root.getRotX() - piranha.getXBodyRot(animationState.getPartialTick()) * Mth.DEG_TO_RAD);
-            root.resetStateChanges();
-        });
-    }
+		return LayerDefinition.create(meshdefinition, 32, 32);
+	}
+
+	@Override
+	protected void setupAnimations(Piranha entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch) {
+
+		this.animateSmooth(entity.flopAnimationState, PiranhaAnimations.PIRANHA_FLOP, ageInTicks, partialTick);
+		this.animateSmooth(entity.swimAnimationState, PiranhaAnimations.PIRANHA_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, SMALL_SWIMMER_LIMB_SWING));
+		this.animateSmooth(entity.swimFastAnimationState, PiranhaAnimations.PIRANHA_SWIM_FAST, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, LARGE_SWIMMER_LIMB_SWING));
+
+		this.root.xRot += entity.getXBodyRot(partialTick) * Mth.DEG_TO_RAD;
+	}
 }

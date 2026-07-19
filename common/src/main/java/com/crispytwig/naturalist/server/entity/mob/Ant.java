@@ -4,8 +4,8 @@ import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.block.AntHillBlock;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.Catchable;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.base.TamableClimbingAnimal;
 import com.crispytwig.naturalist.server.entity.misc.CarriedFoodEntity;
@@ -58,14 +58,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -73,7 +67,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, NeutralMob, Catchable, DataDrivenVariantAnimal {
+public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable, DataDrivenVariantAnimal {
     //region Data
     private static final int PERSISTENT_ANGER_TIME = 500;
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Ant.class, EntityDataSerializers.STRING);
@@ -89,10 +83,8 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     @Nullable
     private CarriedFoodEntity carriedFood;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.ant.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.ant.walk");
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
 
     public Ant(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -109,24 +101,24 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(DATA_REMAINING_ANGER_TIME, 0);
         builder.define(FROM_HAND, false);
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/ant.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     public void startHillCooldown() {
@@ -243,8 +235,8 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
     //endregion
@@ -254,7 +246,7 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.15D, true));
-        this.goalSelector.addGoal(2, new AntStoreFoodGoal(this, 1.0D, 16, 5));
+        this.goalSelector.addGoal(2, new AntStoreFoodGoal(this));
         this.goalSelector.addGoal(3, new AntGatherFoodGoal(this));
         this.goalSelector.addGoal(4, new AntEnterHillGoal(this, 1.0D, 16, 5));
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 1.0D));
@@ -508,8 +500,8 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
     private static class AntStoreFoodGoal extends MoveToBlockGoal {
         private final Ant ant;
 
-        AntStoreFoodGoal(Ant mob, double speedModifier, int searchRange, int verticalSearchRange) {
-            super(mob, speedModifier, searchRange, verticalSearchRange);
+        AntStoreFoodGoal(Ant mob) {
+            super(mob, 1.0, 16, 5);
             this.ant = mob;
         }
 
@@ -540,24 +532,17 @@ public class Ant extends TamableClimbingAnimal implements NaturalistGeoEntity, N
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    protected <E extends Ant> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimation(WALK);
-            event.getController().setAnimationSpeed(this.isNaturalistClimbing() ? 1.0D : this.movementAnimationSpeed(event, 1.0D));
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
         }
-        return PlayState.CONTINUE;
     }
 
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 0, this::predicate));
+    private void setupAnimationStates() {
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+        this.walkAnimationState.animateWhen(moving, this.tickCount);
+        this.idleAnimationState.animateWhen(!moving, this.tickCount);
     }
     //endregion
 }

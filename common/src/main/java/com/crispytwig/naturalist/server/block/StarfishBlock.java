@@ -53,8 +53,7 @@ public class StarfishBlock extends MultifaceBlock implements SimpleWaterloggedBl
         if (state == null) {
             return null;
         }
-        boolean waterlogged = context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER;
-        return state.setValue(WATERLOGGED, waterlogged);
+        return state.setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
     }
 
     @Override

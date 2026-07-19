@@ -12,12 +12,15 @@ import com.crispytwig.naturalist.server.entity.ai.goal.EggLayingBreedGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.HideGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.LayEggGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
 import com.crispytwig.naturalist.server.entity.base.EggLayingAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.base.HidingAnimal;
 import com.crispytwig.naturalist.server.entity.base.IKMount;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -75,15 +78,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -91,7 +87,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
+public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS);
 
@@ -117,19 +113,37 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     @Nullable
     private UUID persistentAngerTarget;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(9);
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.ostrich.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.ostrich.walk_B");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.ostrich.run_B_1");
-    protected static final RawAnimation FLAP = RawAnimation.begin().thenLoop("animation.sf_nba.ostrich.flap");
-    protected static final RawAnimation BURY = RawAnimation.begin().thenLoop("animation.sf_nba.ostrich.bury_head");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.ostrich.sit");
-    protected static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.sf_nba.ostrich.attack");
-    protected static final RawAnimation BABY_IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.ostrich_baby.idle");
-    protected static final RawAnimation BABY_WALK = RawAnimation.begin().thenLoop("animation.sf_nba.ostrich_baby.walk");
-    protected static final RawAnimation BABY_RUN = RawAnimation.begin().thenLoop("animation.sf_nba.ostrich_baby.run");
-    protected static final RawAnimation BABY_SIT = RawAnimation.begin().thenPlay("animation.sf_nba.ostrich_baby.sit").thenLoop("animation.sf_nba.ostrich_baby.sit_idle");
+
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState flapAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState buryAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sitAnimationState = SmoothAnimationState.pose();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
+
+    private static final AnimationSoundTrack WALK_SOUNDS = AnimationSoundTrack.builder(1.0F, true)
+            .at(0.0F, NaturalistSoundEvents.OSTRICH_STEP, 0.35F, 1.0F)
+            .at(0.54F, NaturalistSoundEvents.OSTRICH_STEP, 0.75F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack RUN_SOUNDS = AnimationSoundTrack.builder(0.6667F, true)
+            .at(0.0F, NaturalistSoundEvents.OSTRICH_STEP, 0.35F, 1.0F)
+            .at(0.33F, NaturalistSoundEvents.OSTRICH_STEP, 0.75F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack BURY_SOUNDS = AnimationSoundTrack.builder(0.7917F, false)
+            .at(0.04F, NaturalistSoundEvents.OSTRICH_BURY, 1.0F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack ATTACK_SOUNDS = AnimationSoundTrack.builder(0.4583F, false)
+            .at(0.0F, NaturalistSoundEvents.OSTRICH_ATTACK, 1.0F, 1.0F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.walkAnimationState, WALK_SOUNDS)
+            .add(this.runAnimationState, RUN_SOUNDS)
+            .add(this.buryAnimationState, BURY_SOUNDS)
+            .add(this.attackAnimationState, ATTACK_SOUNDS);
 
     public Ostrich(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -147,7 +161,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
         builder.define(SADDLED, false);
         builder.define(HAS_EGG, false);
         builder.define(LAYING_EGG, false);
@@ -155,18 +169,18 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/ostrich/ostrich.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -324,7 +338,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
         compound.putLongArray("OwnedEggs", eggs);
         this.addPersistentAngerSaveData(compound);
         DyeableAnimal.saveDye(this, compound);
-        FollowingPet.save(this, compound);
+        FollowingPet.savePet(this, compound);
     }
 
     @Override
@@ -339,7 +353,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
         }
         this.readPersistentAngerSaveData(this.level(), compound);
         DyeableAnimal.loadDye(this, compound);
-        FollowingPet.load(this, compound);
+        FollowingPet.loadPet(this, compound);
     }
     //endregion
 
@@ -354,7 +368,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         Ostrich baby = NaturalistEntityTypes.OSTRICH.get().create(level);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }
         return baby;
     }
@@ -365,8 +379,8 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }
@@ -403,7 +417,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
 
     @Override
     public boolean canAttack(@NotNull LivingEntity target) {
-        return !PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
+        return PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
     }
 
     @Override
@@ -462,8 +476,7 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
         if (this.level().isClientSide) {
-            boolean canInteract = this.isTame() || (this.isBaby() && this.isFood(stack));
-            return canInteract ? InteractionResult.CONSUME : InteractionResult.PASS;
+            return (this.isTame() || (this.isBaby() && this.isFood(stack))) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         if (this.isTame()) {
             if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) {
@@ -588,8 +601,8 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
         this.yRotO = this.getYRot();
         this.setXRot(livingEntity.getXRot() * 0.5f);
         this.setRot(this.getYRot(), this.getXRot());
-        this.yHeadRot = this.yBodyRot = this.getYRot();
-        float f = livingEntity.xxa * 0.5f;
+        this.yHeadRot = this.getYRot();
+        this.yBodyRot = Mth.rotLerp(0.35F, this.yBodyRot, this.getYRot());
         float g = livingEntity.zza;
         if (this.playerJumpPendingScale > 0.0F && !this.isJumping && this.onGround()) {
             double jumpVelocity = this.getAttributeValue(Attributes.JUMP_STRENGTH) * this.playerJumpPendingScale * this.getBlockJumpFactor() + this.getJumpBoostPower();
@@ -608,8 +621,8 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
             this.isJumping = false;
         }
         if (this.isControlledByLocalInstance()) {
-            this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.5F);
-            super.travel(new Vec3(f, travelVector.y, g));
+            this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.4F);
+            super.travel(new Vec3(livingEntity.xxa * 0.5f, travelVector.y, g));
         } else if (livingEntity instanceof Player) {
             this.setDeltaMovement(Vec3.ZERO);
         }
@@ -693,6 +706,11 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
         return this.isBaby() ? NaturalistSoundEvents.OSTRICH_DEATH_BABY.get() : NaturalistSoundEvents.OSTRICH_DEATH.get();
     }
 
+    @Override
+    public float getVoicePitch() {
+        return NaturalistAnimal.defaultVoicePitch(this.random);
+    }
+
     static class OstrichHurtByTargetGoal extends BabyHurtByTargetGoal {
         private final Ostrich ostrich;
 
@@ -726,80 +744,29 @@ public class Ostrich extends TamableAnimal implements NaturalistGeoEntity, EggLa
 
     //region Animation
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
+        }
     }
 
-    protected <E extends Ostrich> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (!this.onGround() && !this.isInWater() && !this.isBaby()) {
-            event.getController().setAnimation(FLAP);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (this.isInSittingPose()) {
-            event.getController().setAnimation(this.isBaby() ? BABY_SIT : SIT);
-            event.getController().setAnimationSpeed(1.0D);
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D, 1.0D));
-            if (this.isSprinting() || this.isVehicle()) {
-                event.getController().setAnimation(this.isBaby() ? BABY_RUN : RUN);
-            } else {
-                event.getController().setAnimation(this.isBaby() ? BABY_WALK : WALK);
-            }
-        } else if (this.canHide()) {
-            event.getController().setAnimation(BURY);
-            event.getController().setAnimationSpeed(1.0D);
-        } else {
-            event.getController().setAnimation(this.isBaby() ? BABY_IDLE : IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
+    private void setupAnimationStates() {
+        boolean flapping = !this.onGround() && !this.isInWater() && !this.isBaby();
+        boolean sitting = !flapping && this.isInSittingPose();
+        boolean moving = !flapping && !sitting && NaturalistAnimal.isVisiblyMoving(this);
+        boolean running = moving && (this.isSprinting() || this.isVehicle());
+        boolean burying = !flapping && !sitting && !moving && this.canHide();
 
-    protected <E extends Ostrich> @NotNull PlayState attackPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(ATTACK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
 
-    private void soundListener(@NotNull SoundKeyframeEvent<Ostrich> event) {
-        Ostrich ostrich = event.getAnimatable();
-        if (!ostrich.level().isClientSide) {
-            return;
-        }
-        SoundEvent sound;
-        float volume;
-        switch (event.getKeyframeData().getSound()) {
-            case "step" -> {
-                sound = NaturalistSoundEvents.OSTRICH_STEP.get();
-                volume = 0.75F;
-            }
-            case "step_-6dB" -> {
-                sound = NaturalistSoundEvents.OSTRICH_STEP.get();
-                volume = 0.35F;
-            }
-            case "attack" -> {
-                sound = NaturalistSoundEvents.OSTRICH_ATTACK.get();
-                volume = 1.0F;
-            }
-            case "bury" -> {
-                sound = NaturalistSoundEvents.OSTRICH_BURY.get();
-                volume = 1.0F;
-            }
-            default -> {
-                return;
-            }
-        }
-        ostrich.level().playLocalSound(ostrich.getX(), ostrich.getY(), ostrich.getZ(), sound, ostrich.getSoundSource(), volume, 1.0F, false);
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
-                .setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate)
-                .setSoundKeyframeHandler(this::soundListener));
+        this.flapAnimationState.animateWhen(flapping, this.tickCount);
+        this.sitAnimationState.animateWhen(sitting, this.tickCount);
+        this.walkAnimationState.animateWhen(moving && !running, this.tickCount);
+        this.runAnimationState.animateWhen(running, this.tickCount);
+        this.buryAnimationState.animateWhen(burying, this.tickCount);
+        this.idleAnimationState.animateWhen(!flapping && !sitting && !moving && !burying, this.tickCount);
     }
 
     @Override

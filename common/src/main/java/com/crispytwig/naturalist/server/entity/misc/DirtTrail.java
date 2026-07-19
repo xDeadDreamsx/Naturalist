@@ -12,21 +12,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
-public class DirtTrail extends Entity implements GeoEntity {
+public class DirtTrail extends Entity {
     private static final EntityDataAccessor<Boolean> SMALL = SynchedEntityData.defineId(DirtTrail.class, EntityDataSerializers.BOOLEAN);
     private static final int LIFETIME = 50;
 
-    protected static final RawAnimation SPAWN = RawAnimation.begin().thenPlay("animation.sf_nba.dirt_trail.spawn");
-
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    public final SmoothAnimationState spawnAnimationState = SmoothAnimationState.instant();
 
     public DirtTrail(EntityType<? extends DirtTrail> entityType, Level level) {
         super(entityType, level);
@@ -48,7 +40,9 @@ public class DirtTrail extends Entity implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
-        if (this.level() instanceof ServerLevel serverLevel && this.tickCount >= LIFETIME) {
+        if (this.level().isClientSide) {
+            this.spawnAnimationState.animateWhen(true, this.tickCount);
+        } else if (this.level() instanceof ServerLevel serverLevel && this.tickCount >= LIFETIME) {
             double scale = this.isSmall() ? 0.6D : 1.0D;
             serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()),
                     this.getX(), this.getY() + 0.1D * scale, this.getZ(),
@@ -68,18 +62,5 @@ public class DirtTrail extends Entity implements GeoEntity {
 
     @Override
     protected void addAdditionalSaveData(@NotNull CompoundTag compound) {
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, event -> {
-            event.getController().setAnimation(SPAWN);
-            return PlayState.CONTINUE;
-        }));
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
     }
 }

@@ -78,14 +78,10 @@ public abstract class HumanoidModelMixin {
         float dz = base.z;
 
         float y1 = dy * cosP - dz * sinP;
-        float z1 = dy * sinP + dz * cosP;
 
-        float x2 = dx * cosR - y1 * sinR;
-        float y2 = dx * sinR + y1 * cosR;
-
-        part.x = x2;
-        part.y = naturalist$waistY + y2;
-        part.z = z1;
+        part.x = dx * cosR - y1 * sinR;
+        part.y = naturalist$waistY + dx * sinR + y1 * cosR;
+        part.z = dy * sinP + dz * cosP;
         part.xRot += pitch;
         part.zRot += roll;
     }

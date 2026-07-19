@@ -14,8 +14,8 @@ public final class PetTargeting {
     }
 
     public static boolean protectsOwnedPet(TamableAnimal self, LivingEntity target) {
-        return self.isTame() && self.getOwnerUUID() != null && target instanceof OwnableEntity ownable
-                && self.getOwnerUUID().equals(ownable.getOwnerUUID());
+        return !self.isTame() || self.getOwnerUUID() == null || !(target instanceof OwnableEntity ownable)
+                || !self.getOwnerUUID().equals(ownable.getOwnerUUID());
     }
 
     public static boolean wantsToAttack(LivingEntity target, LivingEntity owner) {

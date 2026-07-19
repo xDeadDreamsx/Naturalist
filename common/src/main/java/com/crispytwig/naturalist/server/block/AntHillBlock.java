@@ -89,10 +89,9 @@ public class AntHillBlock extends Block implements EntityBlock {
     public @NotNull BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
         if (level instanceof ServerLevel serverLevel) {
             int workers = state.getValue(WORKERS);
-            boolean hasQueen = state.getValue(HAS_QUEEN);
             UUID owner = getOwner(serverLevel, pos);
             serverLevel.playSound(null, pos, SoundType.AZALEA.getBreakSound(), SoundSource.BLOCKS, 0.9F, 1.0F);
-            if (workers > 0 || hasQueen) {
+            if (workers > 0 || state.getValue(HAS_QUEEN)) {
                 spawnPoofParticles(serverLevel, pos);
             }
             for (int i = 0; i < workers; i++) {
@@ -128,10 +127,10 @@ public class AntHillBlock extends Block implements EntityBlock {
                 && Objects.equals(hill.getOwner(), antOwner);
     }
 
-    public static boolean storeFood(ServerLevel level, BlockPos pos, Ant ant) {
+    public static void storeFood(ServerLevel level, BlockPos pos, Ant ant) {
         ItemEntity carried = ant.getCarriedFood();
         if (carried == null || !canAntStore(level, pos, ant.getOwnerUUID()) || !(level.getBlockEntity(pos) instanceof AntHillBlockEntity hill)) {
-            return false;
+            return;
         }
         ItemStack leftover = hill.storeFood(carried.getItem().copy());
         ant.consumeCarriedFood();
@@ -139,7 +138,6 @@ public class AntHillBlock extends Block implements EntityBlock {
             popResource(level, pos, leftover);
         }
         playEnterLeaveEffects(level, pos, ant.getRandom());
-        return true;
     }
 
     public static boolean tryEnter(ServerLevel level, BlockPos pos, Ant ant) {

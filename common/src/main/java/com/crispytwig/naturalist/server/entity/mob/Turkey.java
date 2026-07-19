@@ -1,10 +1,10 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -44,28 +44,47 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
+import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import org.jspecify.annotations.NonNull;
 
-public class Turkey extends Animal implements NaturalistGeoEntity, DataDrivenVariantAnimal {
+public class Turkey extends Animal implements DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TURKEY_FOOD_ITEMS);
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Turkey.class, EntityDataSerializers.STRING);
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private static final int PECK_ANIM_TICKS = 25;
 
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.turkey.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.turkey.walk");
-    protected static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.sf_nba.turkey.run");
-    protected static final RawAnimation PECK = RawAnimation.begin().thenPlay("animation.sf_nba.turkey.picking_on_ground");
+    private int peckAnimTicks;
+
+    public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState peckAnimationState = SmoothAnimationState.instant();
+
+    private static final AnimationSoundTrack WALK_SOUNDS = AnimationSoundTrack.builder(2.0F, true)
+            .at(0.29F, NaturalistSoundEvents.TURKEY_STEP, 0.4F, 1.0F)
+            .at(0.88F, NaturalistSoundEvents.TURKEY_STEP, 0.2F, 1.0F)
+            .at(1.33F, NaturalistSoundEvents.TURKEY_STEP, 0.4F, 1.0F)
+            .at(1.88F, NaturalistSoundEvents.TURKEY_STEP, 0.2F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack RUN_SOUNDS = AnimationSoundTrack.builder(1.0F, true)
+            .at(0.17F, NaturalistSoundEvents.TURKEY_STEP, 0.4F, 1.0F)
+            .at(0.42F, NaturalistSoundEvents.TURKEY_STEP, 0.2F, 1.0F)
+            .at(0.67F, NaturalistSoundEvents.TURKEY_STEP, 0.4F, 1.0F)
+            .at(0.92F, NaturalistSoundEvents.TURKEY_STEP, 0.2F, 1.0F)
+            .build();
+    private static final AnimationSoundTrack PECK_SOUNDS = AnimationSoundTrack.builder(1.25F, false)
+            .at(0.42F, NaturalistSoundEvents.TURKEY_PECK, 0.6F, 0.9F)
+            .at(0.83F, NaturalistSoundEvents.TURKEY_PECK, 0.6F, 0.9F)
+            .build();
+
+    private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
+            .add(this.walkAnimationState, WALK_SOUNDS)
+            .add(this.runAnimationState, RUN_SOUNDS)
+            .add(this.peckAnimationState, PECK_SOUNDS);
 
     public Turkey(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -81,22 +100,22 @@ public class Turkey extends Animal implements NaturalistGeoEntity, DataDrivenVar
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.defaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/turkey.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(DATA_VARIANT, id);
+    public void setVariantString(String location) {
+        this.entityData.set(DATA_VARIANT, location);
     }
 
     @Override
@@ -123,14 +142,14 @@ public class Turkey extends Animal implements NaturalistGeoEntity, DataDrivenVar
     public Turkey getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
         Turkey baby = NaturalistEntityTypes.TURKEY.get().create(level);
         if (baby != null) {
-            baby.setVariantRawId(this.inheritVariantFrom(mob, this.random));
+            baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }
         return baby;
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        this.pickVariantForSpawn(level);
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.selectVariantForSpawn(level);
         if (spawnGroupData == null) {
             spawnGroupData = new AgeableMob.AgeableMobGroupData(0.05F);
         }
@@ -171,6 +190,30 @@ public class Turkey extends Animal implements NaturalistGeoEntity, DataDrivenVar
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+            this.animationSounds.tick(this);
+        }
+    }
+
+    private void setupAnimationStates() {
+        boolean moving = NaturalistAnimal.isVisiblyMoving(this);
+
+        if (this.swinging && this.peckAnimTicks <= 0) {
+            this.peckAnimTicks = PECK_ANIM_TICKS;
+        } else if (this.peckAnimTicks > 0) {
+            this.peckAnimTicks--;
+        }
+        this.peckAnimationState.animateWhen(this.peckAnimTicks > 0, this.tickCount);
+
+        this.walkAnimationState.animateWhen(moving && !this.isSprinting(), this.tickCount);
+        this.runAnimationState.animateWhen(moving && this.isSprinting(), this.tickCount);
+        this.idleAnimationState.animateWhen(!moving, this.tickCount);
+    }
+
+    @Override
     public void customServerAiStep() {
         super.customServerAiStep();
         if (this.getMoveControl().hasWanted()) {
@@ -199,67 +242,5 @@ public class Turkey extends Animal implements NaturalistGeoEntity, DataDrivenVar
     }
     //endregion
 
-    //region Animation
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
 
-    protected <E extends Turkey> @NotNull PlayState predicate(final AnimationState<E> event) {
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimation(this.isSprinting() ? RUN : WALK);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 1.0D));
-        } else {
-            event.getController().setAnimation(IDLE);
-            event.getController().setAnimationSpeed(1.0D);
-        }
-        return PlayState.CONTINUE;
-    }
-
-    protected <E extends Turkey> @NotNull PlayState peckPredicate(final AnimationState<E> event) {
-        if (this.swinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(PECK);
-            this.swinging = false;
-        }
-        return PlayState.CONTINUE;
-    }
-
-    private void soundListener(@NotNull SoundKeyframeEvent<Turkey> event) {
-        Turkey turkey = event.getAnimatable();
-        if (!turkey.level().isClientSide) {
-            return;
-        }
-        SoundEvent sound;
-        float volume;
-        float pitch = 1.0F;
-        switch (event.getKeyframeData().getSound()) {
-            case "step" -> {
-                sound = NaturalistSoundEvents.TURKEY_STEP.get();
-                volume = 0.4F;
-            }
-            case "step_-6dB" -> {
-                sound = NaturalistSoundEvents.TURKEY_STEP.get();
-                volume = 0.2F;
-            }
-            case "peck" -> {
-                sound = NaturalistSoundEvents.TURKEY_PECK.get();
-                volume = 0.6F;
-                pitch = 0.9F;
-            }
-            default -> {
-                return;
-            }
-        }
-        turkey.level().playLocalSound(turkey.getX(), turkey.getY(), turkey.getZ(), sound, turkey.getSoundSource(), volume, pitch, false);
-    }
-
-    @Override
-    public void registerControllers(final AnimatableManager.@NotNull ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 5, this::predicate)
-                .setSoundKeyframeHandler(this::soundListener));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::peckPredicate)
-                .setSoundKeyframeHandler(this::soundListener));
-    }
-    //endregion
 }

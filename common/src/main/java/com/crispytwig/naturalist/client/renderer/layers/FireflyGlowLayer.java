@@ -6,43 +6,41 @@ import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.mob.Firefly;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
-public class FireflyGlowLayer extends GeoRenderLayer<Firefly> {
-    private static final ResourceLocation GLOW = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/firefly_glow.png");
-    private static final ResourceLocation GLOW_E = ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, "textures/entity/firefly_glow_e.png");
+public class FireflyGlowLayer extends RenderLayer<Firefly, HierarchicalModel<Firefly>> {
+    private static final ResourceLocation GLOW = Naturalist.location("textures/entity/firefly_glow.png");
+    private static final ResourceLocation GLOW_E = Naturalist.location("textures/entity/firefly_glow_e.png");
     private static final int TOTAL_FRAMES = 30;
     private static final int TICKS_PER_FRAME = 1;
 
-    public FireflyGlowLayer(GeoRenderer<Firefly> entityRendererIn) {
-        super(entityRendererIn);
+    public FireflyGlowLayer(RenderLayerParent<Firefly, HierarchicalModel<Firefly>> parent) {
+        super(parent);
     }
 
-    @SuppressWarnings("unused")
     @Override
-    public void render(PoseStack poseStack, Firefly entity, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTicks, int packedLightIn, int packedOverlay) {
+    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, @NotNull Firefly entity, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
         int frame;
         if (entity.isGlowing()) {
-            int elapsed = entity.tickCount - entity.getGlowStartTick();
-            frame = Math.min(elapsed / TICKS_PER_FRAME, TOTAL_FRAMES - 1);
+            frame = Math.min((entity.tickCount - entity.getGlowStartTick()) / TICKS_PER_FRAME, TOTAL_FRAMES - 1);
         } else {
             frame = 0;
         }
 
-        RenderType baseGlow = RenderType.entityCutoutNoCull(GLOW);
-        VertexConsumer baseBuffer = new AnimatedUVVertexConsumer(bufferSource.getBuffer(baseGlow), TOTAL_FRAMES, frame);
-        getRenderer().reRender(getDefaultBakedModel(entity), poseStack, bufferSource, entity, baseGlow, baseBuffer, partialTicks, packedLightIn, packedOverlay, -1);
+        VertexConsumer baseBuffer = new AnimatedUVVertexConsumer(bufferSource.getBuffer(RenderType.entityCutoutNoCull(GLOW)), TOTAL_FRAMES, frame);
+        this.getParentModel().renderToBuffer(poseStack, baseBuffer, packedLight, OverlayTexture.NO_OVERLAY, -1);
 
         if (entity.isGlowing()) {
-            RenderType emissiveGlow = RenderType.entityTranslucentEmissive(GLOW_E);
-            VertexConsumer emissiveBuffer = new AnimatedUVVertexConsumer(bufferSource.getBuffer(emissiveGlow), TOTAL_FRAMES, frame);
-            getRenderer().reRender(getDefaultBakedModel(entity), poseStack, bufferSource, entity, emissiveGlow, emissiveBuffer, partialTicks, packedLightIn, packedOverlay, -1);
+            VertexConsumer emissiveBuffer = new AnimatedUVVertexConsumer(bufferSource.getBuffer(RenderType.entityTranslucentEmissive(GLOW_E)), TOTAL_FRAMES, frame);
+            this.getParentModel().renderToBuffer(poseStack, emissiveBuffer, packedLight, OverlayTexture.NO_OVERLAY, -1);
         }
     }
 }

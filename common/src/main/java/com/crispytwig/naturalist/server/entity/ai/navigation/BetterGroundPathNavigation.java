@@ -8,6 +8,8 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class BetterGroundPathNavigation extends GroundPathNavigation {
     public BetterGroundPathNavigation(Mob mob, Level level) {
         super(mob, level);
@@ -22,7 +24,7 @@ public class BetterGroundPathNavigation extends GroundPathNavigation {
         boolean shouldAdvance;
         Vec3 tempMobPos = this.getTempMobPos();
         this.maxDistanceToWaypoint = this.mob.getBbWidth() * 0.75F;
-        BlockPos nextPos = this.path.getNextNodePos();
+        BlockPos nextPos = Objects.requireNonNull(this.path).getNextNodePos();
         double x = Math.abs(this.mob.getX() - ((double)nextPos.getX() + 0.5));
         double y = Math.abs(this.mob.getY() - (double)nextPos.getY());
         double z = Math.abs(this.mob.getZ() - ((double)nextPos.getZ() + 0.5));
@@ -34,7 +36,7 @@ public class BetterGroundPathNavigation extends GroundPathNavigation {
     }
 
     private boolean shouldTargetNextNodeInDirection(@NotNull Vec3 currentPos) {
-        if (this.path.getNextNodeIndex() + 1 >= this.path.getNodeCount()) {
+        if (Objects.requireNonNull(this.path).getNextNodeIndex() + 1 >= this.path.getNodeCount()) {
             return false;
         }
         Vec3 nextPos = Vec3.atBottomCenterOf(this.path.getNextNodePos());
@@ -42,7 +44,6 @@ public class BetterGroundPathNavigation extends GroundPathNavigation {
             return false;
         }
         Vec3 nextPos2 = Vec3.atBottomCenterOf(this.path.getNodePos(this.path.getNextNodeIndex() + 1));
-        Vec3 difference = nextPos2.subtract(nextPos);
-        return difference.dot(currentPos.subtract(nextPos)) > 0.0;
+        return nextPos2.subtract(nextPos).dot(currentPos.subtract(nextPos)) > 0.0;
     }
 }

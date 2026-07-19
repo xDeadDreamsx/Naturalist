@@ -6,9 +6,9 @@ import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
+import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
-import com.crispytwig.naturalist.server.entity.base.NaturalistGeoEntity;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.nbt.CompoundTag;
@@ -35,20 +35,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.crispytwig.naturalist.server.entity.util.SmoothSpeedAnimationController;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class Lizard extends TamableAnimal implements NaturalistGeoEntity, DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
+public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"green", "brown", "beardie", "leopard_gecko"};
 
@@ -62,11 +55,8 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     private boolean followingOwner = true;
     private int tailRegrowCooldown = 0;
 
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-
-    protected static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.idle");
-    protected static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.walk");
-    protected static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.sf_nba.lizard.sit");
+    public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState sitAnimationState = SmoothAnimationState.pose();
 
     public Lizard(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -85,28 +75,28 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     }
 
     @Override
-    public ResourceKey<MobVariant> defaultVariant() {
+    public ResourceKey<MobVariant> getDefaultVariant() {
         return NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("lizard"), "green");
     }
 
     @Override
-    public String[] legacyVariantNames() {
+    public String[] getLegacyVariantNames() {
         return VARIANT_NAMES;
     }
 
     @Override
-    public ResourceLocation fallbackVariantTexture() {
+    public ResourceLocation getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/lizard/green.png");
     }
 
     @Override
-    public String getVariantRawId() {
+    public String getVariantString() {
         return this.entityData.get(VARIANT_ID);
     }
 
     @Override
-    public void setVariantRawId(String id) {
-        this.entityData.set(VARIANT_ID, id);
+    public void setVariantString(String location) {
+        this.entityData.set(VARIANT_ID, location);
     }
 
     public boolean hasTail() {
@@ -157,7 +147,7 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
         this.saveVariant(compound);
         compound.putBoolean("HasTail", this.hasTail());
         DyeableAnimal.saveDye(this, compound);
-        FollowingPet.save(this, compound);
+        FollowingPet.savePet(this, compound);
     }
 
     @Override
@@ -166,14 +156,14 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
         this.loadVariant(compound);
         this.setHasTail(compound.getBoolean("HasTail"));
         DyeableAnimal.loadDye(this, compound);
-        FollowingPet.load(this, compound);
+        FollowingPet.loadPet(this, compound);
     }
     //endregion
 
     //region Spawning
     @Override
     public @NotNull SpawnGroupData finalizeSpawn(ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        this.pickVariantForSpawn(level);
+        this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
 
@@ -207,7 +197,7 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
             this.playSound(SoundEvents.SLIME_SQUISH, 1.0f, 1.0f);
             LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level());
             if (lizardTail != null) {
-                lizardTail.setVariantRawId(this.getVariantRawId());
+                lizardTail.setVariantString(this.getVariantString());
                 lizardTail.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(lizardTail);
             }
@@ -234,8 +224,7 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
             return dyeResult.get();
         }
         if (this.level().isClientSide) {
-            boolean bl = this.isOwnedBy(player) || this.isTame() || TEMPT_INGREDIENT.test(stack) && !this.isTame();
-            return bl ? InteractionResult.CONSUME : InteractionResult.PASS;
+            return (this.isOwnedBy(player) || this.isTame() || TEMPT_INGREDIENT.test(stack) && !this.isTame()) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         if (this.isTame()) {
             if (TEMPT_INGREDIENT.test(stack) && this.getHealth() < this.getMaxHealth()) {
@@ -341,28 +330,18 @@ public class Lizard extends TamableAnimal implements NaturalistGeoEntity, Dyeabl
     //endregion
 
     //region Animation
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    private <E extends Lizard> PlayState predicate(final AnimationState<E> event) {
-        if (this.isInSittingPose()) {
-            event.getController().setAnimation(SIT);
-            event.getController().setAnimationSpeed(1.0D);
-            return PlayState.CONTINUE;
-        } else if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6) {
-            event.getController().setAnimation(WALK);
-            event.getController().setAnimationSpeed(this.movementAnimationSpeed(event, 2.0D));
-            return PlayState.CONTINUE;
-        }
-        event.getController().forceAnimationReset();
-
-        return PlayState.STOP;
-    }
-
     @Override
-    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new SmoothSpeedAnimationController<>(this, "controller", 0, this::predicate));
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.setupAnimationStates();
+        }
+    }
+
+    private void setupAnimationStates() {
+        boolean sitting = this.isInSittingPose();
+        this.sitAnimationState.animateWhen(sitting, this.tickCount);
+        this.walkAnimationState.animateWhen(!sitting && NaturalistAnimal.isVisiblyMoving(this), this.tickCount);
     }
     //endregion
 }

@@ -16,7 +16,7 @@ public abstract class ServerLevelMixin {
             cancellable = true)
     private void naturalist$resolveMobPart(int id, CallbackInfoReturnable<Entity> cir) {
         if (cir.getReturnValue() == null) {
-            MobPart part = ((MultipartLevel) (Object) this).naturalist$getMobPart(id);
+            MobPart part = ((MultipartLevel) this).naturalist$getMobPart(id);
             if (part != null) {
                 cir.setReturnValue(part);
             }

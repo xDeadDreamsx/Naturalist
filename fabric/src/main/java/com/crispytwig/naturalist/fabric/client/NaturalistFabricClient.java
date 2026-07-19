@@ -1,7 +1,6 @@
 package com.crispytwig.naturalist.fabric.client;
 
 import com.crispytwig.naturalist.NaturalistClient;
-import com.crispytwig.naturalist.client.gui.tooltip.MobTooltipRenderer;
 import com.crispytwig.naturalist.client.model.item.VariantAwareItemModel;
 import com.crispytwig.naturalist.client.model.item.VariantItemModels;
 import com.crispytwig.naturalist.client.particle.CaptureNetSwingParticle;
@@ -9,13 +8,12 @@ import com.crispytwig.naturalist.registry.NaturalistParticleTypes;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import com.crispytwig.naturalist.server.item.NaturalistBucketItem;
-import com.crispytwig.naturalist.server.item.tooltip.MobTooltipData;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager;
 import net.fabricmc.fabric.api.client.model.loading.v1.PreparableModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -29,6 +27,8 @@ import java.util.concurrent.CompletableFuture;
 public class NaturalistFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        NaturalistClient.registerLayerDefinitions((location, definition) ->
+                EntityModelLayerRegistry.registerModelLayer(location, definition::get));
         NaturalistClient.registerRenderers(EntityRendererRegistry::register);
         NaturalistClient.registerBlockEntityRenderers(BlockEntityRendererRegistry::register);
 
@@ -38,9 +38,6 @@ public class NaturalistFabricClient implements ClientModInitializer {
         registerVariantItemModels();
 
         ParticleFactoryRegistry.getInstance().register(NaturalistParticleTypes.CAPTURE_NET_SWING.get(), CaptureNetSwingParticle.Provider::new);
-
-        TooltipComponentCallback.EVENT.register(data ->
-                data instanceof MobTooltipData mobData ? new MobTooltipRenderer(mobData) : null);
 
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.ORANGE_STARFISH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.PURPLE_STARFISH.get(), RenderType.cutout());
@@ -60,7 +57,7 @@ public class NaturalistFabricClient implements ClientModInitializer {
                             NaturalistBucketItem item = variantItems.get(topLevelId.id());
                             if (item != null) {
                                 return new VariantAwareItemModel(model, item,
-                                        id -> ((FabricBakedModelManager) Minecraft.getInstance().getModelManager()).getModel(id));
+                                        id -> Minecraft.getInstance().getModelManager().getModel(id));
                             }
                         }
                         return model;

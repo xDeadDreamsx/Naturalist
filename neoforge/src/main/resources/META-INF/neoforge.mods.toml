@@ -29,13 +29,6 @@ config="naturalist.mixins.json"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="geckolib"
-    type="required"
-    versionRange="[4.7,)"
-    ordering="NONE"
-    side="BOTH"
-
-[[dependencies.${mod_id}]]
     modId="lambdynlights_api"
     type="optional"
     versionRange="[4.0.0,)"
