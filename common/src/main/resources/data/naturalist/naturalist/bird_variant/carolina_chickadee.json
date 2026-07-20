@@ -1,4 +1,5 @@
 {
   "texture": "naturalist:entity/bird/carolina_chickadee",
+  "biomes": "#naturalist:has_finch",
   "weight": 1
 }

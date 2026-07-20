@@ -30,6 +30,7 @@ public class MoleRenderer extends MobRenderer<Mole, HierarchicalModel<Mole>> {
             poseStack.scale(0.6F, 0.6F, 0.6F);
         }
         this.shadowRadius = entity.isRolledUp() ? 0.0F : entity.isBaby() ? 0.25F : 0.4F;
+        this.model.root().getChild("mound").visible = entity.isRolledUp();
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 }

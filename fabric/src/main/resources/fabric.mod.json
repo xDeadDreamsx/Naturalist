@@ -26,7 +26,8 @@
     ]
   },
   "mixins": [
-    "naturalist.mixins.json"
+    "naturalist.mixins.json",
+    "naturalist-fieldguide.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",

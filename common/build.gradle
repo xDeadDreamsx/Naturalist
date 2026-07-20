@@ -12,6 +12,8 @@ dependencies {
 
     modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${project.lambdynamiclights_version}")
 
+    modCompileOnly "maven.modrinth:field-guide:${project.field_guide_fabric_version}"
+
     compileOnly "org.jetbrains:annotations:24.1.0"
     compileOnly "org.jspecify:jspecify:1.0.0"
 }

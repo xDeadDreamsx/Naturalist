@@ -56,6 +56,10 @@ dependencies {
 
     modCompileOnly "maven.modrinth:emi:${project.emi_neoforge_version}"
     modLocalRuntime "maven.modrinth:emi:${project.emi_neoforge_version}"
+
+    modLocalRuntime "maven.modrinth:field-guide:${project.field_guide_neoforge_version}"
+
+    modLocalRuntime "maven.modrinth:immersive-overlays:${project.immersive_overlays_version}-neoforge"
 }
 
 processResources {

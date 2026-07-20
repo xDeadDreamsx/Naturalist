@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.client.model;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.client.NaturalistPortraitRenderState;
 import com.crispytwig.naturalist.client.model.animation.CrabAnimations;
 import com.crispytwig.naturalist.server.entity.mob.Crab;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -105,6 +106,9 @@ public class CrabModel extends NaturalistEntityModel<Crab> {
 	}
 
 	static void applyLook(Crab entity, float partialTick, float maxYaw, float maxPitch, ModelPart leftEye, ModelPart rightEye) {
+		if (NaturalistPortraitRenderState.ACTIVE) {
+			return;
+		}
 		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
 		double planeLen = Math.sqrt(toCamera.x * toCamera.x + toCamera.z * toCamera.z);
 		float forwardYaw = Mth.rotLerp(partialTick, entity.yBodyRotO, entity.yBodyRot) * Mth.DEG_TO_RAD + Mth.HALF_PI;

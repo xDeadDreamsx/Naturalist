@@ -14,6 +14,9 @@ description='''${mod_description}'''
 [[mixins]]
 config="naturalist.mixins.json"
 
+[[mixins]]
+config="naturalist-fieldguide.mixins.json"
+
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"

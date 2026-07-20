@@ -52,6 +52,10 @@ dependencies {
 
     modCompileOnly "maven.modrinth:emi:${project.emi_fabric_version}"
     modLocalRuntime "maven.modrinth:emi:${project.emi_fabric_version}"
+
+    modLocalRuntime "maven.modrinth:field-guide:${project.field_guide_fabric_version}"
+
+    modLocalRuntime "maven.modrinth:immersive-overlays:${project.immersive_overlays_version}-fabric"
 }
 
 processResources {

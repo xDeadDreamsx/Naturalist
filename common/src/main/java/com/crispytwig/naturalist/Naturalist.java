@@ -1,6 +1,8 @@
 package com.crispytwig.naturalist;
 
 import com.mojang.logging.LogUtils;
+import com.crispytwig.naturalist.compat.fieldguide.FieldGuidePlugin;
+import com.crispytwig.naturalist.platform.Services;
 import com.crispytwig.naturalist.registry.*;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.mob.*;
@@ -63,6 +65,10 @@ public final class Naturalist {
         touch(NaturalistRecipes.RECIPE_SERIALIZERS);
         touch(NaturalistCreativeTab.CREATIVE_MODE_TABS);
         NaturalistMobVariants.bootstrap();
+
+        if (Services.PLATFORM.isModLoaded("fieldguide")) {
+            FieldGuidePlugin.register();
+        }
     }
 
     private static void touch(Object registry) {
