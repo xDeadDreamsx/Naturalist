@@ -11,17 +11,37 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.util.Mth;
 import org.jspecify.annotations.NonNull;
 
 public class AlligatorModel extends NaturalistEntityModel<Alligator> {
+	private static final float HEAD_COUNTER = 0.5F;
+	private static final float LIMB_COUNTER = 0.35F;
+	private static final float LIMB_LIFT = 11.0F;
+
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			Naturalist.location("alligator"), "main");
 	private final ModelPart root;
+	private final ModelPart body;
 	private final ModelPart neck;
+	private final ModelPart tail;
+	private final ModelPart tail2;
+	private final ModelPart leftArm;
+	private final ModelPart rightArm;
+	private final ModelPart leftLeg;
+	private final ModelPart rightLeg;
 
 	public AlligatorModel(ModelPart root) {
 		this.root = root.getChild("root");
-		this.neck = this.root.getChild("body").getChild("neck");
+		this.body = this.root.getChild("body");
+		this.neck = this.body.getChild("neck");
+		this.tail = this.body.getChild("tail");
+		this.tail2 = this.tail.getChild("tail2");
+		ModelPart legs = this.root.getChild("legs");
+		this.leftArm = legs.getChild("left_arm");
+		this.rightArm = legs.getChild("right_arm");
+		this.leftLeg = legs.getChild("left_leg");
+		this.rightLeg = legs.getChild("right_leg");
 	}
 
 	@Override
@@ -83,8 +103,28 @@ public class AlligatorModel extends NaturalistEntityModel<Alligator> {
 		this.animateSmooth(entity.biteAnimationState, AlligatorAnimations.ALLIGATOR_BITE, ageInTicks, partialTick);
 
 		this.animateIdleSmooth(entity.idleAnimationState, AlligatorAnimations.ALLIGATOR_IDLE, ageInTicks, partialTick, limbSwingAmount, IDLE_FADE_SCALE, 0.6F);
-		this.animateSmooth(entity.swimAnimationState, AlligatorAnimations.ALLIGATOR_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, LARGE_SWIMMER_LIMB_SWING));
+		this.animateSmooth(entity.swimAnimationState, AlligatorAnimations.ALLIGATOR_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, LARGE_SWIMMER_LIMB_SWING, 0.1F));
 		this.animateSmooth(entity.walkAnimationState, AlligatorAnimations.ALLIGATOR_WALK, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 3.0F));
+
+		float pitch = entity.getXBodyRot(partialTick) * Mth.DEG_TO_RAD;
+		float roll = entity.getZBodyRot(partialTick) * Mth.DEG_TO_RAD;
+
+		this.rotatePart(this.body, pitch, 0.0F, roll);
+		this.rotatePart(this.neck, -pitch * HEAD_COUNTER, 0.0F, -roll * HEAD_COUNTER);
+		this.rotatePart(this.tail, entity.getSegmentPitchOffset(1, partialTick) * Mth.DEG_TO_RAD, entity.getSegmentYawOffset(1, partialTick) * Mth.DEG_TO_RAD, 0.0F);
+		this.rotatePart(this.tail2, entity.getSegmentPitchOffset(2, partialTick) * Mth.DEG_TO_RAD, entity.getSegmentYawOffset(2, partialTick) * Mth.DEG_TO_RAD, 0.0F);
+
+		float limbPitch = pitch * LIMB_COUNTER;
+		float limbRoll = -roll * LIMB_COUNTER;
+		float limbLift = Mth.sin(pitch) * LIMB_LIFT;
+		this.rotatePart(this.leftArm, limbPitch, 0.0F, limbRoll);
+		this.rotatePart(this.rightArm, limbPitch, 0.0F, limbRoll);
+		this.rotatePart(this.leftLeg, limbPitch, 0.0F, limbRoll);
+		this.rotatePart(this.rightLeg, limbPitch, 0.0F, limbRoll);
+		this.leftArm.y += limbLift;
+		this.rightArm.y += limbLift;
+		this.leftLeg.y -= limbLift;
+		this.rightLeg.y -= limbLift;
 
 		applyHeadLook(this.neck, netHeadYaw, headPitch);
 	}

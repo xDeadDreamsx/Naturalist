@@ -22,23 +22,32 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.phys.Vec3;
 import com.crispytwig.naturalist.server.block.AlligatorEggBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
+import com.crispytwig.naturalist.server.entity.util.BodyChain;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import org.jetbrains.annotations.NotNull;
@@ -54,8 +63,25 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.BOOLEAN);
 
+    private static final float MAX_SWIM_TILT = 35.0F;
+    private static final float ROLL_PER_YAW = 4.0F;
+    private static final float MAX_ROLL = 25.0F;
+
     int layEggCounter;
     private int huntingCooldown;
+
+    private float xBodyRot;
+    private float xBodyRotO;
+    private float zBodyRot;
+    private float zBodyRotO;
+    private final BodyChain chain = new BodyChain(1.0F,
+            new float[]{0.35F, 0.16F, 0.12F},
+            new float[]{0.24F, 0.12F, 0.1F},
+            0.0F, 0.0F, 1.0F);
+    private final BodyChain babyChain = new BodyChain(1.0F,
+            new float[]{0.55F, 0.28F, 0.22F},
+            new float[]{0.4F, 0.22F, 0.18F},
+            0.0F, 0.0F, 1.0F);
 
     public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
@@ -64,7 +90,15 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
 
     public Alligator(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
+        this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.4F, 1.0F, false);
+        this.lookControl = new SmoothSwimmingLookControl(this, 20);
         this.setPathfindingMalus(PathType.WATER, 0.0f);
+        this.setPathfindingMalus(PathType.WATER_BORDER, 0.0f);
+    }
+
+    @Override
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
+        return new AmphibiousPathNavigation(this, level);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
@@ -212,7 +246,6 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new EggLayingBreedGoal<>(this, 1.0));
         this.goalSelector.addGoal(1, new LayEggGoal<>(this, 1.0));
         this.goalSelector.addGoal(2, new CloseMeleeAttackGoal(this, 1.2D, true));
@@ -237,6 +270,25 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
             return !this.isBaby() && isEntityNearAlligatorEggs;
         }));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity) -> !this.isBaby() && this.canHunt() && entity.getType().is(NaturalistTags.EntityTypes.ALLIGATOR_HOSTILES)));
+    }
+
+    @Override
+    public void travel(@NotNull Vec3 travelVector) {
+        if (this.isEffectiveAi() && this.isInWater()) {
+            this.moveRelative(this.getSpeed(), travelVector);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.9));
+            if (this.getTarget() == null) {
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.0025, 0.0));
+            }
+        } else {
+            super.travel(travelVector);
+        }
+    }
+
+    @Override
+    public float getWalkTargetValue(@NotNull BlockPos pos, @NotNull LevelReader level) {
+        return this.isInWater() && level.getFluidState(pos).is(FluidTags.WATER) ? 10.0F : super.getWalkTargetValue(pos, level);
     }
 
     @Override
@@ -272,6 +324,7 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
         super.aiStep();
         if (!this.level().isClientSide) {
             this.tickHuntingCooldown();
+            NaturalistAnimal.leaveWater(this);
         }
 
         BlockPos pos = this.blockPosition();
@@ -309,17 +362,57 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
+            this.tickClientVisuals();
             this.setupAnimationStates();
         }
+    }
+
+    private void tickClientVisuals() {
+        this.xBodyRotO = this.xBodyRot;
+        this.zBodyRotO = this.zBodyRot;
+
+        Vec3 movement = new Vec3(this.getX() - this.xo, this.getY() - this.yo, this.getZ() - this.zo);
+        boolean grounded = this.onGround() || !this.isInWater();
+        float targetPitch = 0.0F;
+        if (!grounded && movement.horizontalDistanceSqr() > 1.0E-7D) {
+            targetPitch = Mth.clamp(-((float) (Mth.atan2(movement.y, movement.horizontalDistance()) * Mth.RAD_TO_DEG)), -MAX_SWIM_TILT, MAX_SWIM_TILT);
+        }
+        this.xBodyRot += (targetPitch - this.xBodyRot) * (grounded ? 0.25F : 0.07F);
+
+        float yawStep = Mth.degreesDifference(this.yBodyRotO, this.yBodyRot);
+        float targetRoll = this.isInWater() ? Mth.clamp(-yawStep * ROLL_PER_YAW, -MAX_ROLL, MAX_ROLL) : 0.0F;
+        this.zBodyRot += (targetRoll - this.zBodyRot) * 0.1F;
+
+        this.activeChain().tick(this.yBodyRot, this.xBodyRot, targetPitch);
+    }
+
+    private BodyChain activeChain() {
+        return this.isBaby() ? this.babyChain : this.chain;
+    }
+
+    public float getXBodyRot(float partialTick) {
+        return Mth.lerp(partialTick, this.xBodyRotO, this.xBodyRot);
+    }
+
+    public float getZBodyRot(float partialTick) {
+        return Mth.lerp(partialTick, this.zBodyRotO, this.zBodyRot);
+    }
+
+    public float getSegmentPitchOffset(int index, float partialTick) {
+        return this.activeChain().getSegmentPitchOffset(index, partialTick, this.getXBodyRot(partialTick));
+    }
+
+    public float getSegmentYawOffset(int index, float partialTick) {
+        return this.activeChain().getSegmentYawOffset(index, partialTick);
     }
 
     private void setupAnimationStates() {
         boolean moving = NaturalistAnimal.isVisiblyMoving(this);
         boolean inWater = this.isInWater();
         this.biteAnimationState.animateWhen(this.swinging, this.tickCount);
-        this.swimAnimationState.animateWhen(moving && inWater, this.tickCount);
+        this.swimAnimationState.animateWhen(inWater, this.tickCount);
         this.walkAnimationState.animateWhen(moving && !inWater, this.tickCount);
-        this.idleAnimationState.animateWhen(!moving, this.tickCount);
+        this.idleAnimationState.animateWhen(!moving && !inWater, this.tickCount);
     }
     //endregion
 }
