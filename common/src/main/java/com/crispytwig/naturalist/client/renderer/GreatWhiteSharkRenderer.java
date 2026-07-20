@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class GreatWhiteSharkRenderer extends MobRenderer<GreatWhiteShark, HierarchicalModel<GreatWhiteShark>> {
     public GreatWhiteSharkRenderer(EntityRendererProvider.Context context) {
-        super(context, new GreatWhiteSharkModel(context.bakeLayer(GreatWhiteSharkModel.LAYER_LOCATION)), 0.9F);
+        super(context, new GreatWhiteSharkModel(context.bakeLayer(GreatWhiteSharkModel.LAYER_LOCATION)), 0.0F);
     }
 
     @Override

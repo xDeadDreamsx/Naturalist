@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class CatfishRenderer extends MobRenderer<Catfish, HierarchicalModel<Catfish>> {
     public CatfishRenderer(EntityRendererProvider.Context context) {
-        super(context, new CatfishModel(context.bakeLayer(CatfishModel.LAYER_LOCATION)), 0.4F);
+        super(context, new CatfishModel(context.bakeLayer(CatfishModel.LAYER_LOCATION)), 0.0F);
     }
 
     @Override

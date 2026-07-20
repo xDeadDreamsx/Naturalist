@@ -8,6 +8,7 @@
     "ClientPacketListenerMixin",
     "EntityRenderDispatcherMixin",
     "HumanoidModelMixin",
+    "LevelRendererMixin",
     "LocalPlayerMixin",
     "ParrotModelMixin",
     "ParrotOnShoulderLayerMixin",

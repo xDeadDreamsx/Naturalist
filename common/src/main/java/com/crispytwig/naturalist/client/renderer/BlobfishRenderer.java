@@ -24,7 +24,7 @@ public class BlobfishRenderer extends MobRenderer<Blobfish, HierarchicalModel<Bl
     private final HierarchicalModel<Blobfish> grayModel;
 
     public BlobfishRenderer(EntityRendererProvider.Context context) {
-        super(context, new BlobfishPinkModel(context.bakeLayer(BlobfishPinkModel.LAYER_LOCATION)), 0.4F);
+        super(context, new BlobfishPinkModel(context.bakeLayer(BlobfishPinkModel.LAYER_LOCATION)), 0.0F);
         this.pinkModel = this.model;
         this.grayModel = new BlobfishGrayModel(context.bakeLayer(BlobfishGrayModel.LAYER_LOCATION));
     }

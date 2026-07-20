@@ -22,7 +22,7 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Ray>> RAY = register("ray", EntityType.Builder.of(Ray::new, MobCategory.WATER_AMBIENT).sized(1.0F, 0.4F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Blobfish>> BLOBFISH = register("blobfish", EntityType.Builder.of(Blobfish::new, MobCategory.WATER_AMBIENT).sized(0.8F, 0.4F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Piranha>> PIRANHA = register("piranha", EntityType.Builder.of(Piranha::new, MobCategory.WATER_AMBIENT).sized(0.5F, 0.6F).clientTrackingRange(8));
-    public static final DeferredHolder<EntityType<?>, EntityType<Bass>> BASS = register("bass", EntityType.Builder.of(Bass::new, MobCategory.WATER_AMBIENT).sized(0.7F, 0.4F).clientTrackingRange(4));
+    public static final DeferredHolder<EntityType<?>, EntityType<Bass>> BASS = register("bass", EntityType.Builder.of(Bass::new, MobCategory.WATER_AMBIENT).sized(0.3F, 0.4F).clientTrackingRange(4));
     public static final DeferredHolder<EntityType<?>, EntityType<Bear>> BEAR = register("bear", EntityType.Builder.of(Bear::new, MobCategory.CREATURE).sized(1.4F, 1.7F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<BlackBear>> BLACK_BEAR = register("black_bear", EntityType.Builder.of(BlackBear::new, MobCategory.CREATURE).sized(1.3F, 1.3F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Bird>> BIRD = register("bird", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));

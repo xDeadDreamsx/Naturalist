@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class JellyfishRenderer extends MobRenderer<Jellyfish, HierarchicalModel<Jellyfish>> {
     public JellyfishRenderer(EntityRendererProvider.Context context) {
-        super(context, new JellyfishModel(context.bakeLayer(JellyfishModel.LAYER_LOCATION)), 0.5F);
+        super(context, new JellyfishModel(context.bakeLayer(JellyfishModel.LAYER_LOCATION)), 0.0F);
     }
 
     @Override

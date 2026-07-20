@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class AnglerfishRenderer extends MobRenderer<Anglerfish, HierarchicalModel<Anglerfish>> {
     public AnglerfishRenderer(EntityRendererProvider.Context context) {
-        super(context, new AnglerfishModel(context.bakeLayer(AnglerfishModel.LAYER_LOCATION)), 0.4F);
+        super(context, new AnglerfishModel(context.bakeLayer(AnglerfishModel.LAYER_LOCATION)), 0.0F);
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class ClamRenderer extends MobRenderer<Clam, HierarchicalModel<Clam>> {
     public ClamRenderer(EntityRendererProvider.Context context) {
-        super(context, new ClamModel(context.bakeLayer(ClamModel.LAYER_LOCATION)), 0.6F);
+        super(context, new ClamModel(context.bakeLayer(ClamModel.LAYER_LOCATION)), 0.0F);
         this.addLayer(new ClamItemLayer(this, context.getItemInHandRenderer()));
     }
 

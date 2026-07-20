@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class RayRenderer extends MobRenderer<Ray, HierarchicalModel<Ray>> {
     public RayRenderer(EntityRendererProvider.Context context) {
-        super(context, new RayModel(context.bakeLayer(RayModel.LAYER_LOCATION)), 0.5F);
+        super(context, new RayModel(context.bakeLayer(RayModel.LAYER_LOCATION)), 0.0F);
     }
 
     @Override

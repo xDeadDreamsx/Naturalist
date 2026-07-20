@@ -15,13 +15,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.NonNull;
 
-public class BassModel extends NaturalistEntityModel<Bass> {
+public class MediumBassModel extends NaturalistEntityModel<Bass> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			Naturalist.location("bass"), "main");
+			Naturalist.location("bass_medium"), "main");
 	private final ModelPart root;
 	private final ModelPart body;
 
-	public BassModel(ModelPart root) {
+	public MediumBassModel(ModelPart root) {
 		super(RenderType::entityCutout);
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
@@ -36,20 +36,20 @@ public class BassModel extends NaturalistEntityModel<Bass> {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 22.0F, -1.0F));
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 21.0F, -1.0F));
 
-		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-0.5F, -1.0F, -2.0F, 1.0F, 3.0F, 5.0F, new CubeDeformation(0.0F))
-		.texOffs(6, 8).addBox(-0.5F, -1.0F, -3.0F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
-		.texOffs(8, -4).addBox(0.0F, -2.0F, -1.0F, 0.0F, 1.0F, 4.0F, new CubeDeformation(0.0F))
-		.texOffs(8, -3).addBox(0.0F, 2.0F, -1.0F, 0.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-1.0F, -2.0F, -2.0F, 2.0F, 4.0F, 6.0F, new CubeDeformation(0.0F))
+		.texOffs(17, 6).addBox(-1.0F, -2.0F, -3.0F, 2.0F, 3.0F, 1.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 7).addBox(0.0F, -3.0F, 0.0F, 0.0F, 1.0F, 4.0F, new CubeDeformation(0.0F))
+		.texOffs(8, 7).addBox(0.0F, 2.0F, 0.0F, 0.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(0, 8).addBox(0.0F, -1.5F, 0.0F, 0.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.5F, 3.0F));
+		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(11, -1).addBox(0.0F, -1.5F, 0.0F, 0.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 4.0F));
 
-		PartDefinition leftFin = body.addOrReplaceChild("leftFin", CubeListBuilder.create().texOffs(8, 3).addBox(0.0F, 0.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.5F, 1.0F, 0.0F, 0.3655F, -0.7119F, -0.5299F));
+		PartDefinition leftFin = body.addOrReplaceChild("leftFin", CubeListBuilder.create().texOffs(1, 3).addBox(0.0F, 0.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(1.0F, 1.0F, 0.0F, 0.3655F, -0.7119F, -0.5299F));
 
-		PartDefinition rightFin = body.addOrReplaceChild("rightFin", CubeListBuilder.create().texOffs(8, 3).mirror().addBox(-2.0F, 0.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-0.5F, 1.0F, 0.0F, 0.3655F, 0.7119F, 0.5299F));
+		PartDefinition rightFin = body.addOrReplaceChild("rightFin", CubeListBuilder.create().texOffs(1, 3).mirror().addBox(-2.0F, 0.0F, 0.0F, 2.0F, 2.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-1.0F, 1.0F, 0.0F, 0.3655F, 0.7119F, 0.5299F));
 
-		return LayerDefinition.create(meshdefinition, 16, 16);
+		return LayerDefinition.create(meshdefinition, 32, 32);
 	}
 
 	@Override

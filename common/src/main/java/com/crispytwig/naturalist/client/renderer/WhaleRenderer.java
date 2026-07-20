@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class WhaleRenderer extends NaturalistMobRenderer<Whale> {
     public WhaleRenderer(EntityRendererProvider.Context context) {
-        super(context, new WhaleModel(context.bakeLayer(WhaleModel.LAYER_LOCATION)), new WhaleBabyModel(context.bakeLayer(WhaleBabyModel.LAYER_LOCATION)), 1.5F, 1.5F);
+        super(context, new WhaleModel(context.bakeLayer(WhaleModel.LAYER_LOCATION)), new WhaleBabyModel(context.bakeLayer(WhaleBabyModel.LAYER_LOCATION)), 0.0F, 0.0F);
     }
 
     @Override

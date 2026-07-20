@@ -6,7 +6,6 @@ import com.crispytwig.naturalist.server.entity.mob.GiantIsopod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class GiantIsopodRenderer extends MobRenderer<GiantIsopod, HierarchicalModel<GiantIsopod>> {
     public GiantIsopodRenderer(EntityRendererProvider.Context context) {
-        super(context, new GiantIsopodModel(context.bakeLayer(GiantIsopodModel.LAYER_LOCATION)), 0.4F);
+        super(context, new GiantIsopodModel(context.bakeLayer(GiantIsopodModel.LAYER_LOCATION)), 0.0F);
     }
 
     @Override
@@ -29,11 +28,5 @@ public class GiantIsopodRenderer extends MobRenderer<GiantIsopod, HierarchicalMo
         if (entity.isBaby()) {
             poseStack.scale(0.5F, 0.5F, 0.5F);
         }
-    }
-
-    @Override
-    public void render(@NotNull GiantIsopod entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        this.shadowRadius = entity.isBaby() ? 0.2F : 0.4F;
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 }

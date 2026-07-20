@@ -48,6 +48,8 @@ public final class NaturalistClient {
         r.register(AnglerfishModel.LAYER_LOCATION, AnglerfishModel::createBodyLayer);
         r.register(AntModel.LAYER_LOCATION, AntModel::createBodyLayer);
         r.register(BassModel.LAYER_LOCATION, BassModel::createBodyLayer);
+        r.register(MediumBassModel.LAYER_LOCATION, MediumBassModel::createBodyLayer);
+        r.register(LargeBassModel.LAYER_LOCATION, LargeBassModel::createBodyLayer);
         r.register(BearBabyModel.LAYER_LOCATION, BearBabyModel::createBodyLayer);
         r.register(BearModel.LAYER_LOCATION, BearModel::createBodyLayer);
         r.register(BirdBabyModel.LAYER_LOCATION, BirdBabyModel::createBodyLayer);

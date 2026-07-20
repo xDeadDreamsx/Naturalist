@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class PiranhaRenderer extends MobRenderer<Piranha, HierarchicalModel<Piranha>> {
     public PiranhaRenderer(EntityRendererProvider.Context context) {
-        super(context, new PiranhaModel(context.bakeLayer(PiranhaModel.LAYER_LOCATION)), 0.3F);
+        super(context, new PiranhaModel(context.bakeLayer(PiranhaModel.LAYER_LOCATION)), 0.0F);
     }
 
     @Override

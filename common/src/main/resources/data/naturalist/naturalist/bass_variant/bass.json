@@ -1,3 +1,4 @@
 {
-  "texture": "naturalist:entity/bass"
+  "texture": "naturalist:entity/bass",
+  "weight": 10
 }

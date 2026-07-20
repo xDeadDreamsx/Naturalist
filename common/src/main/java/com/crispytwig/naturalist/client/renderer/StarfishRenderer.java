@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class StarfishRenderer extends MobRenderer<Starfish, HierarchicalModel<Starfish>> {
     public StarfishRenderer(EntityRendererProvider.Context context) {
-        super(context, new StarfishModel(context.bakeLayer(StarfishModel.LAYER_LOCATION)), 0.3F);
+        super(context, new StarfishModel(context.bakeLayer(StarfishModel.LAYER_LOCATION)), 0.0F);
     }
 
     @Override
