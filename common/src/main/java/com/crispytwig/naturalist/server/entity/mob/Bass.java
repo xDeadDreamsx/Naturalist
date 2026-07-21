@@ -4,6 +4,7 @@ import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.util.ItemHelper;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -20,8 +21,8 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.animal.AbstractSchoolingFish;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
@@ -192,6 +194,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
         super.registerGoals();
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.0D, 1.5D));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Axolotl.class, 6.0F, 1.0D, 1.5D));
+        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Catfish.class, 8.0F, 1.0D, 1.5D));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Bass.class, 8.0F, 1.0D, 1.5D, (living) -> living instanceof Bass other && other.getSizeTier() > this.getSizeTier()));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.4D, true));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Bass.class, 10, true, false, (living) -> living instanceof Bass prey && Bass.this.canEatTarget(prey)) {
@@ -221,10 +224,11 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
     public boolean doHurtTarget(@NotNull Entity target) {
         if (!this.level().isClientSide && target instanceof Bass prey && this.canEatTarget(prey)) {
             boolean wasMediumEatingSmall = this.getSizeTier() == 1 && prey.getSizeTier() == 0;
-            this.eatPrey(prey);
+            boolean grew = wasMediumEatingSmall && this.getRandom().nextFloat() < GROW_CHANCE;
+            devour(this, prey, !grew);
             this.eatCooldown = EAT_COOLDOWN;
             this.setTarget(null);
-            if (wasMediumEatingSmall && this.getRandom().nextFloat() < GROW_CHANCE) {
+            if (grew) {
                 this.growIntoLarge();
             }
             return true;
@@ -232,19 +236,17 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
         return super.doHurtTarget(target);
     }
 
-    private void eatPrey(Bass prey) {
-        if (this.level() instanceof ServerLevel serverLevel) {
-            double x = prey.getX();
-            double y = prey.getY(0.5D);
-            double z = prey.getZ();
+    public static void devour(Mob predator, Bass prey, boolean dropBoneMeal) {
+        if (predator.level() instanceof ServerLevel serverLevel) {
             ItemParticleOption bassParticle = new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(NaturalistRegistry.BASS.get()));
             for (int i = 0; i < 16; i++) {
                 serverLevel.sendParticles(bassParticle, prey.getRandomX(1.0D), prey.getRandomY(), prey.getRandomZ(1.0D), 1, 0.0D, 0.0D, 0.0D, 0.05D);
             }
-//            serverLevel.sendParticles(ParticleTypes.POOF, x, y, z, 15, 0.2D, 0.2D, 0.2D, 0.02D);
-//            ExperienceOrb.award(serverLevel, prey.position(), prey.getBaseExperienceReward());
+            if (dropBoneMeal) {
+                ItemHelper.spawnItemOnEntity(prey, new ItemStack(Items.BONE_MEAL));
+            }
         }
-        this.playSound(SoundEvents.PARROT_EAT, 0.7F, 1.2F + this.getRandom().nextFloat() * 0.1F);
+        predator.playSound(SoundEvents.PARROT_EAT, 0.7F, 1.2F + predator.getRandom().nextFloat() * 0.1F);
         prey.discard();
     }
 
