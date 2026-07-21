@@ -6,8 +6,8 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
 public class CatfishAnimations {
-
-	public static final AnimationDefinition CATFISH_SWIM = AnimationDefinition.Builder.withLength(1.0F).looping()
+	public static final AnimationDefinition CATFISH_SWIM = AnimationDefinition.Builder.withLength(0.5F).looping()
+		.addAnimation("rightFrontFin", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
 			new Keyframe(0.0417F, KeyframeAnimations.degreeVec(0.0F, -6.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
 			new Keyframe(0.0833F, KeyframeAnimations.degreeVec(0.0F, -10.39F, 0.0F), AnimationChannel.Interpolations.LINEAR),

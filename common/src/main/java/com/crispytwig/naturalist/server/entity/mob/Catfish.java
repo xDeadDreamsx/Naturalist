@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -39,6 +38,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
@@ -56,13 +56,7 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
     public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState biteAnimationState = SmoothAnimationState.instant();
 
-    public float prevTilt;
-    public float tilt;
-
-    public float prevSwimPitch;
-    public float swimPitch;
-
-    private static final double PITCH_MIN = 0.01D;
+    public final FishSwimTilt swimTilt = new FishSwimTilt();
 
     public Catfish(EntityType<? extends AbstractFish> entityType, Level level) {
         super(entityType, level);
@@ -221,8 +215,7 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
         super.tick();
         if (this.level().isClientSide) {
             this.setupAnimationStates();
-            this.updateTilt();
-            this.updateSwimPitch();
+            this.swimTilt.tick(this);
         }
     }
 
@@ -231,44 +224,6 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
         this.flopAnimationState.animateWhen(!inWater, this.tickCount);
         this.swimAnimationState.animateWhen(inWater, this.tickCount);
         this.biteAnimationState.animateWhen(this.swinging, this.tickCount);
-    }
-
-    private void updateTilt() {
-        this.prevTilt = this.tilt;
-        if (this.isInWater()) {
-            float turn = Mth.degreesDifference(this.getYRot(), this.yRotO);
-            if (Math.abs(turn) > 1.0F) {
-                if (Math.abs(this.tilt) < 25.0F) {
-                    this.tilt -= Math.signum(turn);
-                }
-            } else if (this.tilt != 0.0F) {
-                float sign = Math.signum(this.tilt);
-                this.tilt -= sign * 0.85F;
-                if (this.tilt * sign < 0.0F) {
-                    this.tilt = 0.0F;
-                }
-            }
-        } else {
-            this.tilt = 0.0F;
-        }
-    }
-
-    private void updateSwimPitch() {
-        this.prevSwimPitch = this.swimPitch;
-        float target = 0.0F;
-        if (this.isInWater()) {
-            double dx = this.getX() - this.xo;
-            double dy = this.getY() - this.yo;
-            double dz = this.getZ() - this.zo;
-            double horizontal = Math.sqrt(dx * dx + dz * dz);
-            double speed = Math.sqrt(horizontal * horizontal + dy * dy);
-            float speedFactor = (float) Mth.clamp((speed - PITCH_MIN) / (0.05D - PITCH_MIN), 0.0D, 1.0D);
-            if (speedFactor > 0.0F) {
-                float angle = (float) (-(Mth.atan2(dy, horizontal) * (180.0D / Math.PI)));
-                target = Mth.clamp(angle, -55.0F, 55.0F) * speedFactor;
-            }
-        }
-        this.swimPitch += (target - this.swimPitch) * 0.2F;
     }
     //endregion
 }

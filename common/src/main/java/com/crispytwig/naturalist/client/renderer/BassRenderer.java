@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -50,6 +49,6 @@ public class BassRenderer extends MobRenderer<Bass, HierarchicalModel<Bass>> {
     @Override
     protected void setupRotations(@NotNull Bass entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTick, float nativeScale) {
         super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, nativeScale);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, -entity.prevTilt, -entity.tilt)));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-entity.swimTilt.getTilt(partialTick)));
     }
 }

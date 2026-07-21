@@ -79,12 +79,11 @@ public class RayModel extends NaturalistEntityModel<Ray> {
 		this.animateSmooth(entity.idleAnimationState, RayAnimations.RAY_IDLE, ageInTicks, partialTick);
 		this.animateSmooth(entity.swimAnimationState, RayAnimations.RAY_SWIM_IDLE_EVENT, ageInTicks, partialTick);
 
-		float bodyRot = entity.getXBodyRot(partialTick);
+		float bodyRot = entity.swimTilt.getSwimPitch(partialTick);
 		float finCounter = (bodyRot - entity.getFinLag(partialTick)) * Mth.DEG_TO_RAD * COUNTER_GAIN;
 		float tailCounter = (bodyRot - entity.getTailLag(partialTick)) * Mth.DEG_TO_RAD * COUNTER_GAIN;
 
 		this.body.xRot += bodyRot * Mth.DEG_TO_RAD;
-		this.body.zRot += entity.getZBodyRot(partialTick) * Mth.DEG_TO_RAD;
 		this.leftFin.xRot -= finCounter;
 		this.rightFin.xRot -= finCounter;
 		this.tail.xRot -= tailCounter;

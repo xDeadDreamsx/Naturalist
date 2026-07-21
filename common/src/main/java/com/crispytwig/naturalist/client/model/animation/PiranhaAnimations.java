@@ -101,61 +101,6 @@ public class PiranhaAnimations {
 		))
 		.build();
 
-	public static final AnimationDefinition PIRANHA_SWIM_FAST = AnimationDefinition.Builder.withLength(0.5F).looping()
-		.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-			new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 15.0F, -3.24F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.0417F, KeyframeAnimations.degreeVec(0.0F, 12.99F, -1.63F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.0833F, KeyframeAnimations.degreeVec(0.0F, 7.5F, 0.42F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.1667F, KeyframeAnimations.degreeVec(0.0F, -7.5F, 3.65F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.2083F, KeyframeAnimations.degreeVec(0.0F, -12.99F, 3.98F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.25F, KeyframeAnimations.degreeVec(0.0F, -15.0F, 3.24F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.2917F, KeyframeAnimations.degreeVec(0.0F, -12.99F, 1.63F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.3333F, KeyframeAnimations.degreeVec(0.0F, -7.5F, -0.42F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.4167F, KeyframeAnimations.degreeVec(0.0F, 7.5F, -3.65F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.4583F, KeyframeAnimations.degreeVec(0.0F, 12.99F, -3.98F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.5F, KeyframeAnimations.degreeVec(0.0F, 15.0F, -3.24F), AnimationChannel.Interpolations.LINEAR)
-		))
-		.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.POSITION,
-			new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.125F, KeyframeAnimations.posVec(-0.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.2083F, KeyframeAnimations.posVec(-0.25F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.3333F, KeyframeAnimations.posVec(0.43F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.4167F, KeyframeAnimations.posVec(0.43F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.5F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
-		))
-		.addAnimation("jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-			new Keyframe(0.0F, KeyframeAnimations.degreeVec(19.64F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.0833F, KeyframeAnimations.degreeVec(4.96F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.125F, KeyframeAnimations.degreeVec(0.73F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.1667F, KeyframeAnimations.degreeVec(0.33F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.2083F, KeyframeAnimations.degreeVec(3.85F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.25F, KeyframeAnimations.degreeVec(10.36F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.3333F, KeyframeAnimations.degreeVec(25.04F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.375F, KeyframeAnimations.degreeVec(29.27F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.4167F, KeyframeAnimations.degreeVec(29.67F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.4583F, KeyframeAnimations.degreeVec(26.15F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.5F, KeyframeAnimations.degreeVec(19.64F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
-		))
-		.addAnimation("tail", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-			new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 26.45F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.0417F, KeyframeAnimations.degreeVec(0.0F, 41.11F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.0833F, KeyframeAnimations.degreeVec(0.0F, 44.75F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.125F, KeyframeAnimations.degreeVec(0.0F, 36.41F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.1667F, KeyframeAnimations.degreeVec(0.0F, 18.3F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.2083F, KeyframeAnimations.degreeVec(0.0F, -4.7F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.25F, KeyframeAnimations.degreeVec(0.0F, -26.45F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.2917F, KeyframeAnimations.degreeVec(0.0F, -41.11F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.3333F, KeyframeAnimations.degreeVec(0.0F, -44.75F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.375F, KeyframeAnimations.degreeVec(0.0F, -36.41F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.4167F, KeyframeAnimations.degreeVec(0.0F, -18.3F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.4583F, KeyframeAnimations.degreeVec(0.0F, 4.7F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.5F, KeyframeAnimations.degreeVec(0.0F, 26.45F, 0.0F), AnimationChannel.Interpolations.LINEAR)
-		))
-		.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.SCALE,
-			new Keyframe(0.0F, KeyframeAnimations.scaleVec(0.9F, 0.8F, 1.3F), AnimationChannel.Interpolations.LINEAR)
-		))
-		.build();
-
 	public static final AnimationDefinition PIRANHA_FLOP = AnimationDefinition.Builder.withLength(0.5F).looping()
 		.addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
 			new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -90.0F), AnimationChannel.Interpolations.LINEAR),

@@ -68,6 +68,6 @@ public class AnglerfishModel extends NaturalistEntityModel<Anglerfish> {
 		this.animateSmooth(entity.swimAnimationState, AnglerfishAnimations.ANGLERFISH_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, SMALL_SWIMMER_LIMB_SWING));
 		this.animateSmooth(entity.swimFastAnimationState, AnglerfishAnimations.ANGLERFISH_SWIM_FAST, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, LARGE_SWIMMER_LIMB_SWING));
 
-		this.body.xRot += entity.getXBodyRot(partialTick) * Mth.DEG_TO_RAD;
+		this.body.xRot += entity.swimTilt.getSwimPitch(partialTick) * Mth.DEG_TO_RAD;
 	}
 }

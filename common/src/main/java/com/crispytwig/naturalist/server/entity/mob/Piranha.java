@@ -11,7 +11,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -35,31 +34,28 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
 public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Piranha.class, EntityDataSerializers.STRING);
-    private static final EntityDataAccessor<Boolean> DATA_HAS_TARGET = SynchedEntityData.defineId(Piranha.class, EntityDataSerializers.BOOLEAN);
-
-    public float xBodyRot;
-    public float xBodyRotO;
 
     @Nullable
     private AbstractSchoolingFish schoolLeader;
 
     public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
-    public final SmoothAnimationState swimFastAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
+
+    public final FishSwimTilt swimTilt = new FishSwimTilt();
 
     public Piranha(EntityType<? extends AbstractSchoolingFish> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.1F, 0.5F, false);
-        this.lookControl = new SmoothSwimmingLookControl(this, 10);
+        this.moveControl = new SmoothSwimmingMoveControl(this, 1000, 5, 0.02F, 0.1F, false);
+        this.lookControl = new SmoothSwimmingLookControl(this, 5);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
@@ -70,11 +66,6 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
-        builder.define(DATA_HAS_TARGET, false);
-    }
-
-    public boolean hasSwimTarget() {
-        return this.entityData.get(DATA_HAS_TARGET);
     }
 
     @Override
@@ -188,17 +179,7 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
                     this.setTarget(leaderTarget);
                 }
             }
-            this.entityData.set(DATA_HAS_TARGET, this.getTarget() != null);
         }
-
-        this.xBodyRotO = this.xBodyRot;
-        Vec3 velocity = this.getDeltaMovement();
-        float horizontal = (float) velocity.horizontalDistance();
-        float targetPitch = 0.0F;
-        if (this.isInWater() && horizontal > 0.01F) {
-            targetPitch = -((float) (Mth.atan2(velocity.y, horizontal) * (180.0 / Math.PI)));
-        }
-        this.xBodyRot += (targetPitch - this.xBodyRot) * 0.2F;
     }
 
     @Override
@@ -228,19 +209,14 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
         super.tick();
         if (this.level().isClientSide) {
             this.setupAnimationStates();
+            this.swimTilt.tick(this);
         }
     }
 
     private void setupAnimationStates() {
         boolean inWater = this.isInWater();
-        boolean hasTarget = this.hasSwimTarget();
         this.flopAnimationState.animateWhen(!inWater, this.tickCount);
-        this.swimFastAnimationState.animateWhen(inWater && hasTarget, this.tickCount);
-        this.swimAnimationState.animateWhen(inWater && !hasTarget, this.tickCount);
-    }
-
-    public float getXBodyRot(float partialTick) {
-        return Mth.lerp(partialTick, this.xBodyRotO, this.xBodyRot);
+        this.swimAnimationState.animateWhen(inWater, this.tickCount);
     }
     //endregion
 }

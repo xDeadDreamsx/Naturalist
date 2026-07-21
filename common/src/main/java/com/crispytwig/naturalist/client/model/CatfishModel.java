@@ -91,8 +91,7 @@ public class CatfishModel extends NaturalistEntityModel<Catfish> {
 		this.animateSmooth(entity.swimAnimationState, CatfishAnimations.CATFISH_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, SMALL_SWIMMER_LIMB_SWING));
 		this.animateSmooth(entity.biteAnimationState, CatfishAnimations.CATFISH_BITE, ageInTicks, partialTick);
 
-		float pitch = Mth.lerp(partialTick, entity.prevSwimPitch, entity.swimPitch);
-		this.body.xRot += pitch * Mth.DEG_TO_RAD;
+		this.body.xRot += entity.swimTilt.getSwimPitch(partialTick) * Mth.DEG_TO_RAD;
 	}
 
 	private static boolean showsHat(String name) {

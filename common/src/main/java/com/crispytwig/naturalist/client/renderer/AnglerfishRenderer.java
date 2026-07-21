@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.crispytwig.naturalist.client.model.AnglerfishModel;
 import com.crispytwig.naturalist.server.entity.mob.Anglerfish;
 import net.fabricmc.api.EnvType;
@@ -31,5 +32,11 @@ public class AnglerfishRenderer extends MobRenderer<Anglerfish, HierarchicalMode
             packedLight = LightTexture.FULL_BRIGHT;
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+    }
+
+    @Override
+    protected void setupRotations(@NotNull Anglerfish entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTick, float nativeScale) {
+        super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, nativeScale);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-entity.swimTilt.getTilt(partialTick)));
     }
 }

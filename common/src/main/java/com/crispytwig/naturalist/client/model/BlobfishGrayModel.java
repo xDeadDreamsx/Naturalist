@@ -54,7 +54,7 @@ public class BlobfishGrayModel extends NaturalistEntityModel<Blobfish> {
 		this.animateSmooth(entity.idleAnimationState, BlobfishAnimations.BLOBFISH_PINK_IDLE, ageInTicks, partialTick);
 		this.animateSmooth(entity.swimAnimationState, BlobfishAnimations.BLOBFISH_GRAY_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 2.0F, SMALL_SWIMMER_LIMB_SWING));
 
-		this.root.xRot += entity.getXBodyRot(partialTick) * Mth.DEG_TO_RAD;
+		this.root.xRot += entity.swimTilt.getSwimPitch(partialTick) * Mth.DEG_TO_RAD;
 		if (entity.isConverting()) {
 			this.root.yRot -= Mth.cos((entity.tickCount + partialTick) * 3.0F) * 0.1F;
 		}

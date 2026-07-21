@@ -16,7 +16,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -38,11 +37,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
 import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
@@ -56,9 +55,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
 
     private int conversionTime;
 
-    public float xBodyRot;
-    public float xBodyRotO;
-    private Vec3 lastMoveDir = Vec3.ZERO;
+    public final FishSwimTilt swimTilt = new FishSwimTilt();
 
     public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
@@ -72,8 +69,8 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
 
     public Blobfish(EntityType<? extends AbstractFish> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.1F, 0.5F, false);
-        this.lookControl = new SmoothSwimmingLookControl(this, 10);
+        this.moveControl = new SmoothSwimmingMoveControl(this, 1000, 5, 0.02F, 0.1F, false);
+        this.lookControl = new SmoothSwimmingLookControl(this, 5);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
@@ -187,16 +184,6 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
         if (!this.level().isClientSide) {
             this.tickConversion();
         }
-        this.xBodyRotO = this.xBodyRot;
-        float target = 0.0F;
-        if (this.isInWater()) {
-            Vec3 movement = this.getDeltaMovement();
-            if (movement.lengthSqr() > 1.0E-6) {
-                this.lastMoveDir = movement;
-            }
-            target = -((float) Mth.atan2(this.lastMoveDir.y, this.lastMoveDir.horizontalDistance()) * (180.0F / (float) Math.PI));
-        }
-        this.xBodyRot += (target - this.xBodyRot) * 0.1F;
     }
 
     private void tickConversion() {
@@ -243,6 +230,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
         super.tick();
         if (this.level().isClientSide) {
             this.setupAnimationStates();
+            this.swimTilt.tick(this);
             this.animationSounds.tick(this);
         }
     }
@@ -251,10 +239,6 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
         boolean idle = this.onGround() && !NaturalistAnimal.isVisiblyMoving(this);
         this.idleAnimationState.animateWhen(idle, this.tickCount);
         this.swimAnimationState.animateWhen(!idle, this.tickCount);
-    }
-
-    public float getXBodyRot(float partialTick) {
-        return Mth.lerp(partialTick, this.xBodyRotO, this.xBodyRot);
     }
     //endregion
 }

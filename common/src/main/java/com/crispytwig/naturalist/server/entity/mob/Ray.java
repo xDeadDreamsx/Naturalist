@@ -39,11 +39,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
 import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
@@ -68,25 +68,20 @@ public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
     private final AnimationSoundPlayer animationSounds = new AnimationSoundPlayer()
             .add(this.swimAnimationState, SWIM_SOUNDS);
 
-    private static final float MAX_TILT = 22.0F;
-    private static final float MAX_ROLL = 25.0F;
-    private static final float ROLL_PER_YAW = 2.0F;
+    private static final float FIN_LAG = 0.15F;
+    private static final float TAIL_LAG = 0.09F;
 
-    public float xBodyRot;
-    public float xBodyRotO;
+    public final FishSwimTilt swimTilt = new FishSwimTilt();
+
     public float finLag;
     public float finLagO;
     public float tailLag;
     public float tailLagO;
-    public float zBodyRot;
-    public float zBodyRotO;
-    private float lastYRot;
-    private Vec3 lastMoveDir = Vec3.ZERO;
 
     public Ray(EntityType<? extends AbstractFish> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.1F, 0.5F, false);
-        this.lookControl = new SmoothSwimmingLookControl(this, 10);
+        this.moveControl = new SmoothSwimmingMoveControl(this, 1000, 5, 0.02F, 0.1F, false);
+        this.lookControl = new SmoothSwimmingLookControl(this, 5);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
@@ -220,40 +215,6 @@ public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
         return result;
     }
 
-    @Override
-    public void aiStep() {
-        super.aiStep();
-        this.xBodyRotO = this.xBodyRot;
-        this.finLagO = this.finLag;
-        this.tailLagO = this.tailLag;
-        float target = 0.0F;
-        if (this.isInWater()) {
-            Vec3 movement = this.getDeltaMovement();
-            if (movement.lengthSqr() > 1.0E-6) {
-                this.lastMoveDir = movement;
-            }
-            target = -((float) Mth.atan2(this.lastMoveDir.y, this.lastMoveDir.horizontalDistance()) * (180.0F / (float) Math.PI));
-            target = Mth.clamp(target, -MAX_TILT, MAX_TILT);
-        }
-        this.xBodyRot += (target - this.xBodyRot) * 0.2F;
-        this.finLag += (this.xBodyRot - this.finLag) * 0.15F;
-        this.tailLag += (this.xBodyRot - this.tailLag) * 0.09F;
-
-        this.zBodyRotO = this.zBodyRot;
-        float yawDelta = Mth.wrapDegrees(this.getYRot() - this.lastYRot);
-        this.lastYRot = this.getYRot();
-        float rollTarget = this.isInWater() ? Mth.clamp(-yawDelta * ROLL_PER_YAW, -MAX_ROLL, MAX_ROLL) : 0.0F;
-        this.zBodyRot += (rollTarget - this.zBodyRot) * 0.2F;
-    }
-
-    public float getXBodyRot(float partialTick) {
-        return Mth.lerp(partialTick, this.xBodyRotO, this.xBodyRot);
-    }
-
-    public float getZBodyRot(float partialTick) {
-        return Mth.lerp(partialTick, this.zBodyRotO, this.zBodyRot);
-    }
-
     public float getFinLag(float partialTick) {
         return Mth.lerp(partialTick, this.finLagO, this.finLag);
     }
@@ -269,6 +230,11 @@ public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
         super.tick();
         if (this.level().isClientSide) {
             this.setupAnimationStates();
+            this.swimTilt.tick(this);
+            this.finLagO = this.finLag;
+            this.tailLagO = this.tailLag;
+            this.finLag += (this.swimTilt.swimPitch - this.finLag) * FIN_LAG;
+            this.tailLag += (this.swimTilt.swimPitch - this.tailLag) * TAIL_LAG;
             this.animationSounds.tick(this);
         }
     }

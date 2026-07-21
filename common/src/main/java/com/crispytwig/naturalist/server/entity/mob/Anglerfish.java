@@ -19,7 +19,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -46,12 +45,12 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
 import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
 import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
+import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 @SuppressWarnings("unused")
@@ -64,9 +63,7 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
 
     private int huntingCooldown;
 
-    public float xBodyRot;
-    public float xBodyRotO;
-    private Vec3 lastMoveDir = Vec3.ZERO;
+    public final FishSwimTilt swimTilt = new FishSwimTilt();
 
     public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState swimFastAnimationState = new SmoothAnimationState();
@@ -87,8 +84,8 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
 
     public Anglerfish(EntityType<? extends AbstractFish> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.1F, 0.5F, false);
-        this.lookControl = new SmoothSwimmingLookControl(this, 10);
+        this.moveControl = new SmoothSwimmingMoveControl(this, 1000, 5, 0.02F, 0.1F, false);
+        this.lookControl = new SmoothSwimmingLookControl(this, 5);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
@@ -277,21 +274,6 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
             this.entityData.set(DATA_HAS_TARGET, this.getTarget() != null);
             this.tickHuntingCooldown();
         }
-
-        this.xBodyRotO = this.xBodyRot;
-        float target = 0.0F;
-        if (this.isInWater()) {
-            Vec3 movement = this.getDeltaMovement();
-            if (movement.lengthSqr() > 1.0E-6) {
-                this.lastMoveDir = movement;
-            }
-            target = -((float) Mth.atan2(this.lastMoveDir.y, this.lastMoveDir.horizontalDistance()) * (180.0F / (float) Math.PI));
-        }
-        this.xBodyRot += (target - this.xBodyRot) * 0.1F;
-    }
-
-    public float getXBodyRot(float partialTick) {
-        return Mth.lerp(partialTick, this.xBodyRotO, this.xBodyRot);
     }
     //endregion
 
@@ -301,6 +283,7 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
         super.tick();
         if (this.level().isClientSide) {
             this.setupAnimationStates();
+            this.swimTilt.tick(this);
             this.animationSounds.tick(this);
         }
     }

@@ -58,7 +58,6 @@ public class LargeBassModel extends NaturalistEntityModel<Bass> {
 		this.animateSmooth(entity.flopAnimationState, BassAnimations.BASS_FLOP, ageInTicks, partialTick);
 		this.animateSmooth(entity.swimAnimationState, BassAnimations.BASS_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, SMALL_SWIMMER_LIMB_SWING));
 
-		float pitch = Mth.lerp(partialTick, entity.prevSwimPitch, entity.swimPitch);
-		this.root.xRot += pitch * Mth.DEG_TO_RAD;
+		this.root.xRot += entity.swimTilt.getSwimPitch(partialTick) * Mth.DEG_TO_RAD;
 	}
 }

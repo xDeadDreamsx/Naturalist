@@ -10,7 +10,6 @@ import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -28,6 +27,6 @@ public class CatfishRenderer extends MobRenderer<Catfish, HierarchicalModel<Catf
     @Override
     protected void setupRotations(@NotNull Catfish entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTick, float nativeScale) {
         super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, nativeScale);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, -entity.prevTilt, -entity.tilt)));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-entity.swimTilt.getTilt(partialTick)));
     }
 }

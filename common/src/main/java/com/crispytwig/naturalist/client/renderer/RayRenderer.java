@@ -2,6 +2,8 @@ package com.crispytwig.naturalist.client.renderer;
 
 import com.crispytwig.naturalist.client.model.RayModel;
 import com.crispytwig.naturalist.server.entity.mob.Ray;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HierarchicalModel;
@@ -20,5 +22,11 @@ public class RayRenderer extends MobRenderer<Ray, HierarchicalModel<Ray>> {
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull Ray entity) {
         return entity.getVariantTexture();
+    }
+
+    @Override
+    protected void setupRotations(@NotNull Ray entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTick, float nativeScale) {
+        super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, nativeScale);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-entity.swimTilt.getTilt(partialTick)));
     }
 }
