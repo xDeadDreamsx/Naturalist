@@ -1,5 +1,5 @@
 plugins {
-    id "com.gradleup.shadow" version "8.3.5"
+    id "com.gradleup.shadow" version "8.3.11"
 }
 
 architectury {
@@ -81,9 +81,29 @@ processResources {
     inputs.properties(expandProps)
 }
 
+def essentialPartnerModPackage = "com.crispytwig.naturalist.essentialpartnermod"
+def essentialPartnerModDep = "gg.essential:partner-mod-integration-${project.minecraft_version}-neoforge:${project.essential_partner_version}"
+
+def relocatedEssentialPartnerModJar = tasks.register("relocatedEssentialPartnerModJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    destinationDirectory = layout.buildDirectory.dir("devlibs")
+    archiveFileName = "essentialpartner.jar"
+    inputs.property("essentialPartnerModPackage", essentialPartnerModPackage)
+    def configuration = project.configurations.detachedConfiguration(project.dependencies.create(essentialPartnerModDep))
+    dependsOn configuration
+    from({ configuration.collect { zipTree(it) } })
+    exclude "mcmod.info", "META-INF/mods.toml", "META-INF/neoforge.mods.toml", "pack.mcmeta", "gg/essential/partnermod/EssentialPartnerMod.class"
+    relocate "gg.essential.partnermod", essentialPartnerModPackage
+    filesMatching("gg/essential/partnermod/mixins.json") {
+        filter { it.replace("gg.essential.partnermod", essentialPartnerModPackage) }
+    }
+}
+
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = "dev-shadow"
+
+    from(relocatedEssentialPartnerModJar.map { it.archiveFile }.map { zipTree(it) })
+    manifest.attributes "MixinConfigs": "${essentialPartnerModPackage.replace('.', '/')}/mixins.json"
 }
 
 remapJar {
