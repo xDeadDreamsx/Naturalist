@@ -28,6 +28,7 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Bird>> BIRD = register("bird", EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.5F, 0.6F).clientTrackingRange(8));
     public static final DeferredHolder<EntityType<?>, EntityType<Boar>> BOAR = register("boar", EntityType.Builder.of(Boar::new, MobCategory.CREATURE).sized(0.9F, 0.9F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Butterfly>> BUTTERFLY = register("butterfly", EntityType.Builder.of(Butterfly::new, MobCategory.AMBIENT).sized(0.7F, 0.6F).clientTrackingRange(8));
+    public static final DeferredHolder<EntityType<?>, EntityType<Capybara>> CAPYBARA = register("capybara", EntityType.Builder.of(Capybara::new, MobCategory.CREATURE).sized(0.9F, 0.9F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Caterpillar>> CATERPILLAR = register("caterpillar", EntityType.Builder.of(Caterpillar::new, MobCategory.CREATURE).sized(0.4F, 0.4F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Catfish>> CATFISH = register("catfish", EntityType.Builder.of(Catfish::new, MobCategory.WATER_AMBIENT).sized(0.7F, 0.4F).clientTrackingRange(4));
     public static final DeferredHolder<EntityType<?>, EntityType<Clam>> CLAM = register("clam", EntityType.Builder.of(Clam::new, MobCategory.WATER_AMBIENT).sized(1.0F, 0.6F).clientTrackingRange(8));

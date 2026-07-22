@@ -1858,5 +1858,34 @@
       "naturalist:mob/dragonfly/death1"
     ],
     "subtitle": "naturalist.subtitles.entity.dragonfly.death"
+  },
+  "entity.capybara.ambient": {
+    "sounds": [
+      "naturalist:mob/capybara/idle1",
+      "naturalist:mob/capybara/idle2",
+      "naturalist:mob/capybara/idle3",
+      "naturalist:mob/capybara/idle4"
+    ],
+    "subtitle": "naturalist.subtitles.entity.capybara.ambient"
+  },
+  "entity.capybara.hurt": {
+    "sounds": [
+      "naturalist:mob/capybara/hurt1",
+      "naturalist:mob/capybara/hurt2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.capybara.hurt"
+  },
+  "entity.capybara.death": {
+    "sounds": [
+      "naturalist:mob/capybara/death1",
+      "naturalist:mob/capybara/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.capybara.death"
+  },
+  "entity.capybara.sleep": {
+    "sounds": [
+      "naturalist:mob/capybara/sleep1"
+    ],
+    "subtitle": "naturalist.subtitles.entity.capybara.sleep"
   }
 }

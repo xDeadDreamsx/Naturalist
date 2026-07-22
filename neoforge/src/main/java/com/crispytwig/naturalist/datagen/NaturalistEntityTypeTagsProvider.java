@@ -96,6 +96,7 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.BIRD.get())
                 .add(NaturalistEntityTypes.BOAR.get())
                 .add(NaturalistEntityTypes.BUTTERFLY.get())
+                .add(NaturalistEntityTypes.CAPYBARA.get())
                 .add(NaturalistEntityTypes.CATERPILLAR.get())
                 .add(NaturalistEntityTypes.CATFISH.get())
                 .add(NaturalistEntityTypes.DEER.get())

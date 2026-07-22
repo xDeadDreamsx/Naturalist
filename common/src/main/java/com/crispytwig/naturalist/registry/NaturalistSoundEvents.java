@@ -250,6 +250,11 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> DUCK_HURT_BABY = register("entity.duck.hurt_baby");
     public static final DeferredHolder<SoundEvent, SoundEvent> DUCK_DEATH_BABY = register("entity.duck.death_baby");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> CAPYBARA_AMBIENT = register("entity.capybara.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CAPYBARA_HURT = register("entity.capybara.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CAPYBARA_DEATH = register("entity.capybara.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CAPYBARA_SLEEP = register("entity.capybara.sleep");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBER_DUCKY_AMBIENT = register("entity.rubber_ducky.ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBER_DUCKY_HURT = register("entity.rubber_ducky.hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBER_DUCKY_DEATH = register("entity.rubber_ducky.death");
