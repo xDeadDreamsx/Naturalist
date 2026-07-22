@@ -36,6 +36,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
@@ -45,6 +47,8 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnimal {
     //region Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bass.class, EntityDataSerializers.STRING);
+
+    public static final String[] VARIANT_NAMES = {"bass", "bass_medium", "bass_large"};
 
     public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
@@ -75,6 +79,11 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
     }
 
     @Override
+    public String[] getLegacyVariantNames() {
+        return VARIANT_NAMES;
+    }
+
+    @Override
     public String getVariantString() {
         return this.entityData.get(DATA_VARIANT);
     }
@@ -82,6 +91,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
     @Override
     public void setVariantString(String location) {
         this.entityData.set(DATA_VARIANT, location);
+        this.moveControl = new SmoothSwimmingMoveControl(this, 1000, this.isLargeVariant() ? 10 : 5, 0.02F, 0.1F, false);
     }
 
     @Override
@@ -101,6 +111,21 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
     @Override
     public @NotNull ItemStack getBucketItemStack() {
         return new ItemStack(NaturalistRegistry.BASS_BUCKET.get());
+    }
+
+    @Override
+    public void saveToBucketTag(@NotNull ItemStack stack) {
+        super.saveToBucketTag(stack);
+        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, this::saveVariant);
+        CompoundTag custom = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        this.saveVariant(custom);
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(custom));
+    }
+
+    @Override
+    public void loadFromBucketTag(@NotNull CompoundTag tag) {
+        super.loadFromBucketTag(tag);
+        this.loadVariant(tag);
     }
 
     public boolean isMediumVariant() {
@@ -132,6 +157,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
     public boolean canEatTarget(Bass prey) {
         return prey != this && prey.isAlive() && prey.getSizeTier() < this.getSizeTier();
     }
+
     //endregion
 
     //region Spawning
@@ -189,7 +215,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.0D, 1.5D));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Axolotl.class, 6.0F, 1.0D, 1.5D));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Catfish.class, 8.0F, 1.0D, 1.5D));
-        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Bass.class, 8.0F, 1.0D, 1.5D, (living) -> living instanceof Bass other && other.getSizeTier() > this.getSizeTier()));
+        this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Bass.class, 10.0F, 1.3D, 1.7D, (living) -> living instanceof Bass other && other.getSizeTier() > this.getSizeTier()));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.4D, true));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Bass.class, 10, true, false, (living) -> living instanceof Bass prey && Bass.this.canEatTarget(prey)) {
             @Override

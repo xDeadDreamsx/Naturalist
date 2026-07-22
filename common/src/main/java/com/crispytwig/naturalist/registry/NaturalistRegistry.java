@@ -2,6 +2,7 @@ package com.crispytwig.naturalist.registry;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.block.*;
+import com.crispytwig.naturalist.server.entity.mob.Bass;
 import com.crispytwig.naturalist.server.entity.mob.Butterfly;
 import com.crispytwig.naturalist.server.entity.mob.Crab;
 import com.crispytwig.naturalist.server.entity.mob.Rat;
@@ -74,7 +75,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, Item> LIZARD_TAIL = ITEMS.register("lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.8F).effect(new MobEffectInstance(MobEffects.POISON, 100, 0), 1.0F).build())));
     public static final DeferredHolder<Item, Item> COOKED_LIZARD_TAIL = ITEMS.register("cooked_lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.6F).build())));
     public static final DeferredHolder<Item, NaturalistBucketItem> CATFISH_BUCKET = ITEMS.register("catfish_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.CATFISH.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, NaturalistBucketItem> BASS_BUCKET = ITEMS.register("bass_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.BASS.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, NaturalistBucketItem> BASS_BUCKET = ITEMS.register("bass_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.BASS.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1), true, null, Bass.VARIANT_NAMES));
     public static final DeferredHolder<Item, NaturalistBucketItem> DUCK_BUCKET = ITEMS.register("duck_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.DUCK.get(), Fluids.EMPTY, SoundEvents.BUCKET_EMPTY, new Item.Properties().stacksTo(1).component(DataComponents.BUCKET_ENTITY_DATA, ducklingBucketData())));
     public static final DeferredHolder<Item, Item> CATFISH = ITEMS.register("catfish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.1F).build())));
     public static final DeferredHolder<Item, Item> COOKED_CATFISH = ITEMS.register("cooked_catfish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.8F).build())));
