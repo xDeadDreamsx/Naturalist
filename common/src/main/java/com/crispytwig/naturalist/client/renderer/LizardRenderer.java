@@ -1,7 +1,7 @@
 package com.crispytwig.naturalist.client.renderer;
 
 import com.crispytwig.naturalist.client.model.LizardModel;
-import com.crispytwig.naturalist.client.renderer.layers.DyeOverlayRenderLayer;
+import com.crispytwig.naturalist.client.renderer.layers.DyeLayer;
 import com.crispytwig.naturalist.server.entity.mob.Lizard;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class LizardRenderer extends MobRenderer<Lizard, HierarchicalModel<Lizard>> {
     public LizardRenderer(EntityRendererProvider.@NotNull Context context) {
         super(context, new LizardModel(context.bakeLayer(LizardModel.LAYER_LOCATION)), 0.4F);
-        this.addLayer(new DyeOverlayRenderLayer<>(this, "lizard"));
+        this.addLayer(new DyeLayer<>(this, "lizard"));
     }
 
     @Override

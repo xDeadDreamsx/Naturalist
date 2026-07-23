@@ -255,6 +255,12 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> CAPYBARA_DEATH = register("entity.capybara.death");
     public static final DeferredHolder<SoundEvent, SoundEvent> CAPYBARA_SLEEP = register("entity.capybara.sleep");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> HEDGEHOG_AMBIENT = register("entity.hedgehog.ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HEDGEHOG_HURT = register("entity.hedgehog.hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HEDGEHOG_DEATH = register("entity.hedgehog.death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HEDGEHOG_HIDE = register("entity.hedgehog.hide");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HEDGEHOG_UNHIDE = register("entity.hedgehog.unhide");
+
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBER_DUCKY_AMBIENT = register("entity.rubber_ducky.ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBER_DUCKY_HURT = register("entity.rubber_ducky.hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBER_DUCKY_DEATH = register("entity.rubber_ducky.death");

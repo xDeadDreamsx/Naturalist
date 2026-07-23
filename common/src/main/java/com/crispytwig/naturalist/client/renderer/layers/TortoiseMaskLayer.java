@@ -12,13 +12,13 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-public class TortoiseSkinRenderLayer<M extends EntityModel<Tortoise>> extends RenderLayer<Tortoise, M> {
+public class TortoiseMaskLayer<M extends EntityModel<Tortoise>> extends RenderLayer<Tortoise, M> {
     private static final ResourceLocation DONATELLO = Naturalist.location("textures/entity/tortoise/donatello.png");
     private static final ResourceLocation LEONARDO = Naturalist.location("textures/entity/tortoise/leonardo.png");
     private static final ResourceLocation MICHELANGELO = Naturalist.location("textures/entity/tortoise/michelangelo.png");
     private static final ResourceLocation RAPHAEL = Naturalist.location("textures/entity/tortoise/raphael.png");
 
-    public TortoiseSkinRenderLayer(RenderLayerParent<Tortoise, M> parent) {
+    public TortoiseMaskLayer(RenderLayerParent<Tortoise, M> parent) {
         super(parent);
     }
 

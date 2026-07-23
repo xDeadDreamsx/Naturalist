@@ -13,7 +13,7 @@ public class FieldGuidePlugin {
             Bird.class, BlackBear.class, Blobfish.class, Boar.class, Butterfly.class,
             Capybara.class, Caterpillar.class, Catfish.class, Clam.class, Crab.class, Deer.class,
             DesertScorpion.class, Dragonfly.class, Duck.class, Elephant.class, Firefly.class,
-            GiantIsopod.class, Giraffe.class, GreatWhiteShark.class, Hippo.class, Jellyfish.class,
+            GiantIsopod.class, Giraffe.class, GreatWhiteShark.class, Hedgehog.class, Hippo.class, Jellyfish.class,
             JungleScorpion.class, KomodoDragon.class, Lion.class, Lizard.class, Mammoth.class,
             Mole.class, Ostrich.class, Piranha.class, Rat.class, Ray.class,
             Rhino.class, Snail.class, Snake.class, Starfish.class, Tiger.class,

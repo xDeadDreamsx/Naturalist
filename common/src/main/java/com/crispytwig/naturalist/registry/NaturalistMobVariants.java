@@ -16,12 +16,14 @@ public final class NaturalistMobVariants {
     private static final Set<String> NON_MOB_ENTITIES = Set.of("duck_egg", "dirt_trail", "carried_food");
     private static final Set<String> REGISTERED_MOBS = new HashSet<>();
 
+    public static final ResourceKey<Registry<MobVariant>> HEDGEHOG_VARIANT = registryFor("hedgehog");
     public static final ResourceKey<Registry<MobVariant>> RAT_VARIANT = registryFor("rat");
     public static final ResourceKey<Registry<MobVariant>> TIGER_VARIANT = registryFor("tiger");
     public static final ResourceKey<Registry<MobVariant>> TORTOISE_VARIANT = registryFor("tortoise");
     public static final ResourceKey<Registry<MobVariant>> ANGLERFISH_VARIANT = registryFor("anglerfish");
     public static final ResourceKey<Registry<MobVariant>> BUTTERFLY_VARIANT = registryFor("butterfly");
 
+    public static final ResourceKey<MobVariant> HEDGEHOG_BROWN = createKey(HEDGEHOG_VARIANT, "brown");
     public static final ResourceKey<MobVariant> RAT_BLACK = createKey(RAT_VARIANT, "black");
     public static final ResourceKey<MobVariant> TIGER_BLACK_PANTHER = createKey(TIGER_VARIANT, "black_panther");
     public static final ResourceKey<MobVariant> TORTOISE_BROWN = createKey(TORTOISE_VARIANT, "brown");

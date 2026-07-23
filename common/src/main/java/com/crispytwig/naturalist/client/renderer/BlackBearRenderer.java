@@ -2,7 +2,7 @@ package com.crispytwig.naturalist.client.renderer;
 
 import com.crispytwig.naturalist.client.model.BlackBearBabyModel;
 import com.crispytwig.naturalist.client.model.BlackBearModel;
-import com.crispytwig.naturalist.client.renderer.layers.DyeOverlayRenderLayer;
+import com.crispytwig.naturalist.client.renderer.layers.DyeLayer;
 import com.crispytwig.naturalist.server.entity.mob.BlackBear;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -23,7 +23,7 @@ public class BlackBearRenderer extends NaturalistMobRenderer<BlackBear> {
     public BlackBearRenderer(EntityRendererProvider.Context context) {
         super(context, new BlackBearModel(context.bakeLayer(BlackBearModel.LAYER_LOCATION)), new BlackBearBabyModel(context.bakeLayer(BlackBearBabyModel.LAYER_LOCATION)), 0.9F);
         this.addLayer(new BlackBearHeldItemLayer(this, context.getItemInHandRenderer()));
-        this.addLayer(new DyeOverlayRenderLayer<>(this, "black_bear"));
+        this.addLayer(new DyeLayer<>(this, "black_bear"));
     }
 
     private static class BlackBearHeldItemLayer extends RenderLayer<BlackBear, HierarchicalModel<BlackBear>> {

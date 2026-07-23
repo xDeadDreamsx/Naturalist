@@ -19,6 +19,8 @@
     "BottleItemMixin",
     "CreeperMixin",
     "CropBlockMixin",
+    "EnchantedCountIncreaseFunctionMixin",
+    "EnchantmentMixin",
     "EntityTypeMixin",
     "LevelMixin",
     "MapItemMixin",

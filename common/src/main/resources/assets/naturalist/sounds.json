@@ -1887,5 +1887,43 @@
       "naturalist:mob/capybara/sleep1"
     ],
     "subtitle": "naturalist.subtitles.entity.capybara.sleep"
+  },
+  "entity.hedgehog.ambient": {
+    "sounds": [
+      "naturalist:mob/hedgehog/idle1",
+      "naturalist:mob/hedgehog/idle2",
+      "naturalist:mob/hedgehog/idle3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.hedgehog.ambient"
+  },
+  "entity.hedgehog.hurt": {
+    "sounds": [
+      "naturalist:mob/hedgehog/hurt1",
+      "naturalist:mob/hedgehog/hurt2",
+      "naturalist:mob/hedgehog/hurt3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.hedgehog.hurt"
+  },
+  "entity.hedgehog.death": {
+    "sounds": [
+      "naturalist:mob/hedgehog/death1",
+      "naturalist:mob/hedgehog/death2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.hedgehog.death"
+  },
+  "entity.hedgehog.hide": {
+    "sounds": [
+      "naturalist:mob/hedgehog/hide1",
+      "naturalist:mob/hedgehog/hide2",
+      "naturalist:mob/hedgehog/hide3"
+    ],
+    "subtitle": "naturalist.subtitles.entity.hedgehog.hide"
+  },
+  "entity.hedgehog.unhide": {
+    "sounds": [
+      "naturalist:mob/hedgehog/unhide1",
+      "naturalist:mob/hedgehog/unhide2"
+    ],
+    "subtitle": "naturalist.subtitles.entity.hedgehog.unhide"
   }
 }

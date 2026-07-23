@@ -50,6 +50,7 @@ public final class NaturalistSpawns {
         c.accept(BiomeTags.IS_FOREST, null, MobCategory.CREATURE, EntityType.FOX, 10, 1, 2);
         c.accept(BiomeTags.IS_FOREST, null, MobCategory.CREATURE, EntityType.RABBIT, 10, 2, 3);
         c.accept(NaturalistTags.Biomes.HAS_GIANT_ISOPOD, NaturalistTags.Biomes.BLACKLIST_GIANT_ISOPOD, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.GIANT_ISOPOD.get(), 8, 1, 2);
+        c.accept(NaturalistTags.Biomes.HAS_HEDGEHOG, NaturalistTags.Biomes.BLACKLIST_HEDGEHOG, MobCategory.CREATURE, NaturalistEntityTypes.HEDGEHOG.get(), 10, 1, 3);
         c.accept(NaturalistTags.Biomes.HAS_JELLYFISH, NaturalistTags.Biomes.BLACKLIST_JELLYFISH, MobCategory.WATER_AMBIENT, NaturalistEntityTypes.JELLYFISH.get(), 10, 1, 3);
         c.accept(NaturalistTags.Biomes.HAS_GIRAFFE, NaturalistTags.Biomes.BLACKLIST_GIRAFFE, MobCategory.CREATURE, NaturalistEntityTypes.GIRAFFE.get(), 5, 1, 3);
         c.accept(NaturalistTags.Biomes.HAS_HIPPO, NaturalistTags.Biomes.BLACKLIST_HIPPO, MobCategory.CREATURE, NaturalistEntityTypes.HIPPO.get(), 10, 1, 3);

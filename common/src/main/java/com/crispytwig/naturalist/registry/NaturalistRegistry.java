@@ -5,7 +5,9 @@ import com.crispytwig.naturalist.server.block.*;
 import com.crispytwig.naturalist.server.entity.mob.Bass;
 import com.crispytwig.naturalist.server.entity.mob.Butterfly;
 import com.crispytwig.naturalist.server.entity.mob.Crab;
+import com.crispytwig.naturalist.server.entity.mob.Hedgehog;
 import com.crispytwig.naturalist.server.entity.mob.Rat;
+import com.crispytwig.naturalist.server.item.HedgehogItem;
 import com.crispytwig.naturalist.server.item.BugNetItem;
 import com.crispytwig.naturalist.server.item.QueenAntItem;
 import com.crispytwig.naturalist.server.item.DuckEggItem;
@@ -102,6 +104,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, CaughtMobItem> ANT = ITEMS.register("ant", () -> new CaughtMobItem(NaturalistEntityTypes.ANT, () -> Fluids.EMPTY, NaturalistSoundEvents.ANT_AMBIENT, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobWithVariantsItem> RAT = ITEMS.register("rat", () -> new CaughtMobWithVariantsItem(NaturalistEntityTypes.RAT, () -> Fluids.EMPTY, NaturalistSoundEvents.RAT_AMBIENT, "tooltip.naturalist.rat_", Rat.VARIANT_NAMES, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobItem> SCORPION = ITEMS.register("scorpion", () -> new CaughtMobItem(NaturalistEntityTypes.DESERT_SCORPION, () -> Fluids.EMPTY, NaturalistSoundEvents.SCORPION_AMBIENT, new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, HedgehogItem> HEDGEHOG = ITEMS.register("hedgehog", () -> new HedgehogItem(NaturalistEntityTypes.HEDGEHOG, () -> Fluids.EMPTY, NaturalistSoundEvents.HEDGEHOG_AMBIENT, "tooltip.naturalist.hedgehog_", Hedgehog.VARIANT_NAMES, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> SCORPION_POISON_GLAND = ITEMS.register("scorpion_poison_gland", () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, QueenAntItem> QUEEN_ANT = ITEMS.register("queen_ant", () -> new QueenAntItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Block, AntHillBlock> ANT_HILL = registerBlock("ant_hill", () -> new AntHillBlock(BlockBehaviour.Properties.of().strength(0.5F, 0.2F).sound(SoundType.ROOTED_DIRT).randomTicks()));
@@ -161,6 +164,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, SpawnEggItem> DRAGONFLY_SPAWN_EGG = ITEMS.register("dragonfly_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.DRAGONFLY, 7507200, 16771840, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> DUCK_SPAWN_EGG = ITEMS.register("duck_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.DUCK, 13286315, 2333491, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> CAPYBARA_SPAWN_EGG = ITEMS.register("capybara_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.CAPYBARA, 11691058, 5650727, new Item.Properties()));
+    public static final DeferredHolder<Item, SpawnEggItem> HEDGEHOG_SPAWN_EGG = ITEMS.register("hedgehog_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.HEDGEHOG, 5783076, 14468251, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> ELEPHANT_SPAWN_EGG = ITEMS.register("elephant_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.ELEPHANT, 9539213, 6643034, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> MAMMOTH_SPAWN_EGG = ITEMS.register("mammoth_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.MAMMOTH, 5520936, 3153430, new Item.Properties()));
     public static final DeferredHolder<Item, SpawnEggItem> FIREFLY_SPAWN_EGG = ITEMS.register("firefly_spawn_egg", () -> Services.REGISTRY.createSpawnEgg(NaturalistEntityTypes.FIREFLY, 6764577, 16768800, new Item.Properties()));

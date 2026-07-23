@@ -451,6 +451,16 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
                 .addOptional(bop("bayou")).addOptional(bop("bog"))
                 .addOptional(bop("rainforest")).addOptional(bop("wetland"));
 
+        tag(NaturalistTags.Biomes.HAS_HEDGEHOG)
+                .add(Biomes.FOREST).add(Biomes.FLOWER_FOREST)
+                .add(Biomes.PLAINS).add(Biomes.SUNFLOWER_PLAINS)
+                .add(Biomes.MEADOW).add(Biomes.TAIGA)
+                .addOptional(bop("coniferous_forest")).addOptional(bop("field"))
+                .addOptional(bop("forested_field")).addOptional(bop("grassland"))
+                .addOptional(bop("lavender_field")).addOptional(bop("orchard"))
+                .addOptional(bop("pasture")).addOptional(bop("pumpkin_patch"))
+                .addOptional(bop("rocky_shrubland")).addOptional(bop("shrubland"));
+
         tag(NaturalistTags.Biomes.HAS_JUNGLE_SCORPION)
                 .addTag(BiomeTags.IS_JUNGLE)
                 .addOptional(bop("rainforest"));
@@ -670,6 +680,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_OSTRICH);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_TURKEY);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_CAPYBARA);
+        emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_HEDGEHOG);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_RATTLESNAKE);
         coldBlacklist(NaturalistTags.Biomes.BLACKLIST_RHINO);
         emptyBlacklist(NaturalistTags.Biomes.BLACKLIST_ROBIN);

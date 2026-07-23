@@ -13,10 +13,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-public class GlowmaskRenderLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
+public class GlowLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
     private final Function<T, ResourceLocation> glowmask;
 
-    public GlowmaskRenderLayer(RenderLayerParent<T, M> parent, Function<T, ResourceLocation> glowmask) {
+    public GlowLayer(RenderLayerParent<T, M> parent, Function<T, ResourceLocation> glowmask) {
         super(parent);
         this.glowmask = glowmask;
     }

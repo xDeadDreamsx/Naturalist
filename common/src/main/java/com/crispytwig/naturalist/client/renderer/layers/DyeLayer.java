@@ -16,11 +16,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 
-public class DyeOverlayRenderLayer<T extends LivingEntity & DyeableAnimal, M extends EntityModel<T>> extends RenderLayer<T, M> {
+public class DyeLayer<T extends LivingEntity & DyeableAnimal, M extends EntityModel<T>> extends RenderLayer<T, M> {
     private final String folder;
     private final EnumMap<DyeColor, ResourceLocation> textures = new EnumMap<>(DyeColor.class);
 
-    public DyeOverlayRenderLayer(RenderLayerParent<T, M> parent, String folder) {
+    public DyeLayer(RenderLayerParent<T, M> parent, String folder) {
         super(parent);
         this.folder = folder;
     }

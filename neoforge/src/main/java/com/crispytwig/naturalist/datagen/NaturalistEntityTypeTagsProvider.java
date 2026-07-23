@@ -107,6 +107,7 @@ public class NaturalistEntityTypeTagsProvider extends EntityTypeTagsProvider {
                 .add(NaturalistEntityTypes.FIREFLY.get())
                 .add(NaturalistEntityTypes.GIRAFFE.get())
                 .add(NaturalistEntityTypes.GREAT_WHITE_SHARK.get())
+                .add(NaturalistEntityTypes.HEDGEHOG.get())
                 .add(NaturalistEntityTypes.HIPPO.get())
                 .add(NaturalistEntityTypes.JUNGLE_SCORPION.get())
                 .add(NaturalistEntityTypes.LION.get())

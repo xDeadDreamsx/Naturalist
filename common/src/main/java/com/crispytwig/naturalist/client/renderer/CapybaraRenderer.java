@@ -3,7 +3,7 @@ package com.crispytwig.naturalist.client.renderer;
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.client.model.CapybaraBabyModel;
 import com.crispytwig.naturalist.client.model.CapybaraModel;
-import com.crispytwig.naturalist.client.renderer.layers.CapybaraDyeOverlayRenderLayer;
+import com.crispytwig.naturalist.client.renderer.layers.CapybaraDyeLayer;
 import com.crispytwig.naturalist.server.entity.mob.Capybara;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,7 +19,7 @@ public class CapybaraRenderer extends NaturalistMobRenderer<Capybara> {
 
     public CapybaraRenderer(EntityRendererProvider.Context context) {
         super(context, new CapybaraModel(context.bakeLayer(CapybaraModel.LAYER_LOCATION)), new CapybaraBabyModel(context.bakeLayer(CapybaraBabyModel.LAYER_LOCATION)), 0.5F);
-        this.addLayer(new CapybaraDyeOverlayRenderLayer(this));
+        this.addLayer(new CapybaraDyeLayer(this));
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.crispytwig.naturalist.client.renderer;
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.client.model.DuckBabyModel;
 import com.crispytwig.naturalist.client.model.DuckModel;
-import com.crispytwig.naturalist.client.renderer.layers.DyeOverlayRenderLayer;
+import com.crispytwig.naturalist.client.renderer.layers.DyeLayer;
 import com.crispytwig.naturalist.server.entity.mob.Duck;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,7 +20,7 @@ public class DuckRenderer extends NaturalistMobRenderer<Duck> {
 
     public DuckRenderer(EntityRendererProvider.Context context) {
         super(context, new DuckModel(context.bakeLayer(DuckModel.LAYER_LOCATION)), new DuckBabyModel(context.bakeLayer(DuckBabyModel.LAYER_LOCATION)), 0.3F);
-        this.addLayer(new DyeOverlayRenderLayer<>(this, "duck"));
+        this.addLayer(new DyeLayer<>(this, "duck"));
     }
 
     @Override

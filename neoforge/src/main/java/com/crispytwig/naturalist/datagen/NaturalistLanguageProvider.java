@@ -78,6 +78,7 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("entity.naturalist.desert_scorpion", "Desert Scorpion");
         add("entity.naturalist.great_white_shark", "Great White Shark");
         add("entity.naturalist.capybara", "Capybara");
+        add("entity.naturalist.hedgehog", "Hedgehog");
         add("entity.naturalist.jungle_scorpion", "Jungle Scorpion");
         add("entity.naturalist.rattlesnake", "Rattlesnake");
         add("entity.naturalist.rhino", "Rhino");
@@ -100,6 +101,8 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("item.naturalist.boar_spawn_egg", "Boar Spawn Egg");
         add("item.naturalist.capture_net", "Capture Net");
         add("item.naturalist.capybara_spawn_egg", "Capybara Spawn Egg");
+        add("item.naturalist.hedgehog", "Hedgehog");
+        add("item.naturalist.hedgehog_spawn_egg", "Hedgehog Spawn Egg");
         add("item.naturalist.bushmeat", "Bushmeat");
         add("item.naturalist.butterfly", "Butterfly");
         add("item.naturalist.butterfly_spawn_egg", "Butterfly Spawn Egg");

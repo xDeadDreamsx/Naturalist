@@ -67,6 +67,7 @@ public final class NaturalistClient {
         r.register(CatfishModel.LAYER_LOCATION, CatfishModel::createBodyLayer);
         r.register(ClamModel.LAYER_LOCATION, ClamModel::createBodyLayer);
         r.register(CrabBabyModel.LAYER_LOCATION, CrabBabyModel::createBodyLayer);
+        r.register(HedgehogModel.LAYER_LOCATION, HedgehogModel::createBodyLayer);
         r.register(CrabModel.LAYER_LOCATION, CrabModel::createBodyLayer);
         r.register(DeerBabyModel.LAYER_LOCATION, DeerBabyModel::createBodyLayer);
         r.register(DeerModel.LAYER_LOCATION, DeerModel::createBodyLayer);
@@ -173,6 +174,7 @@ public final class NaturalistClient {
         r.register(NaturalistEntityTypes.GREAT_WHITE_SHARK.get(), GreatWhiteSharkRenderer::new);
         r.register(NaturalistEntityTypes.TURKEY.get(), TurkeyRenderer::new);
         r.register(NaturalistEntityTypes.CAPYBARA.get(), CapybaraRenderer::new);
+        r.register(NaturalistEntityTypes.HEDGEHOG.get(), HedgehogRenderer::new);
     }
 
     @FunctionalInterface
