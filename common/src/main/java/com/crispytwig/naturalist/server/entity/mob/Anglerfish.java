@@ -93,6 +93,11 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return distanceToClosestPlayer > 16384.0D && super.removeWhenFarAway(distanceToClosestPlayer);
+    }
+
+    @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_VARIANT, NaturalistMobVariants.ANGLERFISH_RED.location().toString());

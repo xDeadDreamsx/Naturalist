@@ -143,7 +143,7 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
 
     @Override
     public boolean removeWhenFarAway(double distance) {
-        return !this.fromBucket() && !this.hasCustomName();
+        return distance > 16384.0D && !this.fromBucket() && !this.hasCustomName();
     }
 
     @Override

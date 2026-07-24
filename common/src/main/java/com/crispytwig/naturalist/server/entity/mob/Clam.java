@@ -157,7 +157,7 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
 
     @Override
     public boolean removeWhenFarAway(double distance) {
-        return !this.hasTreasure() && !this.hasCustomName();
+        return distance > 16384.0D && !this.hasTreasure() && !this.hasCustomName();
     }
     //endregion
 
