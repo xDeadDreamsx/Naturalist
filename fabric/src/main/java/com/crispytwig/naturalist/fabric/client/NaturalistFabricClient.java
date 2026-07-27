@@ -44,6 +44,8 @@ public class NaturalistFabricClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.BLUE_STARFISH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.RED_STARFISH.get(), RenderType.cutout());
 
+        BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.SNAIL_EGGS.get(), RenderType.cutout());
+
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.AZURE_FROGLASS.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.VERDANT_FROGLASS.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.CRIMSON_FROGLASS.get(), RenderType.translucent());
