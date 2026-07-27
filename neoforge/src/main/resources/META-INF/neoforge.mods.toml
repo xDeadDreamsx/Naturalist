@@ -7,7 +7,7 @@ issueTrackerURL="https://github.com/crispytwig/Naturalist/issues"
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
-logoFile="icon.png"
+logoFile="naturalist.png"
 authors="${mod_authors}"
 description='''${mod_description}'''
 

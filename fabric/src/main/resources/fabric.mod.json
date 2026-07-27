@@ -11,7 +11,7 @@
     "issues": "https://github.com/crispytwig/Naturalist/issues"
   },
   "license": "${mod_license}",
-  "icon": "icon.png",
+  "icon": "naturalist.png",
   "environment": "*",
   "accessWidener": "naturalist.accesswidener",
   "entrypoints": {

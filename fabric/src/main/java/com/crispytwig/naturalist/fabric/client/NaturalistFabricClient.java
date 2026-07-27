@@ -43,6 +43,13 @@ public class NaturalistFabricClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.PURPLE_STARFISH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.BLUE_STARFISH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.RED_STARFISH.get(), RenderType.cutout());
+
+        BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.AZURE_FROGLASS.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.VERDANT_FROGLASS.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.CRIMSON_FROGLASS.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.AZURE_FROGLASS_PANE.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.VERDANT_FROGLASS_PANE.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(NaturalistRegistry.CRIMSON_FROGLASS_PANE.get(), RenderType.translucent());
     }
 
     private static void registerVariantItemModels() {
