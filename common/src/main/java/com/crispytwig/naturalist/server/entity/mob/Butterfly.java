@@ -450,4 +450,8 @@ public class Butterfly extends NaturalistAnimal implements FlyingAnimal, Catchab
         this.flyAnimationState.animateWhen(true, this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

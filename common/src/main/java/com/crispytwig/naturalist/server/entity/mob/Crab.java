@@ -644,4 +644,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     }
     //endregion
 
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

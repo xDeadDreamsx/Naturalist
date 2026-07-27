@@ -344,4 +344,8 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
         this.walkAnimationState.animateWhen(!sitting && NaturalistAnimal.isVisiblyMoving(this), this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

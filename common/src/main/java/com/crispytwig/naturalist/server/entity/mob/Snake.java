@@ -564,4 +564,8 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         this.moveAnimationState.animateWhen(!sleeping && !climbing && this.walkAnimation.speed() > 0.04F, this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

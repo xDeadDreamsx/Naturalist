@@ -326,4 +326,8 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
         this.swimAnimationState.animateWhen(inWater, this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

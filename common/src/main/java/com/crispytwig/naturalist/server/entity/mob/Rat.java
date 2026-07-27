@@ -37,6 +37,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -536,4 +537,8 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
         this.idleAnimationState.animateWhen(!posing && !moving && !this.isInterested(), this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

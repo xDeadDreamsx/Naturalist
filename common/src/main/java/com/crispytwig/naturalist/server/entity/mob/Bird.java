@@ -226,9 +226,6 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, DyeableA
 
     @Override
     protected void doPush(@NotNull Entity entity) {
-        if (!(entity instanceof Player)) {
-            super.doPush(entity);
-        }
     }
 
     @Override

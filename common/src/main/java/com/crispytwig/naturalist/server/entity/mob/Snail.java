@@ -530,4 +530,8 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
         this.idleAnimationState.animateWhen(locomotion && !crawling, this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

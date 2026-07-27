@@ -231,4 +231,8 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
         this.swimAnimationState.animateWhen(inWater, this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

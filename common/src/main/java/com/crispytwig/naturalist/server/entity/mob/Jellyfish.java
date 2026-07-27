@@ -243,4 +243,8 @@ public class Jellyfish extends AbstractFish implements DataDrivenVariantAnimal {
         this.idleAnimationState.animateWhen(inWater && !moving, this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

@@ -326,4 +326,8 @@ public class Firefly extends NaturalistAnimal implements FlyingAnimal, DataDrive
         this.idleAnimationState.animateWhen(this.isBaby() && !moving, this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

@@ -268,4 +268,8 @@ public class Caterpillar extends ClimbingAnimal implements Catchable, DataDriven
         this.idleAnimationState.animateWhen(!moving, this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }

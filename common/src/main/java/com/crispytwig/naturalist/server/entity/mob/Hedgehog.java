@@ -645,4 +645,8 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         this.idleAnimationState.animateWhen(idle && this.idleEventTicks <= 0, this.tickCount);
     }
     //endregion
+
+    @Override
+    protected void doPush(@NotNull Entity entity) {
+    }
 }
