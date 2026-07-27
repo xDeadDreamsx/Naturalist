@@ -17,9 +17,13 @@ public class GiantIsopodModel extends NaturalistEntityModel<GiantIsopod> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			Naturalist.location("giant_isopod"), "main");
 	private final ModelPart root;
+	private final ModelPart body;
+	private final ModelPart rolled;
 
 	public GiantIsopodModel(ModelPart root) {
 		this.root = root.getChild("root");
+		this.body = this.root.getChild("body");
+		this.rolled = this.root.getChild("rolled");
 	}
 
 	@Override
@@ -102,12 +106,14 @@ public class GiantIsopodModel extends NaturalistEntityModel<GiantIsopod> {
 
 	@Override
 	protected void setupAnimations(GiantIsopod entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch) {
+		boolean hiding = entity.canHide();
+		this.rolled.visible = hiding || entity.hideEndAnimationState.isStarted();
 
 		this.animateSmooth(entity.hideAnimationState, GiantIsopodAnimations.GIANT_ISOPOD_HIDE_START, ageInTicks, partialTick);
 		this.animateSmooth(entity.hideEndAnimationState, GiantIsopodAnimations.GIANT_ISOPOD_HIDE_END, ageInTicks, partialTick);
-		this.animateSmooth(entity.swimAnimationState, GiantIsopodAnimations.GIANT_ISOPOD_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, LARGE_SWIMMER_LIMB_SWING));
+		this.animateSmooth(entity.swimAnimationState, GiantIsopodAnimations.GIANT_ISOPOD_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 2.0F, LARGE_SWIMMER_LIMB_SWING));
 
 		this.animateIdleSmooth(entity.idleAnimationState, GiantIsopodAnimations.GIANT_ISOPOD_IDLE, ageInTicks, partialTick, limbSwingAmount);
-		this.animateSmooth(entity.walkAnimationState, GiantIsopodAnimations.GIANT_ISOPOD_WALK, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F));
+		this.animateSmooth(entity.walkAnimationState, GiantIsopodAnimations.GIANT_ISOPOD_WALK, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 6.0F));
 	}
 }

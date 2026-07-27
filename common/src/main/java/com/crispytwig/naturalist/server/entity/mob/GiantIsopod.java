@@ -31,6 +31,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -77,12 +78,13 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
     private int hideEndTicks;
     private long hideCacheTick = -1L;
     private boolean hideCache;
+    private int hideHoldTicks;
 
     public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
-    public final SmoothAnimationState hideAnimationState = new SmoothAnimationState();
-    public final SmoothAnimationState hideEndAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState hideAnimationState = SmoothAnimationState.instant();
+    public final SmoothAnimationState hideEndAnimationState = SmoothAnimationState.instant();
 
     public GiantIsopod(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -252,6 +254,9 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
         if (this.isBaby()) {
             return false;
         }
+        if (this.hideHoldTicks > 0) {
+            return true;
+        }
         return !this.level().getNearbyPlayers(
                 TargetingConditions.forNonCombat().range(3.0D).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test),
                 this, this.getBoundingBox().inflate(3.0D, 2.0D, 3.0D)).isEmpty();
@@ -264,6 +269,9 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
 
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
+        if (this.canHide()) {
+            this.hideHoldTicks = 10;
+        }
         return super.hurt(source, this.canHide() ? amount * 0.5F : amount);
     }
 
@@ -273,12 +281,19 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.0D, 1.0D, 0.0D));
             vec3 = vec3.multiply(0.0D, 1.0D, 0.0D);
         }
+        if (!this.isInWater()) {
+            vec3 = vec3.multiply(0.35D, 1.0D, 0.35D);
+        }
         super.travel(vec3);
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
+        if (this.hideHoldTicks > 0) {
+            this.hideHoldTicks--;
+            this.hideCacheTick = -1L;
+        }
         if (!this.level().isClientSide) {
             boolean hiding = this.canHide();
             if (hiding) {
