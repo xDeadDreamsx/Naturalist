@@ -41,24 +41,6 @@
 					"rotation": ["12.5 + Math.cos(( q.anim_time - 0.1 ) * 90 ) * 4", 0, 0]
 				}
 			}
-		},
-		"animation.sf_nba.ant.tooltip": {
-			"loop": true,
-			"bones": {
-				"root": {
-					"rotation": [15, -37.5, 0],
-					"position": [0, 2, 0]
-				},
-				"body": {
-					"rotation": [-5.0767, -9.9616, 0.8804]
-				},
-				"skull": {
-					"rotation": [-7.5641, 7.4355, -0.9844]
-				},
-				"antennae": {
-					"rotation": [5, 0, 0]
-				}
-			}
 		}
 	}
 }

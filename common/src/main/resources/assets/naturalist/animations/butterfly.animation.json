@@ -72,16 +72,6 @@
 					}
 				}
 			}
-		},
-		"animation.sf_nba.butterfly.tooltip": {
-			"loop": true,
-			"bones": {
-				"root": {
-					"rotation": [-36.9891, -13.5116, -0.5899],
-					"position": [0, 1, 0],
-					"scale": 1.5
-				}
-			}
 		}
 	}
 }

@@ -2242,26 +2242,6 @@
 					"position": [0, -3.75, 0]
 				}
 			}
-		},
-		"animation.sf_nba.ray.tooltip": {
-			"loop": true,
-			"bones": {
-				"root": {
-					"rotation": [21.0522, -33.1634, -11.8903]
-				},
-				"body": {
-					"rotation": [5, 0, 0]
-				},
-				"leftFin": {
-					"rotation": [7.5, 0, 0]
-				},
-				"rightFin": {
-					"rotation": [15, 0, 0]
-				},
-				"tail": {
-					"rotation": [15, 0, 0]
-				}
-			}
 		}
 	}
 }

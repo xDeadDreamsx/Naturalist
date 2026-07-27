@@ -214,15 +214,6 @@
 					}
 				}
 			}
-		},
-		"animation.sf_nba.starfish.tooltip": {
-			"loop": true,
-			"bones": {
-				"root": {
-					"rotation": [35.0997, -199.9923, -8.7086],
-					"position": [2, 2, 0]
-				}
-			}
 		}
 	}
 }

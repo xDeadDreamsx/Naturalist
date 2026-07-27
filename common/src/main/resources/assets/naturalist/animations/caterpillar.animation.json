@@ -77,28 +77,6 @@
 					}
 				}
 			}
-		},
-		"animation.sf_nba.caterpillar.tooltip": {
-			"loop": true,
-			"bones": {
-				"root": {
-					"rotation": [-7.5, -42.5, 0],
-					"position": [0, 3, 0]
-				},
-				"neck": {
-					"position": [0, -3, 0]
-				},
-				"extended": {
-					"rotation": [0, 0, 0]
-				},
-				"chest": {
-					"rotation": [45, 0, 0]
-				},
-				"butt": {
-					"rotation": [-45, 0, 0],
-					"position": [0, 0.5, 1]
-				}
-			}
 		}
 	}
 }

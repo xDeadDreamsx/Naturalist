@@ -1,24 +1,6 @@
 {
 	"format_version": "1.10.0",
 	"animations": {
-		"animation.sf_nba.snail.tooltip": {
-			"loop": true,
-			"bones": {
-				"root": {
-					"rotation": [6, -38, 0],
-					"position": [0, 1, 0]
-				},
-				"shell": {
-					"rotation": [0, 0, -6]
-				},
-				"body": {
-					"rotation": [-4, 0, 0]
-				},
-				"eyes": {
-					"rotation": [-8, 0, 0]
-				}
-			}
-		},
 		"animation.sf_nba.snail.move": {
 			"loop": true,
 			"animation_length": 1.5,
