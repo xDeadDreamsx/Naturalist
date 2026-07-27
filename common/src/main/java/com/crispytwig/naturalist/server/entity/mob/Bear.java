@@ -90,6 +90,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
     private boolean followingOwner = true;
     private int huntingCooldown;
+    private int wakeTicks;
     @Nullable
     private UUID persistentAngerTarget;
     public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
@@ -164,7 +165,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     @Override
     public boolean canSleep() {
         long dayTime = this.level().getDayTime();
-        return (dayTime < 12000 || dayTime > 18000) && dayTime < 23000 && dayTime > 6000 && !this.isAngry() && !this.level().isWaterAt(this.blockPosition());
+        return this.wakeTicks <= 0 && (dayTime < 12000 || dayTime > 18000) && dayTime < 23000 && dayTime > 6000 && !this.isAngry() && !this.level().isWaterAt(this.blockPosition());
     }
 
     @Override
@@ -373,6 +374,10 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
             this.level().addFreshEntity(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
+        if (this.isSleeping()) {
+            this.setSleeping(false);
+        }
+        this.wakeTicks = 200;
         return super.hurt(source, amount);
     }
 
@@ -474,7 +479,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     @Override
     protected void pickUpItem(@NotNull ItemEntity itemEntity) {
         ItemStack stack = itemEntity.getItem();
-        if (this.getMainHandItem().isEmpty() && FOOD_ITEMS.test(stack) && !this.isBaby()) {
+        if (this.getMainHandItem().isEmpty() && FOOD_ITEMS.test(stack) && !this.isBaby() && !this.isSleeping()) {
             this.onItemPickup(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, stack);
             this.handDropChances[EquipmentSlot.MAINHAND.getIndex()] = 2.0F;
@@ -512,6 +517,9 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
         super.aiStep();
         if (!this.level().isClientSide) {
             this.updatePersistentAnger((ServerLevel)this.level(), true);
+            if (this.wakeTicks > 0) {
+                this.wakeTicks--;
+            }
         }
         if (this.isSleeping() || this.isImmobile()) {
             this.jumping = false;
