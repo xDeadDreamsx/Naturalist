@@ -54,7 +54,7 @@ public class CatfishModel extends NaturalistEntityModel<Catfish> {
 		PartDefinition tail = body.addOrReplaceChild("tail", CubeListBuilder.create()
 		.texOffs(36, 0).addBox(-1.0F, -2.5F, 0.0F, 2.0F, 5.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.6667F, 9.6111F));
 		PartDefinition tail2 = tail.addOrReplaceChild("tail2", CubeListBuilder.create()
-		.texOffs(11, 39).addBox(0.0F, -5.5F, -3.0F, 0.0F, 11.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 5.0F));
+		.texOffs(32, 16).addBox(0.0F, -5.5F, -3.0F, 0.0F, 11.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 5.0F));
 		PartDefinition rightFrontFin = body.addOrReplaceChild("rightFrontFin", CubeListBuilder.create()
 		.texOffs(0, 3).mirror().addBox(-4.0F, 0.0F, 0.0F, 4.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-3.0F, -0.1667F, 1.6111F, 0.3655F, 0.7119F, 0.5299F));
 		PartDefinition leftFrontFin = body.addOrReplaceChild("leftFrontFin", CubeListBuilder.create()
