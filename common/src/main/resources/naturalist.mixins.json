@@ -22,6 +22,7 @@
     "EnchantedCountIncreaseFunctionMixin",
     "EnchantmentMixin",
     "EntityTypeMixin",
+    "FoxMixin",
     "LevelMixin",
     "MapItemMixin",
     "MobMixin",

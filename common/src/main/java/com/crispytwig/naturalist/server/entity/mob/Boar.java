@@ -4,6 +4,7 @@ import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
+import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
@@ -32,6 +33,7 @@ import net.minecraft.world.entity.monster.Zoglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,6 +50,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS);
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
+    private static final float DEATH_BY_HOGS_CHANCE = 0.1F;
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Boar.class, EntityDataSerializers.STRING);
 
@@ -202,6 +205,17 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
             }
             this.updatePersistentAnger((ServerLevel)this.level(), true);
         }
+    }
+
+    @Override
+    public boolean doHurtTarget(@NotNull Entity target) {
+        boolean hurt = super.doHurtTarget(target);
+        if (hurt && !this.level().isClientSide && target instanceof Player player && player.isDeadOrDying()
+                && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)
+                && this.random.nextFloat() < DEATH_BY_HOGS_CHANCE) {
+            player.spawnAtLocation(new ItemStack(NaturalistRegistry.MUSIC_DISC_DEATH_BY_HOGS.get()));
+        }
+        return hurt;
     }
 
     @Override

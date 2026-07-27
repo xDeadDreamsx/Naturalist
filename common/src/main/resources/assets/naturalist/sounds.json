@@ -1925,5 +1925,21 @@
       "naturalist:mob/hedgehog/unhide2"
     ],
     "subtitle": "naturalist.subtitles.entity.hedgehog.unhide"
+  },
+  "music_disc.death_by_hogs": {
+    "sounds": [
+      {
+        "name": "naturalist:records/death_by_hogs",
+        "stream": true
+      }
+    ]
+  },
+  "music_disc.wild_ones": {
+    "sounds": [
+      {
+        "name": "naturalist:records/wild_ones",
+        "stream": true
+      }
+    ]
   }
 }

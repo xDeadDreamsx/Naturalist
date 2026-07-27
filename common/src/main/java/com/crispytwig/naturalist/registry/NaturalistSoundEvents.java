@@ -265,6 +265,9 @@ public class NaturalistSoundEvents {
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBER_DUCKY_HURT = register("entity.rubber_ducky.hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBER_DUCKY_DEATH = register("entity.rubber_ducky.death");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_DISC_WILD_ONES = register("music_disc.wild_ones");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_DISC_DEATH_BY_HOGS = register("music_disc.death_by_hogs");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(Naturalist.location(name)));
     }
