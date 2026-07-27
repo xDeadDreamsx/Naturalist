@@ -85,8 +85,8 @@ public class RatModel extends NaturalistEntityModel<Rat> {
 		this.animateSmooth(entity.swimAnimationState, RatAnimations.RAT_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F, LARGE_SWIMMER_LIMB_SWING));
 
 		this.animateIdleSmooth(entity.idleAnimationState, RatAnimations.RAT_IDLE, ageInTicks, partialTick, limbSwingAmount);
-		this.animateSmooth(entity.walkAnimationState, RatAnimations.RAT_WALK, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.5F));
-		this.animateSmooth(entity.runAnimationState, RatAnimations.RAT_RUN, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.0F));
+		this.animateSmooth(entity.walkAnimationState, RatAnimations.RAT_WALK, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 2.5F));
+		this.animateSmooth(entity.runAnimationState, RatAnimations.RAT_RUN, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 1.5F));
 
 		if (!sleeping && !entity.isInSittingPose()) {
 			applyHeadLook(this.skull, netHeadYaw, headPitch);
