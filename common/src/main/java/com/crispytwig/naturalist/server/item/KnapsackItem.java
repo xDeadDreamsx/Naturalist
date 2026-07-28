@@ -1,12 +1,10 @@
 package com.crispytwig.naturalist.server.item;
 
-import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -14,10 +12,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -42,14 +42,23 @@ public class KnapsackItem extends Item {
         return entityTag(stack).contains("id");
     }
 
+    private static void giveOrDrop(Player player, ItemStack stack) {
+        if (!player.getInventory().add(stack) && !stack.isEmpty()) {
+            ItemEntity item = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack);
+            item.setNoPickUpDelay();
+            item.setTarget(player.getUUID());
+            player.level().addFreshEntity(item);
+        }
+    }
+
     public static boolean isCapturable(@NotNull LivingEntity target) {
         if (!(target instanceof Mob) || !target.isAlive() || target.isPassenger()) {
             return false;
         }
-        if (target.isBaby()) {
-            return true;
+        if (target instanceof AgeableMob ageable) {
+            return ageable.getAge() < 0;
         }
-        return Naturalist.MOD_ID.equals(BuiltInRegistries.ENTITY_TYPE.getKey(target.getType()).getNamespace());
+        return target.isBaby();
     }
 
     @Override
@@ -73,11 +82,11 @@ public class KnapsackItem extends Item {
         player.swing(hand);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), NaturalistSoundEvents.KNAPSACK_PICKUP.get(), SoundSource.NEUTRAL, 0.6F, 1.0F);
 
-        stack.shrink(1);
-        if (stack.isEmpty()) {
+        if (stack.getCount() <= 1) {
             player.setItemInHand(hand, filled);
-        } else if (!player.getInventory().add(filled)) {
-            player.drop(filled, false);
+        } else {
+            stack.shrink(1);
+            giveOrDrop(player, filled);
         }
         return InteractionResult.SUCCESS;
     }
@@ -103,13 +112,15 @@ public class KnapsackItem extends Item {
 
             Player player = context.getPlayer();
             ItemStack empty = new ItemStack(NaturalistRegistry.KNAPSACK.get());
-            stack.shrink(1);
             if (player != null) {
-                if (stack.isEmpty()) {
+                if (stack.getCount() <= 1) {
                     player.setItemInHand(context.getHand(), empty);
-                } else if (!player.getInventory().add(empty)) {
-                    player.drop(empty, false);
+                } else {
+                    stack.shrink(1);
+                    giveOrDrop(player, empty);
                 }
+            } else {
+                stack.shrink(1);
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
