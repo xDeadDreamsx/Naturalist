@@ -59,6 +59,11 @@ dependencies {
     modLocalRuntime "maven.modrinth:field-guide:${project.field_guide_neoforge_version}"
 
     modLocalRuntime "maven.modrinth:immersive-overlays:${project.immersive_overlays_version}-neoforge"
+
+    localRuntime "maven.modrinth:not-enough-animations:${project.not_enough_animations_neoforge_version}"
+
+    modLocalRuntime "maven.modrinth:zrAMu1nt:${project.personality_neoforge_version}"
+    modLocalRuntime "maven.modrinth:blueprint:${project.blueprint_neoforge_version}"
 }
 
 processResources {

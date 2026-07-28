@@ -7,11 +7,11 @@
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
     "EntityRenderDispatcherMixin",
-    "HumanoidModelMixin",
     "LevelRendererMixin",
     "LocalPlayerMixin",
     "ParrotModelMixin",
     "ParrotOnShoulderLayerMixin",
+    "PlayerModelMixin",
     "WolfModelMixin"
   ],
   "mixins": [

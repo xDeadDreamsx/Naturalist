@@ -2,8 +2,8 @@ package com.crispytwig.naturalist.mixin;
 
 import com.crispytwig.naturalist.server.entity.base.IKMount;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Final;
@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(HumanoidModel.class)
-public abstract class HumanoidModelMixin {
+@Mixin(PlayerModel.class)
+public abstract class PlayerModelMixin<T extends LivingEntity> extends HumanoidModel<T> {
     @Unique
     private static final float naturalist$waistY = 12.0F;
     @Unique
@@ -23,15 +23,18 @@ public abstract class HumanoidModelMixin {
     @Unique
     private static final float naturalist$rollSign = -1.0F;
 
-    @Shadow @Final public ModelPart head;
-    @Shadow @Final public ModelPart body;
-    @Shadow @Final public ModelPart leftArm;
-    @Shadow @Final public ModelPart rightArm;
+    @Shadow @Final public ModelPart jacket;
+    @Shadow @Final public ModelPart leftSleeve;
+    @Shadow @Final public ModelPart rightSleeve;
 
     @Unique
     private boolean naturalist$leanApplied;
 
-    @Inject(method = "setupAnim*", at = @At("HEAD"))
+    public PlayerModelMixin() {
+        super(null);
+    }
+
+    @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At("HEAD"))
     private void naturalist$resetLean(LivingEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
         if (naturalist$leanApplied || naturalist$leanMount(entity) != null) {
             this.head.resetPose();
@@ -42,7 +45,7 @@ public abstract class HumanoidModelMixin {
         }
     }
 
-    @Inject(method = "setupAnim*", at = @At("TAIL"))
+    @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At("RETURN"))
     private void naturalist$counterLean(LivingEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo ci) {
         IKMount mount = naturalist$leanMount(entity);
         if (mount == null) {
@@ -59,6 +62,10 @@ public abstract class HumanoidModelMixin {
         naturalist$rotateWaist(this.body, pitch, roll, cosP, sinP, cosR, sinR);
         naturalist$rotateWaist(this.leftArm, pitch, roll, cosP, sinP, cosR, sinR);
         naturalist$rotateWaist(this.rightArm, pitch, roll, cosP, sinP, cosR, sinR);
+        this.hat.copyFrom(this.head);
+        this.jacket.copyFrom(this.body);
+        this.leftSleeve.copyFrom(this.leftArm);
+        this.rightSleeve.copyFrom(this.rightArm);
         this.naturalist$leanApplied = true;
     }
 
@@ -72,10 +79,9 @@ public abstract class HumanoidModelMixin {
 
     @Unique
     private static void naturalist$rotateWaist(ModelPart part, float pitch, float roll, float cosP, float sinP, float cosR, float sinR) {
-        PartPose base = part.getInitialPose();
-        float dx = base.x;
-        float dy = base.y - naturalist$waistY;
-        float dz = base.z;
+        float dx = part.x;
+        float dy = part.y - naturalist$waistY;
+        float dz = part.z;
 
         float y1 = dy * cosP - dz * sinP;
 
