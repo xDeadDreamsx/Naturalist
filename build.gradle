@@ -34,10 +34,6 @@ subprojects {
             name = "Gegy"
             url = "https://maven.gegy.dev"
         }
-        maven {
-            name = "Essential"
-            url = "https://repo.essential.gg/public"
-        }
     }
 
     dependencies {

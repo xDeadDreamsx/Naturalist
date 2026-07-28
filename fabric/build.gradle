@@ -57,8 +57,6 @@ dependencies {
     modLocalRuntime "maven.modrinth:field-guide:${project.field_guide_fabric_version}"
 
     modLocalRuntime "maven.modrinth:immersive-overlays:${project.immersive_overlays_version}-fabric"
-
-    include "gg.essential:partner-mod-integration-${project.minecraft_version}-fabric:${project.essential_partner_version}"
 }
 
 processResources {
