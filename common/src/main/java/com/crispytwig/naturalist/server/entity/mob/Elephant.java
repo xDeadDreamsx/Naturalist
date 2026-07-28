@@ -36,8 +36,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
@@ -76,6 +74,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> CHESTED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<ItemStack> BANNER = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.ITEM_STACK);
 
     private final SimpleContainer inventory = new SimpleContainer(INVENTORY_SIZE);
     private int tamingFood;
@@ -88,6 +87,11 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState swingAnimationState = SmoothAnimationState.instant();
     private int swingAnimTicks;
+
+    public float bannerLift;
+    public float bannerLiftO;
+    public float bannerSwing;
+    public float bannerSwingO;
 
     public Elephant(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -112,6 +116,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         builder.define(REMAINING_ANGER_TIME, 0);
         builder.define(SADDLED, false);
         builder.define(CHESTED, false);
+        builder.define(BANNER, ItemStack.EMPTY);
     }
 
     @Override
@@ -143,6 +148,14 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
 
     public void setChested(boolean chested) {
         this.entityData.set(CHESTED, chested);
+    }
+
+    public ItemStack getBanner() {
+        return this.entityData.get(BANNER);
+    }
+
+    public void setBanner(ItemStack stack) {
+        this.entityData.set(BANNER, stack.copyWithCount(1));
     }
 
     @Override
@@ -223,15 +236,8 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0f));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
-    }
-
-    @Override
-    public boolean wantsToAttack(@NotNull LivingEntity target, @NotNull LivingEntity owner) {
-        return PetTargeting.wantsToAttack(target, owner);
     }
 
     @Override
@@ -512,6 +518,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         }
         this.setSaddled(false);
         this.setChested(false);
+        this.setBanner(ItemStack.EMPTY);
     }
 
     private void popItem(ItemStack stack) {
@@ -530,6 +537,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         if (this.level().isClientSide) {
             this.legSolver.update(this, this.getScale() * (this.isBaby() ? 0.5F : 1.0F));
             this.setupAnimationStates();
+            this.updateBannerPhysics();
         }
     }
 
@@ -546,6 +554,10 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     public void customServerAiStep() {
         super.customServerAiStep();
         this.setSaddled(!this.inventory.getItem(ElephantInventoryMenu.SADDLE_SLOT).isEmpty());
+        ItemStack banner = this.inventory.getItem(ElephantInventoryMenu.BANNER_SLOT);
+        if (!ItemStack.isSameItemSameComponents(banner, this.getBanner())) {
+            this.setBanner(banner);
+        }
         if (this.isVehicle()) {
             this.setSprinting(false);
         } else if (this.getMoveControl().hasWanted()) {
@@ -608,6 +620,17 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         this.walkAnimationState.animateWhen(moving && !this.isSprinting(), this.tickCount);
         this.runAnimationState.animateWhen(moving && this.isSprinting(), this.tickCount);
         this.idleAnimationState.animateWhen(!moving, this.tickCount);
+    }
+
+    private void updateBannerPhysics() {
+        Vec3 velocity = this.getDeltaMovement().yRot(this.yBodyRot * Mth.DEG_TO_RAD);
+        float liftTarget = (float) velocity.z * 120.0F + Math.max(this.getRenderPitch() * Mth.RAD_TO_DEG, 0.0F);
+        float swingTarget = Mth.degreesDifference(this.yBodyRotO, this.yBodyRot) * 1.5F - (float) velocity.x * 160.0F;
+
+        this.bannerLiftO = this.bannerLift;
+        this.bannerSwingO = this.bannerSwing;
+        this.bannerLift += (Mth.clamp(liftTarget, -35.0F, 35.0F) - this.bannerLift) * 0.15F;
+        this.bannerSwing += (Mth.clamp(swingTarget, -20.0F, 20.0F) - this.bannerSwing) * 0.15F;
     }
 
     @Override

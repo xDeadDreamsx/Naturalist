@@ -51,7 +51,7 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Lion>> LION = register("lion", EntityType.Builder.of(Lion::new, MobCategory.CREATURE).sized(1.5F, 1.8F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Lizard>> LIZARD = register("lizard", EntityType.Builder.of(Lizard::new, MobCategory.CREATURE).sized(0.8F, 0.5F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<LizardTail>> LIZARD_TAIL = register("lizard_tail", EntityType.Builder.of(LizardTail::new, MobCategory.CREATURE).sized(0.7F, 0.5F).clientTrackingRange(10));
-    public static final DeferredHolder<EntityType<?>, EntityType<Mammoth>> MAMMOTH = register("mammoth", EntityType.Builder.of(Mammoth::new, MobCategory.CREATURE).sized(2.5F, 3.5F).clientTrackingRange(10));
+    public static final DeferredHolder<EntityType<?>, EntityType<Mammoth>> MAMMOTH = register("mammoth", EntityType.Builder.of(Mammoth::new, MobCategory.CREATURE).sized(2.5F, 4.0F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Mole>> MOLE = register("mole", EntityType.Builder.of(Mole::new, MobCategory.CREATURE).sized(0.7F, 0.65F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<Ostrich>> OSTRICH = register("ostrich", EntityType.Builder.of(Ostrich::new, MobCategory.CREATURE).sized(1.2F, 2.5F).clientTrackingRange(10));
     public static final DeferredHolder<EntityType<?>, EntityType<DesertScorpion>> DESERT_SCORPION = register("desert_scorpion", EntityType.Builder.of(DesertScorpion::new, MobCategory.CREATURE).sized(0.7F, 0.3F).clientTrackingRange(8));
