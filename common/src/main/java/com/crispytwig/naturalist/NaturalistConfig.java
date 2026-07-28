@@ -4,13 +4,29 @@ import com.crispytwig.naturalist.platform.Services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public final class NaturalistConfig {
-    public static final List<String> MOB_KEYS = List.of(
-            "alligator", "bass", "bear", "bird", "boar", "butterfly", "catfish", "deer",
-            "dragonfly", "duck", "elephant", "firefly", "forestFox", "forestRabbit", "giraffe",
-            "hippo", "lion", "lizard", "rhino", "snail", "snake", "tortoise", "vulture", "zebra"
+    public static final List<String> AQUATIC_MOBS = List.of(
+            "anglerfish", "bass", "blobfish", "catfish", "clam", "giantIsopod", "greatWhiteShark",
+            "jellyfish", "piranha", "ray", "starfish", "whale"
     );
+
+    public static final List<String> LAND_MOBS = List.of(
+            "alligator", "bear", "bird", "blackBear", "boar", "capybara", "crab", "deer", "duck",
+            "elephant", "forestFox", "forestRabbit", "giraffe", "hedgehog", "hippo", "komodoDragon",
+            "lion", "lizard", "mammoth", "mole", "ostrich", "rat", "rhino", "snake", "tiger",
+            "tortoise", "turkey", "vulture", "zebra"
+    );
+
+    public static final List<String> BUGS = List.of(
+            "ant", "butterfly", "desertScorpion", "dragonfly", "firefly", "jungleScorpion", "snail"
+    );
+
+    public static final List<String> MOB_KEYS = Stream.of(AQUATIC_MOBS, LAND_MOBS, BUGS)
+            .flatMap(List::stream)
+            .sorted()
+            .toList();
 
     private static final Map<String, String> ALIASES = Map.of(
             "bluejay", "bird",
@@ -24,6 +40,7 @@ public final class NaturalistConfig {
     );
 
     public static final String SNAIL_CRUSHING_KEY = "snail_crushing";
+    public static final String REMOVE_ALL_BUGS_KEY = "remove_all_bugs";
 
     private NaturalistConfig() {}
 
@@ -44,7 +61,11 @@ public final class NaturalistConfig {
     }
 
     public static boolean isRemoved(String mobName) {
-        return Services.CONFIG.isMobRemoved(canonicalKey(mobName));
+        String key = canonicalKey(mobName);
+        if (BUGS.contains(key) && Services.CONFIG.areAllBugsRemoved()) {
+            return true;
+        }
+        return Services.CONFIG.isMobRemoved(key);
     }
 
     public static boolean isSnailCrushingEnabled() {
