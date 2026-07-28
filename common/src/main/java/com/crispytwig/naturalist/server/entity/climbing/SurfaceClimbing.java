@@ -30,8 +30,11 @@ public class SurfaceClimbing {
     private int grace = GRACE_TICKS;
     private int switchCooldown;
     private int stuckTicks;
+    private Vec3 nudgeDir = Vec3.ZERO;
     private Vec3 desiredDir = Vec3.ZERO;
+    private Vec3 goalDelta = Vec3.ZERO;
     private double desiredSpeed;
+    private int groundCooldown;
 
     private Vec3 renderNormal = UP;
     private Vec3 renderNormalO = UP;
@@ -49,14 +52,20 @@ public class SurfaceClimbing {
         this.normalData = normalData;
     }
 
-    public void setDesired(Vec3 dir, double speed) {
+    public void setDesired(Vec3 dir, double speed, Vec3 goalDelta) {
         this.desiredDir = dir;
         this.desiredSpeed = speed;
+        this.goalDelta = goalDelta;
     }
 
     public void halt() {
         this.desiredDir = Vec3.ZERO;
         this.desiredSpeed = 0.0D;
+        this.goalDelta = Vec3.ZERO;
+    }
+
+    public void suppressClimbing(int ticks) {
+        this.groundCooldown = ticks;
     }
 
     public Vec3 getNormal() {
@@ -103,7 +112,32 @@ public class SurfaceClimbing {
             return false;
         }
         Vec3 velocity = this.mob.getDeltaMovement().scale(0.6D).add(this.desiredDir.scale(this.desiredSpeed * 0.16D));
-        Vec3 intended = velocity.add(this.normal.scale(-0.08D));
+        boolean facePresent = this.probe(this.normal.scale(-1.0D));
+        Vec3 intended = facePresent || this.normal.y > 0.5D || this.goalDelta.dot(this.normal) < 0.0D
+                ? velocity.add(this.normal.scale(-0.08D))
+                : velocity;
+        if (this.stuckTicks > 2 && this.normal.y < WALL_NORMAL_Y) {
+            if (this.stuckTicks == 3) {
+                Vec3 cross = this.normal.cross(this.desiredDir);
+                if (cross.lengthSqr() > 1.0E-6D) {
+                    Vec3 crossNorm = cross.normalize();
+                    boolean plusFree = this.mob.level().noCollision(this.mob,
+                            this.mob.getBoundingBox().move(crossNorm.scale(0.35D)));
+                    boolean minusFree = this.mob.level().noCollision(this.mob,
+                            this.mob.getBoundingBox().move(crossNorm.scale(-0.35D)));
+                    if (plusFree) {
+                        this.nudgeDir = crossNorm.scale(0.05D);
+                    } else if (minusFree) {
+                        this.nudgeDir = crossNorm.scale(-0.05D);
+                    } else {
+                        this.nudgeDir = Vec3.ZERO;
+                    }
+                }
+            }
+            if (this.nudgeDir.lengthSqr() > 1.0E-8D) {
+                intended = intended.add(this.nudgeDir);
+            }
+        }
         Vec3 before = this.mob.position();
         this.mob.move(MoverType.SELF, intended);
         Vec3 actual = this.mob.position().subtract(before);
@@ -112,23 +146,39 @@ public class SurfaceClimbing {
         if (this.switchCooldown > 0) {
             this.switchCooldown--;
         }
+        if (this.groundCooldown > 0) {
+            this.groundCooldown--;
+        }
         this.updateStuckEscape(actual);
         return true;
     }
 
     private void updateStuckEscape(Vec3 actual) {
-        if (this.desiredSpeed <= 1.0E-3D || actual.lengthSqr() > 1.0E-6D) {
+        if (this.desiredSpeed <= 1.0E-3D) {
             this.stuckTicks = 0;
+            this.nudgeDir = Vec3.ZERO;
             return;
         }
-        if (++this.stuckTicks > 20) {
+        if (this.desiredDir.lengthSqr() > 1.0E-4D && actual.dot(this.desiredDir) > 1.0E-4D) {
             this.stuckTicks = 0;
-            Vec3 other = this.findNearestFace();
-            if (other != null) {
-                this.attach(other);
-            } else {
-                this.attached = false;
+            if (this.nudgeDir.lengthSqr() < 1.0E-8D || actual.dot(this.desiredDir) > 0.005D) {
+                this.nudgeDir = Vec3.ZERO;
             }
+            return;
+        }
+        if (actual.lengthSqr() > 1.0E-6D && this.desiredDir.lengthSqr() <= 1.0E-4D) {
+            this.stuckTicks = 0;
+            this.nudgeDir = Vec3.ZERO;
+            return;
+        }
+        this.stuckTicks++;
+        if (this.normal.y > WALL_NORMAL_Y) {
+            return;
+        }
+        if (this.stuckTicks > 10) {
+            this.stuckTicks = 0;
+            this.nudgeDir = Vec3.ZERO;
+            this.attached = false;
         }
     }
 
@@ -143,7 +193,7 @@ public class SurfaceClimbing {
             return;
         }
         Vec3 nearest = this.findNearestFace();
-        if (nearest != null) {
+        if (nearest != null && (this.groundCooldown <= 0 || nearest.y > WALL_NORMAL_Y)) {
             this.attach(nearest);
             return;
         }
@@ -165,7 +215,7 @@ public class SurfaceClimbing {
     }
 
     private Vec3 findSteeredFace(Vec3 intended, Vec3 actual) {
-        if (this.switchCooldown > 0) {
+        if (this.switchCooldown > 0 || this.groundCooldown > 0) {
             return null;
         }
         Vec3 best = null;

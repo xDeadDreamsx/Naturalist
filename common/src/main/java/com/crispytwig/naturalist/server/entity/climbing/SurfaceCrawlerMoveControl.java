@@ -13,6 +13,8 @@ public class SurfaceCrawlerMoveControl extends MoveControl {
     private int stuckTicks;
     private int climbTicks;
     private int stuckCycles;
+    private Vec3 progressAnchor = Vec3.ZERO;
+    private int progressTicks;
 
     public <T extends Mob & SurfaceCrawler> SurfaceCrawlerMoveControl(T mob) {
         super(mob);
@@ -24,6 +26,8 @@ public class SurfaceCrawlerMoveControl extends MoveControl {
         this.stuckTicks = 0;
         this.climbTicks = 0;
         this.stuckCycles = 0;
+        this.progressAnchor = this.mob.position();
+        this.progressTicks = 0;
         this.mob.getNavigation().stop();
         this.crawler.getClimbing().halt();
     }
@@ -43,6 +47,8 @@ public class SurfaceCrawlerMoveControl extends MoveControl {
             this.stuckTicks = 0;
             this.climbTicks = 0;
             this.stuckCycles = 0;
+            this.progressAnchor = this.mob.position();
+            this.progressTicks = 0;
         }
 
         Vec3 delta = wanted.subtract(this.mob.position());
@@ -57,11 +63,24 @@ public class SurfaceCrawlerMoveControl extends MoveControl {
         this.trackProgress();
 
         Vec3 normal = climbing.getNormal();
-        Vec3 tangent = SurfaceClimbing.projectOntoPlane(delta, normal);
-        if (tangent.lengthSqr() < distance * distance * 0.04D) {
-            tangent = SurfaceClimbing.projectOntoPlane(new Vec3(0.0D, 1.0D, 0.0D), normal);
-            if (tangent.lengthSqr() < 0.01D) {
-                tangent = new Vec3(delta.x, 0.0D, delta.z);
+        boolean onWall = Math.abs(normal.y) < 0.5D;
+        Vec3 tangent;
+        if (onWall && delta.dot(normal) < 0.0D) {
+            tangent = new Vec3(0.0D, 1.0D, 0.0D);
+        } else {
+            tangent = SurfaceClimbing.projectOntoPlane(delta, normal);
+            if (onWall && tangent.y > 0.0D) {
+                tangent = new Vec3(tangent.x, 0.0D, tangent.z);
+            }
+            if (tangent.lengthSqr() < distance * distance * 0.04D) {
+                if (onWall) {
+                    tangent = new Vec3(0.0D, -1.0D, 0.0D);
+                } else {
+                    tangent = SurfaceClimbing.projectOntoPlane(new Vec3(0.0D, 1.0D, 0.0D), normal);
+                    if (tangent.lengthSqr() < 0.01D) {
+                        tangent = new Vec3(delta.x, 0.0D, delta.z);
+                    }
+                }
             }
         }
         if (this.climbTicks > 0) {
@@ -84,7 +103,7 @@ public class SurfaceCrawlerMoveControl extends MoveControl {
         tangent = tangent.normalize();
         double speed = this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED);
         this.mob.setSpeed((float) speed);
-        climbing.setDesired(tangent, speed);
+        climbing.setDesired(tangent, speed, delta);
 
         if (tangent.horizontalDistanceSqr() > 1.0E-4D) {
             float yaw = (float) (Mth.atan2(tangent.z, tangent.x) * Mth.RAD_TO_DEG) - 90.0F;
@@ -95,13 +114,28 @@ public class SurfaceCrawlerMoveControl extends MoveControl {
 
     private void trackProgress() {
         Vec3 pos = this.mob.position();
+        if (++this.progressTicks >= 20) {
+            if (pos.distanceToSqr(this.progressAnchor) < 0.01D) {
+                this.crawler.getClimbing().suppressClimbing(40);
+                this.giveUp();
+                return;
+            }
+            this.progressAnchor = pos;
+            this.progressTicks = 0;
+        }
         if (pos.distanceToSqr(this.lastPos) < 1.0E-4D) {
-            if (++this.stuckTicks > 12 && this.climbTicks <= 0) {
+            if (++this.stuckTicks > 8 && this.climbTicks <= 0) {
                 this.stuckTicks = 0;
-                if (++this.stuckCycles >= 2) {
-                    this.giveUp();
+                if (this.crawler.getClimbing().isOnSide()) {
+                    if (++this.stuckCycles >= 2) {
+                        this.crawler.getClimbing().suppressClimbing(40);
+                        this.giveUp();
+                    } else {
+                        this.climbTicks = 24;
+                    }
                 } else {
-                    this.climbTicks = 24;
+                    this.crawler.getClimbing().suppressClimbing(40);
+                    this.giveUp();
                 }
             }
         } else {

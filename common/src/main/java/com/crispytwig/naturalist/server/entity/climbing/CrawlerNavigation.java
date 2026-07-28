@@ -40,6 +40,11 @@ public class CrawlerNavigation extends GroundPathNavigation {
         return true;
     }
 
+    public boolean crawlTo(BlockPos target, double speed) {
+        this.stop();
+        return this.startCrawlTo(target, speed);
+    }
+
     @Override
     public void tick() {
         SurfaceClimbing climbing = this.crawler.getClimbing();

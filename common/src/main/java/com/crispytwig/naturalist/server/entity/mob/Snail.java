@@ -11,6 +11,8 @@ import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.entity.climbing.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -24,6 +26,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -438,10 +441,54 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     }
 
     static class SnailStrollGoal extends WaterAvoidingRandomStrollGoal {
+        private boolean surfaceTarget;
+
         public SnailStrollGoal(PathfinderMob mob, double speedModifier, float probability) {
             super(mob, speedModifier, probability);
             this.forceTrigger = true;
             this.interval = 1;
+        }
+
+        @Nullable
+        @Override
+        protected Vec3 getPosition() {
+            this.surfaceTarget = false;
+            if (this.mob.getRandom().nextFloat() < 0.3F) {
+                Vec3 surface = this.findSurfacePosition();
+                if (surface != null) {
+                    this.surfaceTarget = true;
+                    return surface;
+                }
+            }
+            return super.getPosition();
+        }
+
+        @Nullable
+        private Vec3 findSurfacePosition() {
+            RandomSource random = this.mob.getRandom();
+            BlockPos origin = this.mob.blockPosition();
+            for (int attempt = 0; attempt < 10; attempt++) {
+                BlockPos pos = origin.offset(random.nextInt(13) - 6, random.nextInt(9) - 4, random.nextInt(13) - 6);
+                if (!this.mob.level().getBlockState(pos).getCollisionShape(this.mob.level(), pos).isEmpty()) {
+                    continue;
+                }
+                for (Direction direction : Direction.values()) {
+                    BlockPos support = pos.relative(direction);
+                    if (this.mob.level().getBlockState(support).isFaceSturdy(this.mob.level(), support, direction.getOpposite())) {
+                        return Vec3.atCenterOf(pos);
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public void start() {
+            if (this.surfaceTarget && this.mob.getNavigation() instanceof CrawlerNavigation navigation) {
+                navigation.crawlTo(BlockPos.containing(this.wantedX, this.wantedY, this.wantedZ), this.speedModifier);
+            } else {
+                super.start();
+            }
         }
     }
     //endregion
