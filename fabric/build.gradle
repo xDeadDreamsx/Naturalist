@@ -98,20 +98,23 @@ jar {
 publishMods {
     file = remapJar.archiveFile
     type = STABLE
+    version = "${project.mod_version}+${project.minecraft_version}-fabric"
     changelog = rootProject.file("CHANGELOG.md").text
     modLoaders.add("fabric")
     displayName = "${project.mod_name} ${project.mod_version} (Fabric ${project.minecraft_version})"
 
     curseforge {
         projectId = project.curseforge
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        accessToken = providers.gradleProperty("curseforgeToken").orElse(providers.environmentVariable("CURSEFORGE_TOKEN"))
         minecraftVersions.add(project.minecraft_version)
+        clientRequired = true
+        serverRequired = true
         requires("fabric-api")
     }
 
     modrinth {
         projectId = project.modrinth
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        accessToken = providers.gradleProperty("modrinthToken").orElse(providers.environmentVariable("MODRINTH_TOKEN"))
         minecraftVersions.add(project.minecraft_version)
         requires("fabric-api")
     }

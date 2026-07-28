@@ -117,19 +117,22 @@ jar {
 publishMods {
     file = remapJar.archiveFile
     type = STABLE
+    version = "${project.mod_version}+${project.minecraft_version}-neoforge"
     changelog = rootProject.file("CHANGELOG.md").text
     modLoaders.add("neoforge")
     displayName = "${project.mod_name} ${project.mod_version} (NeoForge ${project.minecraft_version})"
 
     curseforge {
         projectId = project.curseforge
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        accessToken = providers.gradleProperty("curseforgeToken").orElse(providers.environmentVariable("CURSEFORGE_TOKEN"))
         minecraftVersions.add(project.minecraft_version)
+        clientRequired = true
+        serverRequired = true
     }
 
     modrinth {
         projectId = project.modrinth
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        accessToken = providers.gradleProperty("modrinthToken").orElse(providers.environmentVariable("MODRINTH_TOKEN"))
         minecraftVersions.add(project.minecraft_version)
     }
 }
