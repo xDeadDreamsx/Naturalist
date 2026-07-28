@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.NaturalistConfig;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.base.DyeableAnimal;
 import com.crispytwig.naturalist.server.entity.base.FollowingPet;
@@ -354,7 +355,7 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, DyeableA
 
         if (this.level().isClientSide) {
             Vec3 movement = player.getDeltaMovement();
-            if (movement.y < 0.0D && !player.onGround() && !player.getAbilities().flying && !player.isFallFlying()) {
+            if (NaturalistConfig.isBirdHeadSlowFallingEnabled() && movement.y < 0.0D && !player.onGround() && !player.getAbilities().flying && !player.isFallFlying()) {
                 player.setDeltaMovement(movement.multiply(1.0D, 0.6D, 1.0D));
             }
         } else if (player.isCrouching() || !player.isAlive() || player.isSpectator()) {

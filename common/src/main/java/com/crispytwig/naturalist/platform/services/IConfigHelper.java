@@ -6,4 +6,8 @@ public interface IConfigHelper {
     boolean areAllBugsRemoved();
 
     boolean isSnailCrushingEnabled();
+
+    boolean isBirdHeadSlowFallingEnabled();
+
+    boolean isParrotFlightEnabled();
 }

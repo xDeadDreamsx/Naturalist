@@ -18,6 +18,8 @@ public final class FabricNaturalistConfig implements IConfigHelper {
     private static final Map<String, Boolean> VALUES = new HashMap<>();
     private static boolean snailCrushing = false;
     private static boolean removeAllBugs = false;
+    private static boolean birdHeadSlowFalling = true;
+    private static boolean parrotFlight = true;
 
     public static void load() {
         Path path = FabricLoader.getInstance().getConfigDir().resolve("naturalist-server.properties");
@@ -27,6 +29,8 @@ public final class FabricNaturalistConfig implements IConfigHelper {
         }
         properties.setProperty(NaturalistConfig.REMOVE_ALL_BUGS_KEY, "false");
         properties.setProperty(NaturalistConfig.SNAIL_CRUSHING_KEY, "false");
+        properties.setProperty(NaturalistConfig.BIRD_HEAD_SLOW_FALLING_KEY, "true");
+        properties.setProperty(NaturalistConfig.PARROT_FLIGHT_KEY, "true");
 
         if (Files.exists(path)) {
             try (Reader reader = Files.newBufferedReader(path)) {
@@ -41,6 +45,8 @@ public final class FabricNaturalistConfig implements IConfigHelper {
         }
         removeAllBugs = Boolean.parseBoolean(properties.getProperty(NaturalistConfig.REMOVE_ALL_BUGS_KEY, "false"));
         snailCrushing = Boolean.parseBoolean(properties.getProperty(NaturalistConfig.SNAIL_CRUSHING_KEY, "false"));
+        birdHeadSlowFalling = Boolean.parseBoolean(properties.getProperty(NaturalistConfig.BIRD_HEAD_SLOW_FALLING_KEY, "true"));
+        parrotFlight = Boolean.parseBoolean(properties.getProperty(NaturalistConfig.PARROT_FLIGHT_KEY, "true"));
 
         try (Writer writer = Files.newBufferedWriter(path)) {
             properties.store(writer, "Naturalist server config. Set (mob)_removed=true to disable a mob.");
@@ -62,5 +68,15 @@ public final class FabricNaturalistConfig implements IConfigHelper {
     @Override
     public boolean isSnailCrushingEnabled() {
         return snailCrushing;
+    }
+
+    @Override
+    public boolean isBirdHeadSlowFallingEnabled() {
+        return birdHeadSlowFalling;
+    }
+
+    @Override
+    public boolean isParrotFlightEnabled() {
+        return parrotFlight;
     }
 }

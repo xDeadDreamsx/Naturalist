@@ -70,7 +70,8 @@ processResources {
             "mod_description"        : project.mod_description,
             "mod_authors"            : project.mod_authors,
             "minecraft_version"      : project.minecraft_version,
-            "fabric_loader_version"  : project.fabric_loader_version
+            "fabric_loader_version"  : project.fabric_loader_version,
+            "fabric_api_version"     : project.fabric_api_version
     ]
 
     filesMatching("fabric.mod.json") {

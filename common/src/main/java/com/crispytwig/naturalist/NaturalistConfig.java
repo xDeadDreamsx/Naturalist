@@ -41,6 +41,8 @@ public final class NaturalistConfig {
 
     public static final String SNAIL_CRUSHING_KEY = "snail_crushing";
     public static final String REMOVE_ALL_BUGS_KEY = "remove_all_bugs";
+    public static final String BIRD_HEAD_SLOW_FALLING_KEY = "bird_head_slow_falling";
+    public static final String PARROT_FLIGHT_KEY = "parrot_flight";
 
     private NaturalistConfig() {}
 
@@ -70,5 +72,13 @@ public final class NaturalistConfig {
 
     public static boolean isSnailCrushingEnabled() {
         return Services.CONFIG.isSnailCrushingEnabled();
+    }
+
+    public static boolean isBirdHeadSlowFallingEnabled() {
+        return Services.CONFIG.isBirdHeadSlowFallingEnabled();
+    }
+
+    public static boolean isParrotFlightEnabled() {
+        return Services.CONFIG.isParrotFlightEnabled();
     }
 }

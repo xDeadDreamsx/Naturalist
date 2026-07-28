@@ -320,6 +320,8 @@ public class NaturalistLanguageProvider extends LanguageProvider {
         add("naturalist.configuration.remove_all_bugs", "Remove All Bugs");
         add("naturalist.configuration.behavior", "Behavior");
         add("naturalist.configuration.snail_crushing", "Crushable Snails");
+        add("naturalist.configuration.bird_head_slow_falling", "Bird Slow Falling");
+        add("naturalist.configuration.parrot_flight", "Parrot Flight");
         add("naturalist.configuration.alligator_removed", "Remove Alligator");
         add("naturalist.configuration.anglerfish_removed", "Remove Anglerfish");
         add("naturalist.configuration.ant_removed", "Remove Ant");

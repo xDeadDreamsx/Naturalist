@@ -13,6 +13,8 @@ public final class NeoForgeNaturalistConfig implements IConfigHelper {
     private static final Map<String, ModConfigSpec.BooleanValue> VALUES = new HashMap<>();
     private static final ModConfigSpec.BooleanValue SNAIL_CRUSHING;
     private static final ModConfigSpec.BooleanValue REMOVE_ALL_BUGS;
+    private static final ModConfigSpec.BooleanValue BIRD_HEAD_SLOW_FALLING;
+    private static final ModConfigSpec.BooleanValue PARROT_FLIGHT;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -40,6 +42,12 @@ public final class NeoForgeNaturalistConfig implements IConfigHelper {
         SNAIL_CRUSHING = builder
                 .translation("naturalist.configuration." + NaturalistConfig.SNAIL_CRUSHING_KEY)
                 .define(NaturalistConfig.SNAIL_CRUSHING_KEY, false);
+        BIRD_HEAD_SLOW_FALLING = builder
+                .translation("naturalist.configuration." + NaturalistConfig.BIRD_HEAD_SLOW_FALLING_KEY)
+                .define(NaturalistConfig.BIRD_HEAD_SLOW_FALLING_KEY, true);
+        PARROT_FLIGHT = builder
+                .translation("naturalist.configuration." + NaturalistConfig.PARROT_FLIGHT_KEY)
+                .define(NaturalistConfig.PARROT_FLIGHT_KEY, true);
         builder.pop();
 
         SPEC = builder.build();
@@ -66,5 +74,15 @@ public final class NeoForgeNaturalistConfig implements IConfigHelper {
     @Override
     public boolean isSnailCrushingEnabled() {
         return SNAIL_CRUSHING.get();
+    }
+
+    @Override
+    public boolean isBirdHeadSlowFallingEnabled() {
+        return BIRD_HEAD_SLOW_FALLING.get();
+    }
+
+    @Override
+    public boolean isParrotFlightEnabled() {
+        return PARROT_FLIGHT.get();
     }
 }

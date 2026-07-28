@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.server.entity.util;
 
+import com.crispytwig.naturalist.NaturalistConfig;
 import com.crispytwig.naturalist.server.entity.mob.Bird;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +28,7 @@ public final class ParrotFlight {
     }
 
     public static boolean canAscend(Player player) {
-        return hasParrotOnBothShoulders(player) && hasBirdOnHead(player);
+        return NaturalistConfig.isParrotFlightEnabled() && hasParrotOnBothShoulders(player) && hasBirdOnHead(player);
     }
 
     private static boolean isParrot(CompoundTag tag) {
