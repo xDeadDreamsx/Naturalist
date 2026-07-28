@@ -56,6 +56,8 @@ public class PiranhaModel extends NaturalistEntityModel<Piranha> {
 	@Override
 	protected void setupAnimations(Piranha entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch) {
 
+		this.animateSmooth(entity.attackAnimationState, PiranhaAnimations.PIRANHA_ATTACK, ageInTicks, partialTick);
+
 		this.animateSmooth(entity.flopAnimationState, PiranhaAnimations.PIRANHA_FLOP, ageInTicks, partialTick);
 		this.animateSmooth(entity.swimAnimationState, PiranhaAnimations.PIRANHA_SWIM, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 2.0F, SMALL_SWIMMER_LIMB_SWING));
 

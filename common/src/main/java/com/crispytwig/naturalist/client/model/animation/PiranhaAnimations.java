@@ -187,10 +187,6 @@ public class PiranhaAnimations {
 			new Keyframe(0.25F, KeyframeAnimations.posVec(0.0F, 0.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
 			new Keyframe(0.3333F, KeyframeAnimations.posVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
 		))
-		.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.SCALE,
-			new Keyframe(0.375F, KeyframeAnimations.scaleVec(1.0F, 1.0F, 1.0F), AnimationChannel.Interpolations.LINEAR),
-			new Keyframe(0.376F, KeyframeAnimations.scaleVec(0.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
-		))
 		.build();
 
 	public static final AnimationDefinition PIRANHA_ATTACK_UB = AnimationDefinition.Builder.withLength(0.5F)

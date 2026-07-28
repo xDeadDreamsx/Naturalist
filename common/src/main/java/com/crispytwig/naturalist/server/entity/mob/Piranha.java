@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
 import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
@@ -48,6 +49,9 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
 
     public final SmoothAnimationState swimAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState flopAnimationState = new SmoothAnimationState();
+    public final SmoothAnimationState attackAnimationState = SmoothAnimationState.instant();
+
+    private final AnimationTimer attackAnimTimer = new AnimationTimer(15);
 
     public final FishSwimTilt swimTilt = new FishSwimTilt();
 
@@ -223,6 +227,7 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
 
     private void setupAnimationStates() {
         boolean inWater = this.isInWater();
+        this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
         this.flopAnimationState.animateWhen(!inWater, this.tickCount);
         this.swimAnimationState.animateWhen(inWater, this.tickCount);
     }

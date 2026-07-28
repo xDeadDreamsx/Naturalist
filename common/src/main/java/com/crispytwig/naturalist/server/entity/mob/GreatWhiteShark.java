@@ -427,12 +427,14 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
         private static final double RETREAT_SPEED = 1.2D;
         private static final int RETREAT_TIME_LIMIT = 60;
         private static final int FUMBLE_TIME_LIMIT = 15;
+        private static final int ATTACK_COOLDOWN = 20;
 
         private final GreatWhiteShark shark;
         private boolean charging;
         private int retreatTicks;
         private int fumbleTicks;
         private int pathRecalcTicks;
+        private int attackCooldown;
 
         SharkAttackGoal(GreatWhiteShark shark) {
             this.shark = shark;
@@ -472,6 +474,9 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
             if (target == null) {
                 return;
             }
+            if (this.attackCooldown > 0) {
+                this.attackCooldown--;
+            }
             if (this.charging) {
                 this.tickCharge(target);
             } else {
@@ -485,9 +490,10 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
                 this.pathRecalcTicks = 4;
                 this.shark.getNavigation().moveTo(target, 2.25);
             }
-            if (this.shark.isWithinMeleeAttackRange(target) && this.shark.getSensing().hasLineOfSight(target) && this.shark.isFacing(target)) {
+            if (this.attackCooldown <= 0 && this.shark.isWithinMeleeAttackRange(target) && this.shark.getSensing().hasLineOfSight(target) && this.shark.isFacing(target)) {
                 this.shark.swing(InteractionHand.MAIN_HAND);
                 this.shark.doHurtTarget(target);
+                this.attackCooldown = ATTACK_COOLDOWN;
                 this.startRetreat(target);
             } else if (this.shark.distanceToSqr(target) < FUMBLE_DIST_SQR) {
                 if (++this.fumbleTicks > FUMBLE_TIME_LIMIT) {
