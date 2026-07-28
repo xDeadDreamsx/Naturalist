@@ -69,6 +69,6 @@ public class DirtTrailModel extends NaturalistEntityModel<DirtTrail> {
 		this.extra2.visible = (bits & 2) != 0;
 		this.extra3.visible = (bits & 4) != 0;
 
-		this.animateSmooth(entity.spawnAnimationState, DirtTrailAnimations.DIRT_TRAIL_SPAWN, ageInTicks, partialTick);
+		this.animateUnblended(entity.spawnAnimationState, DirtTrailAnimations.DIRT_TRAIL_SPAWN, ageInTicks);
 	}
 }

@@ -50,9 +50,13 @@ public abstract class NaturalistEntityModel<E extends Entity> extends Hierarchic
         if (cached != null) {
             return cached;
         }
-        Optional<ModelPart> resolved = name.equals(this.getRootPartName())
-                ? Optional.of(this.root())
-                : super.getAnyDescendantWithName(name);
+        Optional<ModelPart> resolved = this.root().getAllParts()
+                .filter(part -> part.hasChild(name))
+                .findFirst()
+                .map(part -> part.getChild(name));
+        if (resolved.isEmpty() && name.equals(this.getRootPartName())) {
+            resolved = Optional.of(this.root());
+        }
         this.partsByName.put(name, resolved);
         return resolved;
     }
@@ -116,6 +120,13 @@ public abstract class NaturalistEntityModel<E extends Entity> extends Hierarchic
         }
         state.updateTime(ageInTicks, speed);
         KeyframeAnimations.animate(this, definition, state.getAccumulatedTime(), factor, ANIMATION_VECTOR_CACHE);
+    }
+
+    protected void animateUnblended(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks) {
+        if (state.isStarted()) {
+            state.updateTime(ageInTicks, 1.0F);
+        }
+        KeyframeAnimations.animate(this, definition, state.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE);
     }
 
     protected void animateIdleSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks, float partialTick, float limbSwingAmount) {
