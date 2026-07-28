@@ -6,6 +6,9 @@
     "minecraft:tropical_fish",
     "minecraft:pufferfish",
     "naturalist:bass",
-    "naturalist:catfish"
+    "naturalist:catfish",
+    "naturalist:anglerfish",
+    "naturalist:blobfish",
+    "naturalist:piranha"
   ]
 }
