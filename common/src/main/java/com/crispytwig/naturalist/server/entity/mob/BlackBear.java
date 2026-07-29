@@ -6,7 +6,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +18,15 @@ public class BlackBear extends Bear {
     //region Behavior
     public BlackBear(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 24.0D)
+                .add(Attributes.FOLLOW_RANGE, 20.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D)
+                .add(Attributes.ATTACK_DAMAGE, 5.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.5D)
+                .add(Attributes.STEP_HEIGHT, 1.0D);
     }
 
     @Override

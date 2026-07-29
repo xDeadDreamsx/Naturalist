@@ -44,9 +44,9 @@ public class DesertScorpion extends Scorpion implements Catchable, DataDrivenVar
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 5.0D)
+                .add(Attributes.MAX_HEALTH, 12.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.27D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
+                .add(Attributes.ATTACK_DAMAGE, 2.0D);
     }
 
     @Override

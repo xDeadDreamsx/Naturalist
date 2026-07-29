@@ -92,9 +92,9 @@ public class Turkey extends Animal implements DataDrivenVariantAnimal {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 4.0D)
+                .add(Attributes.MAX_HEALTH, 6.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
-                .add(Attributes.ATTACK_DAMAGE, 5.0D);
+                .add(Attributes.ATTACK_DAMAGE, 2.0D);
     }
 
     @Override

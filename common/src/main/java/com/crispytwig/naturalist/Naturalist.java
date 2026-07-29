@@ -102,7 +102,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.RHINO.get(), Rhino.createAttributes());
         r.register(NaturalistEntityTypes.LION.get(), Lion.createAttributes());
         r.register(NaturalistEntityTypes.ELEPHANT.get(), Elephant.createAttributes());
-        r.register(NaturalistEntityTypes.MAMMOTH.get(), Elephant.createAttributes());
+        r.register(NaturalistEntityTypes.MAMMOTH.get(), Mammoth.createAttributes());
         r.register(NaturalistEntityTypes.ZEBRA.get(), Zebra.createBaseHorseAttributes());
         r.register(NaturalistEntityTypes.GIRAFFE.get(), Giraffe.createAttributes());
         r.register(NaturalistEntityTypes.HIPPO.get(), Hippo.createAttributes());
@@ -115,7 +115,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.BLOBFISH.get(), Blobfish.createAttributes());
         r.register(NaturalistEntityTypes.PIRANHA.get(), Piranha.createAttributes());
         r.register(NaturalistEntityTypes.ALLIGATOR.get(), Alligator.createAttributes());
-        r.register(NaturalistEntityTypes.BASS.get(), Mob.createMobAttributes());
+        r.register(NaturalistEntityTypes.BASS.get(), Bass.createAttributes());
         r.register(NaturalistEntityTypes.LIZARD.get(), Lizard.createAttributes());
         r.register(NaturalistEntityTypes.LIZARD_TAIL.get(), LizardTail.createAttributes());
         r.register(NaturalistEntityTypes.TORTOISE.get(), Tortoise.createAttributes());
@@ -128,7 +128,7 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.ANT.get(), Ant.createAttributes());
         r.register(NaturalistEntityTypes.MOLE.get(), Mole.createAttributes());
         r.register(NaturalistEntityTypes.RAT.get(), Rat.createAttributes());
-        r.register(NaturalistEntityTypes.BLACK_BEAR.get(), Bear.createAttributes());
+        r.register(NaturalistEntityTypes.BLACK_BEAR.get(), BlackBear.createAttributes());
         r.register(NaturalistEntityTypes.TIGER.get(), Tiger.createAttributes());
         r.register(NaturalistEntityTypes.KOMODO_DRAGON.get(), KomodoDragon.createAttributes());
         r.register(NaturalistEntityTypes.OSTRICH.get(), Ostrich.createAttributes());

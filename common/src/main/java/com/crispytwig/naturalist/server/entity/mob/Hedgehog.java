@@ -106,7 +106,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 18.0).add(Attributes.MOVEMENT_SPEED, 0.2);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 12.0).add(Attributes.MOVEMENT_SPEED, 0.2);
     }
 
     @Override

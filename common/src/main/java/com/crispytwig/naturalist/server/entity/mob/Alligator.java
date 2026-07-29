@@ -105,7 +105,7 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
         return Mob.createMobAttributes()
                 .add(Attributes.MOVEMENT_SPEED, 0.2)
                 .add(Attributes.MAX_HEALTH, 30.0)
-                .add(Attributes.ATTACK_DAMAGE, 6.0)
+                .add(Attributes.ATTACK_DAMAGE, 8.0)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.60)
                 .add(Attributes.STEP_HEIGHT, 1.0);
     }

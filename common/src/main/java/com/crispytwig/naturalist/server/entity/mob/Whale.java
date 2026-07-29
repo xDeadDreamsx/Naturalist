@@ -117,9 +117,9 @@ public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnim
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0D)
+                .add(Attributes.MAX_HEALTH, 80.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.6D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.9D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D);
     }
 

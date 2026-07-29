@@ -139,9 +139,9 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0D)
+                .add(Attributes.MAX_HEALTH, 80.0D)
                 .add(Attributes.MOVEMENT_SPEED, 1.0D)
-                .add(Attributes.ATTACK_DAMAGE, 14.0D)
+                .add(Attributes.ATTACK_DAMAGE, 8.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D);
     }
 

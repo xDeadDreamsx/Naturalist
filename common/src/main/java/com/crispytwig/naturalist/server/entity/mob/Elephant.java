@@ -99,10 +99,10 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 80.0D)
+                .add(Attributes.MAX_HEALTH, 100.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.ATTACK_DAMAGE, 10.0D)
-                .add(Attributes.ATTACK_KNOCKBACK, 1.2)
+                .add(Attributes.ATTACK_DAMAGE, 12.0D)
+                .add(Attributes.ATTACK_KNOCKBACK, 1.5)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D)
                 .add(Attributes.FOLLOW_RANGE, 15.0D)
                 .add(Attributes.STEP_HEIGHT, 1.0D);

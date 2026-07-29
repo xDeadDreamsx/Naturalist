@@ -71,7 +71,7 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 40.0D).add(Attributes.MOVEMENT_SPEED, 0.2D).add(Attributes.ATTACK_DAMAGE, 6.0D).add(Attributes.KNOCKBACK_RESISTANCE, 0.6D).add(Attributes.FOLLOW_RANGE, 12.0D).add(Attributes.STEP_HEIGHT, 1.0D);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 60.0D).add(Attributes.MOVEMENT_SPEED, 0.2D).add(Attributes.ATTACK_DAMAGE, 10.0D).add(Attributes.ATTACK_KNOCKBACK, 1.5D).add(Attributes.KNOCKBACK_RESISTANCE, 0.75D).add(Attributes.FOLLOW_RANGE, 16.0D).add(Attributes.STEP_HEIGHT, 1.0D);
     }
 
     @Override

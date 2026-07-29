@@ -88,11 +88,11 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0D)
+                .add(Attributes.MAX_HEALTH, 70.0D)
                 .add(Attributes.FOLLOW_RANGE, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.ATTACK_DAMAGE, 6.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.6D)
+                .add(Attributes.ATTACK_DAMAGE, 9.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D)
                 .add(Attributes.STEP_HEIGHT, 1.0D);
     }
 

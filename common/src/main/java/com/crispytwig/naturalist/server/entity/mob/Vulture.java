@@ -89,7 +89,7 @@ public class Vulture extends PathfinderMob implements FlyingAnimal, DataDrivenVa
     }
 
     public static Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0F).add(Attributes.FLYING_SPEED, 0.6F).add(Attributes.MOVEMENT_SPEED, 0.3F).add(Attributes.ATTACK_DAMAGE, 4.0F);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 14.0F).add(Attributes.FLYING_SPEED, 0.6F).add(Attributes.MOVEMENT_SPEED, 0.3F).add(Attributes.ATTACK_DAMAGE, 4.0F);
     }
 
     @Override

@@ -136,9 +136,9 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 24.0D)
+                .add(Attributes.MAX_HEALTH, 32.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
-                .add(Attributes.ATTACK_DAMAGE, 6.0D)
+                .add(Attributes.ATTACK_DAMAGE, 8.0D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.STEP_HEIGHT, 1.0D);
     }

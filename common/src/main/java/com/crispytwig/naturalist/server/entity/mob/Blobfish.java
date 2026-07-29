@@ -78,7 +78,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.ATTACK_DAMAGE, 1.0D).add(Attributes.MOVEMENT_SPEED, 1.0D);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 3.0D).add(Attributes.ATTACK_DAMAGE, 1.0D).add(Attributes.MOVEMENT_SPEED, 1.0D);
     }
 
     public static boolean checkBlobfishSpawnRules(EntityType<? extends WaterAnimal> type, ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {

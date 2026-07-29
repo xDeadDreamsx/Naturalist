@@ -97,7 +97,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 2.0D).add(Attributes.MOVEMENT_SPEED, 0.05F);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 3.0D).add(Attributes.MOVEMENT_SPEED, 0.05F);
     }
 
     @Override

@@ -38,9 +38,9 @@ public class JungleScorpion extends Scorpion implements DataDrivenVariantAnimal 
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 8.0D)
+                .add(Attributes.MAX_HEALTH, 16.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.27D)
-                .add(Attributes.ATTACK_DAMAGE, 6.0D);
+                .add(Attributes.ATTACK_DAMAGE, 3.0D);
     }
 
     @Override
