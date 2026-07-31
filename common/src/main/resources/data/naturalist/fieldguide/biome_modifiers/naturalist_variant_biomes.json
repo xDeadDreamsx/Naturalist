@@ -3,17 +3,11 @@
   "additions": [
     {
       "entry": "naturalist:tiger#black_panther",
-      "values": [
-        "minecraft:mangrove_swamp",
-        "minecraft:dark_forest"
-      ]
+      "value": "#naturalist:variant/tiger/black_panther"
     },
     {
       "entry": "naturalist:tiger#white_tiger",
-      "values": [
-        "minecraft:bamboo_jungle",
-        "minecraft:cherry_grove"
-      ]
+      "value": "#naturalist:variant/tiger/white_tiger"
     },
     {
       "entry": "naturalist:tiger#leopard",

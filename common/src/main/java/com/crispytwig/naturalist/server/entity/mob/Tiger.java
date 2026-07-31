@@ -68,7 +68,6 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Objects;
 
 public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal, NocturnalHostile {
@@ -217,15 +216,6 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
         this.stalking = stalking;
     }
 
-    public boolean isPackLeader() {
-        LivingEntity target = this.getTarget();
-        return !this.isBaby() && !this.isTame() && target != null && target.isAlive() && !(target instanceof Tiger);
-    }
-
-    public boolean isCharging() {
-        return this.isSprinting();
-    }
-
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -275,9 +265,9 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
+        this.goalSelector.addGoal(1, new TigerStalkGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.6D, true));
         this.goalSelector.addGoal(2, new BabyPanicGoal(this, 1.25D));
-        this.goalSelector.addGoal(2, new TigerFollowLeaderGoal(this, 24.0F));
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
         this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
@@ -443,39 +433,31 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
         }
     }
 
-    static class TigerFollowLeaderGoal extends Goal {
+    static class TigerStalkGoal extends Goal {
+        private static final double START_DISTANCE_SQR = 144.0D;
+        private static final double POUNCE_DISTANCE_SQR = 36.0D;
         private final Tiger tiger;
-        private final float areaSize;
-        @Nullable
-        private Tiger leader;
         private int timeToRecalcPath;
 
-        public TigerFollowLeaderGoal(Tiger tiger, float areaSize) {
+        public TigerStalkGoal(Tiger tiger) {
             this.tiger = tiger;
-            this.areaSize = areaSize;
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
         @Override
         public boolean canUse() {
-            if (this.tiger.isBaby() || this.tiger.isTame() || this.tiger.getTarget() != null || !this.tiger.canHunt()) {
+            if (this.tiger.isBaby() || this.tiger.isTame() || this.tiger.isSleeping()) {
                 return false;
             }
-            if (this.tiger.tickCount % 10 != 0) {
-                return false;
-            }
-            List<Tiger> nearby = this.tiger.level().getEntitiesOfClass(Tiger.class, this.tiger.getBoundingBox().inflate(this.areaSize),
-                    other -> other != this.tiger && other.isPackLeader());
-            if (nearby.isEmpty()) {
-                return false;
-            }
-            this.leader = nearby.getFirst();
-            return true;
+            LivingEntity target = this.tiger.getTarget();
+            return target != null && target.isAlive() && this.tiger.distanceToSqr(target) > START_DISTANCE_SQR;
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.leader != null && this.leader.isAlive() && this.leader.isPackLeader() && this.tiger.getTarget() == null;
+            LivingEntity target = this.tiger.getTarget();
+            return target != null && target.isAlive() && !this.tiger.isSleeping()
+                    && this.tiger.distanceToSqr(target) > POUNCE_DISTANCE_SQR;
         }
 
         @Override
@@ -487,27 +469,19 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
         @Override
         public void stop() {
             this.tiger.setStalking(false);
-            this.leader = null;
             this.tiger.getNavigation().stop();
         }
 
         @Override
         public void tick() {
-            if (this.leader == null) {
+            LivingEntity target = this.tiger.getTarget();
+            if (target == null) {
                 return;
             }
-            this.tiger.getLookControl().setLookAt(this.leader, 10.0F, this.tiger.getMaxHeadXRot());
-            if (this.leader.isCharging()) {
-                this.tiger.setTarget(this.leader.getTarget());
-                return;
-            }
+            this.tiger.getLookControl().setLookAt(target, 10.0F, this.tiger.getMaxHeadXRot());
             if (--this.timeToRecalcPath <= 0) {
                 this.timeToRecalcPath = this.adjustedTickDelay(10);
-                if (this.tiger.distanceToSqr(this.leader) >= 36.0D) {
-                    this.tiger.getNavigation().moveTo(this.leader, 0.6D);
-                } else {
-                    this.tiger.getNavigation().stop();
-                }
+                this.tiger.getNavigation().moveTo(target, 0.7D);
             }
         }
     }
