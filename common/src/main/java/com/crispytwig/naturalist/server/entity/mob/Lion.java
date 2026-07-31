@@ -180,11 +180,12 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
         this.selectVariantForSpawn(level);
         super.finalizeSpawn(level, difficulty, reason, spawnData);
         AgeableMobGroupData ageableMobGroupData;
-        if (spawnData == null) {
+        boolean prideLeader = spawnData == null;
+        if (prideLeader) {
             spawnData = new AgeableMobGroupData(true);
-            this.setHasMane(this.getRandom().nextBoolean());
         }
-        if ((ageableMobGroupData = (AgeableMobGroupData)spawnData).getGroupSize() > 2) {
+        this.setHasMane(!prideLeader && this.getRandom().nextBoolean());
+        if ((ageableMobGroupData = (AgeableMobGroupData)spawnData).getGroupSize() > 2 && this.getRandom().nextFloat() < 0.7F) {
             this.setAge(-24000);
         }
         ageableMobGroupData.increaseGroupSizeByOne();
@@ -426,27 +427,25 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
 
         @Override
         public boolean canUse() {
-            if (this.mob.isBaby() || this.mob.hasMane()) {
+            if (this.mob.isBaby()) {
                 return false;
             }
-            List<Lion> nearbyLions = this.mob.level().getEntitiesOfClass(Lion.class, this.mob.getBoundingBox().inflate(this.areaSize), followingMob -> followingMob != null && !followingMob.isBaby());
-            if (!nearbyLions.isEmpty()) {
-                for (Lion lion : nearbyLions) {
-                    if (!lion.hasMane()) continue;
-                    if (lion.isInvisible()) continue;
-                    this.followingMob = lion;
-                    return true;
-                }
-                if (this.followingMob == null) {
-                    for (Lion lion : nearbyLions) {
-                        if (lion.isBaby()) continue;
-                        if (lion.isInvisible()) continue;
-                        this.followingMob = lion;
-                        return true;
-                    }
+            List<Lion> nearbyLions = this.mob.level().getEntitiesOfClass(Lion.class, this.mob.getBoundingBox().inflate(this.areaSize), lion -> lion != this.mob && !lion.isBaby() && !lion.isInvisible());
+            Lion leader = null;
+            for (Lion lion : nearbyLions) {
+                if (lion.hasMane()) continue;
+                if (leader == null || lion.getUUID().compareTo(leader.getUUID()) < 0) {
+                    leader = lion;
                 }
             }
-            return false;
+            if (leader == null) {
+                return false;
+            }
+            if (!this.mob.hasMane() && this.mob.getUUID().compareTo(leader.getUUID()) < 0) {
+                return false;
+            }
+            this.followingMob = leader;
+            return true;
         }
 
         @Override

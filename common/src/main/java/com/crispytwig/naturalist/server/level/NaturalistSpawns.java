@@ -55,7 +55,7 @@ public final class NaturalistSpawns {
         c.accept(NaturalistTags.Biomes.HAS_GIRAFFE, NaturalistTags.Biomes.BLACKLIST_GIRAFFE, MobCategory.CREATURE, NaturalistEntityTypes.GIRAFFE.get(), 5, 1, 3);
         c.accept(NaturalistTags.Biomes.HAS_HIPPO, NaturalistTags.Biomes.BLACKLIST_HIPPO, MobCategory.CREATURE, NaturalistEntityTypes.HIPPO.get(), 10, 1, 3);
         c.accept(NaturalistTags.Biomes.HAS_KOMODO_DRAGON, NaturalistTags.Biomes.BLACKLIST_KOMODO_DRAGON, MobCategory.CREATURE, NaturalistEntityTypes.KOMODO_DRAGON.get(), 20, 1, 2);
-        c.accept(NaturalistTags.Biomes.HAS_LION, NaturalistTags.Biomes.BLACKLIST_LION, MobCategory.CREATURE, NaturalistEntityTypes.LION.get(), 3, 1, 3);
+        c.accept(NaturalistTags.Biomes.HAS_LION, NaturalistTags.Biomes.BLACKLIST_LION, MobCategory.CREATURE, NaturalistEntityTypes.LION.get(), 5, 3, 5);
         c.accept(NaturalistTags.Biomes.HAS_LIZARD, NaturalistTags.Biomes.BLACKLIST_LIZARD, MobCategory.CREATURE, NaturalistEntityTypes.LIZARD.get(), 10, 1, 1);
         c.accept(NaturalistTags.Biomes.HAS_MAMMOTH, NaturalistTags.Biomes.BLACKLIST_MAMMOTH, MobCategory.CREATURE, NaturalistEntityTypes.MAMMOTH.get(), 5, 2, 3);
         c.accept(NaturalistTags.Biomes.HAS_MOLE, NaturalistTags.Biomes.BLACKLIST_MOLE, MobCategory.CREATURE, NaturalistEntityTypes.MOLE.get(), 10, 1, 2);
