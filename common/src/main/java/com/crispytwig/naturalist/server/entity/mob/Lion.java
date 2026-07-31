@@ -151,6 +151,10 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
         return this.entityData.get(HAS_MANE);
     }
 
+    public boolean usesAltSleepPose() {
+        return (this.getUUID().hashCode() & 1) == 0;
+    }
+
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -525,13 +529,13 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
         boolean baby = this.isBaby();
         boolean sitting = baby && this.isInSittingPose();
         boolean sleeping = this.isSleeping() || (!baby && this.isInSittingPose());
-        boolean maned = this.hasMane() && !baby;
+        boolean altSleep = this.usesAltSleepPose();
         boolean posing = sitting || sleeping;
         boolean moving = NaturalistAnimal.isVisiblyMoving(this);
 
         this.sitAnimationState.animateWhen(sitting, this.tickCount);
-        this.sleepAnimationState.animateWhen(sleeping && !maned, this.tickCount);
-        this.sleep2AnimationState.animateWhen(sleeping && maned, this.tickCount);
+        this.sleepAnimationState.animateWhen(sleeping && !altSleep, this.tickCount);
+        this.sleep2AnimationState.animateWhen(sleeping && altSleep, this.tickCount);
 
         this.attackAnimationState.animateWhen(this.attackAnimTimer.tick(this.swinging), this.tickCount);
 
