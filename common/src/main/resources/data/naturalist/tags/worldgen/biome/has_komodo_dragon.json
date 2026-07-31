@@ -3,6 +3,8 @@
     "#minecraft:is_badlands",
     "#minecraft:is_savanna",
     "minecraft:desert",
+    "minecraft:jungle",
+    "minecraft:sparse_jungle",
     {
       "id": "biomesoplenty:lush_desert",
       "required": false

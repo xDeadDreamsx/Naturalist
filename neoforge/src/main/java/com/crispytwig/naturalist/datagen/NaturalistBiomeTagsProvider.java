@@ -417,7 +417,7 @@ public class NaturalistBiomeTagsProvider extends TagsProvider<Biome> {
 
         tag(NaturalistTags.Biomes.HAS_KOMODO_DRAGON)
                 .addTag(BiomeTags.IS_BADLANDS).addTag(BiomeTags.IS_SAVANNA)
-                .add(Biomes.DESERT)
+                .add(Biomes.DESERT).add(Biomes.JUNGLE).add(Biomes.SPARSE_JUNGLE)
                 .addOptional(bop("lush_desert")).addOptional(bop("mediterranean_forest"))
                 .addOptional(bop("old_growth_woodland")).addOptional(bop("scrubland"))
                 .addOptional(bop("woodland"));
