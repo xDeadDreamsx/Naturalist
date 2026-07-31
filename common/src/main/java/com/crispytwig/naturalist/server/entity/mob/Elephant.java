@@ -231,6 +231,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         this.goalSelector.addGoal(2, new ElephantMeleeAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(3, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.2D, 24.0D, 6.0D, 12.0D));
+        this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.8));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0f));
