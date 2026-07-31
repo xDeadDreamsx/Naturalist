@@ -60,29 +60,35 @@ public final class NeoForgeNaturalistConfig implements IConfigHelper {
         }
     }
 
+    private static boolean read(ModConfigSpec.BooleanValue value, boolean fallback) {
+        if (value == null || !SPEC.isLoaded()) {
+            return fallback;
+        }
+        return value.get();
+    }
+
     @Override
     public boolean isMobRemoved(String canonicalKey) {
-        ModConfigSpec.BooleanValue value = VALUES.get(canonicalKey);
-        return value != null && value.get();
+        return read(VALUES.get(canonicalKey), false);
     }
 
     @Override
     public boolean areAllBugsRemoved() {
-        return REMOVE_ALL_BUGS.get();
+        return read(REMOVE_ALL_BUGS, false);
     }
 
     @Override
     public boolean isSnailCrushingEnabled() {
-        return SNAIL_CRUSHING.get();
+        return read(SNAIL_CRUSHING, false);
     }
 
     @Override
     public boolean isBirdHeadSlowFallingEnabled() {
-        return BIRD_HEAD_SLOW_FALLING.get();
+        return read(BIRD_HEAD_SLOW_FALLING, true);
     }
 
     @Override
     public boolean isParrotFlightEnabled() {
-        return PARROT_FLIGHT.get();
+        return read(PARROT_FLIGHT, true);
     }
 }

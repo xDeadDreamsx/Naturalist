@@ -561,7 +561,7 @@
   "naturalist.subtitles.entity.zebra.jump": "Zebra jumps",
 
   "_comment.fieldguide": " FIELD GUIDE ",
-  "fieldguide.naturalist.alligator.description": "A neutral mob that swims in Swamps, attacking them if they enter the water. Alligators lay clutches of eggs on land and guard them.\n\nThey can not be tamed, but they can be bred with any raw meat.\n\nUpon death, Alligators drop 1-3 Tooth.",
+  "fieldguide.naturalist.alligator.description": "A neutral mob that swims in Swamps, attacking Players if they enter the water. Alligators lay clutches of eggs on land and guard them.\n\nThey can not be tamed, but they can be bred with any raw meat.\n\nUpon death, Alligators drop 1-3 Tooth.",
   "fieldguide.naturalist.anglerfish.description": "A neutral fish that has a glowing pearl-like object on its head to lure prey.\n\nIt can be caught with a Water Bucket, and drops 1 Anglerfish when killed.",
   "fieldguide.naturalist.ant.description": "A neutral mob that marches in around its hill, looking for anything edible. \n\nAnt Hills can be broken, but doing so will disturb the entire colony. Every Ant Hill has 1 Queen Ant.\n\nObtaining the Queen Ant will allow you to place an Ant Hill of your own with Ants loyal to you.",
   "fieldguide.naturalist.bass.description": "A passive fish that schools near Rivers and other bodies of water. It can be caught with a Water Bucket, and drops 1 Bass when killed.",

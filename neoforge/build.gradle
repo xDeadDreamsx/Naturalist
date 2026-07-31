@@ -64,6 +64,7 @@ dependencies {
 
     modLocalRuntime "maven.modrinth:zrAMu1nt:${project.personality_neoforge_version}"
     modLocalRuntime "maven.modrinth:blueprint:${project.blueprint_neoforge_version}"
+    modLocalRuntime "maven.modrinth:bad-mobs:${project.badmobs_neoforge_version}"
 }
 
 processResources {
