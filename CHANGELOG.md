@@ -1,7 +1,5 @@
-### Naturalist 2.0.3 Changelog
-
 - Added recipes & recipe advancements for Knapsack and Whistle.
-- Disabled select mixin(s) when Sodium/Iris are installed - should prevent crashes
+- Removed particle rendering mixins.
 - Added "Bear Necessities" 4x4 Painting by .inzaenity
 - Mob removal configs are now per-world.
 - Filled out as many block/item tags as I was aware of `(please let me know if you have any other suggestions)'`
