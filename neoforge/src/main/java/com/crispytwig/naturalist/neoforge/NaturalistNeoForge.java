@@ -41,7 +41,7 @@ public class NaturalistNeoForge {
         Naturalist.bootstrap();
         NaturalistBiomeModifiers.BIOME_MODIFIERS.register(modEventBus);
 
-        modContainer.registerConfig(ModConfig.Type.SERVER, NeoForgeNaturalistConfig.SPEC, "naturalist-server.toml");
+        modContainer.registerConfig(ModConfig.Type.COMMON, NeoForgeNaturalistConfig.SPEC, "naturalist-server.toml");
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::createAttributes);

@@ -1,6 +1,8 @@
 package com.crispytwig.naturalist;
 
 import com.crispytwig.naturalist.platform.Services;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
 
 import java.util.List;
 import java.util.Map;
@@ -28,15 +30,18 @@ public final class NaturalistConfig {
             .sorted()
             .toList();
 
-    private static final Map<String, String> ALIASES = Map.of(
-            "bluejay", "bird",
-            "canary", "bird",
-            "cardinal", "bird",
-            "finch", "bird",
-            "robin", "bird",
-            "sparrow", "bird",
-            "coralSnake", "snake",
-            "rattlesnake", "snake"
+    private static final Map<String, String> ALIASES = Map.ofEntries(
+            Map.entry("bluejay", "bird"),
+            Map.entry("canary", "bird"),
+            Map.entry("cardinal", "bird"),
+            Map.entry("finch", "bird"),
+            Map.entry("robin", "bird"),
+            Map.entry("sparrow", "bird"),
+            Map.entry("coralSnake", "snake"),
+            Map.entry("rattlesnake", "snake"),
+            Map.entry("caterpillar", "butterfly"),
+            Map.entry("fox", "forestFox"),
+            Map.entry("rabbit", "forestRabbit")
     );
 
     public static final String SNAIL_CRUSHING_KEY = "snail_crushing";
@@ -60,6 +65,25 @@ public final class NaturalistConfig {
             }
         }
         return sb.append("_removed").toString();
+    }
+
+    public static String mobName(EntityType<?> type) {
+        String path = BuiltInRegistries.ENTITY_TYPE.getKey(type).getPath();
+        StringBuilder sb = new StringBuilder();
+        boolean capitalizeNext = false;
+        for (char c : path.toCharArray()) {
+            if (c == '_') {
+                capitalizeNext = true;
+            } else {
+                sb.append(capitalizeNext ? Character.toUpperCase(c) : c);
+                capitalizeNext = false;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static boolean isRemoved(EntityType<?> type) {
+        return isRemoved(mobName(type));
     }
 
     public static boolean isRemoved(String mobName) {

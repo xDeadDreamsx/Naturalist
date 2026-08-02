@@ -1,8 +1,8 @@
 package com.crispytwig.naturalist.mixin;
 
+import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.NaturalistConfig;
 import com.crispytwig.naturalist.server.entity.mob.Firefly;
-import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Set;
+
 @Mixin(Mob.class)
 public abstract class MobMixin extends LivingEntity {
     @Unique
@@ -35,7 +37,16 @@ public abstract class MobMixin extends LivingEntity {
     private static final double naturalist$BABY_HEALTH_EPSILON = 1.0E-4D;
 
     @Unique
+    private static final Set<String> naturalist$EXCLUDED = Set.of("carried_food", "dirt_trail", "duck_egg", "lizard_tail");
+
+    @Unique
     private Boolean naturalist$wasBaby;
+
+    @Unique
+    private boolean naturalist$isNaturalistMob() {
+        ResourceLocation key = BuiltInRegistries.ENTITY_TYPE.getKey(this.getType());
+        return key.getNamespace().equals(Naturalist.MOD_ID) && !naturalist$EXCLUDED.contains(key.getPath());
+    }
 
     @Unique
     private static double naturalist$babyMaxHealth(double adultMax) {
@@ -52,7 +63,7 @@ public abstract class MobMixin extends LivingEntity {
 
     @Inject(method = "aiStep", at = @At("TAIL"))
     private void naturalist$updateBabyHealth(CallbackInfo ci) {
-        if (this.level().isClientSide || !this.getType().is(NaturalistTags.EntityTypes.NATURALIST_ENTITIES)) {
+        if (this.level().isClientSide || !this.naturalist$isNaturalistMob()) {
             return;
         }
 
@@ -91,7 +102,7 @@ public abstract class MobMixin extends LivingEntity {
 
     @Inject(method = "aiStep", at = @At("HEAD"))
     private void naturalist$clearSwingLatch(CallbackInfo ci) {
-        if (this.getType().is(NaturalistTags.EntityTypes.NATURALIST_ENTITIES)) {
+        if (this.naturalist$isNaturalistMob()) {
             this.updateSwingTime();
         }
     }
@@ -107,36 +118,13 @@ public abstract class MobMixin extends LivingEntity {
 
     @Inject(method = "checkDespawn", at = @At("HEAD"), cancellable = true)
     private void naturalist$checkDespawnMixin(CallbackInfo ci) {
-        if (!this.getType().is(NaturalistTags.EntityTypes.NATURALIST_ENTITIES)) {
+        if (!this.naturalist$isNaturalistMob()) {
             return;
         }
 
-        if (BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath().equals("caterpillar")) {
-            return;
-        }
-
-        String mobName = naturalist$toCamelCase(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
-
-        if (NaturalistConfig.isRemoved(mobName)) {
+        if (NaturalistConfig.isRemoved(this.getType())) {
             this.remove(Entity.RemovalReason.DISCARDED);
             ci.cancel();
         }
-    }
-
-    @Unique
-    private String naturalist$toCamelCase(String input) {
-        StringBuilder camelCase = new StringBuilder();
-        boolean capitalizeNext = false;
-
-        for (char c : input.toCharArray()) {
-            if (c == '_') {
-                capitalizeNext = true;
-            } else {
-                camelCase.append(capitalizeNext ? Character.toUpperCase(c) : c);
-                capitalizeNext = false;
-            }
-        }
-
-        return camelCase.toString();
     }
 }

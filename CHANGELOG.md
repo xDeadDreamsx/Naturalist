@@ -1,7 +1,8 @@
-- Added recipes & recipe advancements for Knapsack and Whistle.
 - Removed particle rendering mixins.
-- Added "Bear Necessities" 4x4 Painting by .inzaenity
-- Mob removal configs are now per-world.
+- Added config for Glow Goop tooltips.
+- Mob removal configs should actually prevent spawning now.
+    - Caterpillars follow the Butterfly removal config.
+    - Spawns no longer even attempt if mobs are disabled - so they should not take up the mob cap.
 - Filled out as many block/item tags as I was aware of `(please let me know if you have any other suggestions)'`
 - Bass now have attack damage properties, so them attacking things should no longer crash you.
 - Fixed the Alligator Field Guide compat being vague and saying "them" instead of "Player".

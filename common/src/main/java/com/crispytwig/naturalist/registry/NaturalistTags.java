@@ -92,8 +92,6 @@ public class NaturalistTags {
         public static final TagKey<EntityType<?>> BOAR_HOSTILES = tag("boar_hostiles");
         public static final TagKey<EntityType<?>> ANIMAL_CRATE_BLACKLISTED = tag("animal_crate_blacklist");
 
-        public static final TagKey<EntityType<?>> NATURALIST_ENTITIES = tag("naturalist_entities");
-
         private static @NotNull TagKey<EntityType<?>> tag(String name) {
             return TagKey.create(Registries.ENTITY_TYPE, Naturalist.location(name));
         }

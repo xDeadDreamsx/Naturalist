@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.server.level.modifiers;
 
 import com.mojang.serialization.MapCodec;
+import com.crispytwig.naturalist.NaturalistConfig;
 import com.crispytwig.naturalist.neoforge.registry.NaturalistBiomeModifiers;
 import com.crispytwig.naturalist.server.level.NaturalistSpawns;
 import net.minecraft.core.Holder;
@@ -15,6 +16,9 @@ public class AddAnimalsBiomeModifier implements BiomeModifier {
     public void modify(@NotNull Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.@NotNull Builder builder) {
         if (phase.equals(Phase.ADD)) {
             NaturalistSpawns.forEachSpawn((hasTag, blacklistTag, category, entityType, weight, min, max) -> {
+                if (NaturalistConfig.isRemoved(entityType)) {
+                    return;
+                }
                 if (biome.is(hasTag) && (blacklistTag == null || !biome.is(blacklistTag))) {
                     builder.getMobSpawnSettings().addSpawn(category, new MobSpawnSettings.SpawnerData(entityType, weight, min, max));
                 }

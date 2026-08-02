@@ -1,6 +1,7 @@
 package com.crispytwig.naturalist.fabric;
 
 import com.crispytwig.naturalist.Naturalist;
+import com.crispytwig.naturalist.NaturalistConfig;
 import com.crispytwig.naturalist.fabric.config.FabricNaturalistConfig;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.level.NaturalistSpawns;
@@ -41,8 +42,8 @@ public class NaturalistFabric implements ModInitializer {
 
     private static void registerBiomeSpawns() {
         NaturalistSpawns.forEachSpawn((hasTag, blacklistTag, category, type, weight, min, max) -> {
-            BiomeModifications.addSpawn(ctx ->
-                    ctx.hasTag(hasTag) && (blacklistTag == null || !ctx.hasTag(blacklistTag)), category, type, weight, min, max);
+            BiomeModifications.addSpawn(ctx -> !NaturalistConfig.isRemoved(type)
+                    && ctx.hasTag(hasTag) && (blacklistTag == null || !ctx.hasTag(blacklistTag)), category, type, weight, min, max);
         });
     }
 

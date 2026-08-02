@@ -140,7 +140,15 @@ public final class Naturalist {
         r.register(NaturalistEntityTypes.HEDGEHOG.get(), Hedgehog.createAttributes());
     }
 
-    public static void registerSpawnPlacements(SpawnPlacementRegistrar r) {
+    public static void registerSpawnPlacements(SpawnPlacementRegistrar registrar) {
+        SpawnPlacementRegistrar r = new SpawnPlacementRegistrar() {
+            @Override
+            public <T extends Mob> void register(EntityType<T> type, SpawnPlacementType placementType, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate) {
+                registrar.register(type, placementType, heightmap, (t, level, spawnType, pos, random) ->
+                        !NaturalistConfig.isRemoved(t) && predicate.test(t, level, spawnType, pos, random));
+            }
+        };
+
         r.register(NaturalistEntityTypes.SNAIL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.BEAR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NaturalistAnimal::checkNaturalistAnimalSpawnRules);
         r.register(NaturalistEntityTypes.BUTTERFLY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING, Butterfly::checkButterflySpawnRules);
