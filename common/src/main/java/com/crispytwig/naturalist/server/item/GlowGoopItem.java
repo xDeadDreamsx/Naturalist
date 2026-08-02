@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.server.item;
 
+import com.crispytwig.naturalist.NaturalistClientConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -20,6 +21,9 @@ public class GlowGoopItem extends ItemNameBlockItem {
     @SuppressWarnings("unused")
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
+        if (!NaturalistClientConfig.isGlowGoopTooltipEnabled()) {
+            return;
+        }
         if (Screen.hasShiftDown()) {
             tooltip.add(Component.literal("Place up to 3").withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.literal("in one space!").withStyle(ChatFormatting.GRAY));

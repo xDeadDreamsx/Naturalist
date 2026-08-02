@@ -1,6 +1,8 @@
 package com.crispytwig.naturalist.neoforge;
 
 import com.crispytwig.naturalist.NaturalistClient;
+import com.crispytwig.naturalist.NaturalistClientConfig;
+import com.crispytwig.naturalist.neoforge.config.NeoForgeNaturalistClientConfig;
 import com.crispytwig.naturalist.client.model.item.VariantAwareItemModel;
 import com.crispytwig.naturalist.client.model.item.VariantItemModels;
 import com.crispytwig.naturalist.client.particle.CaptureNetSwingParticle;
@@ -11,6 +13,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
@@ -23,6 +26,9 @@ import java.util.Map;
 
 public class NaturalistNeoForgeClient {
     public static void init(IEventBus modEventBus, ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.CLIENT, NeoForgeNaturalistClientConfig.SPEC, "naturalist-client.toml");
+        NaturalistClientConfig.setGlowGoopTooltip(NeoForgeNaturalistClientConfig::isGlowGoopTooltipEnabled);
+
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modEventBus.addListener(NaturalistNeoForgeClient::registerRenderers);
         modEventBus.addListener(NaturalistNeoForgeClient::registerLayerDefinitions);

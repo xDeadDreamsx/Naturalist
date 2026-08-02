@@ -1,6 +1,8 @@
 package com.crispytwig.naturalist.fabric.client;
 
 import com.crispytwig.naturalist.NaturalistClient;
+import com.crispytwig.naturalist.NaturalistClientConfig;
+import com.crispytwig.naturalist.fabric.config.FabricNaturalistClientConfig;
 import com.crispytwig.naturalist.client.model.item.VariantAwareItemModel;
 import com.crispytwig.naturalist.client.model.item.VariantItemModels;
 import com.crispytwig.naturalist.client.particle.CaptureNetSwingParticle;
@@ -27,6 +29,9 @@ import java.util.concurrent.CompletableFuture;
 public class NaturalistFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        FabricNaturalistClientConfig.load();
+        NaturalistClientConfig.setGlowGoopTooltip(FabricNaturalistClientConfig::isGlowGoopTooltipEnabled);
+
         NaturalistClient.registerLayerDefinitions((location, definition) ->
                 EntityModelLayerRegistry.registerModelLayer(location, definition::get));
         NaturalistClient.registerRenderers(EntityRendererRegistry::register);
