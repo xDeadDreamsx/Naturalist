@@ -8,9 +8,12 @@ import com.crispytwig.naturalist.server.entity.base.FollowingPet;
 import com.crispytwig.naturalist.server.entity.ai.goal.FollowAdultGoal;
 import com.crispytwig.naturalist.server.entity.ai.goal.PetFollowOwnerGoal;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
+import com.crispytwig.naturalist.server.entity.variant.MobVariant;
+import com.crispytwig.naturalist.registry.NaturalistMobVariants;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -106,8 +109,13 @@ public class Bird extends ShoulderRidingEntity implements FlyingAnimal, DyeableA
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, NaturalistMobVariants.BIRD_AMERICAN_ROBIN.location().toString());
         builder.define(DATA_DYE, -1);
+    }
+
+    @Override
+    public ResourceKey<MobVariant> getDefaultVariant() {
+        return NaturalistMobVariants.BIRD_AMERICAN_ROBIN;
     }
 
     @Override

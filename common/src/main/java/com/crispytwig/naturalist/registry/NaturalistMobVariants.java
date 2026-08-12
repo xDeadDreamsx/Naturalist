@@ -22,6 +22,7 @@ public final class NaturalistMobVariants {
     public static final ResourceKey<Registry<MobVariant>> TORTOISE_VARIANT = registryFor("tortoise");
     public static final ResourceKey<Registry<MobVariant>> ANGLERFISH_VARIANT = registryFor("anglerfish");
     public static final ResourceKey<Registry<MobVariant>> BUTTERFLY_VARIANT = registryFor("butterfly");
+    public static final ResourceKey<Registry<MobVariant>> BIRD_VARIANT = registryFor("bird");
 
     public static final ResourceKey<MobVariant> HEDGEHOG_BROWN = createKey(HEDGEHOG_VARIANT, "brown");
     public static final ResourceKey<MobVariant> RAT_BLACK = createKey(RAT_VARIANT, "black");
@@ -30,6 +31,7 @@ public final class NaturalistMobVariants {
     public static final ResourceKey<MobVariant> ANGLERFISH_RED = createKey(ANGLERFISH_VARIANT, "red");
     public static final ResourceKey<MobVariant> ANGLERFISH_GLOW = createKey(ANGLERFISH_VARIANT, "glow");
     public static final ResourceKey<MobVariant> BUTTERFLY_MONARCH = createKey(BUTTERFLY_VARIANT, "monarch");
+    public static final ResourceKey<MobVariant> BIRD_AMERICAN_ROBIN = createKey(BIRD_VARIANT, "american_robin");
 
     private NaturalistMobVariants() {
     }
