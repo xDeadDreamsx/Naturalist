@@ -115,7 +115,7 @@ publishMods {
     dryRun = providers.gradleProperty("publishDryRun").isPresent()
 
     curseforge {
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN").orElse(providers.gradleProperty("curseforgeToken"))
         projectId = rootProject.curseforge_id
         minecraftVersions.add(rootProject.minecraft_version)
         requires("geckolib")
@@ -123,7 +123,7 @@ publishMods {
     }
 
     modrinth {
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN").orElse(providers.gradleProperty("modrinthToken"))
         projectId = rootProject.modrinth_id
         minecraftVersions.add(rootProject.minecraft_version)
         requires("geckolib")
