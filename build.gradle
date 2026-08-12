@@ -34,6 +34,11 @@ subprojects {
             name = "Gegy"
             url = "https://maven.gegy.dev"
         }
+        maven {
+            name = "CurseMaven"
+            url = "https://cursemaven.com"
+            content { includeGroup "curse.maven" }
+        }
     }
 
     dependencies {

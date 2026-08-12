@@ -41,7 +41,7 @@ dependencies {
     neoForge "net.neoforged:neoforge:${project.neo_version}"
 
 
-    modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${project.lambdynamiclights_version}") {
+    modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${project.lambdynamiclights}") {
         attributes {
             attribute(Attribute.of("net.minecraft.mappings", String), "mojmap")
         }
@@ -50,21 +50,26 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowBundle project(path: ":common", configuration: "transformProductionNeoForge")
 
-    modCompileOnly "maven.modrinth:justenoughbreeding:${project.justenoughbreeding_neoforge_version}"
-    modLocalRuntime "maven.modrinth:justenoughbreeding:${project.justenoughbreeding_neoforge_version}"
+    modCompileOnly "maven.modrinth:justenoughbreeding:${project.jeb_neoforge}"
+    modLocalRuntime "maven.modrinth:justenoughbreeding:${project.jeb_neoforge}"
 
-    modCompileOnly "maven.modrinth:emi:${project.emi_neoforge_version}"
-    modLocalRuntime "maven.modrinth:emi:${project.emi_neoforge_version}"
+    modCompileOnly "maven.modrinth:emi:${project.emi_neoforge}"
+    modLocalRuntime "maven.modrinth:emi:${project.emi_neoforge}"
 
-    modLocalRuntime "maven.modrinth:field-guide:${project.field_guide_neoforge_version}"
+    modLocalRuntime "maven.modrinth:field-guide:${project.field_guide_neoforge}"
 
-    modLocalRuntime "maven.modrinth:immersive-overlays:${project.immersive_overlays_version}-neoforge"
+    modLocalRuntime "maven.modrinth:immersive-overlays:${project.immersive_overlays}-neoforge"
 
-    localRuntime "maven.modrinth:not-enough-animations:${project.not_enough_animations_neoforge_version}"
+    localRuntime "maven.modrinth:not-enough-animations:${project.nea_neoforge}"
 
-    modLocalRuntime "maven.modrinth:zrAMu1nt:${project.personality_neoforge_version}"
-    modLocalRuntime "maven.modrinth:blueprint:${project.blueprint_neoforge_version}"
-    modLocalRuntime "maven.modrinth:bad-mobs:${project.badmobs_neoforge_version}"
+    modLocalRuntime "maven.modrinth:zrAMu1nt:${project.personality}"
+    modLocalRuntime "maven.modrinth:blueprint:${project.blueprint}"
+    modLocalRuntime "maven.modrinth:bad-mobs:${project.badmobs}"
+
+    modLocalRuntime "maven.modrinth:scorched-guns-neoforged:${project.scorched_guns}"
+    modLocalRuntime "maven.modrinth:curios:${project.curios}"
+    modLocalRuntime "maven.modrinth:geckolib:${project.geckolib}"
+    modLocalRuntime "curse.maven:framework-549225:${project.framework}"
 }
 
 processResources {

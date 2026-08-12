@@ -42,23 +42,23 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 
-    modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${project.lambdynamiclights_version}")
-    modLocalRuntime("dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:${project.lambdynamiclights_version}")
+    modCompileOnly("dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${project.lambdynamiclights}")
+    modLocalRuntime("dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:${project.lambdynamiclights}")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowBundle project(path: ":common", configuration: "transformProductionFabric")
 
-    modCompileOnly "maven.modrinth:justenoughbreeding:${project.justenoughbreeding_fabric_version}"
-    modLocalRuntime "maven.modrinth:justenoughbreeding:${project.justenoughbreeding_fabric_version}"
+    modCompileOnly "maven.modrinth:justenoughbreeding:${project.jeb_fabric}"
+    modLocalRuntime "maven.modrinth:justenoughbreeding:${project.jeb_fabric}"
 
-    modCompileOnly "maven.modrinth:emi:${project.emi_fabric_version}"
-    modLocalRuntime "maven.modrinth:emi:${project.emi_fabric_version}"
+    modCompileOnly "maven.modrinth:emi:${project.emi_fabric}"
+    modLocalRuntime "maven.modrinth:emi:${project.emi_fabric}"
 
-    modLocalRuntime "maven.modrinth:field-guide:${project.field_guide_fabric_version}"
+    modLocalRuntime "maven.modrinth:field-guide:${project.field_guide_fabric}"
 
-    modLocalRuntime "maven.modrinth:immersive-overlays:${project.immersive_overlays_version}-fabric"
+    modLocalRuntime "maven.modrinth:immersive-overlays:${project.immersive_overlays}-fabric"
 
-    modLocalRuntime "maven.modrinth:not-enough-animations:${project.not_enough_animations_fabric_version}"
+    modLocalRuntime "maven.modrinth:not-enough-animations:${project.nea_fabric}"
 }
 
 processResources {
