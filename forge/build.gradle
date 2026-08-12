@@ -87,7 +87,7 @@ publishMods {
     file = tasks.named('remapJar').flatMap { it.archiveFile }
     changelog = rootProject.file("common/CHANGELOG.md").text
     type = rootProject.release_type == 'stable' ? STABLE : (rootProject.release_type == 'alpha' ? ALPHA : BETA)
-    displayName = "Naturalist ${rootProject.mod_version} [Forge ${rootProject.minecraft_version}]"
+    displayName = "Naturalist ${rootProject.mod_version} (Forge ${rootProject.minecraft_version})"
     version = "${rootProject.mod_version}+forge-${rootProject.minecraft_version}"
     modLoaders.add("forge")
     dryRun = providers.gradleProperty("publishDryRun").isPresent()
