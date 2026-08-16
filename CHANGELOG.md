@@ -1,5 +1,8 @@
 - Removed particle rendering mixins.
 - Added config for Glow Goop tooltips.
+- Fixed Mixin conflict-related crashes with Scorched Guns.
+- Fixed Field Guide variants showing mystery variants, crashing, etc.
+- A majority of mobs have had their stats `(health, damage, etc.)` drastically improved. They should now be more consistent with similar Vanilla/modded mobs, and things like Butterflies should no longer be hard to kill.
 - Mob removal configs should actually prevent spawning now.
     - Caterpillars follow the Butterfly removal config.
     - Spawns no longer even attempt if mobs are disabled - so they should not take up the mob cap.
