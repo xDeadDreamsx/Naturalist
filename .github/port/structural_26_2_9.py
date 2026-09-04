@@ -1,5 +1,6 @@
 from pathlib import Path
 import re
+import runpy
 
 ROOT = Path("common/src/main/java")
 
@@ -59,3 +60,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    # Keep the workflow list stable while extending the port with the 26.2 data-pack migration.
+    runpy.run_path(".github/port/structural_26_2_10.py", run_name="__main__")
