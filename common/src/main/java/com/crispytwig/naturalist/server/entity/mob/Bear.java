@@ -357,15 +357,6 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
-    public void knockback(double strength, double x, double z) {
-        if (this.isBaby()) {
-            super.knockback(strength / Math.max(1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.01), x, z);
-        } else {
-            super.knockback(strength, x, z);
-        }
-    }
-
-    @Override
     public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide()) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());
@@ -388,8 +379,8 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource source) {
-        return source.equals(this.damageSources().sweetBerryBush()) || super.isInvulnerableTo(source);
+    public boolean isInvulnerableTo(ServerLevel level, DamageSource source) {
+        return source.equals(this.damageSources().sweetBerryBush()) || super.isInvulnerableTo(level, source);
     }
 
     @Override
@@ -398,8 +389,8 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
-    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
-        boolean result = super.killedEntity(level, killed);
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed, @NotNull DamageSource source) {
+        boolean result = super.killedEntity(level, killed, source);
         if (result) {
             this.startHuntingCooldown();
         }

@@ -243,31 +243,20 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     }
 
     @Override
-    public void travel(@NotNull Vec3 travelVector) {
-        if (!this.isAlive()) {
-            return;
-        }
-        LivingEntity livingEntity = this.getControllingPassenger();
-        if (!this.isVehicle() || livingEntity == null) {
-            super.travel(travelVector);
-            return;
-        }
-        this.setYRot(livingEntity.getYRot());
-        this.yRotO = this.getYRot();
-        this.setXRot(livingEntity.getXRot() * 0.5f);
-        this.setRot(this.getYRot(), this.getXRot());
-        this.yHeadRot = this.getYRot();
-        this.yBodyRot = Mth.rotLerp(0.35F, this.yBodyRot, this.getYRot());
-        float f = livingEntity.xxa * 0.5f;
-        float g = livingEntity.zza;
-        if (this.isControlledByLocalInstance()) {
-            this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.3F);
-            super.travel(new Vec3(f, travelVector.y, g));
-        } else if (livingEntity instanceof Player) {
-            this.setDeltaMovement(Vec3.ZERO);
-        }
-        this.calculateEntityAnimation(false);
-        this.tryCheckInsideBlocks();
+    protected void tickRidden(@NotNull Player controller, @NotNull Vec3 riddenInput) {
+        super.tickRidden(controller, riddenInput);
+        this.setRot(controller.getYRot(), controller.getXRot() * 0.5F);
+        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
+    }
+
+    @Override
+    protected @NotNull Vec3 getRiddenInput(@NotNull Player controller, @NotNull Vec3 selfInput) {
+        return new Vec3(controller.xxa * 0.5F, 0.0D, controller.zza);
+    }
+
+    @Override
+    protected float getRiddenSpeed(@NotNull Player controller) {
+        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.3F;
     }
 
     @Override
@@ -281,31 +270,25 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     }
 
     @Override
-    public void knockback(double strength, double x, double z) {
-        if (this.isBaby()) {
-            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
-            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
-        } else {
-            super.knockback(strength, x, z);
-        }
-    }
-
-    @Override
     public int getMaxHeadYRot() {
         return 35;
     }
 
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
-        boolean shouldHurt = target.hurt(target.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        boolean shouldHurt = super.doHurtTarget(level, target);
         if (shouldHurt && target instanceof LivingEntity livingEntity) {
-            Vec3 knockbackDirection = new Vec3(this.blockPosition().getX() - target.getX(), 0.0, this.blockPosition().getZ() - target.getZ()).normalize();
-            float shieldBlockModifier = livingEntity.isDamageSourceBlocked(target.damageSources().mobAttack(this)) ? 0.5f : 1.0f;
-            livingEntity.knockback(shieldBlockModifier * 3.0D, knockbackDirection.x(), knockbackDirection.z());
-            double knockbackResistance = Math.max(0.0, 1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-            livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(0.0, 0.5f * knockbackResistance, 0.0));
+            Vec3 knockbackDirection = livingEntity.position().subtract(this.position());
+            if (knockbackDirection.horizontalDistanceSqr() > 1.0E-6D) {
+                knockbackDirection = knockbackDirection.normalize();
+                double resistance = Math.max(0.0D, 1.0D - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+                livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(
+                        knockbackDirection.x * 1.5D * resistance,
+                        0.5D * resistance,
+                        knockbackDirection.z * 1.5D * resistance));
+            }
         }
-        this.playSound(SoundEvents.RAVAGER_ATTACK, 1.0f, 1.0f);
+        this.playSound(SoundEvents.RAVAGER_ATTACK, 1.0F, 1.0F);
         return shouldHurt;
     }
 
@@ -416,7 +399,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
                         stack.shrink(1);
                     }
                     this.setSaddled(true);
-                    this.playSound(SoundEvents.HORSE_SADDLE, 1.0F, 1.0F);
+                    this.playSound(SoundEvents.HORSE_SADDLE.value(), 1.0F, 1.0F);
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -507,8 +490,8 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     }
 
     @Override
-    protected void dropEquipment() {
-        super.dropEquipment();
+    protected void dropEquipment(ServerLevel level) {
+        super.dropEquipment(level);
         if (!this.level().isClientSide()) {
             if (this.isChested()) {
                 this.popItem(new ItemStack(Items.CHEST));
@@ -527,7 +510,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         if (stack.isEmpty()) {
             return;
         }
-        ItemEntity item = this.spawnAtLocation(stack, this.getBbHeight());
+        ItemEntity item = this.level() instanceof ServerLevel serverLevel ? this.spawnAtLocation(serverLevel, stack, this.getBbHeight()) : null;
         if (item != null) {
             item.setDeltaMovement(item.getDeltaMovement().add(0.0, 0.15, 0.0));
         }
@@ -602,7 +585,9 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
             if (this.mob.distanceToSqr(target) <= Mth.square(this.mob.getBbWidth()) && this.isTimeToAttack()) {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(target);
+                if (this.mob.level() instanceof ServerLevel serverLevel) {
+                    this.mob.doHurtTarget(serverLevel, target);
+                }
             }
         }
     }
