@@ -8,6 +8,7 @@ import com.crispytwig.naturalist.registry.NaturalistTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.PowerParticleOption;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -148,7 +149,8 @@ public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal 
     protected void pushEntities() {
     }
 
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    @Override
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 
@@ -182,17 +184,17 @@ public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal 
     protected @NotNull InteractionResult mobInteract(Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.is(Items.CHORUS_FRUIT)) {
-            this.playSound(SoundEvents.GENERIC_EAT);
+            this.playSound(SoundEvents.GENERIC_EAT.value());
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
             if (!this.level().isClientSide()) {
                 AreaEffectCloud areaEffectCloud = new AreaEffectCloud(this.level(), this.getX(), this.getY(), this.getZ());
                 areaEffectCloud.setOwner(this);
-                areaEffectCloud.setParticle(ParticleTypes.DRAGON_BREATH);
+                areaEffectCloud.setCustomParticle(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1.0F));
                 areaEffectCloud.setRadius(0.5f);
                 areaEffectCloud.setDuration(200);
-                areaEffectCloud.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
+                areaEffectCloud.addEffect(new MobEffectInstance(MobEffects.INSTANT_DAMAGE, 1, 1));
                 areaEffectCloud.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(areaEffectCloud);
             }
