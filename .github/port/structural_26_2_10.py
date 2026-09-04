@@ -112,19 +112,12 @@ def write_if_changed(path: Path, transform) -> None:
 
 
 if ROOT.exists():
-    for path in ROOT.rglob("recipe/*.json"):
-        write_if_changed(path, migrate_recipe)
-    for path in ROOT.rglob("recipes/*.json"):
-        write_if_changed(path, migrate_recipe)
-
-    for path in ROOT.rglob("advancement/*.json"):
-        write_if_changed(path, migrate_predicates)
-    for path in ROOT.rglob("advancements/*.json"):
-        write_if_changed(path, migrate_predicates)
-    for path in ROOT.rglob("loot_table/*.json"):
-        write_if_changed(path, migrate_predicates)
-    for path in ROOT.rglob("loot_tables/*.json"):
-        write_if_changed(path, migrate_predicates)
+    for path in ROOT.rglob("*.json"):
+        parts = set(path.parts)
+        if "recipe" in parts or "recipes" in parts:
+            write_if_changed(path, migrate_recipe)
+        elif "advancement" in parts or "advancements" in parts or "loot_table" in parts or "loot_tables" in parts:
+            write_if_changed(path, migrate_predicates)
 
 print(f"26.2 data-pack migration changed {len(changed)} files")
 for path in changed:
