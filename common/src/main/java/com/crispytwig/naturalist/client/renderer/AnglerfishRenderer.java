@@ -7,7 +7,6 @@ import com.crispytwig.naturalist.client.model.AnglerfishModel;
 import com.crispytwig.naturalist.server.entity.mob.Anglerfish;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
