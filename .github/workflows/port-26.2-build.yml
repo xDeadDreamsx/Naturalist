@@ -63,6 +63,47 @@ jobs:
           status=${PIPESTATUS[0]}
           exit "$status"
 
+      - name: Smoke-test Naturalist client startup
+        id: client_smoke
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          if ! command -v xvfb-run >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y xvfb
+          fi
+
+          rm -rf run/crash-reports
+          timeout --signal=TERM --kill-after=15s 120s xvfb-run -a ./gradlew runClient --stacktrace --no-daemon 2>&1 | tee /tmp/naturalist-client.log
+          status=${PIPESTATUS[0]}
+
+          echo "Client smoke-test exit status: $status"
+          if [ -d run/crash-reports ] && find run/crash-reports -maxdepth 1 -type f -print -quit | grep -q .; then
+            echo "Minecraft produced a crash report during client startup."
+            find run/crash-reports -maxdepth 1 -type f -print
+            for report in run/crash-reports/*; do
+              [ -f "$report" ] || continue
+              echo "===== $report ====="
+              cat "$report"
+            done
+            exit 1
+          fi
+
+          if find run -maxdepth 2 -type f -name 'hs_err_pid*.log' -print -quit 2>/dev/null | grep -q .; then
+            echo "The JVM produced a fatal error log during client startup."
+            find run -maxdepth 2 -type f -name 'hs_err_pid*.log' -print
+            exit 1
+          fi
+
+          # A healthy Minecraft client normally remains open at the title screen, so GNU timeout
+          # returns 124 after two minutes. A clean early exit (0) is also accepted; any other
+          # status means the client failed before the smoke-test window completed.
+          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ]; then
+            exit "$status"
+          fi
+
       - name: Inspect Minecraft 26.2 API after failed build
         if: steps.build.outcome == 'failure'
         shell: bash
@@ -163,8 +204,17 @@ jobs:
         if: steps.build.outcome == 'failure'
         run: exit 1
 
+      - name: Fail workflow if client smoke test failed
+        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'failure'
+        run: |
+          if [ -f /tmp/naturalist-client.log ]; then
+            echo "===== CLIENT STARTUP LOG TAIL ====="
+            tail -n 500 /tmp/naturalist-client.log
+          fi
+          exit 1
+
       - name: Upload built jars
-        if: steps.build.outcome == 'success'
+        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: naturalist-fabric-26.2
