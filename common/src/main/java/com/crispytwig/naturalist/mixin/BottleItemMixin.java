@@ -27,7 +27,7 @@ public class BottleItemMixin extends Item {
     }
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
-    private void onUse(Level level, @NotNull Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResult cir) {
+    private void onUse(Level level, @NotNull Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResult> cir) {
         List<AreaEffectCloud> list = level.getEntitiesOfClass(AreaEffectCloud.class, player.getBoundingBox().inflate(2.0), areaEffectCloud -> areaEffectCloud != null && areaEffectCloud.isAlive() && areaEffectCloud.getOwner() instanceof Dragonfly);
         ItemStack itemStack = player.getItemInHand(usedHand);
         if (!list.isEmpty()) {
