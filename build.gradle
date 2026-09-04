@@ -15,7 +15,6 @@ sourceSets {
         java {
             srcDirs = ['common/src/main/java', 'fabric/src/main/java']
             exclude 'com/crispytwig/naturalist/compat/fieldguide/**'
-            exclude 'com/crispytwig/naturalist/client/compat/**'
         }
         resources {
             srcDirs = ['common/src/main/resources', 'fabric/src/main/resources']
@@ -26,12 +25,15 @@ sourceSets {
 repositories {
     mavenCentral()
     maven { url = 'https://maven.fabricmc.net/' }
+    maven { url = 'https://api.modrinth.com/maven' }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    modCompileOnly "maven.modrinth:lambdynamiclights:4.12.4+26.2"
 
     compileOnly "org.jetbrains:annotations:26.0.2"
     compileOnly "org.jspecify:jspecify:1.0.0"
