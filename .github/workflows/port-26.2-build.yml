@@ -170,11 +170,20 @@ jobs:
           set +e
           rm -rf run/crash-reports
 
+          echo "Checking for a lingering dedicated-server process before reusing its world..."
+          pgrep -af '[K]notServer' || true
+          if pgrep -f '[K]notServer' >/dev/null 2>&1; then
+            echo "A dedicated-server process survived the timeout; terminating it before copying the world."
+            pkill -TERM -f '[K]notServer' || true
+            sleep 3
+            pkill -KILL -f '[K]notServer' || true
+          fi
+
           # The dedicated-server test creates run/world, but Quick Play resolves
           # singleplayer saves below run/saves. Reuse the already validated fresh
           # world as a real client save and remove the copied server session lock.
           if [ ! -d run/world ]; then
-            echo "The dedicated-server smoke test did not leave a world to reuse."
+            echo "::error::The dedicated-server smoke test did not leave a world to reuse."
             exit 1
           fi
           mkdir -p run/saves
@@ -182,12 +191,28 @@ jobs:
           cp -a run/world run/saves/world
           rm -f run/saves/world/session.lock
 
+          echo "Singleplayer save prepared at: $(pwd)/run/saves/world"
+          find run/saves/world -maxdepth 2 -type f | sort | head -n 80 || true
+
           timeout --signal=TERM --kill-after=15s 150s xvfb-run -a ./gradlew runClient --args='--quickPlaySingleplayer world' --stacktrace --no-daemon 2>&1 | tee /tmp/naturalist-world.log
           status=${PIPESTATUS[0]}
 
+          integrated=0
+          login=0
+          grep -Fq 'Starting integrated minecraft server version 26.2' /tmp/naturalist-world.log && integrated=1
+          grep -Fq 'logged in with entity id' /tmp/naturalist-world.log && login=1
+
           echo "Singleplayer world smoke-test exit status: $status"
+          echo "world_smoke_status=$status integrated_marker=$integrated login_marker=$login"
+          {
+            echo "### Singleplayer smoke diagnostics"
+            echo "- Process exit: \`$status\`"
+            if [ "$integrated" -eq 1 ]; then echo "- Integrated server marker: ✅"; else echo "- Integrated server marker: ❌"; fi
+            if [ "$login" -eq 1 ]; then echo "- Player login marker: ✅"; else echo "- Player login marker: ❌"; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
           if [ -d run/crash-reports ] && find run/crash-reports -maxdepth 1 -type f -print -quit | grep -q .; then
-            echo "Minecraft produced a crash report while joining the test world."
+            echo "::error::Minecraft produced a crash report while joining the test world."
             find run/crash-reports -maxdepth 1 -type f -print
             for report in run/crash-reports/*; do
               [ -f "$report" ] || continue
@@ -198,43 +223,72 @@ jobs:
           fi
 
           if find run -maxdepth 2 -type f -name 'hs_err_pid*.log' -print -quit 2>/dev/null | grep -q .; then
-            echo "The JVM produced a fatal error log while joining the test world."
+            echo "::error::The JVM produced a fatal error log while joining the test world."
             find run -maxdepth 2 -type f -name 'hs_err_pid*.log' -print
             exit 1
+          fi
+
+          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ] && [ "$status" -ne 143 ]; then
+            echo "::error::The singleplayer client exited unexpectedly with status $status."
           fi
 
           # A timeout/termination exit code is not by itself a failure here: this
           # client is intentionally stopped after the smoke-test window. What
           # matters is whether the integrated server started and the player joined.
-          if ! grep -Fq 'Starting integrated minecraft server version 26.2' /tmp/naturalist-world.log; then
-            echo "Quick Play never started the Minecraft 26.2 integrated server."
-            echo "Relevant diagnostics:"
-            grep -Ein 'Quick Play|quickPlay|world|session\.lock|Exception|ERROR|Failed|crash report' /tmp/naturalist-world.log | tail -n 200 || true
-            tail -n 500 /tmp/naturalist-world.log || true
-            exit 1
-          fi
-
-          if ! grep -Fq 'logged in with entity id' /tmp/naturalist-world.log; then
-            echo "The test player never successfully entered the singleplayer world."
-            echo "Relevant diagnostics:"
-            grep -Ein 'Starting integrated|logged in with entity id|Quick Play|quickPlay|world|session\.lock|Exception|ERROR|Failed|crash report' /tmp/naturalist-world.log | tail -n 200 || true
-            tail -n 500 /tmp/naturalist-world.log || true
+          if [ "$integrated" -ne 1 ] || [ "$login" -ne 1 ]; then
+            if [ "$integrated" -ne 1 ]; then
+              echo "::error::Singleplayer smoke: integrated-server startup marker missing."
+            fi
+            if [ "$login" -ne 1 ]; then
+              echo "::error::Singleplayer smoke: player-login marker missing."
+            fi
+            echo "=== Relevant singleplayer log lines ==="
+            grep -nEi 'integrated|logged in|joined the game|quick.?play|starting|preparing|loading|world|session\.lock|already in use|error|exception|crash|failed|unable|disconnect' /tmp/naturalist-world.log | tail -n 300 || true
+            echo "=== Last 300 singleplayer log lines ==="
+            tail -n 300 /tmp/naturalist-world.log || true
             exit 1
           fi
 
           echo "Singleplayer Quick Play reached the integrated server and logged the player into the world."
 
           if grep -Fq "Couldn't parse data file 'naturalist:" /tmp/naturalist-world.log; then
-            echo "Naturalist datapack decoding failed during integrated-server startup."
+            echo "::error::Naturalist datapack decoding failed during integrated-server startup."
             grep -Fn "Couldn't parse data file 'naturalist:" /tmp/naturalist-world.log || true
             exit 1
           fi
 
           if grep -Eq 'cannot add it to event naturalist:|Unknown sound event[^\n]*naturalist:' /tmp/naturalist-world.log; then
-            echo "Naturalist has unresolved resources during the in-world client test."
+            echo "::error::Naturalist has unresolved resources during the in-world client test."
             grep -En 'cannot add it to event naturalist:|Unknown sound event[^\n]*naturalist:' /tmp/naturalist-world.log || true
             exit 1
           fi
+
+      - name: Prepare singleplayer failure diagnostics
+        if: steps.world_smoke.outcome == 'failure'
+        shell: bash
+        run: |
+          rm -rf world-smoke-diagnostics
+          mkdir -p world-smoke-diagnostics
+          cp /tmp/naturalist-world.log world-smoke-diagnostics/naturalist-world.log 2>/dev/null || true
+          cp /tmp/naturalist-server.log world-smoke-diagnostics/naturalist-server.log 2>/dev/null || true
+          if [ -d run/crash-reports ]; then
+            cp -a run/crash-reports world-smoke-diagnostics/crash-reports
+          fi
+          {
+            echo "=== Save layout ==="
+            find run/saves/world -maxdepth 3 -type f -print 2>/dev/null | sort || true
+            echo
+            echo "=== Relevant world log lines ==="
+            grep -nEi 'integrated|logged in|joined the game|quick.?play|starting|preparing|loading|world|session\.lock|already in use|error|exception|crash|failed|unable|disconnect' /tmp/naturalist-world.log 2>/dev/null | tail -n 500 || true
+          } > world-smoke-diagnostics/summary.txt
+
+      - name: Upload singleplayer failure diagnostics
+        if: steps.world_smoke.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: naturalist-singleplayer-diagnostics
+          path: world-smoke-diagnostics/
+          if-no-files-found: warn
 
       - name: Persist failed-build diagnostics
         if: steps.build.outcome == 'failure'
