@@ -18,13 +18,14 @@ DIRECT_REPLACEMENTS = {
     "import net.minecraft.world.InteractionResultHolder;": "import net.minecraft.world.InteractionResult;",
     "import net.minecraft.world.ItemInteractionResult;": "import net.minecraft.world.InteractionResult;",
     "ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION": "InteractionResult.TRY_WITH_EMPTY_HAND",
-    "ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION": "InteractionResult.TRY_WITH_EMPTY_HAND",
     "ItemInteractionResult.SUCCESS": "InteractionResult.SUCCESS",
     "ItemInteractionResult.PASS": "InteractionResult.PASS",
     "ItemInteractionResult.FAIL": "InteractionResult.FAIL",
     "ItemInteractionResult": "InteractionResult",
     "player.getCooldowns().isOnCooldown(stack.getItem())": "player.getCooldowns().isOnCooldown(stack)",
     "player.getCooldowns().addCooldown(stack.getItem(), 20)": "player.getCooldowns().addCooldown(stack, 20)",
+    # Repair the one nested generic transformed by the first migration pass.
+    "CallbackInfoReturnable<InteractionResult cir)": "CallbackInfoReturnable<InteractionResult> cir)",
 }
 
 
@@ -80,7 +81,8 @@ def migrate_text(text: str) -> str:
     migrated = re.sub(r"\.isClientSide(?!\s*\()", ".isClientSide()", migrated)
 
     # InteractionResultHolder and ItemInteractionResult were folded into InteractionResult.
-    migrated = re.sub(r"\bInteractionResultHolder\s*<[^;=(){}]+>", "InteractionResult", migrated)
+    # Only consume a single, non-nested generic argument; outer generics must stay intact.
+    migrated = re.sub(r"\bInteractionResultHolder\s*<[^<>]+>", "InteractionResult", migrated)
     for prefix, replacement in (
         ("InteractionResultHolder.sidedSuccess(", "InteractionResult.SUCCESS"),
         ("InteractionResultHolder.success(", "InteractionResult.SUCCESS"),
@@ -92,7 +94,7 @@ def migrate_text(text: str) -> str:
     ):
         migrated = replace_balanced_call(migrated, prefix, replacement)
 
-    # 26.2 Player message split: the old boolean=true displayClientMessage call was overlay/action-bar text.
+    # 26.2 Player message split: old displayClientMessage(..., true) was overlay/action-bar text.
     migrated = re.sub(
         r"player\.displayClientMessage\((.*?),\s*true\);",
         r"player.sendOverlayMessage(\1);",
