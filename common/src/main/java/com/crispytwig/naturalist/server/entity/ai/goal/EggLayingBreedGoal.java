@@ -1,14 +1,14 @@
 package com.crispytwig.naturalist.server.entity.ai.goal;
 
 import com.crispytwig.naturalist.server.entity.base.EggLayingAnimal;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 
 public class EggLayingBreedGoal<T extends Animal & EggLayingAnimal> extends BreedGoal {
     private final T animal;
