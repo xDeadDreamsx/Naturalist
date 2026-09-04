@@ -55,10 +55,16 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 
 
 @SuppressWarnings("unused")
 public class Butterfly extends NaturalistAnimal implements Catchable, DataDrivenVariantAnimal {
+    private static final TagKey<Item> FLOWERS = TagKey.create(Registries.ITEM, Identifier.withDefaultNamespace("flowers"));
+
     //region Data
     public static final String[] VARIANT_NAMES = {"monarch", "clouded_yellow", "swallowtail", "blue_morpho", "jade_green_swallowtail", "purple_emperor", "red_admiral"};
 
@@ -182,7 +188,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
         }
 
         if (tag.contains("HuntingCooldown")) {
-            this.getBrain().setMemoryWithExpiry(MemoryModuleType.HAS_HUNTING_COOLDOWN, true, tag.getLong("HuntingCooldown"));
+            this.getBrain().setMemoryWithExpiry(MemoryModuleType.HAS_HUNTING_COOLDOWN, true, tag.getLongOr("HuntingCooldown", 0L));
         }
 
     }
@@ -238,17 +244,12 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return stack.is(ItemTags.FLOWERS);
+        return stack.is(FLOWERS);
     }
 
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         return NaturalistEntityTypes.CATERPILLAR.get().create(serverLevel, EntitySpawnReason.BREEDING);
-    }
-
-    @Override
-    public boolean isBaby() {
-        return false;
     }
     //endregion
 
@@ -256,7 +257,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.25D, Ingredient.of(ItemTags.FLOWERS), false));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.25D, Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(FLOWERS)), false));
         this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new ButterflyGrowCropGoal(this, 1.0D, 16, 4));
         this.goalSelector.addGoal(5, new ButterflyPollinateGoal(this, 1.0D, 16, 4));
@@ -296,7 +297,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 

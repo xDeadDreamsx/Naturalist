@@ -601,7 +601,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
             Vec3 deltaMovement = this.getDeltaMovement();
             this.setDeltaMovement(deltaMovement.x, jumpVelocity, deltaMovement.z);
             this.isJumping = true;
-            this.hasImpulse = true;
+            this.needsSync = true;
             if (forward > 0.0F) {
                 float sin = Mth.sin(this.getYRot() * Mth.DEG_TO_RAD);
                 float cos = Mth.cos(this.getYRot() * Mth.DEG_TO_RAD);
@@ -630,7 +630,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 

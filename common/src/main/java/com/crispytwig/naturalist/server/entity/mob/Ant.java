@@ -69,6 +69,7 @@ import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.entity.EntityReference;
+import net.minecraft.core.UUIDUtil;
 
 public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable, DataDrivenVariantAnimal {
     //region Data
@@ -130,13 +131,13 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
-        return this.entityData.get(DATA_REMAINING_ANGER_TIME);
+    public long getPersistentAngerEndTime() {
+        return this.persistentAngerEndTime;
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int time) {
-        this.entityData.set(DATA_REMAINING_ANGER_TIME, time);
+    public void setPersistentAngerEndTime(long endTime) {
+        this.persistentAngerEndTime = endTime;
     }
 
     @Nullable
@@ -152,7 +153,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME);
+        this.setTimeToRemainAngry(PERSISTENT_ANGER_TIME);
     }
 
     @Override
@@ -162,7 +163,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
         compound.putInt("HillCooldown", this.hillCooldown);
         compound.putBoolean("FromHand", this.fromHand());
         if (this.carriedFoodId != null) {
-            compound.putUUID("CarriedFood", this.carriedFoodId);
+            compound.putIntArray("CarriedFood", UUIDUtil.uuidToIntArray(this.carriedFoodId));
         }
         this.addPersistentAngerSaveData(compound);
     }
@@ -173,7 +174,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
         this.loadVariant(compound);
         this.hillCooldown = compound.getIntOr("HillCooldown", 0);
         this.setFromHand(compound.getBooleanOr("FromHand", false));
-        this.carriedFoodId = compound.hasUUID("CarriedFood") ? compound.getUUID("CarriedFood") : null;
+        this.carriedFoodId = compound.getIntArray("CarriedFood").filter(a -> a.length == 4).map(UUIDUtil::uuidFromIntArray).orElse(null);
         this.readPersistentAngerSaveData(this.level(), compound);
     }
 
@@ -197,9 +198,9 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
         Catchable.saveDefaultDataToHandTag(this, stack);
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         this.saveVariant(tag);
-        if (this.isTame() && this.getOwnerUUID() != null) {
+        if (this.isTame() && this.getOwnerReference() != null) {
             tag.putBoolean("Tame", true);
-            tag.putUUID("Owner", this.getOwnerUUID());
+            tag.putIntArray("Owner", UUIDUtil.uuidToIntArray(this.getOwnerReference().getUUID()));
         }
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
@@ -208,8 +209,9 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     public void loadFromHandTag(@NotNull CompoundTag tag) {
         Catchable.loadDefaultDataFromHandTag(this, tag);
         this.loadVariant(tag);
-        if (tag.getBoolean("Tame") && tag.hasUUID("Owner")) {
-            this.setOwnerUUID(tag.getUUID("Owner"));
+        int[] owner = tag.getIntArray("Owner").orElse(null);
+        if (tag.getBooleanOr("Tame", false) && owner != null && owner.length == 4) {
+            this.setOwnerReference(EntityReference.of(UUIDUtil.uuidFromIntArray(owner)));
             this.setTame(true, true);
         }
     }
@@ -285,7 +287,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
         ItemStack stack = player.getItemInHand(hand);
         if (stack.is(Items.SUGAR) && this.getHealth() < this.getMaxHealth()) {
             this.heal(1.0F);
-            this.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
+            this.playSound(SoundEvents.GENERIC_EAT.value(), 1.0F, 1.0F);
             stack.consume(1, player);
             return InteractionResult.SUCCESS;
         }
@@ -330,7 +332,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     public void onCarriedFoodTaken(@NotNull Player player) {
         this.detachCarriedFood();
         if (player.isAlive() && !this.isOwnedBy(player) && this.getTarget() == null) {
-            this.setPersistentAngerTarget(player.getUUID());
+            this.setPersistentAngerTarget(EntityReference.of(player));
             this.startPersistentAngerTimer();
             this.setTarget(player);
         }
@@ -444,7 +446,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
 
         @Override
         protected boolean isValidTarget(@NotNull LevelReader level, @NotNull BlockPos pos) {
-            return AntHillBlock.canAntEnter(level, pos, this.ant.getOwnerUUID());
+            return AntHillBlock.canAntEnter(level, pos, this.ant.getOwnerReference() == null ? null : this.ant.getOwnerReference().getUUID());
         }
     }
 
@@ -529,7 +531,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
 
         @Override
         protected boolean isValidTarget(@NotNull LevelReader level, @NotNull BlockPos pos) {
-            return AntHillBlock.canAntStore(level, pos, this.ant.getOwnerUUID());
+            return AntHillBlock.canAntStore(level, pos, this.ant.getOwnerReference() == null ? null : this.ant.getOwnerReference().getUUID());
         }
     }
     //endregion

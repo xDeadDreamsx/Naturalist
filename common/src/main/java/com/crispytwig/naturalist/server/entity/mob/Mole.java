@@ -452,7 +452,7 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
         if (!this.level().getEntitiesOfClass(DirtTrail.class, new AABB(pos)).isEmpty()) {
             return;
         }
-        DirtTrail trail = NaturalistEntityTypes.DIRT_TRAIL.get().create(this.level());
+        DirtTrail trail = NaturalistEntityTypes.DIRT_TRAIL.get().create(this.level(), EntitySpawnReason.TRIGGERED);
         if (trail == null) {
             return;
         }

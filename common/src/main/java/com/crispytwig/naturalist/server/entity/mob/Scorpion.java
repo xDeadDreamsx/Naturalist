@@ -134,7 +134,7 @@ public abstract class Scorpion extends Animal implements NocturnalHostile {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.is(NaturalistRegistry.LIZARD_TAIL.get()) && this.getHealth() < this.getMaxHealth()) {
             this.heal(1.0F);
-            this.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
+            this.playSound(SoundEvents.GENERIC_EAT.value(), 1.0F, 1.0F);
             stack.consume(1, player);
             return InteractionResult.SUCCESS;
         }

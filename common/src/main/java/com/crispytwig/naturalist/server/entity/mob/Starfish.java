@@ -178,7 +178,7 @@ public class Starfish extends WaterAnimal implements VariantBucketable {
     @Override
     protected void dropCustomDeathLoot(@NotNull ServerLevel level, @NotNull DamageSource source, boolean hitByPlayer) {
         super.dropCustomDeathLoot(level, source, hitByPlayer);
-        this.spawnAtLocation(this.getPlaceableBlock());
+        this.spawnAtLocation(level, this.getPlaceableBlock());
     }
     //endregion
 

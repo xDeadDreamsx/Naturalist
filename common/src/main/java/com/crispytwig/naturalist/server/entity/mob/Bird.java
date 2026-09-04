@@ -200,10 +200,6 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         return null;
     }
-
-    public boolean isBaby() {
-        return false;
-    }
     //endregion
 
     //region Behavior
@@ -239,7 +235,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 
@@ -269,7 +265,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
 
     @Override
     public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
+        if (this.isInvulnerableTo(level, source)) {
             return false;
         } else {
             if (!this.level().isClientSide()) {
@@ -431,7 +427,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        if (this.level().isNight()) {
+        if (!this.level().isBrightOutside()) {
             return null;
         }
         return switch (this.getVariantLocation().getPath()) {
@@ -447,7 +443,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     @Override
     public void playAmbientSound() {
         super.playAmbientSound();
-        if (this.level() instanceof ServerLevel serverLevel && !this.level().isNight()) {
+        if (this.level() instanceof ServerLevel serverLevel && !!this.level().isBrightOutside()) {
             float f = (float)level().getRandom().nextInt(4) / 24.0f;
             serverLevel.sendParticles(ParticleTypes.NOTE, this.getX(), this.getY() + 1, this.getZ(), 0, f, 0.0, 0.0, 1.0);
         }
@@ -545,7 +541,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
             if (this.bird.isTame()) {
                 return false;
             }
-            this.toAvoid = this.bird.level().getNearestPlayer(this.avoidTargeting, this.bird);
+            this.toAvoid = this.bird.level().getNearestPlayer(this.bird.getX(), this.bird.getY(), this.bird.getZ(), MAX_DIST, entity -> entity instanceof Player player && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player) && !player.isDiscrete());
             if (this.toAvoid == null) {
                 return false;
             }

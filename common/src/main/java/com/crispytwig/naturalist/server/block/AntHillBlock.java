@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import net.minecraft.world.entity.EntityReference;
 
 public class AntHillBlock extends Block implements EntityBlock {
     public static final int MAX_WORKERS = 3;
@@ -98,7 +99,7 @@ public class AntHillBlock extends Block implements EntityBlock {
                 Ant ant = releaseAnt(serverLevel, pos, serverLevel.getRandom(), owner);
                 if (ant != null && !ant.isOwnedBy(player)) {
                     ant.lookAt(player, 360.0F, 360.0F);
-                    ant.setPersistentAngerTarget(player.getUUID());
+                    ant.setPersistentAngerTarget(EntityReference.of(player));
                     ant.startPersistentAngerTimer();
                     ant.setTarget(player);
                 }
@@ -129,7 +130,7 @@ public class AntHillBlock extends Block implements EntityBlock {
 
     public static void storeFood(ServerLevel level, BlockPos pos, Ant ant) {
         ItemEntity carried = ant.getCarriedFood();
-        if (carried == null || !canAntStore(level, pos, ant.getOwnerUUID()) || !(level.getBlockEntity(pos) instanceof AntHillBlockEntity hill)) {
+        if (carried == null || !canAntStore(level, pos, ant.getOwnerReference() == null ? null : ant.getOwnerReference().getUUID()) || !(level.getBlockEntity(pos) instanceof AntHillBlockEntity hill)) {
             return;
         }
         ItemStack leftover = hill.storeFood(carried.getItem().copy());
@@ -141,7 +142,7 @@ public class AntHillBlock extends Block implements EntityBlock {
     }
 
     public static boolean tryEnter(ServerLevel level, BlockPos pos, Ant ant) {
-        if (!canAntEnter(level, pos, ant.getOwnerUUID())) {
+        if (!canAntEnter(level, pos, ant.getOwnerReference() == null ? null : ant.getOwnerReference().getUUID())) {
             return false;
         }
         BlockState state = level.getBlockState(pos);
@@ -178,7 +179,7 @@ public class AntHillBlock extends Block implements EntityBlock {
         ant.startHillCooldown();
         if (owner != null) {
             ant.setTame(true, false);
-            ant.setOwnerUUID(owner);
+            ant.setOwnerReference(EntityReference.of(owner));
         }
         level.addFreshEntity(ant);
         return ant;

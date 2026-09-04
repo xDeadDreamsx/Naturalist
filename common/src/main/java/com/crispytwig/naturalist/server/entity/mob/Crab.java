@@ -83,6 +83,7 @@ import java.util.Optional;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.NbtOps;
 
 @SuppressWarnings("unused")
 public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal {
@@ -217,7 +218,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         tag.putInt("Age", this.getAge());
         ItemStack held = this.getMainHandItem();
         if (!held.isEmpty()) {
-            tag.put("HeldItem", held.save(this.level().registryAccess()));
+            ItemStack.CODEC.encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), held).result().ifPresent(encoded -> tag.put("HeldItem", encoded));
         }
         Catchable.saveTamableDataToHandTag(this, tag);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -231,7 +232,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
             this.setAge(tag.getIntOr("Age", 0));
         }
         if (tag.contains("HeldItem")) {
-            ItemStack held = ItemStack.parse(this.level().registryAccess(), tag.getCompound("HeldItem")).orElse(ItemStack.EMPTY);
+            ItemStack held = tag.get("HeldItem").flatMap(encoded -> ItemStack.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), encoded).result()).orElse(ItemStack.EMPTY);
             this.setItemSlot(EquipmentSlot.MAINHAND, held);
             this.setDropChance(EquipmentSlot.MAINHAND, 2.0F);
         }
@@ -520,7 +521,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         if (this.isBaby() || this.isTame() || !this.getMainHandItem().isEmpty()) {
             return false;
         }
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D).selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
         boolean playerNear = false;
         for (Player player : players) {
             if (!player.isCrouching() && !FOOD_ITEMS.test(player.getMainHandItem()) && !FOOD_ITEMS.test(player.getOffhandItem())) {
@@ -543,8 +544,8 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     }
 
     @Override
-    public void knockback(double strength, double x, double z) {
-        super.knockback(this.canHide() ? strength / 4 : strength, x, z);
+    public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
+        super.knockback(this.canHide() ? strength / 4 : strength, x, z, source, sourceStrength);
     }
 
     @Override

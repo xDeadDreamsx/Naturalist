@@ -226,7 +226,7 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
         if (ageableMob instanceof Tortoise tortoiseParent) {
             assert tortoise != null;
             tortoise.setVariantString(this.getOffspringVariantId(tortoiseParent, this.random));
-            tortoise.setOwnerUUID(this.random.nextBoolean() ? tortoiseParent.getOwnerUUID() : this.getOwnerUUID());
+            tortoise.setOwnerReference(this.random.nextBoolean() ? tortoiseParent.getOwnerReference() : this.getOwnerReference());
         }
         return tortoise;
     }
@@ -263,16 +263,16 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
         if (this.isTame()) {
             return false;
         }
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector((livingEntity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity) && !livingEntity.isDiscrete() && !livingEntity.isHolding(TEMPT_ITEMS)), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D), player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player) && !player.isDiscrete() && !player.isHolding(TEMPT_ITEMS));
         return !players.isEmpty();
     }
 
     @Override
-    public void knockback(double strength, double x, double z) {
+    public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
         if (this.isBaby()) {
-            super.knockback(strength / Math.max(1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.01), x, z);
+            super.knockback(strength / Math.max(1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.01), x, z, source, sourceStrength);
         } else {
-            super.knockback(this.isInSittingPose() || this.canHide() ? strength / 4 : strength, x, z);
+            super.knockback(this.isInSittingPose() || this.canHide() ? strength / 4 : strength, x, z, source, sourceStrength);
         }
     }
 

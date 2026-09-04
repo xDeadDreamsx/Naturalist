@@ -198,8 +198,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
         if (!this.throwEnchantments.keySet().isEmpty()) {
-            ItemEnchantments.CODEC.encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), this.throwEnchantments)
-                    .result().ifPresent(tag -> compound.put("ThrowEnchantments", tag));
+            compound.store("ThrowEnchantments", ItemEnchantments.CODEC, this.throwEnchantments);
         }
         DyeableAnimal.saveDye(this, compound);
         FollowingPet.savePet(this, compound);
@@ -210,10 +209,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.setFromHand(compound.getBooleanOr("FromHand", false));
-        if (compound.contains("ThrowEnchantments")) {
-            ItemEnchantments.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get("ThrowEnchantments"))
-                    .result().ifPresent(this::setThrowEnchantments);
-        }
+        compound.read("ThrowEnchantments", ItemEnchantments.CODEC).ifPresent(this::setThrowEnchantments);
         DyeableAnimal.loadDye(this, compound);
         FollowingPet.loadPet(this, compound);
     }
@@ -327,7 +323,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         if (this.isTame() || this.isRolling() || this.isSprinting() || this.isInSittingPose()) {
             return false;
         }
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(6.0).selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)), this, this.getBoundingBox().inflate(6.0, 3.0, 6.0));
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(6.0, 3.0, 6.0), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
         for (Player player : players) {
             if (!player.isCrouching() && !FOOD_ITEMS.test(player.getMainHandItem()) && !FOOD_ITEMS.test(player.getOffhandItem())) {
                 return true;
@@ -350,13 +346,13 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 
     @Override
-    public boolean isInvulnerableTo(@NotNull DamageSource source) {
-        return super.isInvulnerableTo(source) || source.is(DamageTypes.CACTUS) || source.is(DamageTypes.SWEET_BERRY_BUSH)
+    public boolean isInvulnerableTo(@NotNull ServerLevel level, @NotNull DamageSource source) {
+        return super.isInvulnerableTo(level, source) || source.is(DamageTypes.CACTUS) || source.is(DamageTypes.SWEET_BERRY_BUSH)
                 || this.isRolling() && source.is(DamageTypeTags.IS_FIRE);
     }
 
@@ -438,10 +434,11 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
                 } else {
                     for (LivingEntity target : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2), this::isSpikeTarget)) {
                         Vec3 motion = this.getDeltaMovement();
-                        if (target.hurt(this.damageSources().thrown(this, this.getOwner()), 2.0F + this.getThrowEnchantmentLevel(Enchantments.THORNS))) {
+                        DamageSource throwSource = this.damageSources().thrown(this, this.getOwner());
+                        if (target.hurtServer((ServerLevel) this.level(), throwSource, 2.0F + this.getThrowEnchantmentLevel(Enchantments.THORNS))) {
                             int punch = this.getThrowEnchantmentLevel(Enchantments.PUNCH);
                             if (punch > 0) {
-                                target.knockback(punch * 0.6, -motion.x, -motion.z);
+                                target.knockback(punch * 0.6, -motion.x, -motion.z, throwSource, 0.0F);
                             }
                             if (flaming) {
                                 target.igniteForSeconds(5.0F);
@@ -450,7 +447,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
                             this.saveToHandTag(particleStack);
                             ((ServerLevel) this.level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, particleStack.getItem()), this.getX(), this.getY(0.5), this.getZ(), 8, 0.1, 0.1, 0.1, 0.05);
                             if (this.random.nextInt(this.getThrowEnchantmentLevel(Enchantments.UNBREAKING) + 1) == 0) {
-                                Holder<DamageType> throwDamage = this.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(NaturalistDamageTypes.HEDGEHOG_THROW);
+                                Holder<DamageType> throwDamage = this.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(NaturalistDamageTypes.HEDGEHOG_THROW);
                                 this.hurt(new DamageSource(throwDamage, target), 2.0F);
                             }
                             if (!this.isDeadOrDying() && this.getThrowEnchantmentLevel(Enchantments.LOYALTY) > 0) {
@@ -503,7 +500,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     public int getThrowEnchantmentLevel(ResourceKey<Enchantment> key) {
-        return this.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(key).map(this.throwEnchantments::getLevel).orElse(0);
+        return this.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(key).map(this.throwEnchantments::getLevel).orElse(0);
     }
 
     private void startReturn(Vec3 motion) {

@@ -271,7 +271,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
 
     public static void devour(Mob predator, Bass prey, boolean dropBoneMeal) {
         if (predator.level() instanceof ServerLevel serverLevel) {
-            ItemParticleOption bassParticle = new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(NaturalistRegistry.BASS.get()));
+            ItemParticleOption bassParticle = new ItemParticleOption(ParticleTypes.ITEM, NaturalistRegistry.BASS.get());
             for (int i = 0; i < 16; i++) {
                 serverLevel.sendParticles(bassParticle, prey.getRandomX(1.0D), prey.getRandomY(), prey.getRandomZ(1.0D), 1, 0.0D, 0.0D, 0.0D, 0.05D);
             }

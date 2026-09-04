@@ -112,17 +112,17 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int remainingPersistentAngerTime) {
-        this.remainingPersistentAngerTime = remainingPersistentAngerTime;
+    public long getPersistentAngerEndTime() {
+        return this.persistentAngerEndTime;
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
-        return this.remainingPersistentAngerTime;
+    public void setPersistentAngerEndTime(long endTime) {
+        this.persistentAngerEndTime = endTime;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID persistentAngerTarget) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> persistentAngerTarget) {
         this.persistentAngerTarget = persistentAngerTarget;
     }
 
@@ -187,9 +187,9 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     public void thunderHit(@NotNull ServerLevel level, @NotNull LightningBolt lightning) {
         super.thunderHit(level, lightning);
         if (level.getDifficulty() != Difficulty.PEACEFUL) {
-            Zoglin zoglin = EntityTypes.ZOGLIN.create(level);
+            Zoglin zoglin = EntityTypes.ZOGLIN.create(level, EntitySpawnReason.CONVERSION);
             assert zoglin != null;
-            zoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+            zoglin.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
             zoglin.setNoAi(this.isNoAi());
             zoglin.setBaby(this.isBaby());
             if (this.hasCustomName()) {
@@ -217,9 +217,9 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     public boolean doHurtTarget(ServerLevel level, @NotNull Entity target) {
         boolean hurt = super.doHurtTarget(level, target);
         if (hurt && !this.level().isClientSide() && target instanceof Player player && player.isDeadOrDying()
-                && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)
+                && level.getGameRules().get(GameRules.MOB_DROPS)
                 && this.random.nextFloat() < DEATH_BY_HOGS_CHANCE) {
-            player.spawnAtLocation(new ItemStack(NaturalistRegistry.MUSIC_DISC_DEATH_BY_HOGS.get()));
+            player.spawnAtLocation(level, new ItemStack(NaturalistRegistry.MUSIC_DISC_DEATH_BY_HOGS.get()));
         }
         return hurt;
     }
@@ -254,7 +254,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
 
     @Override
     protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
-        this.playSound(SoundEvents.PIG_STEP, 0.15f, 1.0f);
+        this.playSound(SoundEvents.PIG_STEP.value(), 0.15f, 1.0f);
     }
 
     @Override

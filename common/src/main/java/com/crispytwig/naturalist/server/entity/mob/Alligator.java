@@ -260,7 +260,7 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(8, new BabySniffFlowersGoal(this, 1.0D, 16, 4, SoundEvents.FOX_SNIFF));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity, level) -> !this.isBaby() && (entity.isInWater() || this.isDefensive() || !this.level().isDay())));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity, level) -> !this.isBaby() && (entity.isInWater() || this.isDefensive() || !this.level().isBrightOutside())));
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity, level) -> {
             if(entity instanceof Alligator) return false;
             boolean isEntityNearAlligatorEggs = false;

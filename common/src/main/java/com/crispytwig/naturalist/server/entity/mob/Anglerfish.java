@@ -247,7 +247,7 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
                 if (this.isTimeToAttack() && this.mob.distanceToSqr(target.getX(), target.getY(), target.getZ()) <= reach) {
                     this.resetAttackCooldown();
                     this.mob.swing(InteractionHand.MAIN_HAND);
-                    this.mob.doHurtTarget(target);
+                    if (this.mob.level() instanceof ServerLevel serverLevel) { this.mob.doHurtTarget(serverLevel, target); }
                 }
             }
         });

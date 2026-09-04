@@ -261,7 +261,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
         this.nextFlap = this.flyDist + this.flapSpeed / 2.0F;
     }
 
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 

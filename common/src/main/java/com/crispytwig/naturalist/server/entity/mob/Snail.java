@@ -546,7 +546,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 

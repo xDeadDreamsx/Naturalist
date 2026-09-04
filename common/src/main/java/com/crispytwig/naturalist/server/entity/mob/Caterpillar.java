@@ -243,7 +243,7 @@ public class Caterpillar extends ClimbingAnimal implements Catchable, DataDriven
 
         @Override
         protected void moveMobToBlock() {
-            caterpillar.getNavigation().moveTo(logPos.getX() + 0.5D, logPos.getY() + 1.0D, this.speedModifier);
+            caterpillar.getNavigation().moveTo(logPos.getX() + 0.5D, logPos.getY() + 1.0D, logPos.getZ() + 0.5D, this.speedModifier);
         }
 
         @Override

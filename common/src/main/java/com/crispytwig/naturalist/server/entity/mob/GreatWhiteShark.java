@@ -285,7 +285,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
         ItemStack stack = player.getItemInHand(hand);
         if (FOOD_ITEMS.test(stack) && this.getHealth() < this.getMaxHealth()) {
             this.heal(2.0F);
-            this.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
+            this.playSound(SoundEvents.GENERIC_EAT.value(), 1.0F, 1.0F);
             stack.consume(1, player);
             return InteractionResult.SUCCESS;
         }

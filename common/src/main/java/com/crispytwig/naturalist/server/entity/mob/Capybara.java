@@ -133,8 +133,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
 
     @Override
     public boolean canSleep() {
-        long dayTime = this.level().getDayTime() % 24000;
-        return dayTime > 6000 && dayTime < 13000 && this.onGround() && !this.isInWater()
+        return this.level().isBrightOutside() && this.onGround() && !this.isInWater()
                 && !this.isOrderedToSit() && !this.isInLove() && this.getLastHurtByMob() == null;
     }
 
@@ -223,7 +222,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 

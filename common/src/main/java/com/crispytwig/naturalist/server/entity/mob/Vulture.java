@@ -191,7 +191,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 
@@ -226,9 +226,10 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     public boolean doHurtTarget(ServerLevel level, Entity target) {
         boolean shouldHurt = true;
         float knockback = (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-        if (shouldHurt == target.hurt(target.damageSources().mobAttack(this), (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
+        DamageSource attackSource = target.damageSources().mobAttack(this);
+        if (shouldHurt == target.hurtServer(level, attackSource, (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
             if (knockback > 0.0f && target instanceof LivingEntity) {
-                ((LivingEntity)target).knockback(knockback * 0.5f, Mth.sin(this.getYRot() * Mth.DEG_TO_RAD), -Mth.cos(this.getYRot() * Mth.DEG_TO_RAD));
+                ((LivingEntity)target).knockback(knockback * 0.5f, Mth.sin(this.getYRot() * Mth.DEG_TO_RAD), -Mth.cos(this.getYRot() * Mth.DEG_TO_RAD), attackSource, 0.0F);
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 1.0, 0.6));
             }
             this.setLastHurtMob(target);
@@ -263,7 +264,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
             }
         }
         this.setDeltaMovement(dx, 0.5D, dz);
-        this.hasImpulse = true;
+        this.needsSync = true;
     }
 
     @Override
@@ -304,7 +305,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 ItemStack itemStack = this.getItemBySlot(slot);
                 if (!itemStack.isEmpty()) {
-                    this.spawnAtLocation(itemStack);
+                    this.spawnAtLocation((ServerLevel) this.level(), itemStack);
                     this.setItemSlot(slot, ItemStack.EMPTY);
                 }
             }
@@ -328,15 +329,6 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     @Override
     public void aiStep() {
         super.aiStep();
-        this.level().getProfiler().push("looting");
-        if (!this.level().isClientSide() && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-            for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(1.0D, 1.0D, 1.0D))) {
-                if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(itementity.getItem())) {
-                    this.pickUpItem(itementity);
-                }
-            }
-        }
-        this.level().getProfiler().pop();
         if (!this.level().isClientSide() && this.isAlive() && this.isEffectiveAi()) {
             ++this.ticksSinceEaten;
             if (this.perchCooldown > 0) {
@@ -351,7 +343,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
                     }
                     this.ticksSinceEaten = 0;
                 } else if (this.ticksSinceEaten > 560 && this.random.nextFloat() < 0.1f) {
-                    this.playEatingSound();
+                    this.playSound(SoundEvents.GENERIC_EAT.value(), 1.0F, 1.0F);
                     this.level().broadcastEntityEvent(this, (byte)45);
                 }
             }
@@ -438,7 +430,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
                 if (!(enemy instanceof Player)) {
-                    this.mob.doHurtTarget(enemy);
+                    if (this.mob.level() instanceof ServerLevel serverLevel) { this.mob.doHurtTarget(serverLevel, enemy); }
                 }
                 if (enemy instanceof Player && this.mob.getMainHandItem().isEmpty() && !enemy.getMainHandItem().isEmpty()) {
                     this.mob.setItemSlot(EquipmentSlot.MAINHAND, enemy.getMainHandItem().split(1));
@@ -474,7 +466,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
             if (this.vulture.getTarget() != null) {
                 return false;
             }
-            this.toAvoid = this.vulture.level().getNearestPlayer(this.fleeConditions, this.vulture);
+            this.toAvoid = this.vulture.level().getNearestPlayer(this.vulture.getX(), this.vulture.getY(), this.vulture.getZ(), 8.0D, entity -> entity instanceof Player player && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player));
             return this.toAvoid != null;
         }
 

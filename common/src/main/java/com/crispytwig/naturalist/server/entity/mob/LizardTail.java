@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.damagesource.DamageSource;
 
 @SuppressWarnings("unused")
 public class LizardTail extends Mob implements DataDrivenVariantAnimal {
@@ -91,8 +92,8 @@ public class LizardTail extends Mob implements DataDrivenVariantAnimal {
 
     //region Behavior
     @Override
-    public void knockback(double strength, double x, double z) {
-        super.knockback(strength * 1.5D, x, z);
+    public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
+        super.knockback(strength * 1.5D, x, z, source, sourceStrength);
     }
 
     @Override
@@ -101,8 +102,8 @@ public class LizardTail extends Mob implements DataDrivenVariantAnimal {
         if (!this.isInWater() && this.onGround() && this.verticalCollision) {
             this.setDeltaMovement(this.getDeltaMovement().add((this.random.nextFloat() * 2.0f - 1.0f) * 0.05f, 0.4f, (this.random.nextFloat() * 2.0f - 1.0f) * 0.05f));
             this.setOnGround(false);
-            this.hasImpulse = true;
-            this.playSound(SoundEvents.SALMON_FLOP, this.getSoundVolume(), this.getVoicePitch());
+            this.needsSync = true;
+            this.playSound(SoundEvents.SALMON_FLOP.value(), this.getSoundVolume(), this.getVoicePitch());
         }
     }
     //endregion
