@@ -60,5 +60,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    # Keep the workflow list stable while extending the port with the 26.2 data-pack migration.
+    # Keep the workflow list stable while extending the port with late idempotent migrations.
     runpy.run_path(".github/port/structural_26_2_10.py", run_name="__main__")
+    runpy.run_path(".github/port/structural_26_2_11.py", run_name="__main__")
