@@ -197,14 +197,14 @@ jar {
 }
 
 // Guard against the exact packaging regression found by the manual 26.2 tests. A green CI run
-// must now prove that the remapped user-facing JAR actually contains the new client-item files
+// must now prove that the user-facing root JAR actually contains the new client-item files
 // and a non-legacy spawn-egg model, rather than only proving that the source compiled.
 tasks.register('verify26_2PackagedClientResources') {
-    dependsOn tasks.named('remapJar')
+    dependsOn tasks.named('jar')
 
     doLast {
-        def remapTask = tasks.named('remapJar').get()
-        def jarFile = remapTask.archiveFile.get().asFile
+        def jarTask = tasks.named('jar').get()
+        def jarFile = jarTask.archiveFile.get().asFile
         def zip = new ZipFile(jarFile)
         try {
             def entries = java.util.Collections.list(zip.entries())
