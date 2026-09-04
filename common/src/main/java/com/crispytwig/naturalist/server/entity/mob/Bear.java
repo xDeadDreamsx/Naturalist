@@ -70,11 +70,11 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityReference;
 
 @SuppressWarnings("unused")
 public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
@@ -89,13 +89,13 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     private static final EntityDataAccessor<Boolean> SHEARED = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> EAT_COUNTER = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.INT);
 
     private boolean followingOwner = true;
     private int huntingCooldown;
     private int wakeTicks;
+    private long persistentAngerEndTime = -1L;
     @Nullable
-    private UUID persistentAngerTarget;
+    private EntityReference<LivingEntity> persistentAngerTarget;
     public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState runAnimationState = new SmoothAnimationState();
@@ -129,7 +129,6 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
         builder.define(SITTING, false);
         builder.define(SHEARED, false);
         builder.define(EAT_COUNTER, 0);
-        builder.define(REMAINING_ANGER_TIME, 0);
         builder.define(DATA_DYE, -1);
     }
 
@@ -167,8 +166,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
     @Override
     public boolean canSleep() {
-        long dayTime = this.level().getDayTime();
-        return this.wakeTicks <= 0 && (dayTime < 12000 || dayTime > 18000) && dayTime < 23000 && dayTime > 6000 && !this.isAngry() && !this.level().isWaterAt(this.blockPosition());
+        return this.wakeTicks <= 0 && !this.level().isBrightOutside() && !this.isAngry() && !this.level().isWaterAt(this.blockPosition());
     }
 
     @Override
@@ -217,23 +215,23 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int time) {
-        this.entityData.set(REMAINING_ANGER_TIME, time);
+    public void setPersistentAngerEndTime(long endTime) {
+        this.persistentAngerEndTime = endTime;
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
-        return this.entityData.get(REMAINING_ANGER_TIME);
+    public long getPersistentAngerEndTime() {
+        return this.persistentAngerEndTime;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID target) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> target) {
         this.persistentAngerTarget = target;
     }
 
     @Nullable
     @Override
-    public UUID getPersistentAngerTarget() {
+    public EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.persistentAngerTarget;
     }
 
@@ -303,7 +301,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        AgeableMob baby = (AgeableMob) this.getType().create(serverLevel);
+        AgeableMob baby = (AgeableMob) this.getType().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby instanceof Bear bearBaby) {
             bearBaby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }
@@ -338,8 +336,8 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
         this.targetSelector.addGoal(2, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(2, new BearAttackPlayerNearBabiesGoal(this, Player.class, 20, false, true, null));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 20, true, false, this::isHostileWhenDark));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby() && this.canHunt()));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 20, true, false, (entity, level) -> this.isHostileWhenDark(entity)));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity, level) -> entity.getType().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby() && this.canHunt()));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
@@ -396,7 +394,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+        this.setTimeToRemainAngry(PERSISTENT_ANGER_TIME.sample(this.random));
     }
 
     @Override

@@ -49,6 +49,7 @@ import java.util.function.Predicate;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityReference;
 
 @SuppressWarnings("unused")
 public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVariantAnimal {
@@ -59,9 +60,9 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Boar.class, EntityDataSerializers.STRING);
 
-    private int remainingPersistentAngerTime;
+    private long persistentAngerEndTime = -1L;
     @Nullable
-    private UUID persistentAngerTarget;
+    private EntityReference<LivingEntity> persistentAngerTarget;
 
     public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
     public final SmoothAnimationState walkAnimationState = new SmoothAnimationState();
@@ -127,7 +128,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
 
     @Override
     @Nullable
-    public UUID getPersistentAngerTarget() {
+    public EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.persistentAngerTarget;
     }
     //endregion
@@ -179,7 +180,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+        this.setTimeToRemainAngry(PERSISTENT_ANGER_TIME.sample(this.random));
     }
 
     @Override

@@ -68,6 +68,7 @@ import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.entity.EntityReference;
 
 public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable, DataDrivenVariantAnimal {
     //region Data
@@ -77,8 +78,9 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Ant.class, EntityDataSerializers.BOOLEAN);
 
     private int hillCooldown;
+    private long persistentAngerEndTime = -1L;
     @Nullable
-    private UUID persistentAngerTarget;
+    private EntityReference<LivingEntity> persistentAngerTarget;
 
     @Nullable
     private UUID carriedFoodId;
@@ -139,12 +141,12 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
 
     @Nullable
     @Override
-    public UUID getPersistentAngerTarget() {
+    public EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.persistentAngerTarget;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID target) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> target) {
         this.persistentAngerTarget = target;
     }
 

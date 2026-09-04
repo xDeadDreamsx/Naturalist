@@ -42,6 +42,7 @@ import java.util.Optional;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 @SuppressWarnings("unused")
 public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
@@ -198,7 +199,7 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
         if (this.hasTail() && this.getHealth() <= this.getMaxHealth() / 2) {
             this.setHasTail(false);
             this.playSound(SoundEvents.SLIME_SQUISH, 1.0f, 1.0f);
-            LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level());
+            LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level(), EntitySpawnReason.TRIGGERED);
             if (lizardTail != null) {
                 lizardTail.setVariantString(this.getVariantString());
                 lizardTail.setPos(this.getX(), this.getY(), this.getZ());

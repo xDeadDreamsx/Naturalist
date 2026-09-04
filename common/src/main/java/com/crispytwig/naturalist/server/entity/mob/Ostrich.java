@@ -51,7 +51,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.PlayerRideableJumping;
-import net.minecraft.world.entity.Saddleable;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -90,7 +89,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
 
-public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
+public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS));
 
@@ -186,7 +185,6 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         this.entityData.set(DATA_VARIANT, location);
     }
 
-    @Override
     public boolean isSaddled() {
         return this.entityData.get(SADDLED);
     }
@@ -468,8 +466,15 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         if (dyeResult.isPresent()) {
             return dyeResult.get();
         }
-        if (stack.is(Items.SADDLE) && this.isSaddleable() && !this.isSaddled()) {
-            return InteractionResult.PASS;
+        if (stack.is(Items.SADDLE) && this.canBeSaddled() && !this.isSaddled()) {
+            if (!this.level().isClientSide()) {
+                this.setSaddled(true);
+                this.playSound(SoundEvents.HORSE_SADDLE.value(), 0.5F, 1.0F);
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+            }
+            return InteractionResult.SUCCESS;
         }
         if (this.isTame() && this.isBaby() && this.isFood(stack)) {
             this.ageUp(getSpeedUpSecondsWhenFeeding(-this.getAge()), true);
@@ -546,17 +551,9 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         return new Vec3(0.0D, 1.55D, -0.17D).scale(scale).yRot(-this.getYRot() * Mth.DEG_TO_RAD);
     }
 
-    @Override
-    public boolean isSaddleable() {
+    private boolean canBeSaddled() {
         return this.isAlive() && !this.isBaby() && this.isTame();
     }
-
-    @Override
-    public void equipSaddle(@NotNull ItemStack stack, @Nullable SoundSource source) {
-        this.setSaddled(true);
-        if (source != null) {
-            this.level().playSound(null, this, SoundEvents.HORSE_SADDLE, source, 0.5F, 1.0F);
-        }
     }
 
     @Override
@@ -674,7 +671,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         }
         LivingEntity target = this.getTarget();
         boolean engaged = target != null && target.isAlive()
-                && target.getUUID().equals(this.persistentAngerTarget)
+                && this.persistentAngerTarget != null && this.persistentAngerTarget.matches(target)
                 && this.closerThan(target, this.getAttributeValue(Attributes.FOLLOW_RANGE));
         if (!engaged && --this.remainingPersistentAngerTime <= 0) {
             this.stopBeingAngry();

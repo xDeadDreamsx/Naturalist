@@ -59,9 +59,9 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.entity.EntityReference;
 
 @SuppressWarnings("unused")
 public class Elephant extends TamableAnimal implements NeutralMob, IKMount, DataDrivenVariantAnimal {
@@ -75,13 +75,13 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> CHESTED = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> REMAINING_ANGER_TIME = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<ItemStack> BANNER = SynchedEntityData.defineId(Elephant.class, EntityDataSerializers.ITEM_STACK);
 
     private final SimpleContainer inventory = new SimpleContainer(INVENTORY_SIZE);
     private int tamingFood;
+    private long persistentAngerEndTime = -1L;
     @Nullable
-    private UUID persistentAngerTarget;
+    private EntityReference<LivingEntity> persistentAngerTarget;
     public final TerrainLegSolver legSolver = new TerrainLegSolver(1.0F, 0.5F, 0.9F);
 
     public final SmoothAnimationState idleAnimationState = new SmoothAnimationState();
@@ -115,7 +115,6 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         super.defineSynchedData(builder);
 
         builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
-        builder.define(REMAINING_ANGER_TIME, 0);
         builder.define(SADDLED, false);
         builder.define(CHESTED, false);
         builder.define(BANNER, ItemStack.EMPTY);
@@ -317,27 +316,27 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+        this.setTimeToRemainAngry(PERSISTENT_ANGER_TIME.sample(this.random));
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int time) {
-        this.entityData.set(REMAINING_ANGER_TIME, time);
+    public void setPersistentAngerEndTime(long endTime) {
+        this.persistentAngerEndTime = endTime;
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
-        return this.entityData.get(REMAINING_ANGER_TIME);
+    public long getPersistentAngerEndTime() {
+        return this.persistentAngerEndTime;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID target) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> target) {
         this.persistentAngerTarget = target;
     }
 
     @Nullable
     @Override
-    public UUID getPersistentAngerTarget() {
+    public EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.persistentAngerTarget;
     }
 
