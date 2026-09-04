@@ -10,6 +10,7 @@ This pass is intentionally conservative and idempotent:
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -131,3 +132,9 @@ if ROOT.exists():
 print(f"26.2 data-pack migration changed {len(changed)} files")
 for path in changed:
     print(path)
+
+# The existing CI migration commit stages Java sources itself. Stage migrated data files here as
+# well so the validated resource changes are persisted on the port branch instead of existing
+# only in the workflow checkout used to build the artifact.
+if changed:
+    subprocess.run(["git", "add", *[str(path) for path in changed]], check=True)
