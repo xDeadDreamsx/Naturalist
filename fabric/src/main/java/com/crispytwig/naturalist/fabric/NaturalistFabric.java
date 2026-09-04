@@ -30,9 +30,7 @@ public class NaturalistFabric implements ModInitializer {
         Naturalist.createAttributes((type, builder) -> {
             // TemptGoal requires minecraft:tempt_range in 26.2. Naturalist 2.0.3
             // predates that attribute, so make it available to the port's mobs.
-            if (!builder.hasAttribute(Attributes.TEMPT_RANGE)) {
-                builder.add(Attributes.TEMPT_RANGE, 10.0D);
-            }
+            builder.add(Attributes.TEMPT_RANGE, 10.0D);
             FabricDefaultAttributeRegistry.register(type, builder.build());
         });
 
