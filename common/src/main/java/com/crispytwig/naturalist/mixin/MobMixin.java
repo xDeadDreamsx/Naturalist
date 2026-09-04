@@ -64,7 +64,7 @@ public abstract class MobMixin extends LivingEntity {
 
     @Inject(method = "aiStep", at = @At("TAIL"))
     private void naturalist$updateBabyHealth(CallbackInfo ci) {
-        if (this.level().isClientSide || !this.naturalist$isNaturalistMob()) {
+        if (this.level().isClientSide() || !this.naturalist$isNaturalistMob()) {
             return;
         }
 

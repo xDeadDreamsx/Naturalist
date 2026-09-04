@@ -66,8 +66,8 @@ public class KnapsackItem extends Item {
         if (isFilled(stack) || !isCapturable(target)) {
             return InteractionResult.PASS;
         }
-        if (player.level().isClientSide) {
-            return InteractionResult.sidedSuccess(true);
+        if (player.level().isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
         Mob mob = (Mob) target;
         CompoundTag entityTag = new CompoundTag();
@@ -123,7 +123,7 @@ public class KnapsackItem extends Item {
                 stack.shrink(1);
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override

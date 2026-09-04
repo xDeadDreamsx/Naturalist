@@ -26,7 +26,7 @@ public interface DataDrivenVariantAnimal {
     }
 
     default String[] getLegacyVariantNames() {
-        return new String[]{this.getDefaultVariant().location().getPath()};
+        return new String[]{this.getDefaultVariant().identifier().getPath()};
     }
 
     Identifier getFallbackVariantTexture();
@@ -37,11 +37,11 @@ public interface DataDrivenVariantAnimal {
 
     default Identifier getVariantLocation() {
         Identifier location = Identifier.tryParse(this.getVariantString());
-        return location != null ? location : this.getDefaultVariant().location();
+        return location != null ? location : this.getDefaultVariant().identifier();
     }
 
     default void setVariant(Holder<MobVariant> variant) {
-        variant.unwrapKey().ifPresent(key -> this.setVariantString(key.location().toString()));
+        variant.unwrapKey().ifPresent(key -> this.setVariantString(key.identifier().toString()));
     }
 
     default Optional<Holder.Reference<MobVariant>> getVariantHolder() {
@@ -49,7 +49,7 @@ public interface DataDrivenVariantAnimal {
     }
 
     default boolean hasNonDefaultVariant() {
-        return !this.getVariantLocation().equals(this.getDefaultVariant().location());
+        return !this.getVariantLocation().equals(this.getDefaultVariant().identifier());
     }
 
     default Identifier getVariantTexture() {

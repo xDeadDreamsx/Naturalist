@@ -22,7 +22,7 @@ public class NaturalistVariantProvider<T extends Mob & DataDrivenVariantAnimal> 
         Optional<Registry<MobVariant>> registry = entity.level().registryAccess().registry(entity.getVariantRegistryKey());
         if (registry.isEmpty() || registry.get().size() <= 1) return variants;
 
-        ResourceLocation defaultVariant = entity.getDefaultVariant().location();
+        ResourceLocation defaultVariant = entity.getDefaultVariant().identifier();
         if (registry.get().containsKey(defaultVariant)) {
             variants.add(new VariantDef(defaultVariant.getPath(), defaultVariant));
         }

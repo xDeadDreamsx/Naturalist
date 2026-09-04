@@ -1,7 +1,7 @@
 package com.crispytwig.naturalist.mixin;
 
 import com.crispytwig.naturalist.server.entity.util.ParrotFlight;
-import net.minecraft.client.player.Input;
+import net.minecraft.world.entity.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;

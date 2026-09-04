@@ -100,7 +100,7 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, NaturalistMobVariants.ANGLERFISH_RED.location().toString());
+        builder.define(DATA_VARIANT, NaturalistMobVariants.ANGLERFISH_RED.identifier().toString());
         builder.define(DATA_HAS_TARGET, false);
     }
 
@@ -134,7 +134,7 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
     }
 
     public boolean isGlowing() {
-        return NaturalistMobVariants.ANGLERFISH_GLOW.location().equals(this.getVariantLocation());
+        return NaturalistMobVariants.ANGLERFISH_GLOW.identifier().equals(this.getVariantLocation());
     }
 
     @Override
@@ -258,7 +258,7 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
-        if (hurt && !this.level().isClientSide && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
+        if (hurt && !this.level().isClientSide() && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
             this.setTarget(attacker);
         }
         return hurt;
@@ -275,7 +275,7 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.entityData.set(DATA_HAS_TARGET, this.getTarget() != null);
             this.tickHuntingCooldown();
         }
@@ -286,7 +286,7 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.swimTilt.tick(this);
             this.animationSounds.tick(this);

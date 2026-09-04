@@ -113,7 +113,7 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(HAS_EGG, false);
         builder.define(LAYING_EGG, false);
     }
@@ -322,7 +322,7 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.tickHuntingCooldown();
             NaturalistAnimal.leaveWater(this);
         }
@@ -361,7 +361,7 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.tickClientVisuals();
             this.setupAnimationStates();
         }

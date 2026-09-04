@@ -148,7 +148,7 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(DATA_STATE, STATE_UNROLLED);
     }
 
@@ -466,7 +466,7 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
             return false;
         }
         boolean hurt = super.hurt(source, amount);
-        if (hurt && !this.level().isClientSide && source.getEntity() instanceof LivingEntity attacker) {
+        if (hurt && !this.level().isClientSide() && source.getEntity() instanceof LivingEntity attacker) {
             if (peeking) {
                 this.popOut(attacker);
             } else {
@@ -497,12 +497,12 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
         }
         ItemStack stack = player.getItemInHand(hand);
         if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.usePlayerItem(player, hand, stack);
                 this.heal(2.0F);
                 this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
@@ -587,7 +587,7 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.animationSounds.tick(this);
         }

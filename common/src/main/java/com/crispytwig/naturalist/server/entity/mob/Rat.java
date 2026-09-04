@@ -125,7 +125,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, NaturalistMobVariants.RAT_BLACK.location().toString());
+        builder.define(DATA_VARIANT, NaturalistMobVariants.RAT_BLACK.identifier().toString());
         builder.define(SLEEPING, false);
         builder.define(INTERESTED, false);
         builder.define(FROM_HAND, false);
@@ -227,7 +227,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
 
     @Override
     public void die(@NotNull DamageSource cause) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.dropCarriedItems();
         }
         super.die(cause);
@@ -396,7 +396,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     if (this.random.nextInt(10) < 7) {
                         this.tame(player);
                         this.setOrderedToSit(true);
@@ -406,15 +406,15 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
                         this.level().broadcastEntityEvent(this, (byte) 6);
                     }
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (this.getHealth() < this.getMaxHealth()) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.usePlayerItem(player, hand, stack);
                     this.heal(2.0F);
                     this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             return super.mobInteract(player, hand);
         }
@@ -513,7 +513,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.animationSounds.tick(this);
         }

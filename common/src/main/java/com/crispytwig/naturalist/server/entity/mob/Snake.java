@@ -98,7 +98,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(SLEEPING, false);
         builder.define(EAT_COUNTER, 0);
         builder.define(REMAINING_ANGER_TIME, 0);
@@ -301,7 +301,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
-        if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide) {
+        if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide()) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());
             itemEntity.setPickUpDelay(80);
             itemEntity.setThrower(this);
@@ -346,7 +346,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         if (whistle != null) {
             return whistle;
         }
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             return (this.isOwnedBy(player) || this.isTame() || (this.isTameFood(stack) && !this.isTame())) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         if (this.isTame()) {
@@ -410,7 +410,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.updatePersistentAnger((ServerLevel)this.level(), true);
             this.tickHuntingCooldown();
         }
@@ -437,9 +437,9 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
             this.setEating(false);
         }
         if (this.isEating()) {
-            if (!this.level().isClientSide && this.getEatCounter() > 6000) {
+            if (!this.level().isClientSide() && this.getEatCounter() > 6000) {
                 if (!this.getMainHandItem().isEmpty()) {
-                    if (!this.level().isClientSide) {
+                    if (!this.level().isClientSide()) {
                         this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                         this.gameEvent(GameEvent.EAT);
                     }
@@ -543,7 +543,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

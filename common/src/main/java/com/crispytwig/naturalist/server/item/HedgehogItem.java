@@ -13,7 +13,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -94,7 +94,7 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE).getType() != HitResult.Type.MISS) {
             return super.use(level, player, hand);
@@ -102,7 +102,7 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
         if (level instanceof ServerLevel serverLevel) {
             Hedgehog hedgehog = NaturalistEntityTypes.HEDGEHOG.get().create(serverLevel);
             if (hedgehog == null) {
-                return InteractionResultHolder.pass(stack);
+                return InteractionResult.PASS;
             }
             Vec3 look = player.getLookAngle();
             hedgehog.moveTo(player.getX() + look.x * 0.6, player.getEyeY() - 0.3 + look.y * 0.6, player.getZ() + look.z * 0.6, player.getYRot(), 0.0F);
@@ -124,6 +124,6 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        return InteractionResult.SUCCESS;
     }
 }

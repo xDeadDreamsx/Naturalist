@@ -100,7 +100,7 @@ public class Turkey extends Animal implements DataDrivenVariantAnimal {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
     }
 
     @Override
@@ -192,7 +192,7 @@ public class Turkey extends Animal implements DataDrivenVariantAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.animationSounds.tick(this);
         }

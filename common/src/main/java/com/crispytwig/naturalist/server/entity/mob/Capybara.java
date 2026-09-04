@@ -72,7 +72,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(DATA_DYE, -1);
         builder.define(SLEEPING, false);
         builder.define(SLEEP_POSE, false);
@@ -240,7 +240,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
         ItemStack stack = player.getItemInHand(hand);
         if (!this.isTame()) {
             if (this.isFood(stack)) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
@@ -251,7 +251,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
                         this.level().broadcastEntityEvent(this, (byte) 6);
                     }
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             return super.mobInteract(player, hand);
         }
@@ -261,13 +261,13 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
                     stack.shrink(1);
                 }
                 this.heal(2.0F);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (stack.isEmpty()) {
                 this.setOrderedToSit(!this.isOrderedToSit());
                 this.jumping = false;
                 this.navigation.stop();
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
         }
         return super.mobInteract(player, hand);
@@ -301,7 +301,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -68,13 +68,13 @@ public class CaughtMobItem extends NaturalistBucketItem {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         BlockHitResult blockhitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         if (blockhitresult.getType() == HitResult.Type.MISS) {
-            return InteractionResultHolder.pass(itemstack);
+            return InteractionResult.PASS;
         } else if (blockhitresult.getType() != HitResult.Type.BLOCK) {
-            return InteractionResultHolder.pass(itemstack);
+            return InteractionResult.PASS;
         } else {
             BlockPos pos = blockhitresult.getBlockPos();
             Direction direction = blockhitresult.getDirection();
@@ -82,9 +82,9 @@ public class CaughtMobItem extends NaturalistBucketItem {
                 this.checkExtraContent(player, level, itemstack, pos);
                 this.playEmptySound(player, level, pos);
                 player.awardStat(Stats.ITEM_USED.get(this));
-                return InteractionResultHolder.sidedSuccess(getEmptySuccessItem(itemstack, player), level.isClientSide());
+                return InteractionResult.SUCCESS;
             } else {
-                return InteractionResultHolder.fail(itemstack);
+                return InteractionResult.FAIL;
             }
         }
     }

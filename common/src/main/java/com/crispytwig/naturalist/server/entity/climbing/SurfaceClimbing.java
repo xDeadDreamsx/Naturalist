@@ -77,7 +77,7 @@ public class SurfaceClimbing {
     }
 
     public boolean isOnSide() {
-        if (this.mob.level().isClientSide) {
+        if (this.mob.level().isClientSide()) {
             return this.mob.getEntityData().get(this.normalData).y() < WALL_NORMAL_Y;
         }
         return this.attached && this.normal.y < WALL_NORMAL_Y;
@@ -86,7 +86,7 @@ public class SurfaceClimbing {
 
     //region Physics
     public void tick() {
-        if (this.mob.level().isClientSide) {
+        if (this.mob.level().isClientSide()) {
             this.tickClient();
             return;
         }

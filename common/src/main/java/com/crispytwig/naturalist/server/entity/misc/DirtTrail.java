@@ -40,7 +40,7 @@ public class DirtTrail extends Entity {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.spawnAnimationState.animateWhen(true, this.tickCount);
         } else if (this.level() instanceof ServerLevel serverLevel && this.tickCount >= LIFETIME) {
             double scale = this.isSmall() ? 0.6D : 1.0D;

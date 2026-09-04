@@ -133,7 +133,7 @@ Catchable {
                 ItemHelper.spawnItemOnEntity(player, caughtItemStack);
             }
             player.playSound(SoundEvents.ITEM_PICKUP, 0.3F, 1.0F);
-            if (!entity.level().isClientSide) {
+            if (!entity.level().isClientSide()) {
                 CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, caughtItemStack);
             }
             entity.discard();

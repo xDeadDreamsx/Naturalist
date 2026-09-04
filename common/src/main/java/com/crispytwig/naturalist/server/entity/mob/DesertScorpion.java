@@ -52,7 +52,7 @@ public class DesertScorpion extends Scorpion implements Catchable, DataDrivenVar
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(FROM_HAND, false);
     }
 

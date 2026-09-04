@@ -85,7 +85,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, NaturalistMobVariants.BUTTERFLY_MONARCH.location().toString());
+        builder.define(DATA_VARIANT, NaturalistMobVariants.BUTTERFLY_MONARCH.identifier().toString());
         builder.define(FROM_HAND, false);
         builder.define(HAS_NECTAR, false);
     }
@@ -217,8 +217,8 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
 
     private String selectSpawnVariantId(ServerLevelAccessor level) {
         return MobVariantUtil.selectVariantForSpawn(level, this.blockPosition(), NaturalistMobVariants.BUTTERFLY_VARIANT)
-                .flatMap(holder -> holder.unwrapKey().map(key -> key.location().toString()))
-                .orElseGet(() -> this.getDefaultVariant().location().toString());
+                .flatMap(holder -> holder.unwrapKey().map(key -> key.identifier().toString()))
+                .orElseGet(() -> this.getDefaultVariant().identifier().toString());
     }
 
     public static class ButterflyGroupData extends AgeableMob.AgeableMobGroupData {
@@ -319,7 +319,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
         if (this.hasNectar() && this.getCropsGrownSincePollination() < 10 && this.random.nextFloat() < 0.05F) {

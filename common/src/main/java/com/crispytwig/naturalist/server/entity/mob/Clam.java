@@ -88,7 +88,7 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, DEFAULT_VARIANT.location().toString());
+        builder.define(DATA_VARIANT, DEFAULT_VARIANT.identifier().toString());
         builder.define(DATA_OPEN, false);
         builder.define(DATA_HAS_TREASURE, false);
     }
@@ -283,15 +283,15 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         if (player.isCreative() && player.getItemInHand(hand).is(Items.DEBUG_STICK)) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.setOpen(true);
                 this.stateTimer = 200;
                 this.snapCooldown = 200;
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         if (this.isOpen() && this.hasTreasure() && !this.getMainHandItem().isEmpty()) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 ItemStack treasure = this.getMainHandItem().copy();
                 this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                 this.setHasTreasure(false);
@@ -300,18 +300,18 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
                 }
                 this.closeShell();
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         ItemStack inHand = player.getItemInHand(hand);
         if (this.isOpen() && !this.hasTreasure() && !inHand.isEmpty()) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.setItemSlot(EquipmentSlot.MAINHAND, inHand.copyWithCount(1));
                 this.setHasTreasure(true);
                 if (!player.getAbilities().instabuild) {
                     inHand.shrink(1);
                 }
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
@@ -339,7 +339,7 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

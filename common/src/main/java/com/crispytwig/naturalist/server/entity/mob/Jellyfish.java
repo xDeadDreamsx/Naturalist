@@ -82,7 +82,7 @@ public class Jellyfish extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, DEFAULT_VARIANT.location().toString());
+        builder.define(DATA_VARIANT, DEFAULT_VARIANT.identifier().toString());
     }
 
     @Override
@@ -183,7 +183,7 @@ public class Jellyfish extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide && this.isAlive()) {
+        if (!this.level().isClientSide() && this.isAlive()) {
             List<LivingEntity> touching = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2D),
                     entity -> entity.isAlive() && !(entity instanceof Jellyfish));
             for (LivingEntity target : touching) {
@@ -225,7 +225,7 @@ public class Jellyfish extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.animationSounds.tick(this);
         }

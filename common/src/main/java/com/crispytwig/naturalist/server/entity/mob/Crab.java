@@ -134,7 +134,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, DEFAULT_VARIANT.location().toString());
+        builder.define(DATA_VARIANT, DEFAULT_VARIANT.identifier().toString());
         builder.define(DATA_DANCING, false);
         builder.define(FROM_HAND, false);
     }
@@ -372,19 +372,19 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
                         stack.shrink(1);
                     }
                     this.heal(2.0F);
-                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                    return InteractionResult.SUCCESS;
                 }
             } else {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.setOrderedToSit(!this.isOrderedToSit());
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
         } else if (!this.isTame() && this.isFood(stack)) {
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 if (this.random.nextInt(3) == 0) {
                     this.tame(player);
                     this.setFollowingOwner(true);
@@ -394,7 +394,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
                     this.level().broadcastEntityEvent(this, (byte) 6);
                 }
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
 
         return super.mobInteract(player, hand);
@@ -454,11 +454,11 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
             this.peekCooldown = 50;
         }
 
-        if (!this.level().isClientSide && this.tickCount % 20 == 0) {
+        if (!this.level().isClientSide() && this.tickCount % 20 == 0) {
             this.setDancing(this.isTame() && !this.isOrderedToSit() && this.isJukeboxNearby());
         }
 
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.animationSounds.tick(this);
         }

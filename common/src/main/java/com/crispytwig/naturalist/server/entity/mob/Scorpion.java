@@ -138,7 +138,7 @@ public abstract class Scorpion extends Animal implements NocturnalHostile {
             this.heal(1.0F);
             this.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
             stack.consume(1, player);
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
@@ -177,7 +177,7 @@ public abstract class Scorpion extends Animal implements NocturnalHostile {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.animationSounds.tick(this);
         }

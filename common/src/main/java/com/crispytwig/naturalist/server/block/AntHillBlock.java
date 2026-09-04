@@ -60,7 +60,7 @@ public class AntHillBlock extends Block implements EntityBlock {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if (level.isClientSide || !state.getValue(OPEN) || type != NaturalistBlockEntities.ANT_HILL.get()) {
+        if (level.isClientSide() || !state.getValue(OPEN) || type != NaturalistBlockEntities.ANT_HILL.get()) {
             return null;
         }
         return (BlockEntityTicker<T>) (BlockEntityTicker<AntHillBlockEntity>) AntHillBlockEntity::serverTick;

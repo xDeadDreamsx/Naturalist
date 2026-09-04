@@ -145,7 +145,7 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, NaturalistMobVariants.TIGER_BLACK_PANTHER.location().toString());
+        builder.define(DATA_VARIANT, NaturalistMobVariants.TIGER_BLACK_PANTHER.identifier().toString());
         builder.define(SLEEPING, false);
     }
 
@@ -321,9 +321,9 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             boolean canInteract = this.isOwnedBy(player) || this.isTame()
                     || (this.isBaby() && this.isFood(stack) && !this.isTame());
             return canInteract ? InteractionResult.CONSUME : InteractionResult.PASS;
@@ -491,7 +491,7 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.animationSounds.tick(this);
         }

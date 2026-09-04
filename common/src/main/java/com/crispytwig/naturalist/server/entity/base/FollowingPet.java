@@ -32,10 +32,10 @@ public interface FollowingPet {
     static <T extends TamableAnimal & FollowingPet> InteractionResult tryWhistle(T mob, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!stack.is(NaturalistRegistry.WHISTLE.get()) || !mob.isTame() || !mob.isOwnedBy(player)
-                || player.isSecondaryUseActive() || player.getCooldowns().isOnCooldown(stack.getItem())) {
+                || player.isSecondaryUseActive() || player.getCooldowns().isOnCooldown(stack)) {
             return null;
         }
-        if (!mob.level().isClientSide) {
+        if (!mob.level().isClientSide()) {
             boolean follow = !mob.isFollowingOwner();
             mob.setFollowingOwner(follow);
             mob.setOrderedToSit(false);
@@ -46,10 +46,10 @@ public interface FollowingPet {
             Component name = mob.getDisplayName().copy().withStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW).withItalic(false));
             Component state = Component.translatable(follow ? "naturalist.whistle.following" : "naturalist.whistle.wandering")
                     .withStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW).withBold(true).withItalic(false));
-            player.displayClientMessage(Component.translatable("naturalist.whistle.message", name, state)
-                    .withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(true)), true);
+            player.sendOverlayMessage(Component.translatable("naturalist.whistle.message", name, state)
+                    .withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(true)));
         }
-        player.getCooldowns().addCooldown(stack.getItem(), 20);
-        return InteractionResult.sidedSuccess(mob.level().isClientSide);
+        player.getCooldowns().addCooldown(stack, 20);
+        return InteractionResult.SUCCESS;
     }
 }

@@ -62,7 +62,7 @@ public class Starfish extends WaterAnimal implements VariantBucketable {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, DEFAULT_VARIANT.location().toString());
+        builder.define(DATA_VARIANT, DEFAULT_VARIANT.identifier().toString());
         builder.define(FROM_BUCKET, false);
     }
 
@@ -184,7 +184,7 @@ public class Starfish extends WaterAnimal implements VariantBucketable {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

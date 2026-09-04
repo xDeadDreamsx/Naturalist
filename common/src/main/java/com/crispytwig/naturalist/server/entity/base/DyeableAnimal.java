@@ -42,14 +42,14 @@ public interface DyeableAnimal {
         if (stack.getItem() instanceof DyeItem dyeItem && animal.isDyeableBy(player)) {
             DyeColor color = dyeItem.getDyeColor();
             if (color != animal.getDyeColor()) {
-                if (!animal.level().isClientSide) {
+                if (!animal.level().isClientSide()) {
                     animal.setDyeColor(color);
                     animal.playSound(SoundEvents.DYE_USE, 1.0F, 1.0F);
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
                 }
-                return Optional.of(InteractionResult.sidedSuccess(animal.level().isClientSide));
+                return Optional.of(InteractionResult.SUCCESS);
             }
         }
         return Optional.empty();
@@ -58,12 +58,12 @@ public interface DyeableAnimal {
     static <T extends LivingEntity & DyeableAnimal> Optional<InteractionResult> tryClearDye(T animal, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (animal.getDyeColor() != null && stack.is(NaturalistTags.ItemTags.SHEARS) && animal.isDyeableBy(player)) {
-            if (!animal.level().isClientSide) {
+            if (!animal.level().isClientSide()) {
                 animal.setDyeColor(null);
                 animal.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
                 stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }
-            return Optional.of(InteractionResult.sidedSuccess(animal.level().isClientSide));
+            return Optional.of(InteractionResult.SUCCESS);
         }
         return Optional.empty();
     }

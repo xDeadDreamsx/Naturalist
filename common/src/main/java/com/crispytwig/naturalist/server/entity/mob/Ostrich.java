@@ -161,7 +161,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(SADDLED, false);
         builder.define(HAS_EGG, false);
         builder.define(LAYING_EGG, false);
@@ -449,14 +449,14 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
             return whistle;
         }
         if (this.isTame() && this.isOwnedBy(player) && this.isSaddled() && stack.is(NaturalistTags.ItemTags.SHEARS)) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.setSaddled(false);
                 this.spawnAtLocation(Items.SADDLE);
                 stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
                 this.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
                 this.gameEvent(GameEvent.SHEAR, player);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         Optional<InteractionResult> dyeResult = DyeableAnimal.tryClearDye(this, player, hand);
         if (dyeResult.isEmpty()) {
@@ -473,9 +473,9 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             return (this.isTame() || (this.isBaby() && this.isFood(stack))) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         if (this.isTame()) {
@@ -516,7 +516,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     protected void doPlayerRide(@NotNull Player player) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
             player.startRiding(this);
@@ -657,7 +657,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
                 && this.level().getBlockState(pos.below()).is(this.getEggLayableBlockTag())) {
             this.level().levelEvent(2001, pos, Block.getId(this.level().getBlockState(pos.below())));
         }
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.updateEggAnger();
             if (this.tickCount % 60 == 0 && !this.ownedEggs.isEmpty()) {
                 this.pruneOwnedEggs();
@@ -746,7 +746,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.animationSounds.tick(this);
         }

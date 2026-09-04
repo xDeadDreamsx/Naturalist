@@ -99,7 +99,7 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, DEFAULT_VARIANT.location().toString());
+        builder.define(DATA_VARIANT, DEFAULT_VARIANT.identifier().toString());
         builder.define(FROM_BUCKET, false);
     }
 
@@ -294,7 +294,7 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
             this.hideHoldTicks--;
             this.hideCacheTick = -1L;
         }
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             boolean hiding = this.canHide();
             if (hiding) {
                 this.jumping = false;
@@ -314,7 +314,7 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

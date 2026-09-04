@@ -108,7 +108,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, NaturalistMobVariants.BIRD_AMERICAN_ROBIN.location().toString());
+        builder.define(DATA_VARIANT, NaturalistMobVariants.BIRD_AMERICAN_ROBIN.identifier().toString());
         builder.define(DATA_DYE, -1);
     }
 
@@ -270,7 +270,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
         if (this.isInvulnerableTo(source)) {
             return false;
         } else {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.setOrderedToSit(false);
             }
 
@@ -301,12 +301,12 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
                 if (this.getHealth() == this.getMaxHealth()) {
                     this.spawnTamingParticles(true);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             } else if (!this.isFlying()) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.setOrderedToSit(!this.isOrderedToSit());
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
 
         }
@@ -319,7 +319,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
         if (this.getVehicle() instanceof Player player) {
             this.rideOnHead(player);
         }
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.tickFlyPitch();
             this.setupAnimationStates();
         }
@@ -364,7 +364,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
         this.setYHeadRot(player.getYHeadRot());
         this.yHeadRotO = this.yHeadRot;
 
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             Vec3 movement = player.getDeltaMovement();
             if (NaturalistConfig.isBirdHeadSlowFallingEnabled() && movement.y < 0.0D && !player.onGround() && !player.getAbilities().flying && !player.isFallFlying()) {
                 player.setDeltaMovement(movement.multiply(1.0D, 0.6D, 1.0D));

@@ -148,7 +148,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
     }
 
     @Override
@@ -286,7 +286,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
             this.heal(2.0F);
             this.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
             stack.consume(1, player);
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
@@ -308,7 +308,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
         }
         this.positionParts();
         MobPart.pushEntities(this, this.parts);
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (MobPart.resolveBodyCollisions(this, this.parts)) {
                 this.positionParts();
             }
@@ -368,7 +368,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
         }
         this.xBodyRot += (targetPitch - this.xBodyRot) * 0.1F;
         this.chain.tick(this.yBodyRot, this.xBodyRot, targetPitch);
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.tickHuntingCooldown();
             this.flopCooldown = BeachedMob.tickFlopping(this, this.flopCooldown, null);
         }

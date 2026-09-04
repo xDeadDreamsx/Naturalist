@@ -62,7 +62,7 @@ public class Caterpillar extends ClimbingAnimal implements Catchable, DataDriven
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(FROM_HAND, false);
     }
 
@@ -232,7 +232,7 @@ public class Caterpillar extends ClimbingAnimal implements Catchable, DataDriven
             caterpillar.getLookControl().setLookAt(logPos.getX() + 0.5D, logPos.getY() + 1, logPos.getZ() + 0.5D, 10.0F, this.caterpillar.getMaxHeadXRot());
             Level level = caterpillar.level();
             if (this.isValidTarget(level, caterpillar.blockPosition())) {
-                if (!level.isClientSide) {
+                if (!level.isClientSide()) {
                     ((ServerLevel) level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, NaturalistRegistry.CHRYSALIS_BLOCK.get().defaultBlockState()), caterpillar.getX(), caterpillar.getY(), caterpillar.getZ(), 50, caterpillar.getBbWidth() / 4.0F, caterpillar.getBbHeight() / 4.0F, caterpillar.getBbWidth() / 4.0F, 0.05D);
                 }
                 caterpillar.discard();
@@ -257,7 +257,7 @@ public class Caterpillar extends ClimbingAnimal implements Catchable, DataDriven
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

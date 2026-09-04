@@ -94,7 +94,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(DATA_GRAY, true);
         builder.define(DATA_CONVERTING, false);
     }
@@ -195,7 +195,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.tickConversion();
         }
     }
@@ -242,7 +242,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.swimTilt.tick(this);
             this.animationSounds.tick(this);

@@ -54,7 +54,7 @@ public class CarriedFoodEntity extends ItemEntity {
 
     @Nullable
     public Ant resolveAnt() {
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             int id = this.entityData.get(DATA_ANT_ID);
             return id != -1 && this.level().getEntity(id) instanceof Ant ant ? ant : null;
         }
@@ -69,12 +69,12 @@ public class CarriedFoodEntity extends ItemEntity {
     public void tick() {
         this.baseTick();
         this.bobAge++;
-        if (!this.level().isClientSide && this.getItem().isEmpty()) {
+        if (!this.level().isClientSide() && this.getItem().isEmpty()) {
             this.discard();
             return;
         }
         Ant ant = this.resolveAnt();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             if (ant != null) {
                 this.follow(ant);
             }
@@ -96,7 +96,7 @@ public class CarriedFoodEntity extends ItemEntity {
     }
 
     public void releaseToWorld() {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             ItemEntity dropped = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), this.getItem().copy());
             dropped.setDefaultPickUpDelay();
             this.level().addFreshEntity(dropped);
@@ -106,7 +106,7 @@ public class CarriedFoodEntity extends ItemEntity {
 
     @Override
     public void playerTouch(@NotNull Player player) {
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             super.playerTouch(player);
             return;
         }

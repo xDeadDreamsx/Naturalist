@@ -103,7 +103,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(FROM_HAND, false);
         builder.define(DATA_COLOR, Color.BROWN.getId());
         builder.define(HAS_EGG, false);
@@ -396,7 +396,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
             this.zza = 0.0F;
         }
         this.checkCrush();
-        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && --this.slimeBallTime <= 0) {
+        if (!this.level().isClientSide() && this.isAlive() && !this.isBaby() && --this.slimeBallTime <= 0) {
             this.playSound(SoundEvents.SLIME_SQUISH_SMALL, 1.0F, NaturalistAnimal.defaultVoicePitch(this.random));
             this.spawnAtLocation(Items.SLIME_BALL);
             this.slimeBallTime = this.random.nextInt(1200) + 12000;
@@ -404,7 +404,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     }
 
     private void checkCrush() {
-        if (this.level().isClientSide || !NaturalistConfig.isSnailCrushingEnabled()
+        if (this.level().isClientSide() || !NaturalistConfig.isSnailCrushingEnabled()
                 || !this.onGround() || this.hasCustomName() || this.fromHand() || this.isPersistenceRequired()) {
             return;
         }
@@ -508,7 +508,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     public void tick() {
         super.tick();
         this.climbing.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.updateLookLag();
             this.setupAnimationStates();
         }

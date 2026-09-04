@@ -56,7 +56,7 @@ public class OstrichEggBlock extends TurtleEggBlock {
 
     @Override
     public void onPlace(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean isMoving) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             level.levelEvent(2005, pos, 0);
         }
     }
@@ -83,7 +83,7 @@ public class OstrichEggBlock extends TurtleEggBlock {
 
     @Override
     public @NotNull BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
-        if (!level.isClientSide && !player.getAbilities().instabuild) {
+        if (!level.isClientSide() && !player.getAbilities().instabuild) {
             this.angerNearbyOstriches(level, pos, player);
         }
         return super.playerWillDestroy(level, pos, state, player);
@@ -93,7 +93,7 @@ public class OstrichEggBlock extends TurtleEggBlock {
         if (!this.canDestroyEgg(level, entity)) {
             return;
         }
-        if (!level.isClientSide && level.random.nextInt(chance) == 0 && state.is(this)) {
+        if (!level.isClientSide() && level.random.nextInt(chance) == 0 && state.is(this)) {
             level.playSound(null, pos, NaturalistSoundEvents.OSTRICH_EGG_BREAK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.2f);
             level.destroyBlock(pos, false);
             if (entity instanceof Player player) {

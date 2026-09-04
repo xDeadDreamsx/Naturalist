@@ -49,7 +49,7 @@ public class AlligatorEggBlock extends TurtleEggBlock {
 
     @Override
     public void onPlace(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean isMoving) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             level.levelEvent(2005, pos, 0);
         }
     }
@@ -79,7 +79,7 @@ public class AlligatorEggBlock extends TurtleEggBlock {
         if (!this.canDestroyEgg(level, entity)) {
             return;
         }
-        if (!level.isClientSide && level.random.nextInt(chance) == 0 && state.is(this)) {
+        if (!level.isClientSide() && level.random.nextInt(chance) == 0 && state.is(this)) {
             this.decreaseEggs(level, pos, state);
         }
     }

@@ -112,7 +112,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, NaturalistMobVariants.HEDGEHOG_BROWN.location().toString());
+        builder.define(DATA_VARIANT, NaturalistMobVariants.HEDGEHOG_BROWN.identifier().toString());
         builder.define(DATA_DYE, -1);
         builder.define(ROLLING, false);
         builder.define(FROM_HAND, false);
@@ -382,7 +382,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     if (this.random.nextBoolean()) {
                         this.tame(player);
                         this.level().broadcastEntityEvent(this, (byte) 7);
@@ -390,14 +390,14 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
                         this.level().broadcastEntityEvent(this, (byte) 6);
                     }
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (this.isOwnedBy(player) && this.getHealth() < this.getMaxHealth()) {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
                 this.heal(2.0F);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             return super.mobInteract(player, hand);
         }
@@ -405,7 +405,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
             this.setOrderedToSit(!this.isOrderedToSit());
             this.jumping = false;
             this.navigation.stop();
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
@@ -418,7 +418,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.followCooldown > 0) {
                 this.followCooldown--;
             }
@@ -594,13 +594,13 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         boolean hiding = this.canHide();
         if (!hiding && this.wasHiding) {
             this.unhideAnimTicks = 10;
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.playSound(NaturalistSoundEvents.HEDGEHOG_UNHIDE.get(), 0.6F, 1.0F);
             }
         }
         if (hiding) {
             this.unhideAnimTicks = 0;
-            if (!this.wasHiding && !this.level().isClientSide) {
+            if (!this.wasHiding && !this.level().isClientSide()) {
                 this.playSound(NaturalistSoundEvents.HEDGEHOG_HIDE.get(), 0.6F, 1.0F);
             }
         }
@@ -608,7 +608,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         if (this.unhideAnimTicks > 0) {
             this.unhideAnimTicks--;
         }
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

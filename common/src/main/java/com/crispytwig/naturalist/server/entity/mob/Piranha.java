@@ -77,7 +77,7 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
     }
 
     @Override
@@ -164,7 +164,7 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
-        if (hurt && !this.level().isClientSide && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
+        if (hurt && !this.level().isClientSide() && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
             this.setTarget(attacker);
             if (this.schoolLeader instanceof Piranha leader && leader.isAlive()) {
                 leader.setTarget(attacker);
@@ -184,7 +184,7 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.isFollower() && this.schoolLeader instanceof Piranha leader) {
                 LivingEntity leaderTarget = leader.getTarget();
                 if (leaderTarget != this.getTarget()) {
@@ -219,7 +219,7 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.swimTilt.tick(this);
         }

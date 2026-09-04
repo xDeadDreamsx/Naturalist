@@ -84,7 +84,7 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(VARIANT_ID, NaturalistMobVariants.TORTOISE_BROWN.location().toString());
+        builder.define(VARIANT_ID, NaturalistMobVariants.TORTOISE_BROWN.identifier().toString());
         builder.define(HAS_EGG, false);
         builder.define(LAYING_EGG, false);
     }
@@ -298,7 +298,7 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
         if (whistle != null) {
             return whistle;
         }
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             if (this.isTame() && this.isOwnedBy(player)) {
                 return InteractionResult.SUCCESS;
             }
@@ -376,7 +376,7 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

@@ -101,7 +101,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(DATA_REMAINING_ANGER_TIME, 0);
         builder.define(FROM_HAND, false);
     }
@@ -283,7 +283,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
             this.heal(1.0F);
             this.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
             stack.consume(1, player);
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
@@ -291,7 +291,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide && this.hillCooldown > 0) {
+        if (!this.level().isClientSide() && this.hillCooldown > 0) {
             this.hillCooldown--;
         }
     }
@@ -379,7 +379,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
 
     @Override
     public void remove(Entity.@NotNull RemovalReason reason) {
-        if (!this.level().isClientSide && reason.shouldDestroy()) {
+        if (!this.level().isClientSide() && reason.shouldDestroy()) {
             this.releaseCarriedFood();
         }
         super.remove(reason);
@@ -534,7 +534,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

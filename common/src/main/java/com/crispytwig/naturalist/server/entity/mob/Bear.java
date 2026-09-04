@@ -120,7 +120,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(SLEEPING, false);
         builder.define(SNIFFING, false);
         builder.define(SITTING, false);
@@ -366,7 +366,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
-        if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide) {
+        if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide()) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());
             itemEntity.setPickUpDelay(80);
             itemEntity.setThrower(this);
@@ -421,21 +421,21 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
                 this.setLastHurtByMob(player);
             }
             List<ItemStack> drops = this.onSheared(player, itemStack, this.level(), this.blockPosition());
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 for (ItemStack drop : drops) {
                     this.spawnShearedDrop(this.level(), this.blockPosition(), drop);
                 }
                 itemStack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }
             this.gameEvent(GameEvent.SHEAR, player);
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         Optional<InteractionResult> dye = DyeableAnimal.tryDye(this, player, hand);
         if (dye.isPresent()) {
             return dye.get();
         }
         if (!this.isTame() && this.isBaby() && this.isFood(itemStack)) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 if (!player.getAbilities().instabuild) {
                     itemStack.shrink(1);
                 }
@@ -446,7 +446,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
                     this.level().broadcastEntityEvent(this, (byte) 6);
                 }
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         if (this.isTame() && this.isOwnedBy(player)) {
             if (this.isFood(itemStack) && this.getHealth() < this.getMaxHealth()) {
@@ -454,13 +454,13 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
                     itemStack.shrink(1);
                 }
                 this.heal(4.0F);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (itemStack.isEmpty() && player.isSecondaryUseActive()) {
                 this.setOrderedToSit(!this.isOrderedToSit());
                 this.jumping = false;
                 this.navigation.stop();
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
         }
         return super.mobInteract(player, hand);
@@ -515,7 +515,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.updatePersistentAnger((ServerLevel)this.level(), true);
             if (this.wakeTicks > 0) {
                 this.wakeTicks--;
@@ -534,7 +534,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
             this.setSniffing(false);
         }
         this.level().getProfiler().push("looting");
-        if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+        if (!this.level().isClientSide() && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(1.0D, 0.0D, 1.0D))) {
                 if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(itementity.getItem())) {
                     this.pickUpItem(itementity);
@@ -556,7 +556,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     private void handleEating() {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (!this.isEating() && this.isSitting() && !this.isSleeping() && !this.getMainHandItem().isEmpty() && this.random.nextInt(40) == 1) {
                 this.setEating(true);
             } else if (this.getMainHandItem().isEmpty() || !this.isSitting()) {
@@ -986,7 +986,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }
@@ -1012,7 +1012,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     @Override
     public void swing(@NotNull InteractionHand hand, boolean updateSelf) {
         super.swing(hand, updateSelf);
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             SoundEvent attackSound = this.getAttackSound();
             if (attackSound != null) {
                 this.playSound(attackSound, 1.0F, 1.0F);

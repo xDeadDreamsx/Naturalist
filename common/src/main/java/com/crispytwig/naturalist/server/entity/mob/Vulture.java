@@ -94,7 +94,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(PERCHED, false);
     }
 
@@ -215,7 +215,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
-        if (hurt && !this.level().isClientSide) {
+        if (hurt && !this.level().isClientSide()) {
             this.startle(source.getSourcePosition());
         }
         return hurt;
@@ -313,7 +313,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }
@@ -328,7 +328,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     public void aiStep() {
         super.aiStep();
         this.level().getProfiler().push("looting");
-        if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+        if (!this.level().isClientSide() && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(1.0D, 1.0D, 1.0D))) {
                 if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(itementity.getItem())) {
                     this.pickUpItem(itementity);
@@ -336,7 +336,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
             }
         }
         this.level().getProfiler().pop();
-        if (!this.level().isClientSide && this.isAlive() && this.isEffectiveAi()) {
+        if (!this.level().isClientSide() && this.isAlive() && this.isEffectiveAi()) {
             ++this.ticksSinceEaten;
             if (this.perchCooldown > 0) {
                 --this.perchCooldown;

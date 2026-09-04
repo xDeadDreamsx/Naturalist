@@ -92,7 +92,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(DATA_DYE, -1);
         builder.define(FROM_BUCKET, false);
     }
@@ -281,15 +281,15 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
             ItemStack bucketStack = this.getBucketItemStack();
             this.saveToBucketTag(bucketStack);
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, bucketStack, false));
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer) player, bucketStack);
             }
             this.discard();
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         if (!this.isTame()) {
             if (this.isBaby() && this.isFood(stack)) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
@@ -300,7 +300,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
                         this.level().broadcastEntityEvent(this, (byte) 6);
                     }
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             return super.mobInteract(player, hand);
         }
@@ -310,13 +310,13 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
                     stack.shrink(1);
                 }
                 this.heal(2.0F);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (stack.isEmpty()) {
                 this.setOrderedToSit(!this.isOrderedToSit());
                 this.jumping = false;
                 this.navigation.stop();
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
         }
         return super.mobInteract(player, hand);
@@ -341,7 +341,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }
@@ -377,7 +377,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
         }
 
         this.flap += this.flapping * 2.0F;
-        if (!this.level().isClientSide && this.isAlive() && !this.isBaby() && --this.eggTime <= 0) {
+        if (!this.level().isClientSide() && this.isAlive() && !this.isBaby() && --this.eggTime <= 0) {
             this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, NaturalistAnimal.defaultVoicePitch(this.random));
             this.spawnAtLocation(NaturalistRegistry.DUCK_EGG.get());
             this.gameEvent(GameEvent.ENTITY_PLACE);

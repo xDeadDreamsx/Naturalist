@@ -71,7 +71,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(GLOW_TICKS_REMAINING, 0);
         builder.define(GLOW_START_TICK, 0);
         builder.define(SUN_TICKS, 0);
@@ -226,7 +226,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
             this.setSunTicks(this.getSunTicks() + 1);
             if (this.getSunTicks() > 600) {
                 BlockPos pos = this.blockPosition();
-                if (!level().isClientSide) {
+                if (!level().isClientSide()) {
                     for(int i = 0; i < 20; ++i) {
                         double x = random.nextGaussian() * 0.02D;
                         double y = random.nextGaussian() * 0.02D;
@@ -241,7 +241,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
     }
 
     private boolean canGlow() {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             return this.level().isNight() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;
         }
         return false;
@@ -249,7 +249,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
 
     @Override
     protected boolean isSunBurnTick() {
-        if (this.level().isDay() && !this.hasCustomName() && !this.level().isClientSide) {
+        if (this.level().isDay() && !this.hasCustomName() && !this.level().isClientSide()) {
             float f = (float) this.level().getMaxLocalRawBrightness(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())) / 15.0F;
             return Mth.lerp(this.level().dimensionType().ambientLight(), f / (4.0F - 3.0F * f), 1.0F) > 0.5F;
         }
@@ -298,7 +298,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
             super.tick();
             Level level = firefly.level();
             if (this.isReachedTarget()) {
-                if (!level.isClientSide) {
+                if (!level.isClientSide()) {
                     ((ServerLevel)level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SHORT_GRASS.defaultBlockState()), firefly.getX(), firefly.getY(), firefly.getZ(), 50, firefly.getBbWidth() / 4.0F, firefly.getBbHeight() / 4.0F, firefly.getBbWidth() / 4.0F, 0.05D);
                 }
                 level.playSound(null, firefly.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
@@ -317,7 +317,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

@@ -89,7 +89,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
 
     @Override
     public void onPlace(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean isMoving) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             level.levelEvent(2005, pos, 0);
         }
     }
@@ -119,7 +119,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
         if (!this.canDestroyEgg(level, entity)) {
             return;
         }
-        if (!level.isClientSide && level.random.nextInt(chance) == 0 && state.is(this)) {
+        if (!level.isClientSide() && level.random.nextInt(chance) == 0 && state.is(this)) {
             this.decreaseEggs(level, pos, state);
         }
     }
@@ -128,7 +128,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     public void playerDestroy(@NotNull Level level, @NotNull Player player, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable BlockEntity blockEntity, @NotNull ItemStack stack) {
         super.playerDestroy(level, player, pos, state, blockEntity, stack);
 
-        if (!level.isClientSide && stack.getItem() == Items.COMMAND_BLOCK) {
+        if (!level.isClientSide() && stack.getItem() == Items.COMMAND_BLOCK) {
             int variant = state.getValue(VARIANT);
             int eggCount = state.getValue(EGGS);
 

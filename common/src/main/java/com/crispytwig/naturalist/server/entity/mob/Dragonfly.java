@@ -183,7 +183,7 @@ public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal 
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 AreaEffectCloud areaEffectCloud = new AreaEffectCloud(this.level(), this.getX(), this.getY(), this.getZ());
                 areaEffectCloud.setOwner(this);
                 areaEffectCloud.setParticle(ParticleTypes.DRAGON_BREATH);
@@ -193,7 +193,7 @@ public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal 
                 areaEffectCloud.setPos(this.getX(), this.getY(), this.getZ());
                 this.level().addFreshEntity(areaEffectCloud);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player , hand);
     }
@@ -202,7 +202,7 @@ public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal 
     public void tick() {
         super.tick();
         this.setDeltaMovement(this.getDeltaMovement().multiply(1.0, 0.6, 1.0));
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

@@ -81,7 +81,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
     }
 
     @Override
@@ -253,7 +253,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
 
     @Override
     public boolean doHurtTarget(@NotNull Entity target) {
-        if (!this.level().isClientSide && target instanceof Bass prey && this.canEatTarget(prey)) {
+        if (!this.level().isClientSide() && target instanceof Bass prey && this.canEatTarget(prey)) {
             boolean wasMediumEatingSmall = this.getSizeTier() == 1 && prey.getSizeTier() == 0;
             boolean grew = wasMediumEatingSmall && this.getRandom().nextFloat() < GROW_CHANCE;
             devour(this, prey, !grew);
@@ -318,7 +318,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.swimTilt.tick(this);
         } else if (this.eatCooldown > 0) {

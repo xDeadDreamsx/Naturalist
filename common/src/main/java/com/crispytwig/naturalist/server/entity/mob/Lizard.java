@@ -223,7 +223,7 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
         if (dyeResult.isPresent()) {
             return dyeResult.get();
         }
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             return (this.isOwnedBy(player) || this.isTame() || TEMPT_INGREDIENT.test(stack) && !this.isTame()) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         if (this.isTame()) {
@@ -333,7 +333,7 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

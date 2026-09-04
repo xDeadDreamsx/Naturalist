@@ -77,7 +77,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
     }
 
     @Override
@@ -201,7 +201,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (!this.isAggro()) {
                 this.stopBeingAngry();
             }
@@ -212,7 +212,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     @Override
     public boolean doHurtTarget(@NotNull Entity target) {
         boolean hurt = super.doHurtTarget(target);
-        if (hurt && !this.level().isClientSide && target instanceof Player player && player.isDeadOrDying()
+        if (hurt && !this.level().isClientSide() && target instanceof Player player && player.isDeadOrDying()
                 && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)
                 && this.random.nextFloat() < DEATH_BY_HOGS_CHANCE) {
             player.spawnAtLocation(new ItemStack(NaturalistRegistry.MUSIC_DISC_DEATH_BY_HOGS.get()));
@@ -307,7 +307,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

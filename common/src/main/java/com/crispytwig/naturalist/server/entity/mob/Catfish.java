@@ -76,7 +76,7 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
     }
 
     @Override
@@ -160,7 +160,7 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
 
     @Override
     public boolean doHurtTarget(@NotNull Entity target) {
-        if (!this.level().isClientSide && target instanceof Bass prey && prey.isAlive() && this.pendingPrey == null) {
+        if (!this.level().isClientSide() && target instanceof Bass prey && prey.isAlive() && this.pendingPrey == null) {
             this.pendingPrey = prey;
             this.eatTimer = EAT_DELAY_TICKS;
             this.startHuntingCooldown();
@@ -187,7 +187,7 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.tickHuntingCooldown();
             this.tickPendingEat();
         }
@@ -218,7 +218,7 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.swimTilt.tick(this);
         }

@@ -126,7 +126,7 @@ public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnim
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
     }
 
     @Override
@@ -159,7 +159,7 @@ public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnim
     @Override
     public void baseTick() {
         super.baseTick();
-        if (!this.level().isClientSide && this.isAlive() && this.isInWater()) {
+        if (!this.level().isClientSide() && this.isAlive() && this.isInWater()) {
             this.setAirSupply(this.getMaxAirSupply());
         }
     }
@@ -285,12 +285,12 @@ public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnim
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (this.isFood(stack) && this.getHealth() < this.getMaxHealth()) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.usePlayerItem(player, hand, stack);
                 this.heal(4.0F);
                 this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
@@ -312,7 +312,7 @@ public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnim
         }
         this.positionParts();
         MobPart.pushEntities(this, this.parts);
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.resolveBodyCollisions();
         } else {
             this.setupAnimationStates();
@@ -394,7 +394,7 @@ public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnim
         this.frontDroop += ((this.isInWater() && this.isPartAboveWater(this.parts[0]) ? 1.0F : 0.0F) - this.frontDroop) * 0.08F;
         this.backDroop += ((this.isInWater() && this.isPartAboveWater(this.parts[3]) ? 1.0F : 0.0F) - this.backDroop) * 0.08F;
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.blowholeCooldown > 0) {
                 this.blowholeCooldown--;
             } else if (this.canSpray()) {

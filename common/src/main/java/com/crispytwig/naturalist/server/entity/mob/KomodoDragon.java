@@ -107,7 +107,7 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(BASKING, false);
     }
 
@@ -226,7 +226,7 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
                 stack.shrink(1);
             }
             this.heal(2.0F);
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
@@ -319,7 +319,7 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.animationSounds.tick(this);
         }

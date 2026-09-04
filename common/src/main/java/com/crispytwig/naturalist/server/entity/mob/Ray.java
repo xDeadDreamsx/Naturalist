@@ -96,7 +96,7 @@ public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, DEFAULT_VARIANT.location().toString());
+        builder.define(DATA_VARIANT, DEFAULT_VARIANT.identifier().toString());
     }
 
     @Override
@@ -197,7 +197,7 @@ public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     public boolean hurt(@NotNull DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
-        if (hurt && !this.level().isClientSide && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
+        if (hurt && !this.level().isClientSide() && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
             this.setTarget(attacker);
         }
         return hurt;
@@ -214,7 +214,7 @@ public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     public boolean doHurtTarget(@NotNull Entity target) {
         boolean result = super.doHurtTarget(target);
-        if (result && !this.level().isClientSide && target instanceof LivingEntity living) {
+        if (result && !this.level().isClientSide() && target instanceof LivingEntity living) {
             living.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0), this);
         }
         return result;
@@ -233,7 +233,7 @@ public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
             this.swimTilt.tick(this);
             this.finLagO = this.finLag;

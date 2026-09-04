@@ -15,7 +15,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -66,17 +66,17 @@ public class NaturalistBucketItem extends MobBucketItem {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (this.noFluid) {
             BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
             if (hit.getType() != HitResult.Type.BLOCK) {
-                return InteractionResultHolder.pass(stack);
+                return InteractionResult.PASS;
             }
             BlockPos pos = hit.getBlockPos();
             Direction direction = hit.getDirection();
             if (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos.relative(direction), direction, stack)) {
-                return InteractionResultHolder.fail(stack);
+                return InteractionResult.FAIL;
             }
             return release(level, player, stack, pos);
         }
@@ -104,14 +104,14 @@ public class NaturalistBucketItem extends MobBucketItem {
             return super.useOn(context);
         }
         player.setItemInHand(context.getHand(), release(level, player, context.getItemInHand(), placePos).getObject());
-        return InteractionResult.sidedSuccess(level.isClientSide());
+        return InteractionResult.SUCCESS;
     }
 
-    private InteractionResultHolder<ItemStack> release(Level level, Player player, ItemStack stack, BlockPos pos) {
+    private InteractionResult release(Level level, Player player, ItemStack stack, BlockPos pos) {
         this.checkExtraContent(player, level, stack, pos);
         this.playEmptySound(player, level, pos);
         player.awardStat(Stats.ITEM_USED.get(this));
-        return InteractionResultHolder.sidedSuccess(getEmptySuccessItem(stack, player), level.isClientSide());
+        return InteractionResult.SUCCESS;
     }
 
     @Override

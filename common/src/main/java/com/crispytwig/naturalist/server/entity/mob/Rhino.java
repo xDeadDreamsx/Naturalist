@@ -77,7 +77,7 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(CHARGE_COOLDOWN_TICKS, 0);
         builder.define(HAS_TARGET, false);
     }
@@ -484,7 +484,7 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

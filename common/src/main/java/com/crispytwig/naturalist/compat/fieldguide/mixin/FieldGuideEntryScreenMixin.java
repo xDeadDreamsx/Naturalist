@@ -97,7 +97,7 @@ public class FieldGuideEntryScreenMixin {
         return biomes.stream()
                 .map(Holder::unwrapKey)
                 .filter(Optional::isPresent)
-                .map(key -> key.get().location())
+                .map(key -> key.get().identifier())
                 .distinct()
                 .toList();
     }

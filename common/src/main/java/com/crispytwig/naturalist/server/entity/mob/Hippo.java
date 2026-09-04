@@ -41,7 +41,7 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -99,7 +99,7 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
     }
 
     @Override
@@ -253,7 +253,7 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
         }
         if (this.isFood(itemStack)) {
             if (!this.isTame() && this.isBaby()) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.usePlayerItem(player, hand, itemStack);
                     this.tame(player);
                     this.setOrderedToSit(true);
@@ -261,18 +261,18 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
                     this.setTarget(null);
                     this.level().broadcastEntityEvent(this, (byte) 7);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (this.isTame() && this.getHealth() < this.getMaxHealth()) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.usePlayerItem(player, hand, itemStack);
                     this.heal(4.0F);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             int age = this.getAge();
             if (age == 0 && this.canFallInLove()) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.eatingTicks = 10;
                     this.setItemSlot(EquipmentSlot.MAINHAND, itemStack.copy());
                     this.swing(InteractionHand.MAIN_HAND);
@@ -284,24 +284,24 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
                     this.usePlayerItem(player, hand, itemStack);
                     this.setInLove(player);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (this.isBaby()) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.usePlayerItem(player, hand, itemStack);
                     this.ageUp(Animal.getSpeedUpSecondsWhenFeeding(-age), true);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
         }
         if (this.isTame() && this.isOwnedBy(player) && itemStack.isEmpty() && player.isSecondaryUseActive()) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.setOrderedToSit(!this.isOrderedToSit());
                 this.jumping = false;
                 this.navigation.stop();
                 this.setTarget(null);
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
@@ -319,7 +319,7 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.eatingTicks > 0) {
                 this.eatingTicks--;
             } else {
@@ -473,7 +473,7 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setupAnimationStates();
         }
     }

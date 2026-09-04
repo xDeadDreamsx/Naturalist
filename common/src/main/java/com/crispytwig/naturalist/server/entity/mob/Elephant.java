@@ -112,7 +112,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
 
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
         builder.define(REMAINING_ANGER_TIME, 0);
         builder.define(SADDLED, false);
         builder.define(CHESTED, false);
@@ -347,7 +347,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         }
         if (!this.isTame()) {
             if (this.isBaby() && stack.is(Items.CAKE)) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
@@ -358,7 +358,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
                         this.level().broadcastEntityEvent(this, (byte) 6);
                     }
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             return super.mobInteract(player, hand);
         }
@@ -368,11 +368,11 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
                     stack.shrink(1);
                 }
                 this.heal(4.0F);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (!this.isBaby() && stack.is(Items.SHEARS)) {
                 if (this.isChested()) {
-                    if (!this.level().isClientSide) {
+                    if (!this.level().isClientSide()) {
                         this.popItem(new ItemStack(Items.CHEST));
                         for (int i = 0; i < ElephantInventoryMenu.CHEST_SIZE; i++) {
                             this.popItem(this.inventory.getItem(i));
@@ -383,10 +383,10 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
                         this.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
                         this.gameEvent(GameEvent.SHEAR, player);
                     }
-                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                    return InteractionResult.SUCCESS;
                 }
                 if (this.isSaddled()) {
-                    if (!this.level().isClientSide) {
+                    if (!this.level().isClientSide()) {
                         ItemStack saddleStack = this.inventory.getItem(ElephantInventoryMenu.SADDLE_SLOT);
                         this.popItem(saddleStack.isEmpty() ? new ItemStack(Items.SADDLE) : saddleStack.copy());
                         this.inventory.setItem(ElephantInventoryMenu.SADDLE_SLOT, ItemStack.EMPTY);
@@ -395,21 +395,21 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
                         this.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
                         this.gameEvent(GameEvent.SHEAR, player);
                     }
-                    return InteractionResult.sidedSuccess(this.level().isClientSide);
+                    return InteractionResult.SUCCESS;
                 }
             }
             if (!this.isBaby() && !this.isChested() && stack.is(Items.CHEST)) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.setChested(true);
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
                     this.playSound(SoundEvents.MULE_CHEST, 1.0F, 1.0F);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (!this.isBaby() && stack.is(Items.SADDLE) && !this.isSaddled()) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.inventory.setItem(ElephantInventoryMenu.SADDLE_SLOT, stack.copyWithCount(1));
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
@@ -417,22 +417,22 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
                     this.setSaddled(true);
                     this.playSound(SoundEvents.HORSE_SADDLE, 1.0F, 1.0F);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (!this.isBaby() && player.isSecondaryUseActive()) {
                 this.openCustomInventory(player);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (!this.isBaby() && this.isSaddled() && stack.isEmpty()) {
                 this.doPlayerRide(player);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
         }
         return super.mobInteract(player, hand);
     }
 
     protected void doPlayerRide(@NotNull Player player) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
             player.startRiding(this);
@@ -496,7 +496,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     }
 
     private void openCustomInventory(Player player) {
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             ElephantInventoryMenu.clientOpenEntityId = this.getId();
             return;
         }
@@ -508,7 +508,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     @Override
     protected void dropEquipment() {
         super.dropEquipment();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.isChested()) {
                 this.popItem(new ItemStack(Items.CHEST));
             }
@@ -535,7 +535,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.legSolver.update(this, this.getScale() * (this.isBaby() ? 0.5F : 1.0F));
             this.setupAnimationStates();
             this.updateBannerPhysics();
@@ -545,7 +545,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.updatePersistentAnger((ServerLevel)this.level(), true);
         }
 

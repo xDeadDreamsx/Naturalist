@@ -69,7 +69,7 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
+        builder.define(DATA_VARIANT, this.getDefaultVariant().identifier().toString());
     }
 
     @Override
@@ -198,7 +198,7 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
         }
         if (!this.isTame()) {
             if (this.isBaby() && this.isFood(stack)) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
@@ -210,17 +210,17 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
                         this.level().broadcastEntityEvent(this, (byte) 6);
                     }
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (!this.isBaby() && this.isFood(stack) && this.getAge() == 0 && this.canFallInLove()) {
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
                     }
                     this.setInLove(player);
                     this.playSound(SoundEvents.HORSE_EAT, 1.0F, 1.0F);
                 }
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             return super.mobInteract(player, hand);
         }
@@ -231,18 +231,18 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
                 }
                 this.heal(4.0F);
                 this.playSound(SoundEvents.HORSE_EAT, 1.0F, 1.0F);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
             if (!this.isBaby() && stack.isEmpty()) {
                 this.doPlayerRide(player);
-                return InteractionResult.sidedSuccess(this.level().isClientSide);
+                return InteractionResult.SUCCESS;
             }
         }
         return super.mobInteract(player, hand);
     }
 
     protected void doPlayerRide(@NotNull Player player) {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
             player.startRiding(this);
@@ -318,7 +318,7 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.legSolver.update(this, this.getScale() * (this.isBaby() ? 0.5F : 1.0F));
             this.setupAnimationStates();
         }

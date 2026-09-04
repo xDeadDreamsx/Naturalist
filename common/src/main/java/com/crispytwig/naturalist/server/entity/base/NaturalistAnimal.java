@@ -34,7 +34,7 @@ public abstract class NaturalistAnimal extends Animal {
     // Credit to Spawns' Iguanas @ Ninni
     public static void leaveWater(Mob mob) {
         Path path = mob.getNavigation().getPath();
-        if (!mob.level().isClientSide && mob.getNavigation().isInProgress() && mob.isInWaterOrBubble() && path != null) {
+        if (!mob.level().isClientSide() && mob.getNavigation().isInProgress() && mob.isInWaterOrBubble() && path != null) {
             int nodeIndex = Mth.clamp(path.getNextNodeIndex(), 0, path.getNodeCount() - 1);
             if (mob.level().getFluidState(path.getNodePos(nodeIndex)).isEmpty()) {
                 Vec3 look = mob.getLookAngle();
