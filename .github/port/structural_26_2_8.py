@@ -80,25 +80,33 @@ def patch_item_ids(path: Path) -> bool:
     original = text
 
     # Minecraft 26.2 requires Item.Properties.setId(ResourceKey<Item>) before the Item
-    # constructor runs. Apply it to every literal Naturalist ITEMS registration.
+    # constructor runs. Apply it once to every literal Naturalist ITEMS registration and
+    # also clean duplicate setId calls left by earlier migration-pass runs.
     matches = list(re.finditer(r'ITEMS\.register\("([^"\\]+)"\s*,', text))
     for match in reversed(matches):
         name = match.group(1)
         end = _registration_end(text, match.start())
         chunk = text[match.start():end]
-        if "new Item.Properties()" not in chunk:
-            continue
         replacement = (
             "new Item.Properties().setId(ResourceKey.create(Registries.ITEM, "
             f'Naturalist.location("{name}")))'
         )
-        chunk = chunk.replace("new Item.Properties()", replacement)
+        set_id_suffix = replacement[len("new Item.Properties()"):]
+        duplicate = replacement + set_id_suffix
+        while duplicate in chunk:
+            chunk = chunk.replace(duplicate, replacement)
+
+        if replacement not in chunk and "new Item.Properties()" in chunk:
+            chunk = chunk.replace("new Item.Properties()", replacement)
         text = text[:match.start()] + chunk + text[end:]
 
     # Block-item helper registrations use a variable name rather than a string literal.
     helper_replacement = (
         "new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location(name)))"
     )
+    helper_suffix = helper_replacement[len("new Item.Properties()"):]
+    while helper_replacement + helper_suffix in text:
+        text = text.replace(helper_replacement + helper_suffix, helper_replacement)
     text = text.replace(
         "ITEMS.register(name, () -> new BlockItem(holder.get(), new Item.Properties()));",
         f"ITEMS.register(name, () -> new BlockItem(holder.get(), {helper_replacement}));",
