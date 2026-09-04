@@ -122,7 +122,13 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, CollisionContext context) {
-        return context.isHoldingItem(NaturalistRegistry.GLOW_GOOP.get()) ? Shapes.block() : Shapes.empty();
+        // 26.2 initializes the block shape cache while this block is being registered. At that
+        // point the GLOW_GOOP item holder, declared immediately after the block, has not been
+        // assigned yet. Treat that bootstrap/cache query like a normal non-item collision query;
+        // once registry initialization is complete the original held-item outline behavior applies.
+        return NaturalistRegistry.GLOW_GOOP != null && context.isHoldingItem(NaturalistRegistry.GLOW_GOOP.get())
+                ? Shapes.block()
+                : Shapes.empty();
     }
 
     protected float getShadeBrightness(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
