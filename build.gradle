@@ -39,7 +39,7 @@ dependencies {
     // Optional integration: compile against LambDynamicLights and load it only in development
     // so CI exercises the integration without bundling or requiring it in Naturalist's release JAR.
     compileOnly "dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:4.12.4+26.2"
-    modLocalRuntime "dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:4.12.4+26.2"
+    modRuntimeOnly "dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:4.12.4+26.2"
 
     compileOnly "org.jetbrains:annotations:26.0.2"
     compileOnly "org.jspecify:jspecify:1.0.0"
