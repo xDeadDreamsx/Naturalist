@@ -74,7 +74,7 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
         if (name.equals(this.getRootPartName())) {
             return true;
         }
-        return this.root().getAllParts().anyMatch(part -> part.hasChild(name));
+        return this.root().getAllParts().stream().anyMatch(part -> part.hasChild(name));
     }
 
     private AnimationDefinition compatibleDefinition(AnimationDefinition definition) {
