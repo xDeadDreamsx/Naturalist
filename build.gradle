@@ -25,7 +25,10 @@ sourceSets {
 repositories {
     mavenCentral()
     maven { url = 'https://maven.fabricmc.net/' }
-    maven { url = 'https://api.modrinth.com/maven' }
+    maven {
+        name = 'Gegy'
+        url = 'https://maven.gegy.dev'
+    }
 }
 
 dependencies {
@@ -33,7 +36,9 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    modCompileOnly "maven.modrinth:lambdynamiclights:4.12.4+26.2"
+    // Optional integration: compile against LambDynamicLights' Java API only.
+    // The actual LambDynamicLights mod is not bundled and remains optional at runtime.
+    compileOnly "dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:4.12.4+26.2"
 
     compileOnly "org.jetbrains:annotations:26.0.2"
     compileOnly "org.jspecify:jspecify:1.0.0"
