@@ -32,7 +32,7 @@ public interface HuntingAnimal {
     }
 
     default void loadHuntingCooldown(CompoundTag compound) {
-        this.setHuntingCooldown(compound.getInt(HUNTING_COOLDOWN_TAG));
+        this.setHuntingCooldown(compound.getIntOr(HUNTING_COOLDOWN_TAG, 0));
     }
 
     default void saveHuntingCooldown(ValueOutput output) {
