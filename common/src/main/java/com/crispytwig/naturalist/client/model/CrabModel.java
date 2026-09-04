@@ -104,7 +104,7 @@ public static LayerDefinition createBodyLayer() {
 		if (NaturalistPortraitRenderState.ACTIVE) {
 			return;
 		}
-		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
+		Vec3 toCamera = Minecraft.getInstance().getEntityRenderDispatcher().camera.position().subtract(entity.position());
 		double planeLen = Math.sqrt(toCamera.x * toCamera.x + toCamera.z * toCamera.z);
 		float forwardYaw = Mth.rotLerp(partialTick, entity.yBodyRotO, entity.yBodyRot) * Mth.DEG_TO_RAD + Mth.HALF_PI;
 		float cameraYaw = planeLen < 1.0E-4D ? forwardYaw : (float) Math.atan2(-toCamera.x, toCamera.z);

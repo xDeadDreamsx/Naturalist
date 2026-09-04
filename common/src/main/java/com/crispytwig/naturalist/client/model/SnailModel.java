@@ -96,7 +96,7 @@ public static LayerDefinition createBodyLayer() {
 		SurfaceClimbing climbing = entity.getClimbing();
 		Vec3 normal = climbing.getRenderNormal(partialTick);
 		Vec3 forward = climbing.getRenderForwardFlattened(partialTick, normal);
-		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
+		Vec3 toCamera = Minecraft.getInstance().getEntityRenderDispatcher().camera.position().subtract(entity.position());
 		Vec3 plane = SurfaceClimbing.projectOntoPlane(toCamera, normal);
 		double planeLen = plane.length();
 		Vec3 cameraDir = planeLen < 1.0E-4D ? forward : plane.normalize();

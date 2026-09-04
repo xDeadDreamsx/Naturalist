@@ -65,8 +65,8 @@ public static LayerDefinition createBodyLayer() {
 	@Override
 	protected void setupAnimations(Hedgehog entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch) {
 		this.animateSmooth(entity.sitAnimationState, HedgehogAnimations.HEDGEHOG_SIT, ageInTicks, partialTick);
-		this.animate(entity.hideAnimationState, HedgehogAnimations.HEDGEHOG_HIDE, ageInTicks);
-		this.animate(entity.unhideAnimationState, HedgehogAnimations.HEDGEHOG_UNHIDE, ageInTicks);
+		this.animateUnblended(entity.hideAnimationState, HedgehogAnimations.HEDGEHOG_HIDE, ageInTicks);
+		this.animateUnblended(entity.unhideAnimationState, HedgehogAnimations.HEDGEHOG_UNHIDE, ageInTicks);
 		this.animateSmooth(entity.rollGroundAnimationState, HedgehogAnimations.HEDGEHOG_ROLL_GROUND, ageInTicks, partialTick);
 		this.animateSmooth(entity.rollAirAnimationState, HedgehogAnimations.HEDGEHOG_ROLL_AIR, ageInTicks, partialTick);
 		this.animateSmooth(entity.idleEventAnimationState, HedgehogAnimations.HEDGEHOG_IDLE_EVENT, ageInTicks, partialTick);

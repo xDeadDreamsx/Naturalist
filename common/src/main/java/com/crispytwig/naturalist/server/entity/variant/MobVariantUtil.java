@@ -54,18 +54,18 @@ public final class MobVariantUtil {
     }
 
     public static Optional<Holder.Reference<MobVariant>> selectVariantForSpawn(ServerLevelAccessor level, BlockPos pos, ResourceKey<Registry<MobVariant>> registryKey) {
-        Optional<Registry<MobVariant>> maybeRegistry = level.registryAccess().registry(registryKey);
+        Optional<Registry<MobVariant>> maybeRegistry = level.registryAccess().lookup(registryKey);
         if (maybeRegistry.isEmpty()) {
             return Optional.empty();
         }
         Registry<MobVariant> registry = maybeRegistry.get();
         Holder<Biome> biome = level.getBiome(pos);
-        List<Holder.Reference<MobVariant>> pool = registry.holders()
+        List<Holder.Reference<MobVariant>> pool = registry.listElements()
                 .filter(holder -> holder.value().weight() > 0)
                 .filter(holder -> holder.value().biomes().map(biomes -> biomes.contains(biome)).orElse(false))
                 .toList();
         if (pool.isEmpty()) {
-            pool = registry.holders()
+            pool = registry.listElements()
                     .filter(holder -> holder.value().weight() > 0 && holder.value().biomes().isEmpty())
                     .toList();
         }

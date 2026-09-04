@@ -232,7 +232,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
             this.setAge(tag.getIntOr("Age", 0));
         }
         if (tag.contains("HeldItem")) {
-            ItemStack held = tag.get("HeldItem").flatMap(encoded -> ItemStack.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), encoded).result()).orElse(ItemStack.EMPTY);
+            ItemStack held = tag.get("HeldItem") != null ? ItemStack.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), tag.get("HeldItem")).result().orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
             this.setItemSlot(EquipmentSlot.MAINHAND, held);
             this.setDropChance(EquipmentSlot.MAINHAND, 2.0F);
         }

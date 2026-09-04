@@ -35,7 +35,6 @@ public class SnakeModel extends NaturalistEntityModel<Snake> {
         ModelPart tail3 = this.tail2.getChild("tail3");
 		this.tail4 = tail3.getChild("tail4");
 	}
-@Override
 	protected String getRootPartName() {
 		return "main";
 	}

@@ -260,9 +260,10 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
         if (this.hideHoldTicks > 0) {
             return true;
         }
-        return !this.level().getNearbyPlayers(
-                TargetingConditions.forNonCombat().range(3.0D).selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)),
-                this, this.getBoundingBox().inflate(3.0D, 2.0D, 3.0D)).isEmpty();
+        return !this.level().getEntitiesOfClass(
+                Player.class,
+                this.getBoundingBox().inflate(3.0D, 2.0D, 3.0D),
+                EntitySelector.NO_CREATIVE_OR_SPECTATOR::test).isEmpty();
     }
 
     @Override

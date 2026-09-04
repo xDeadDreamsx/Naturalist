@@ -38,7 +38,7 @@ public class StarfishBlock extends MultifaceBlock implements SimpleWaterloggedBl
         return CODEC;
     }
 
-    @Override
+    
     public @NotNull MultifaceSpreader getSpreader() {
         return this.spreader;
     }
@@ -67,7 +67,7 @@ public class StarfishBlock extends MultifaceBlock implements SimpleWaterloggedBl
     @Override
     protected @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull LevelReader level, @NotNull ScheduledTickAccess ticks, @NotNull BlockPos pos, @NotNull Direction direction, @NotNull BlockPos neighborPos, @NotNull BlockState neighborState, @NotNull RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
-            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+            ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
         return super.updateShape(state, level, ticks, pos, direction, neighborPos, neighborState, random);
     }

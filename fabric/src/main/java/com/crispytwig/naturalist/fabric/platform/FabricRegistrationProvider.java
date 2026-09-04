@@ -15,7 +15,7 @@ public class FabricRegistrationProvider<T> implements RegistrationProvider<T> {
 
     @SuppressWarnings("unchecked")
     public FabricRegistrationProvider(ResourceKey<? extends Registry<T>> registryKey, String modId) {
-        this.registry = (Registry<T>) BuiltInRegistries.REGISTRY.get(registryKey.identifier());
+        this.registry = (Registry<T>) BuiltInRegistries.REGISTRY.getValue(registryKey.identifier());
         this.modId = modId;
     }
 

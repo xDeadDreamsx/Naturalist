@@ -220,17 +220,17 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
             return whistle;
         }
         if (this.level().isClientSide()) {
-            return (this.isOwnedBy(player) || this.isTame() || (this.isTameFood(stack) && !this.isTame())) ? InteractionResult.CONSUME : InteractionResult.PASS;
+            return (this.isOwnedBy(player) || this.isTame() || (TAME_ITEMS.test(stack) && !this.isTame())) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         if (this.isTame()) {
-            if (this.isTameFood(stack) && this.getHealth() < this.getMaxHealth()) {
+            if (TAME_ITEMS.test(stack) && this.getHealth() < this.getMaxHealth()) {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
                 this.heal(4.0F);
                 return InteractionResult.SUCCESS;
             }
-            if (this.isOwnedBy(player) && !this.isTameFood(stack)) {
+            if (this.isOwnedBy(player) && !TAME_ITEMS.test(stack)) {
                 this.setOrderedToSit(!this.isOrderedToSit());
                 this.jumping = false;
                 this.navigation.stop();
@@ -239,7 +239,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
             }
             return super.mobInteract(player, hand);
         }
-        if (this.isTameFood(stack)) {
+        if (TAME_ITEMS.test(stack)) {
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }

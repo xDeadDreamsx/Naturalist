@@ -86,8 +86,8 @@ public class SnailShellBlock extends Block implements EntityBlock {
         CustomData data = context.getItemInHand().get(DataComponents.CUSTOM_DATA);
         if (data != null) {
             CompoundTag tag = data.copyTag();
-            if (tag.contains("Color", Tag.TAG_ANY_NUMERIC)) {
-                color = DyeColor.byId(tag.getInt("Color"));
+            if (tag.contains("Color")) {
+                color = DyeColor.byId(tag.getIntOr("Color", 0));
             }
         }
         return this.defaultBlockState().setValue(COLOR, color).setValue(ROTATION, RotationSegment.convertToSegment(context.getRotation()));

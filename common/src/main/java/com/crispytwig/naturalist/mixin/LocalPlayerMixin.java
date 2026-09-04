@@ -24,7 +24,7 @@ public abstract class LocalPlayerMixin {
     @Inject(method = "aiStep", at = @At("TAIL"))
     private void naturalist$parrotAscend(CallbackInfo ci) {
         LocalPlayer self = (LocalPlayer) (Object) this;
-        if (!this.input.jumping || self.onGround() || self.getAbilities().flying || !ParrotFlight.canAscend(self)) {
+        if (!this.input.jump() || self.onGround() || self.getAbilities().flying || !ParrotFlight.canAscend(self)) {
             return;
         }
         Vec3 movement = self.getDeltaMovement();

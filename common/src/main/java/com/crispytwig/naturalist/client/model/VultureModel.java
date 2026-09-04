@@ -27,7 +27,6 @@ public class VultureModel extends NaturalistEntityModel<Vulture> {
 		this.neck = this.body.getChild("neck");
 		this.held_item = this.neck.getChild("held_item");
 	}
-@Override
 	protected String getRootPartName() {
 		return "body";
 	}

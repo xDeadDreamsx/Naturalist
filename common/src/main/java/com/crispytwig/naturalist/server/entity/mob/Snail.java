@@ -348,7 +348,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
                     break label90;
                 }
 
-            DyeColor dyeColor = dyeItem.getDyeColor();
+            DyeColor dyeColor = stack.get(DataComponents.DYE);
                 if (dyeColor != this.getColor()) {
                     this.setColor(dyeColor);
                     if (!player.getAbilities().instabuild) {

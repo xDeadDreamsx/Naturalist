@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 public class SnailShellBlockEntity extends BlockEntity {
     private ItemStack flower = ItemStack.EMPTY;
@@ -35,19 +37,17 @@ public class SnailShellBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
         if (!this.flower.isEmpty()) {
-            tag.put("Flower", this.flower.save(registries));
+            output.store("Flower", ItemStack.CODEC, this.flower);
         }
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.flower = tag.contains("Flower", Tag.TAG_COMPOUND)
-                ? ItemStack.parse(registries, tag.getCompound("Flower")).orElse(ItemStack.EMPTY)
-                : ItemStack.EMPTY;
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        this.flower = input.read("Flower", ItemStack.CODEC).orElse(ItemStack.EMPTY);
     }
 
     @Override

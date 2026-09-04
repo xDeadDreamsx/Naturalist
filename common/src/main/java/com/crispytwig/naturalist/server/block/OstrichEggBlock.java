@@ -75,7 +75,7 @@ public class OstrichEggBlock extends TurtleEggBlock {
     }
 
     @Override
-    public void fallOn(@NotNull Level level, @NotNull BlockState state, @NotNull BlockPos pos, @NotNull Entity entity, float fallDistance) {
+    public void fallOn(@NotNull Level level, @NotNull BlockState state, @NotNull BlockPos pos, @NotNull Entity entity, double fallDistance) {
         if (!(entity instanceof Zombie)) {
             this.destroyEgg(level, state, pos, entity, 3);
         }

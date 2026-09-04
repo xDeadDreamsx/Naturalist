@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.damagesource.DamageSource;
 
 public class DirtTrail extends Entity {
     private static final EntityDataAccessor<Boolean> SMALL = SynchedEntityData.defineId(DirtTrail.class, EntityDataSerializers.BOOLEAN);
@@ -65,4 +66,9 @@ public class DirtTrail extends Entity {
     @Override
     protected void addAdditionalSaveData(@NotNull ValueOutput compound) {
     }
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        return false;
+    }
+
 }

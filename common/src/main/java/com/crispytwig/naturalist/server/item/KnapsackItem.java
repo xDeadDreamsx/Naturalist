@@ -28,6 +28,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import net.minecraft.world.item.component.TooltipDisplay;
 
 public class KnapsackItem extends Item {
     public KnapsackItem(Properties properties) {
@@ -127,7 +128,7 @@ public class KnapsackItem extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull TooltipDisplay display, @NotNull java.util.function.Consumer<Component> tooltip, @NotNull TooltipFlag flag) {
         CompoundTag tag = entityTag(stack);
         if (!tag.contains("id")) {
             return;
@@ -140,7 +141,7 @@ public class KnapsackItem extends Item {
             label = EntityType.byString(tag.getString("id")).map(EntityType::getDescription).orElse(null);
         }
         if (label != null) {
-            tooltip.add(label.copy().withStyle(ChatFormatting.GRAY));
+            tooltip.accept(label.copy().withStyle(ChatFormatting.GRAY));
         }
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.server.level.ServerLevel;
 
 public class AntivenomMobEffect extends InstantaneousMobEffect {
     public AntivenomMobEffect(MobEffectCategory category, int color) {
@@ -14,7 +15,7 @@ public class AntivenomMobEffect extends InstantaneousMobEffect {
     }
 
     @Override
-    public void applyInstantenousEffect(@Nullable Entity source, @Nullable Entity indirectSource, @NotNull LivingEntity target, int amplifier, double health) {
+    public void applyInstantaneousEffect(@NotNull ServerLevel level, @Nullable Entity source, @Nullable Entity indirectSource, @NotNull LivingEntity target, int amplifier, double health) {
         target.removeEffect(MobEffects.POISON);
     }
 }

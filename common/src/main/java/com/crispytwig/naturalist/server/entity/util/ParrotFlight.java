@@ -2,10 +2,7 @@ package com.crispytwig.naturalist.server.entity.util;
 
 import com.crispytwig.naturalist.NaturalistConfig;
 import com.crispytwig.naturalist.server.entity.mob.Bird;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
 
 public final class ParrotFlight {
@@ -25,14 +22,11 @@ public final class ParrotFlight {
     }
 
     public static boolean hasParrotOnBothShoulders(Player player) {
-        return isParrot(player.getShoulderEntityLeft()) && isParrot(player.getShoulderEntityRight());
+        return player.getShoulderParrotLeft().isPresent() && player.getShoulderParrotRight().isPresent();
     }
 
     public static boolean canAscend(Player player) {
         return NaturalistConfig.isParrotFlightEnabled() && hasParrotOnBothShoulders(player) && hasBirdOnHead(player);
     }
 
-    private static boolean isParrot(CompoundTag tag) {
-        return !tag.isEmpty() && EntityType.byString(tag.getString("id")).filter(type -> type == EntityTypes.PARROT).isPresent();
-    }
 }

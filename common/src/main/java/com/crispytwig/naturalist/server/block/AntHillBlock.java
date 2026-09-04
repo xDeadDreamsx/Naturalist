@@ -110,11 +110,11 @@ public class AntHillBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof AntHillBlockEntity hill) {
+    protected void affectNeighborsAfterRemoval(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, boolean movedByPiston) {
+        if (level.getBlockEntity(pos) instanceof AntHillBlockEntity hill) {
             Containers.dropContents(level, pos, hill.getStorage());
         }
-        super.onRemove(state, level, pos, newState, movedByPiston);
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
 
     public static boolean canAntEnter(LevelReader level, BlockPos pos, @Nullable UUID antOwner) {

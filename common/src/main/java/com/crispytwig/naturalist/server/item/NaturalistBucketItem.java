@@ -35,20 +35,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.world.item.component.TooltipDisplay;
 
 @SuppressWarnings("unused")
 public class NaturalistBucketItem extends MobBucketItem {
-    private final EntityType<?> variantEntityType;
+    private final EntityType<? extends Mob> variantEntityType;
     private final boolean noFluid;
     private final boolean allowMidWater;
     private final @Nullable String tooltipPrefix;
     private final @Nullable String[] variantNames;
 
-    public NaturalistBucketItem(EntityType<?> entityType, Fluid content, SoundEvent emptySound, Properties properties) {
+    public NaturalistBucketItem(EntityType<? extends Mob> entityType, Fluid content, SoundEvent emptySound, Properties properties) {
         this(entityType, content, emptySound, properties, true, null, null);
     }
 
-    public NaturalistBucketItem(EntityType<?> entityType, Fluid content, SoundEvent emptySound, Properties properties, boolean allowMidWater, @Nullable String tooltipPrefix, @Nullable String[] variantNames) {
+    public NaturalistBucketItem(EntityType<? extends Mob> entityType, Fluid content, SoundEvent emptySound, Properties properties, boolean allowMidWater, @Nullable String tooltipPrefix, @Nullable String[] variantNames) {
         super(entityType, content, emptySound, properties);
         this.variantEntityType = entityType;
         this.noFluid = content == Fluids.EMPTY;
@@ -103,8 +104,7 @@ public class NaturalistBucketItem extends MobBucketItem {
         if (!level.getFluidState(placePos).is(FluidTags.WATER) || !level.mayInteract(player, placePos)) {
             return super.useOn(context);
         }
-        player.setItemInHand(context.getHand(), release(level, player, context.getItemInHand(), placePos).getObject());
-        return InteractionResult.SUCCESS;
+        return release(level, player, context.getItemInHand(), placePos);
     }
 
     private InteractionResult release(Level level, Player player, ItemStack stack, BlockPos pos) {
@@ -115,8 +115,8 @@ public class NaturalistBucketItem extends MobBucketItem {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
+    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull TooltipDisplay display, @NotNull java.util.function.Consumer<Component> tooltip, @NotNull TooltipFlag flag) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         Identifier id = MobVariantUtil.readVariantId(tag, this.variantNames).orElse(null);
         if (id == null) {
             return;
@@ -127,12 +127,12 @@ public class NaturalistBucketItem extends MobBucketItem {
                     .flatMap(registry -> MobVariantUtil.byId(registries, registry, id))
                     .flatMap(holder -> holder.value().tooltip());
             if (custom.isPresent()) {
-                tooltip.add(custom.get().copy().withStyle(ChatFormatting.GRAY));
+                tooltip.accept(custom.get().copy().withStyle(ChatFormatting.GRAY));
                 return;
             }
         }
         if (this.tooltipPrefix != null) {
-            tooltip.add(Component.translatable(this.tooltipPrefix + id.getPath()).withStyle(ChatFormatting.GRAY));
+            tooltip.accept(Component.translatable(this.tooltipPrefix + id.getPath()).withStyle(ChatFormatting.GRAY));
         }
     }
 }

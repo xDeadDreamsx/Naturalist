@@ -28,7 +28,6 @@ public class DirtTrailModel extends NaturalistEntityModel<DirtTrail> {
 		this.extra2 = this.mound.getChild("extra2");
 		this.extra3 = this.mound.getChild("extra3");
 	}
-@Override
 	protected String getRootPartName() {
 		return "mound";
 	}

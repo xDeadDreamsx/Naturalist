@@ -12,6 +12,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import com.crispytwig.naturalist.platform.registry.DeferredHolder;
 import com.crispytwig.naturalist.platform.registry.DeferredRegister;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.Registries;
 
 public class NaturalistEntityTypes {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, Naturalist.MOD_ID);
@@ -70,6 +72,6 @@ public class NaturalistEntityTypes {
     public static final DeferredHolder<EntityType<?>, EntityType<Whale>> WHALE = register("whale", EntityType.Builder.of(Whale::new, MobCategory.WATER_CREATURE).sized(3.0F, 2.5F).clientTrackingRange(10));
 
     private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> register(String id, EntityType.Builder<T> builder) {
-        return ENTITY_TYPES.register(id, () -> builder.build(Naturalist.location(id).toString()));
+        return ENTITY_TYPES.register(id, () -> builder.build(ResourceKey.create(Registries.ENTITY_TYPE, Naturalist.location(id))));
     }
 }

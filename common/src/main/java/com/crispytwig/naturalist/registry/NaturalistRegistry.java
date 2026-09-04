@@ -43,6 +43,8 @@ import com.crispytwig.naturalist.platform.registry.DeferredHolder;
 import com.crispytwig.naturalist.platform.registry.DeferredRegister;
 
 import java.util.function.Supplier;
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 
 @SuppressWarnings("unused")
 public class NaturalistRegistry {
@@ -76,7 +78,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, Item> COOKED_DRUMSTICK = ITEMS.register("cooked_drumstick", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.6F).build())));
     public static final DeferredHolder<Item, Item> MAMMOTH_MEAT = ITEMS.register("mammoth_meat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.3F).build())));
     public static final DeferredHolder<Item, Item> COOKED_MAMMOTH_MEAT = ITEMS.register("cooked_mammoth_meat", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(8).saturationModifier(0.8F).build())));
-    public static final DeferredHolder<Item, Item> LIZARD_TAIL = ITEMS.register("lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.8F).effect(new MobEffectInstance(MobEffects.POISON, 100, 0), 1.0F).build())));
+    public static final DeferredHolder<Item, Item> LIZARD_TAIL = ITEMS.register("lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.8F).build(), Consumables.defaultFood().onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.POISON, 100, 0), 1.0F)).build())));
     public static final DeferredHolder<Item, Item> COOKED_LIZARD_TAIL = ITEMS.register("cooked_lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.6F).build())));
     public static final DeferredHolder<Item, NaturalistBucketItem> CATFISH_BUCKET = ITEMS.register("catfish_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.CATFISH.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, NaturalistBucketItem> BASS_BUCKET = ITEMS.register("bass_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.BASS.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().stacksTo(1), true, null, Bass.VARIANT_NAMES));

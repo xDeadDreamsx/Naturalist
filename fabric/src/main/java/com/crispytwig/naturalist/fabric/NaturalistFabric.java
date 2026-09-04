@@ -32,7 +32,7 @@ public class NaturalistFabric implements ModInitializer {
         Naturalist.registerDispenserBehaviors();
 
         FabricPotionBrewingBuilder.BUILD.register(builder ->
-                Naturalist.registerPotionMixes(builder::registerItemRecipe));
+                Naturalist.registerPotionMixes((from, ingredient, to) -> builder.registerPotionRecipe(from, ingredient, to)));
 
         registerBiomeSpawns();
         registerBiomeFeatures();

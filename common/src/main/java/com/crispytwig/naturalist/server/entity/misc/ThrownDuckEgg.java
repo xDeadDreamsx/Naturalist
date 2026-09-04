@@ -14,6 +14,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.item.ItemStack;
 
 public class ThrownDuckEgg extends ThrowableItemProjectile {
     public ThrownDuckEgg(EntityType<ThrownDuckEgg> thrownDuckEggEntityType, Level level) {
