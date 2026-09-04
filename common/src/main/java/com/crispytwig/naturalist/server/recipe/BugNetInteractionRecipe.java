@@ -29,7 +29,7 @@ public record BugNetInteractionRecipe(EntityType<?> entityType, ItemStackTemplat
 
     @Override
     public @NotNull ItemStack assemble(@NotNull RecipeInput input) {
-        return dropStack.create();
+        return dropStack.copy();
     }
 
     @Override
