@@ -24,6 +24,7 @@ public class SnakeModel extends NaturalistEntityModel<Snake> {
     private final ModelPart tail4;
 
 	public SnakeModel(ModelPart root) {
+        super(root.getChild("main"));
 		this.main = root.getChild("main");
         ModelPart neck = this.main.getChild("neck");
 		this.skull = neck.getChild("skull");
@@ -34,13 +35,7 @@ public class SnakeModel extends NaturalistEntityModel<Snake> {
         ModelPart tail3 = this.tail2.getChild("tail3");
 		this.tail4 = tail3.getChild("tail4");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.main;
-	}
-
-	@Override
+@Override
 	protected String getRootPartName() {
 		return "main";
 	}

@@ -23,18 +23,13 @@ public class ClamModel extends NaturalistEntityModel<Clam> {
 	private final ModelPart rightItem;
 
 	public ClamModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.bottom = this.root.getChild("bottom");
 		this.rightArm = this.bottom.getChild("rightArm");
 		this.rightItem = this.rightArm.getChild("rightItem");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

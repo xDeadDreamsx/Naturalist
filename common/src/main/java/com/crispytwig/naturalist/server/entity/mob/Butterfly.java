@@ -20,7 +20,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
@@ -39,7 +39,6 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -57,7 +56,7 @@ import org.jetbrains.annotations.Nullable;
 
 
 @SuppressWarnings("unused")
-public class Butterfly extends NaturalistAnimal implements FlyingAnimal, Catchable, DataDrivenVariantAnimal {
+public class Butterfly extends NaturalistAnimal implements Catchable, DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"monarch", "clouded_yellow", "swallowtail", "blue_morpho", "jade_green_swallowtail", "purple_emperor", "red_admiral"};
 
@@ -102,7 +101,7 @@ public class Butterfly extends NaturalistAnimal implements FlyingAnimal, Catchab
     }
 
     @Override
-    public ResourceLocation getFallbackVariantTexture() {
+    public Identifier getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/butterfly/monarch.png");
     }
 
@@ -197,13 +196,13 @@ public class Butterfly extends NaturalistAnimal implements FlyingAnimal, Catchab
     //endregion
 
     //region Spawning
-    public static boolean checkButterflySpawnRules(EntityType<? extends Butterfly> type, ServerLevelAccessor level, MobSpawnType reason, @NotNull BlockPos pos, RandomSource random) {
+    public static boolean checkButterflySpawnRules(EntityType<? extends Butterfly> type, ServerLevelAccessor level, EntitySpawnReason reason, @NotNull BlockPos pos, RandomSource random) {
         return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.BUTTERFLIES_SPAWNABLE_ON) && isBrightEnoughToSpawn(level, pos);
     }
 
     @Override
-    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
-        if (reason == MobSpawnType.BUCKET) {
+    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
+        if (reason == EntitySpawnReason.BUCKET) {
             return super.finalizeSpawn(level, difficulty, reason, spawnData);
         } else {
             if (!(spawnData instanceof Butterfly.ButterflyGroupData)) {
@@ -287,6 +286,10 @@ public class Butterfly extends NaturalistAnimal implements FlyingAnimal, Catchab
     }
 
     @Override
+    protected boolean omnidirectionalAirMover() {
+        return true;
+    }
+
     public boolean isFlying() {
         return !this.onGround();
     }

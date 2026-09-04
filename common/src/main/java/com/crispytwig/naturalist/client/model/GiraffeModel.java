@@ -31,6 +31,7 @@ public class GiraffeModel extends IKEntityModel<Giraffe> implements SeatedModel 
 	private final ModelPart rightHand;
 
 	public GiraffeModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.hips = this.root.getChild("hips");
 		this.shoulders = this.hips.getChild("shoulders");
@@ -47,13 +48,7 @@ public class GiraffeModel extends IKEntityModel<Giraffe> implements SeatedModel 
 		this.leftHand = front_legs.getChild("leftHand");
 		this.rightHand = front_legs.getChild("rightHand");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

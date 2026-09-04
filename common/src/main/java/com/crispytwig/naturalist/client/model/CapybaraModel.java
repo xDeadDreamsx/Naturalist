@@ -20,16 +20,11 @@ public class CapybaraModel extends NaturalistEntityModel<Capybara> {
 	private final ModelPart skull;
 
 	public CapybaraModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.skull = this.root.getChild("body").getChild("skull");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

@@ -24,7 +24,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
@@ -40,7 +40,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -150,7 +150,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     }
 
     @Override
-    public ResourceLocation getFallbackVariantTexture() {
+    public Identifier getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/crab/blue_crab.png");
     }
 
@@ -262,16 +262,16 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
                 .add(Attributes.ATTACK_DAMAGE, 2.0D);
     }
 
-    public static boolean checkCrabSpawnRules(EntityType<Crab> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkCrabSpawnRules(EntityType<Crab> type, LevelAccessor level, EntitySpawnReason spawnType, BlockPos pos, RandomSource random) {
         BlockState below = level.getBlockState(pos.below());
         boolean validGround = below.is(BlockTags.SAND) || below.is(BlockTags.DIRT) || below.is(Blocks.GRAVEL) || below.is(Blocks.STONE);
         return validGround && isBrightEnoughToSpawn(level, pos);
     }
 
     @Override
-    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.setCanPickUpLoot(true);
-        if (spawnType != MobSpawnType.BUCKET) {
+        if (spawnType != EntitySpawnReason.BUCKET) {
             this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);

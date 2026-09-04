@@ -9,7 +9,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
@@ -117,7 +117,7 @@ public class NaturalistBucketItem extends MobBucketItem {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
-        ResourceLocation id = MobVariantUtil.readVariantId(tag, this.variantNames).orElse(null);
+        Identifier id = MobVariantUtil.readVariantId(tag, this.variantNames).orElse(null);
         if (id == null) {
             return;
         }

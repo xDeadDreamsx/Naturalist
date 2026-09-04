@@ -22,18 +22,13 @@ public class BearBabyModel extends NaturalistEntityModel<Bear> {
 	private final ModelPart asleep;
 
 	public BearBabyModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.neck = this.root.getChild("body").getChild("skullRot").getChild("neck");
 		this.awake = this.neck.getChild("awake");
 		this.asleep = this.neck.getChild("asleep");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

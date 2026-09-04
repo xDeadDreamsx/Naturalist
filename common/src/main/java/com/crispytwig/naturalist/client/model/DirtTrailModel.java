@@ -22,18 +22,13 @@ public class DirtTrailModel extends NaturalistEntityModel<DirtTrail> {
 	private final ModelPart extra3;
 
 	public DirtTrailModel(ModelPart root) {
+        super(root.getChild("mound"));
 		this.mound = root.getChild("mound");
 		this.extra1 = this.mound.getChild("extra1");
 		this.extra2 = this.mound.getChild("extra2");
 		this.extra3 = this.mound.getChild("extra3");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.mound;
-	}
-
-	@Override
+@Override
 	protected String getRootPartName() {
 		return "mound";
 	}

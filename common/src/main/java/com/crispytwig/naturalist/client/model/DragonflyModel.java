@@ -19,15 +19,10 @@ public class DragonflyModel extends NaturalistEntityModel<Dragonfly> {
 	private final ModelPart root;
 
 	public DragonflyModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

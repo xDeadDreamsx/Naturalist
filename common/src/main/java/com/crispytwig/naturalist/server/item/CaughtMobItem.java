@@ -13,7 +13,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -46,7 +46,7 @@ public class CaughtMobItem extends NaturalistBucketItem {
     }
 
     private void spawn(ServerLevel serverLevel, ItemStack itemStack, BlockPos pos) {
-        Entity entity = this.type().spawn(serverLevel, itemStack, null, pos, MobSpawnType.BUCKET, true, false);
+        Entity entity = this.type().spawn(serverLevel, itemStack, null, pos, EntitySpawnReason.BUCKET, true, false);
         if (entity instanceof Catchable catchable) {
             catchable.loadFromHandTag(itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag());
             catchable.setFromHand(true);

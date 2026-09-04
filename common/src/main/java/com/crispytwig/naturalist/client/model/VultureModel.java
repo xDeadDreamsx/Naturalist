@@ -22,17 +22,12 @@ public class VultureModel extends NaturalistEntityModel<Vulture> {
 	private final ModelPart held_item;
 
 	public VultureModel(ModelPart root) {
+        super(root.getChild("body"));
 		this.body = root.getChild("body");
 		this.neck = this.body.getChild("neck");
 		this.held_item = this.neck.getChild("held_item");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.body;
-	}
-
-	@Override
+@Override
 	protected String getRootPartName() {
 		return "body";
 	}

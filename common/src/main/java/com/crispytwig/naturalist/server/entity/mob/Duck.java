@@ -18,7 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -36,7 +36,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.world.entity.Bucketable;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -98,7 +98,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     }
 
     @Override
-    public ResourceLocation getFallbackVariantTexture() {
+    public Identifier getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/duck/duck.png");
     }
 
@@ -202,7 +202,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     //endregion
 
     //region Spawning
-    public static boolean checkDuckSpawnRules(EntityType<? extends Duck> type, @NotNull ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
+    public static boolean checkDuckSpawnRules(EntityType<? extends Duck> type, @NotNull ServerLevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         return (level.getBlockState(pos.below()).is(BlockTags.DIRT) || level.getBlockState(pos.below()).getFluidState().is(FluidTags.WATER)) && isBrightEnoughToSpawn(level, pos);
     }
 
@@ -222,8 +222,8 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     }
 
     @Override
-    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        if (spawnType != MobSpawnType.BUCKET) {
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        if (spawnType != EntitySpawnReason.BUCKET) {
             this.selectVariantForSpawn(level);
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);

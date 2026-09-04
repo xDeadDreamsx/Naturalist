@@ -24,6 +24,7 @@ public class LionModel extends NaturalistEntityModel<Lion> {
 	private final ModelPart mane;
 
 	public LionModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
         ModelPart body = this.root.getChild("body");
 		this.neck = body.getChild("neck");
@@ -32,13 +33,7 @@ public class LionModel extends NaturalistEntityModel<Lion> {
 		this.asleep = this.neck.getChild("asleep");
 		this.mane = this.neck.getChild("mane");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

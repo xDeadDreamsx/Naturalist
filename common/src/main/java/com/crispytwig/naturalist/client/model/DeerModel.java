@@ -22,19 +22,14 @@ public class DeerModel extends NaturalistEntityModel<Deer> {
 	private final ModelPart sleep;
 
 	public DeerModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
         ModelPart body = this.root.getChild("body");
 		this.saddle = body.getChild("saddle");
 		this.neck = body.getChild("skullRot").getChild("neck");
 		this.sleep = this.neck.getChild("sleep");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

@@ -32,6 +32,7 @@ public class WhaleModel extends NaturalistEntityModel<Whale> {
 	private final ModelPart leftFin;
 
 	public WhaleModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
         ModelPart body = this.root.getChild("body");
 		this.skullRot = body.getChild("skullRot");
@@ -41,13 +42,7 @@ public class WhaleModel extends NaturalistEntityModel<Whale> {
 		this.rightFin = this.root.getChild("rightFin");
 		this.leftFin = this.root.getChild("leftFin");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

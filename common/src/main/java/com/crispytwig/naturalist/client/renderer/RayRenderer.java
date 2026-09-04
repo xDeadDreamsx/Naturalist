@@ -1,32 +1,27 @@
 package com.crispytwig.naturalist.client.renderer;
 
+import com.crispytwig.naturalist.client.renderer.state.NaturalistRenderState;
 import com.crispytwig.naturalist.client.model.RayModel;
 import com.crispytwig.naturalist.server.entity.mob.Ray;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class RayRenderer extends MobRenderer<Ray, HierarchicalModel<Ray>> {
+public class RayRenderer extends NaturalistSingleMobRenderer<Ray> {
     public RayRenderer(EntityRendererProvider.Context context) {
         super(context, new RayModel(context.bakeLayer(RayModel.LAYER_LOCATION)), 0.0F);
     }
-
-    @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull Ray entity) {
-        return entity.getVariantTexture();
-    }
-
-    @Override
-    protected void setupRotations(@NotNull Ray entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTick, float nativeScale) {
-        super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, nativeScale);
+@Override
+    protected void setupRotations(@NotNull NaturalistRenderState<Ray> state, @NotNull PoseStack poseStack, float yBodyRot, float nativeScale) {
+        Ray entity = state.entity;
+        float partialTick = state.partialTick;
+        super.setupRotations(state, poseStack, yBodyRot, nativeScale);
         poseStack.mulPose(Axis.ZP.rotationDegrees(-entity.swimTilt.getTilt(partialTick)));
     }
 }

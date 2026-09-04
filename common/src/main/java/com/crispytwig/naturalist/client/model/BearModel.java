@@ -33,6 +33,7 @@ public class BearModel extends NaturalistEntityModel<Bear> {
 	private final ModelPart rightHand;
 
 	public BearModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
         ModelPart body = this.root.getChild("butt").getChild("body");
 		this.normalBody = body.getChild("normalBody");
@@ -49,13 +50,7 @@ public class BearModel extends NaturalistEntityModel<Bear> {
 		this.berryArm = saucyArm.getChild("berryArm");
 		this.rightHand = this.rightArm.getChild("rightHand");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

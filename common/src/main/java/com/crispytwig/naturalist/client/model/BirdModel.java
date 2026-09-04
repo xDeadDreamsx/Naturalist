@@ -21,16 +21,11 @@ public class BirdModel extends NaturalistEntityModel<Bird> {
 	private final ModelPart head;
 
 	public BirdModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.head = this.root.getChild("bodyRot").getChild("body").getChild("headRot").getChild("head");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

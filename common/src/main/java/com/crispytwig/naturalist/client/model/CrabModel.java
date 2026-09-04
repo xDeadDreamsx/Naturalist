@@ -33,6 +33,7 @@ public class CrabModel extends NaturalistEntityModel<Crab> {
 	private final ModelPart rightItem;
 
 	public CrabModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.head = this.root.getChild("head");
 		this.crabBody = this.head.getChild("crabBody");
@@ -43,13 +44,7 @@ public class CrabModel extends NaturalistEntityModel<Crab> {
 		this.rightArm = this.rightClaw.getChild("rightArm");
 		this.rightItem = this.rightArm.getChild("rightItem");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

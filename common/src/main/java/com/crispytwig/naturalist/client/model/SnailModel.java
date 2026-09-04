@@ -34,6 +34,7 @@ public class SnailModel extends NaturalistEntityModel<Snail> {
 	private final ModelPart shell;
 
 	public SnailModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
         ModelPart front = this.body.getChild("front");
@@ -43,13 +44,7 @@ public class SnailModel extends NaturalistEntityModel<Snail> {
 		this.tail = this.body.getChild("tail");
 		this.shell = this.root.getChild("shell");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

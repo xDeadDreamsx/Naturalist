@@ -4,21 +4,14 @@ import com.crispytwig.naturalist.client.model.DesertScorpionModel;
 import com.crispytwig.naturalist.server.entity.mob.DesertScorpion;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class DesertScorpionRenderer extends MobRenderer<DesertScorpion, HierarchicalModel<DesertScorpion>> {
+public class DesertScorpionRenderer extends NaturalistSingleMobRenderer<DesertScorpion> {
     public DesertScorpionRenderer(EntityRendererProvider.Context context) {
         super(context, new DesertScorpionModel(context.bakeLayer(DesertScorpionModel.LAYER_LOCATION)), 0.4F);
-    }
-
-    @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull DesertScorpion entity) {
-        return entity.getVariantTexture();
     }
 }

@@ -5,7 +5,7 @@ import com.crispytwig.naturalist.platform.registry.RegistrationProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Supplier;
 
@@ -21,7 +21,7 @@ public class FabricRegistrationProvider<T> implements RegistrationProvider<T> {
 
     @Override
     public <I extends T> DeferredHolder<T, I> register(String name, Supplier<I> supplier) {
-        I value = Registry.register(registry, ResourceLocation.fromNamespaceAndPath(modId, name), supplier.get());
+        I value = Registry.register(registry, Identifier.fromNamespaceAndPath(modId, name), supplier.get());
         return new DeferredHolder<>(() -> value);
     }
 

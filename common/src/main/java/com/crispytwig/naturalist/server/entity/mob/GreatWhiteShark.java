@@ -16,7 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -33,7 +33,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -77,7 +77,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
 
     private static final float MAX_TILT = 40.0F;
     private static final float ATTACK_CONE_COS = Mth.cos(60.0F * Mth.DEG_TO_RAD);
-    private static final ResourceLocation AGGRO_SPEED_BOOST_ID = Naturalist.location("shark_aggro_speed_boost");
+    private static final Identifier AGGRO_SPEED_BOOST_ID = Naturalist.location("shark_aggro_speed_boost");
     private static final AttributeModifier AGGRO_SPEED_BOOST = new AttributeModifier(AGGRO_SPEED_BOOST_ID, 0.4D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
     private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GREAT_WHITE_SHARK_FOOD_ITEMS);
@@ -152,7 +152,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     }
 
     @Override
-    public ResourceLocation getFallbackVariantTexture() {
+    public Identifier getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/great_white_shark.png");
     }
 
@@ -223,7 +223,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
 
     //region Spawning
     @SuppressWarnings("unused")
-    public static boolean checkGreatWhiteSharkSpawnRules(EntityType<GreatWhiteShark> entityType, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkGreatWhiteSharkSpawnRules(EntityType<GreatWhiteShark> entityType, LevelAccessor level, EntitySpawnReason spawnType, BlockPos pos, RandomSource random) {
         return level.getFluidState(pos).is(FluidTags.WATER) && level.getFluidState(pos.above()).is(FluidTags.WATER);
     }
 
@@ -239,7 +239,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     }
 
     @Override
-    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public @NonNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }

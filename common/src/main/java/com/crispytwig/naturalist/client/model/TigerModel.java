@@ -21,19 +21,14 @@ public class TigerModel extends NaturalistEntityModel<Tiger> {
     private final ModelPart sleep;
 
 	public TigerModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
         ModelPart body = this.root.getChild("body");
 		this.skullRot = body.getChild("skullRot");
         ModelPart skull = this.skullRot.getChild("skull");
 		this.sleep = skull.getChild("sleep");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

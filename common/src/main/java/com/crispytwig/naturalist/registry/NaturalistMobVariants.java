@@ -5,7 +5,7 @@ import com.crispytwig.naturalist.platform.Services;
 import com.crispytwig.naturalist.server.entity.variant.MobVariant;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 
 import java.util.HashSet;
@@ -55,7 +55,7 @@ public final class NaturalistMobVariants {
     }
 
     public static Optional<ResourceKey<Registry<MobVariant>>> findRegistry(EntityType<?> type) {
-        ResourceLocation id = EntityType.getKey(type);
+        Identifier id = EntityType.getKey(type);
         if (!id.getNamespace().equals(Naturalist.MOD_ID) || !REGISTERED_MOBS.contains(id.getPath())) {
             return Optional.empty();
         }

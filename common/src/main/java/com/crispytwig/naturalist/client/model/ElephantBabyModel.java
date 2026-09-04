@@ -29,6 +29,7 @@ public class ElephantBabyModel extends IKEntityModel<Elephant> {
 	private final ModelPart leftLeg;
 
 	public ElephantBabyModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 		this.saddle = this.body.getChild("saddle");
@@ -41,13 +42,7 @@ public class ElephantBabyModel extends IKEntityModel<Elephant> {
 		this.rightLeg = legs.getChild("rightLeg");
 		this.leftLeg = legs.getChild("leftLeg");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

@@ -21,16 +21,11 @@ public class AnglerfishModel extends NaturalistEntityModel<Anglerfish> {
     private final ModelPart body;
 
 	public AnglerfishModel(ModelPart root) {
+        super(root);
 		this.modelRoot = root;
 		this.body = root.getChild("root").getChild("body");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.modelRoot;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

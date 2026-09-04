@@ -29,20 +29,14 @@ public class CatfishModel extends NaturalistEntityModel<Catfish> {
 	private final ModelPart hat;
 
 	public CatfishModel(ModelPart root) {
-		super(RenderType::entityCutout);
+		super(root.getChild("root"), RenderType::entityCutout);
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 		ModelPart head = this.body.getChild("head");
 		this.open = head.getChild("open");
 		this.hat = head.getChild("hat");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

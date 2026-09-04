@@ -4,11 +4,12 @@ import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.NaturalistConfig;
 import com.crispytwig.naturalist.server.entity.mob.Firefly;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.*;
@@ -26,7 +27,7 @@ import java.util.Set;
 @Mixin(Mob.class)
 public abstract class MobMixin extends LivingEntity {
     @Unique
-    private static final ResourceLocation naturalist$BABY_HEALTH_ID = ResourceLocation.fromNamespaceAndPath("naturalist", "baby_health");
+    private static final Identifier naturalist$BABY_HEALTH_ID = Identifier.fromNamespaceAndPath("naturalist", "baby_health");
     @Unique
     private static final double naturalist$BABY_HEALTH_SCALE = 1.70D;
     @Unique
@@ -44,7 +45,7 @@ public abstract class MobMixin extends LivingEntity {
 
     @Unique
     private boolean naturalist$isNaturalistMob() {
-        ResourceLocation key = BuiltInRegistries.ENTITY_TYPE.getKey(this.getType());
+        Identifier key = BuiltInRegistries.ENTITY_TYPE.getKey(this.getType());
         return key.getNamespace().equals(Naturalist.MOD_ID) && !naturalist$EXCLUDED.contains(key.getPath());
     }
 
@@ -110,7 +111,7 @@ public abstract class MobMixin extends LivingEntity {
     @Inject(method = "doHurtTarget", at = @At("HEAD"))
     @SuppressWarnings("unused")
     private void naturalist$onDoHurtTarget(Entity target, CallbackInfoReturnable<Boolean> cir) {
-        if (BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.FROG))
+        if (BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.FROG))
                 && target instanceof Firefly) {
             this.addEffect(new MobEffectInstance(MobEffects.GLOWING, 60));
         }

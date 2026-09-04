@@ -26,6 +26,7 @@ public class RhinoModel extends NaturalistEntityModel<Rhino> {
 	private final ModelPart left_ear;
 
 	public RhinoModel(ModelPart root) {
+        super(root);
 		this.modelRoot = root;
 		this.neck = root.getChild("root").getChild("body").getChild("attack").getChild("skullRot").getChild("neck");
 		this.baby_horn = this.neck.getChild("baby_horn");
@@ -34,13 +35,7 @@ public class RhinoModel extends NaturalistEntityModel<Rhino> {
 		this.right_ear = this.neck.getChild("right_ear");
 		this.left_ear = this.neck.getChild("left_ear");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.modelRoot;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

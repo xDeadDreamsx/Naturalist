@@ -4,10 +4,10 @@ import com.crispytwig.naturalist.registry.NaturalistRegistry;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Fox;
+import net.minecraft.world.entity.animal.fox.Fox;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -29,8 +29,8 @@ public abstract class FoxMixin extends Animal {
 
     @Inject(method = "finalizeSpawn", at = @At("RETURN"))
     @SuppressWarnings("unused")
-    private void naturalist$carryWildOnes(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData, CallbackInfoReturnable<SpawnGroupData> cir) {
-        if (spawnType != MobSpawnType.NATURAL && spawnType != MobSpawnType.CHUNK_GENERATION && spawnType != MobSpawnType.SPAWN_EGG) {
+    private void naturalist$carryWildOnes(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnGroupData, CallbackInfoReturnable<SpawnGroupData> cir) {
+        if (spawnType != EntitySpawnReason.NATURAL && spawnType != EntitySpawnReason.CHUNK_GENERATION && spawnType != EntitySpawnReason.SPAWN_EGG) {
             return;
         }
         if (this.isBaby() || this.random.nextFloat() >= naturalist$WILD_ONES_CHANCE) {

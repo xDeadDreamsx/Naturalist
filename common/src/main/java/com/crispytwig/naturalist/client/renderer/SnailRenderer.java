@@ -1,23 +1,22 @@
 package com.crispytwig.naturalist.client.renderer;
 
+import com.crispytwig.naturalist.client.renderer.state.NaturalistRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.client.model.SnailModel;
 import com.crispytwig.naturalist.server.entity.mob.Snail;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class SnailRenderer extends MobRenderer<Snail, HierarchicalModel<Snail>> {
-    private static final ResourceLocation[] TEXTURES_BY_COLOR = buildTextures();
+public class SnailRenderer extends NaturalistSingleMobRenderer<Snail> {
+    private static final Identifier[] TEXTURES_BY_COLOR = buildTextures();
 
     private final Matrix4f orientation = new Matrix4f();
 
@@ -25,8 +24,8 @@ public class SnailRenderer extends MobRenderer<Snail, HierarchicalModel<Snail>> 
         super(context, new SnailModel(context.bakeLayer(SnailModel.LAYER_LOCATION)), 0.2F);
     }
 
-    private static ResourceLocation[] buildTextures() {
-        ResourceLocation[] textures = new ResourceLocation[Snail.Color.BY_ID.length];
+    private static Identifier[] buildTextures() {
+        Identifier[] textures = new Identifier[Snail.Color.BY_ID.length];
         for (Snail.Color color : Snail.Color.BY_ID) {
             textures[color.getId()] = Naturalist.location("textures/entity/snail/" + color.getName() + ".png");
         }
@@ -34,7 +33,8 @@ public class SnailRenderer extends MobRenderer<Snail, HierarchicalModel<Snail>> 
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull Snail entity) {
+    public @NotNull Identifier getTextureLocation(@NotNull NaturalistRenderState<Snail> state) {
+        Snail entity = state.entity;
         if (entity.hasNonDefaultVariant()) {
             return entity.getVariantTexture();
         }
@@ -42,7 +42,9 @@ public class SnailRenderer extends MobRenderer<Snail, HierarchicalModel<Snail>> 
     }
 
     @Override
-    protected void setupRotations(@NotNull Snail entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTick, float nativeScale) {
+    protected void setupRotations(@NotNull NaturalistRenderState<Snail> state, @NotNull PoseStack poseStack, float yBodyRot, float nativeScale) {
+        Snail entity = state.entity;
+        float partialTick = state.partialTick;
         Vec3 normal = entity.getClimbing().getRenderNormal(partialTick);
         Vec3 back = entity.getClimbing().getRenderForwardFlattened(partialTick, normal).scale(-1.0D);
         Vec3 right = normal.cross(back);
@@ -59,6 +61,6 @@ public class SnailRenderer extends MobRenderer<Snail, HierarchicalModel<Snail>> 
             poseStack.scale(0.5F, 0.5F, 0.5F);
         }
 
-        super.setupRotations(entity, poseStack, bob, 180.0F, partialTick, nativeScale);
+        super.setupRotations(state, poseStack, yBodyRot, nativeScale);
     }
 }

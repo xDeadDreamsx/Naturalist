@@ -28,6 +28,7 @@ public class MammothBabyModel extends IKEntityModel<Elephant> {
 	private final ModelPart leftArm;
 
 	public MammothBabyModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 		this.saddle = this.body.getChild("saddle");
@@ -39,13 +40,7 @@ public class MammothBabyModel extends IKEntityModel<Elephant> {
 		this.leftLeg = legs.getChild("leftLeg");
 		this.leftArm = legs.getChild("leftArm");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

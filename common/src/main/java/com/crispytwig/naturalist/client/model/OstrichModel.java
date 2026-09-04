@@ -27,6 +27,7 @@ public class OstrichModel extends NaturalistEntityModel<Ostrich> implements Seat
 	private final ModelPart seat;
 
 	public OstrichModel(ModelPart root) {
+        super(root);
 		this.modelRoot = root;
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
@@ -34,13 +35,7 @@ public class OstrichModel extends NaturalistEntityModel<Ostrich> implements Seat
 		this.skull = this.body.getChild("skull");
 		this.seat = this.body.getChild("seat");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.modelRoot;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

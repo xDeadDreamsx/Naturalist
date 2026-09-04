@@ -9,12 +9,11 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
+import net.fabricmc.fabric.api.registry.FabricPotionBrewingBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.levelgen.GenerationStep;
 
 import java.util.List;
@@ -32,9 +31,8 @@ public class NaturalistFabric implements ModInitializer {
 
         Naturalist.registerDispenserBehaviors();
 
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder ->
-                Naturalist.registerPotionMixes((input, ingredient, output) ->
-                        builder.registerPotionRecipe(input, Ingredient.of(ingredient), output)));
+        FabricPotionBrewingBuilder.BUILD.register(builder ->
+                Naturalist.registerPotionMixes(builder::registerItemRecipe));
 
         registerBiomeSpawns();
         registerBiomeFeatures();
@@ -50,7 +48,7 @@ public class NaturalistFabric implements ModInitializer {
     private static void registerBiomeFeatures() {
         for (String name : List.of("ant_hill_small", "ant_hill_big")) {
             BiomeModifications.addFeature(ctx -> ctx.hasTag(NaturalistTags.Biomes.HAS_ANT_HILL), GenerationStep.Decoration.SURFACE_STRUCTURES,
-                    ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Naturalist.MOD_ID, name)));
+                    ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(Naturalist.MOD_ID, name)));
         }
     }
 }

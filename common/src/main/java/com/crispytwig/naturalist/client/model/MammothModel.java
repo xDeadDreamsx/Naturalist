@@ -32,6 +32,7 @@ public class MammothModel extends IKEntityModel<Elephant> implements SeatedModel
 	private final ModelPart rightLeg;
 
 	public MammothModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
         ModelPart skullRot = this.body.getChild("skullRot");
@@ -48,13 +49,7 @@ public class MammothModel extends IKEntityModel<Elephant> implements SeatedModel
 		this.leftLeg = legs.getChild("leftLeg");
 		this.rightLeg = legs.getChild("rightLeg");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

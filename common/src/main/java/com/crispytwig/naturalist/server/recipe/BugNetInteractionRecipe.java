@@ -58,11 +58,11 @@ public record BugNetInteractionRecipe(EntityType<?> entityType, ItemStack dropSt
 
         public static final StreamCodec<RegistryFriendlyByteBuf, BugNetInteractionRecipe> STREAM_CODEC = StreamCodec.of(
                 (buf, recipe) -> {
-                    buf.writeResourceLocation(BuiltInRegistries.ENTITY_TYPE.getKey(recipe.entityType));
+                    buf.writeIdentifier(BuiltInRegistries.ENTITY_TYPE.getKey(recipe.entityType));
                     ItemStack.STREAM_CODEC.encode(buf, recipe.dropStack);
                 },
                 buf -> {
-                    EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(buf.readResourceLocation());
+                    EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(buf.readIdentifier());
                     return new BugNetInteractionRecipe(entityType, ItemStack.STREAM_CODEC.decode(buf));
                 }
         );

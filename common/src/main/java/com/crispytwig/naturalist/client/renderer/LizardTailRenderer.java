@@ -5,28 +5,14 @@ import com.crispytwig.naturalist.client.model.LizardTailModel;
 import com.crispytwig.naturalist.server.entity.mob.LizardTail;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class LizardTailRenderer extends MobRenderer<LizardTail, HierarchicalModel<LizardTail>> {
+public class LizardTailRenderer extends NaturalistSingleMobRenderer<LizardTail> {
     public LizardTailRenderer(EntityRendererProvider.Context context) {
         super(context, new LizardTailModel(context.bakeLayer(LizardTailModel.LAYER_LOCATION)), 0.4F);
-    }
-
-    @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull LizardTail entity) {
-        return entity.getVariantTexture();
-    }
-
-    @Override
-    public void render(@NotNull LizardTail entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        poseStack.translate(0, -0.3, 0);
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 }

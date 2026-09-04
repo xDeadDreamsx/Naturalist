@@ -22,17 +22,11 @@ public class JellyfishModel extends NaturalistEntityModel<Jellyfish> {
 	private final ModelPart body;
 
 	public JellyfishModel(ModelPart root) {
-		super(RenderType::entityTranslucent);
+		super(root.getChild("root"), RenderType::entityTranslucent);
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

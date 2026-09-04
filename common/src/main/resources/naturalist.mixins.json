@@ -2,16 +2,11 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.crispytwig.naturalist.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "client": [
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
-    "EntityRenderDispatcherMixin",
-    "LocalPlayerMixin",
-    "ParrotModelMixin",
-    "ParrotOnShoulderLayerMixin",
-    "PlayerModelMixin",
-    "WolfModelMixin"
+    "LocalPlayerMixin"
   ],
   "mixins": [
     "AbstractFishMixin",

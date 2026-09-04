@@ -1,7 +1,6 @@
 package com.crispytwig.naturalist;
 
 import com.mojang.logging.LogUtils;
-import com.crispytwig.naturalist.compat.fieldguide.FieldGuidePlugin;
 import com.crispytwig.naturalist.platform.Services;
 import com.crispytwig.naturalist.registry.*;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
@@ -15,17 +14,17 @@ import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.core.dispenser.ProjectileDispenseBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnPlacementType;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.item.DispensibleContainerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -47,8 +46,8 @@ public final class Naturalist {
     private Naturalist() {
     }
 
-    public static ResourceLocation location(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier location(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static void bootstrap() {
@@ -66,9 +65,6 @@ public final class Naturalist {
         touch(NaturalistCreativeTab.CREATIVE_MODE_TABS);
         NaturalistMobVariants.bootstrap();
 
-        if (Services.PLATFORM.isModLoaded("fieldguide")) {
-            FieldGuidePlugin.register();
-        }
     }
 
     private static void touch(Object registry) {
@@ -240,7 +236,7 @@ public final class Naturalist {
                 ServerLevel serverLevel = source.level();
 
                 EntityType<Snail> entityType = NaturalistEntityTypes.SNAIL.get();
-                if (entityType.spawn(serverLevel, blockPos, MobSpawnType.DISPENSER) != null) {
+                if (entityType.spawn(serverLevel, blockPos, EntitySpawnReason.DISPENSER) != null) {
                     stack.shrink(1);
                 }
                 return stack;
@@ -254,7 +250,7 @@ public final class Naturalist {
                 ServerLevel serverLevel = source.level();
 
                 EntityType<Butterfly> entityType = NaturalistEntityTypes.BUTTERFLY.get();
-                if (entityType.spawn(serverLevel, blockPos, MobSpawnType.DISPENSER) != null) {
+                if (entityType.spawn(serverLevel, blockPos, EntitySpawnReason.DISPENSER) != null) {
                     stack.shrink(1);
                 }
                 return stack;

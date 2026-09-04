@@ -26,6 +26,7 @@ public class GreatWhiteSharkModel extends NaturalistEntityModel<GreatWhiteShark>
     private final ModelPart fluke;
 
 	public GreatWhiteSharkModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
         ModelPart body = this.root.getChild("body");
 		this.skullRot = body.getChild("skullRot");
@@ -33,13 +34,7 @@ public class GreatWhiteSharkModel extends NaturalistEntityModel<GreatWhiteShark>
         ModelPart tail2 = this.tail.getChild("tail2");
 		this.fluke = tail2.getChild("fluke");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

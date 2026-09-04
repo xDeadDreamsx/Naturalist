@@ -21,16 +21,10 @@ public class LargeBassModel extends NaturalistEntityModel<Bass> {
 	private final ModelPart root;
 
 	public LargeBassModel(ModelPart root) {
-		super(RenderType::entityCutout);
+		super(root.getChild("root"), RenderType::entityCutout);
 		this.root = root.getChild("root");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

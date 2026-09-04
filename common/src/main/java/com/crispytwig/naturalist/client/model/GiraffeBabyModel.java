@@ -26,6 +26,7 @@ public class GiraffeBabyModel extends IKEntityModel<Giraffe> {
 	private final ModelPart leftArm;
 
 	public GiraffeBabyModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
         ModelPart legs = this.root.getChild("legs");
@@ -36,13 +37,7 @@ public class GiraffeBabyModel extends IKEntityModel<Giraffe> {
 		this.rightArm = frontLegs.getChild("rightArm");
 		this.leftArm = frontLegs.getChild("leftArm");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

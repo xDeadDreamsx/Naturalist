@@ -6,7 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Mob;
@@ -29,14 +29,14 @@ public interface DataDrivenVariantAnimal {
         return new String[]{this.getDefaultVariant().location().getPath()};
     }
 
-    ResourceLocation getFallbackVariantTexture();
+    Identifier getFallbackVariantTexture();
 
     String getVariantString();
 
     void setVariantString(String location);
 
-    default ResourceLocation getVariantLocation() {
-        ResourceLocation location = ResourceLocation.tryParse(this.getVariantString());
+    default Identifier getVariantLocation() {
+        Identifier location = Identifier.tryParse(this.getVariantString());
         return location != null ? location : this.getDefaultVariant().location();
     }
 
@@ -52,11 +52,11 @@ public interface DataDrivenVariantAnimal {
         return !this.getVariantLocation().equals(this.getDefaultVariant().location());
     }
 
-    default ResourceLocation getVariantTexture() {
+    default Identifier getVariantTexture() {
         return this.getVariantHolder().map(holder -> holder.value().texture()).orElseGet(this::getFallbackVariantTexture);
     }
 
-    default ResourceLocation getVariantBabyTexture() {
+    default Identifier getVariantBabyTexture() {
         return this.getVariantHolder().map(holder -> holder.value().babyTexture()).orElseGet(this::getFallbackVariantTexture);
     }
 

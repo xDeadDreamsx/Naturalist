@@ -21,19 +21,14 @@ public class TortoiseBabyModel extends NaturalistEntityModel<Tortoise> {
 	private final ModelPart asleep;
 
 	public TortoiseBabyModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
         ModelPart body = this.root.getChild("body");
         ModelPart skullRot = body.getChild("skullRot");
 		this.neck = skullRot.getChild("neck");
 		this.asleep = this.neck.getChild("asleep");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

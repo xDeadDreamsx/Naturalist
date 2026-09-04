@@ -3,7 +3,7 @@ package com.crispytwig.naturalist.mixin;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
@@ -19,11 +19,11 @@ import java.util.Map;
 @Mixin(ServerAdvancementManager.class)
 public class ServerAdvancementManagerMixin {
     @Unique
-    private static final ResourceLocation naturalist$TACTICAL_FISHING = ResourceLocation.withDefaultNamespace("husbandry/tactical_fishing");
+    private static final Identifier naturalist$TACTICAL_FISHING = Identifier.withDefaultNamespace("husbandry/tactical_fishing");
 
     @SuppressWarnings("unused")
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("HEAD"))
-    private void naturalist$addFishBucketsToTacticalFishing(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
+    private void naturalist$addFishBucketsToTacticalFishing(Map<Identifier, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
         JsonElement element = map.get(naturalist$TACTICAL_FISHING);
         if (element == null || !element.isJsonObject()) {
             return;

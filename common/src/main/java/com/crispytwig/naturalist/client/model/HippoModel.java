@@ -24,19 +24,14 @@ public class HippoModel extends NaturalistEntityModel<Hippo> {
 	private final ModelPart botJaw;
 
 	public HippoModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 		this.bone = this.body.getChild("bone");
 		this.neck = this.bone.getChild("neck");
 		this.botJaw = this.neck.getChild("botJaw");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

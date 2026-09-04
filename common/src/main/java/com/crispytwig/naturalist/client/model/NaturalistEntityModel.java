@@ -1,27 +1,31 @@
 package com.crispytwig.naturalist.client.model;
 
+import com.crispytwig.naturalist.client.renderer.state.NaturalistRenderState;
 import com.crispytwig.naturalist.server.entity.base.MultipartMob;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.KeyframeAnimations;
-import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.animation.KeyframeAnimation;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import org.joml.Vector3f;
-import org.jspecify.annotations.NonNull;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
-public abstract class NaturalistEntityModel<E extends Entity> extends HierarchicalModel<E> {
-    private static final Vector3f ANIMATION_VECTOR_CACHE = new Vector3f();
+/**
+ * Shared Naturalist entity model adapter for Minecraft 26.x's render-state based renderer.
+ *
+ * <p>The entity reference is copied into {@link NaturalistRenderState} by the renderer so the
+ * existing Naturalist animation code can be retained while the mod is migrated to Mojang's
+ * render-state API.</p>
+ */
+public abstract class NaturalistEntityModel<E extends Entity> extends EntityModel<NaturalistRenderState<E>> {
     private static final double GAIT_FACTOR = 0.65D;
     private static final double LIMB_SWING_PER_SPEED = 8.64D;
     protected static final float IDLE_FADE_SCALE = 2.5F;
@@ -29,54 +33,29 @@ public abstract class NaturalistEntityModel<E extends Entity> extends Hierarchic
     public static final double SMALL_SWIMMER_LIMB_SWING = 0.25D;
     public static final double LARGE_SWIMMER_LIMB_SWING = 0.5D;
 
-    private final Map<String, Optional<ModelPart>> partsByName = new HashMap<>();
-    private ModelPart[] allParts;
+    private final Map<AnimationDefinition, KeyframeAnimation> bakedAnimations = new IdentityHashMap<>();
 
-    public NaturalistEntityModel() {
-        super();
+    protected NaturalistEntityModel(ModelPart root) {
+        super(root);
     }
 
-    public NaturalistEntityModel(Function<ResourceLocation, RenderType> renderType) {
-        super(renderType);
-    }
-
-    protected String getRootPartName() {
-        return "root";
+    protected NaturalistEntityModel(ModelPart root, Function<Identifier, RenderType> renderType) {
+        super(root, renderType);
     }
 
     @Override
-    public @NonNull Optional<ModelPart> getAnyDescendantWithName(String name) {
-        Optional<ModelPart> cached = this.partsByName.get(name);
-        if (cached != null) {
-            return cached;
+    public final void setupAnim(NaturalistRenderState<E> state) {
+        super.setupAnim(state);
+        E entity = state.entity;
+        if (entity == null) {
+            return;
         }
-        Optional<ModelPart> resolved = this.root().getAllParts()
-                .filter(part -> part.hasChild(name))
-                .findFirst()
-                .map(part -> part.getChild(name));
-        if (resolved.isEmpty() && name.equals(this.getRootPartName())) {
-            resolved = Optional.of(this.root());
-        }
-        this.partsByName.put(name, resolved);
-        return resolved;
+        this.setupAnimations(entity, state.walkAnimationPos, state.walkAnimationSpeed, state.ageInTicks,
+                state.partialTick, state.yRot, state.xRot);
     }
 
-    protected void resetPose() {
-        if (this.allParts == null) {
-            this.allParts = this.root().getAllParts().toArray(ModelPart[]::new);
-        }
-        for (ModelPart part : this.allParts) {
-            part.resetPose();
-        }
-    }
-
-    @Override
-    public final void setupAnim(E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.resetPose();
-        this.setupAnimations(entity, limbSwing, limbSwingAmount, ageInTicks, ageInTicks - entity.tickCount, netHeadYaw, headPitch);
-    }
-
-    protected abstract void setupAnimations(E entity, float limbSwing, float limbSwingAmount, float ageInTicks, float partialTick, float netHeadYaw, float headPitch);
+    protected abstract void setupAnimations(E entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+                                            float partialTick, float netHeadYaw, float headPitch);
 
     protected static void applyHeadLook(ModelPart part, float netHeadYaw, float headPitch) {
         part.xRot += headPitch * Mth.DEG_TO_RAD;
@@ -105,40 +84,47 @@ public abstract class NaturalistEntityModel<E extends Entity> extends Hierarchic
         return movementAnimationSpeed(entity, limbSwingAmount, baseSpeed, referenceLimbSwing, 0.4F);
     }
 
-    protected static float movementAnimationSpeed(LivingEntity entity, float limbSwingAmount, float baseSpeed, double referenceLimbSwing, float minSpeed) {
+    protected static float movementAnimationSpeed(LivingEntity entity, float limbSwingAmount, float baseSpeed,
+                                                  double referenceLimbSwing, float minSpeed) {
         return baseSpeed * Mth.clamp(limbSwingAmount / (float) Math.max(referenceLimbSwing, 0.05D), minSpeed, 2.0F);
+    }
+
+    private KeyframeAnimation animation(AnimationDefinition definition) {
+        return this.bakedAnimations.computeIfAbsent(definition, d -> d.bake(this.root()));
     }
 
     protected void animateSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks, float partialTick) {
         this.animateSmooth(state, definition, ageInTicks, partialTick, 1.0F);
     }
 
-    protected void animateSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks, float partialTick, float speed) {
+    protected void animateSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks,
+                                 float partialTick, float speed) {
         float factor = state.factor(partialTick);
-        if (factor <= SmoothAnimationState.ACTIVE_THRESHOLD) {
+        if (factor <= SmoothAnimationState.ACTIVE_THRESHOLD || !state.isStarted()) {
             return;
         }
-        state.updateTime(ageInTicks, speed);
-        KeyframeAnimations.animate(this, definition, state.getAccumulatedTime(), factor, ANIMATION_VECTOR_CACHE);
+        long timeMs = (long) (state.getTimeInMillis(ageInTicks) * speed);
+        this.animation(definition).apply(timeMs, factor);
     }
 
     protected void animateUnblended(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks) {
         if (state.isStarted()) {
-            state.updateTime(ageInTicks, 1.0F);
+            this.animation(definition).apply(state.getTimeInMillis(ageInTicks), 1.0F);
         }
-        KeyframeAnimations.animate(this, definition, state.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE);
     }
 
-    protected void animateIdleSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks, float partialTick, float limbSwingAmount) {
+    protected void animateIdleSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks,
+                                     float partialTick, float limbSwingAmount) {
         this.animateIdleSmooth(state, definition, ageInTicks, partialTick, limbSwingAmount, IDLE_FADE_SCALE, 1.0F);
     }
 
-    protected void animateIdleSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks, float partialTick, float limbSwingAmount, float animationScaleFactor, float speed) {
+    protected void animateIdleSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks,
+                                     float partialTick, float limbSwingAmount, float animationScaleFactor, float speed) {
         float factor = state.factor(partialTick) * (1.0F - Math.min(limbSwingAmount * animationScaleFactor, 1.0F));
-        if (factor <= SmoothAnimationState.ACTIVE_THRESHOLD) {
+        if (factor <= SmoothAnimationState.ACTIVE_THRESHOLD || !state.isStarted()) {
             return;
         }
-        state.updateTime(ageInTicks, speed);
-        KeyframeAnimations.animate(this, definition, state.getAccumulatedTime(), factor, ANIMATION_VECTOR_CACHE);
+        long timeMs = (long) (state.getTimeInMillis(ageInTicks) * speed);
+        this.animation(definition).apply(timeMs, factor);
     }
 }

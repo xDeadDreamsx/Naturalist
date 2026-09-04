@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.client.renderer;
 
+import com.crispytwig.naturalist.client.renderer.state.NaturalistRenderState;
 import com.crispytwig.naturalist.client.model.WhaleBabyModel;
 import com.crispytwig.naturalist.client.model.WhaleModel;
 import com.crispytwig.naturalist.server.entity.mob.Whale;
@@ -17,7 +18,9 @@ public class WhaleRenderer extends NaturalistMobRenderer<Whale> {
     }
 
     @Override
-    protected void setupRotations(@NotNull Whale entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTick, float nativeScale) {
-        super.setupRotations(entity, poseStack, bob, entity.getRenderYaw(partialTick), partialTick, nativeScale);
+    protected void setupRotations(@NotNull NaturalistRenderState<Whale> state, @NotNull PoseStack poseStack, float yBodyRot, float nativeScale) {
+        Whale entity = state.entity;
+        float partialTick = state.partialTick;
+        super.setupRotations(state, poseStack, yBodyRot, nativeScale);
     }
 }

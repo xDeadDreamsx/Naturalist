@@ -6,6 +6,10 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class IKEntityModel<E extends LivingEntity> extends NaturalistEntityModel<E> {
+    protected IKEntityModel(ModelPart root) {
+        super(root);
+    }
+
     private ModelPart[] legPartsCache;
 
     protected abstract TerrainLegSolver getLegSolver(E entity);

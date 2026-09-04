@@ -35,6 +35,7 @@ public class BlackBearModel extends NaturalistEntityModel<BlackBear> {
 	private final ModelPart right_arm_honey;
 
 	public BlackBearModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.skullRot = this.root.getChild("body").getChild("skullRot");
         ModelPart skull = this.skullRot.getChild("skull");
@@ -52,13 +53,7 @@ public class BlackBearModel extends NaturalistEntityModel<BlackBear> {
 		this.right_arm_berries = this.right_arm.getChild("right_arm_berries");
 		this.right_arm_honey = this.right_arm.getChild("right_arm_honey");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

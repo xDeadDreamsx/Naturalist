@@ -2,7 +2,6 @@ package com.crispytwig.naturalist.client.renderer;
 
 import com.crispytwig.naturalist.client.model.FireflyBabyModel;
 import com.crispytwig.naturalist.client.model.FireflyModel;
-import com.crispytwig.naturalist.client.renderer.layers.FireflyGlowLayer;
 import com.crispytwig.naturalist.server.entity.mob.Firefly;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -14,6 +13,5 @@ import org.jetbrains.annotations.NotNull;
 public class FireflyRenderer extends NaturalistMobRenderer<Firefly> {
     public FireflyRenderer(EntityRendererProvider.@NotNull Context context) {
         super(context, new FireflyModel(context.bakeLayer(FireflyModel.LAYER_LOCATION)), new FireflyBabyModel(context.bakeLayer(FireflyBabyModel.LAYER_LOCATION)), 0.4F);
-        this.addLayer(new FireflyGlowLayer(this));
     }
 }

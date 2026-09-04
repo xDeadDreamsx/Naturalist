@@ -33,6 +33,7 @@ public class ElephantModel extends IKEntityModel<Elephant> implements SeatedMode
 	private final ModelPart rightLeg;
 
 	public ElephantModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 		this.seat = this.body.getChild("seat");
@@ -48,13 +49,7 @@ public class ElephantModel extends IKEntityModel<Elephant> implements SeatedMode
 		this.leftLeg = legs.getChild("leftLeg");
 		this.rightLeg = legs.getChild("rightLeg");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

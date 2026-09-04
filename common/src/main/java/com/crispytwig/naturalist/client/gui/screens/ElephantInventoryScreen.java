@@ -9,12 +9,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 @Environment(EnvType.CLIENT)
 public class ElephantInventoryScreen extends AbstractContainerScreen<ElephantInventoryMenu> {
-    private static final ResourceLocation TEXTURE = Naturalist.location("textures/gui/container/elephant.png");
+    private static final Identifier TEXTURE = Naturalist.location("textures/gui/container/elephant.png");
 
     private static final int TEXTURE_SIZE = 288;
 

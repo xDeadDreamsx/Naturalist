@@ -1,37 +1,30 @@
 package com.crispytwig.naturalist.client.renderer;
 
+import com.crispytwig.naturalist.client.renderer.state.NaturalistRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.crispytwig.naturalist.Naturalist;
-import com.crispytwig.naturalist.client.model.BlobfishGrayModel;
 import com.crispytwig.naturalist.client.model.BlobfishPinkModel;
 import com.crispytwig.naturalist.server.entity.mob.Blobfish;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
-public class BlobfishRenderer extends MobRenderer<Blobfish, HierarchicalModel<Blobfish>> {
-    private static final ResourceLocation GRAY = Naturalist.location("textures/entity/blobfish/gray.png");
-    private static final ResourceLocation PINK = Naturalist.location("textures/entity/blobfish/pink.png");
-
-    private final HierarchicalModel<Blobfish> pinkModel;
-    private final HierarchicalModel<Blobfish> grayModel;
+public class BlobfishRenderer extends NaturalistSingleMobRenderer<Blobfish> {
+    private static final Identifier GRAY = Naturalist.location("textures/entity/blobfish/gray.png");
+    private static final Identifier PINK = Naturalist.location("textures/entity/blobfish/pink.png");
 
     public BlobfishRenderer(EntityRendererProvider.Context context) {
         super(context, new BlobfishPinkModel(context.bakeLayer(BlobfishPinkModel.LAYER_LOCATION)), 0.0F);
-        this.pinkModel = this.model;
-        this.grayModel = new BlobfishGrayModel(context.bakeLayer(BlobfishGrayModel.LAYER_LOCATION));
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull Blobfish entity) {
+    public @NotNull Identifier getTextureLocation(@NotNull NaturalistRenderState<Blobfish> state) {
+        Blobfish entity = state.entity;
         if (entity.hasNonDefaultVariant()) {
             return entity.getVariantTexture();
         }
@@ -39,14 +32,10 @@ public class BlobfishRenderer extends MobRenderer<Blobfish, HierarchicalModel<Bl
     }
 
     @Override
-    public void render(@NotNull Blobfish entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        this.model = entity.isGray() ? this.grayModel : this.pinkModel;
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-    }
-
-    @Override
-    protected void setupRotations(@NotNull Blobfish entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTick, float nativeScale) {
-        super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, nativeScale);
+    protected void setupRotations(@NotNull NaturalistRenderState<Blobfish> state, @NotNull PoseStack poseStack, float yBodyRot, float nativeScale) {
+        Blobfish entity = state.entity;
+        float partialTick = state.partialTick;
+        super.setupRotations(state, poseStack, yBodyRot, nativeScale);
         poseStack.mulPose(Axis.ZP.rotationDegrees(-entity.swimTilt.getTilt(partialTick)));
     }
 }

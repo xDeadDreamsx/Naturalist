@@ -16,7 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -82,7 +82,7 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
     @Override
     public void checkExtraContent(@Nullable Player player, @NotNull Level level, @NotNull ItemStack containerStack, @NotNull BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
-            Entity entity = NaturalistEntityTypes.HEDGEHOG.get().spawn(serverLevel, containerStack, null, pos, MobSpawnType.BUCKET, true, false);
+            Entity entity = NaturalistEntityTypes.HEDGEHOG.get().spawn(serverLevel, containerStack, null, pos, EntitySpawnReason.BUCKET, true, false);
             if (entity instanceof Hedgehog hedgehog) {
                 hedgehog.loadFromHandTag(containerStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag());
                 hedgehog.setNoGravity(false);

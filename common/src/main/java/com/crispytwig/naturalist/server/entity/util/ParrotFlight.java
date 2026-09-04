@@ -5,6 +5,7 @@ import com.crispytwig.naturalist.server.entity.mob.Bird;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
 
 public final class ParrotFlight {
@@ -32,6 +33,6 @@ public final class ParrotFlight {
     }
 
     private static boolean isParrot(CompoundTag tag) {
-        return !tag.isEmpty() && EntityType.byString(tag.getString("id")).filter(type -> type == EntityType.PARROT).isPresent();
+        return !tag.isEmpty() && EntityType.byString(tag.getString("id")).filter(type -> type == EntityTypes.PARROT).isPresent();
     }
 }

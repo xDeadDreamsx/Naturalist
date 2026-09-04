@@ -32,6 +32,7 @@ public class AlligatorModel extends NaturalistEntityModel<Alligator> {
 	private final ModelPart rightLeg;
 
 	public AlligatorModel(ModelPart root) {
+        super(root.getChild("root"));
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 		this.neck = this.body.getChild("neck");
@@ -43,13 +44,7 @@ public class AlligatorModel extends NaturalistEntityModel<Alligator> {
 		this.leftLeg = legs.getChild("left_leg");
 		this.rightLeg = legs.getChild("right_leg");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

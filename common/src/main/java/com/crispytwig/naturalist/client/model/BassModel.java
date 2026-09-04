@@ -22,17 +22,11 @@ public class BassModel extends NaturalistEntityModel<Bass> {
 	private final ModelPart body;
 
 	public BassModel(ModelPart root) {
-		super(RenderType::entityCutout);
+		super(root.getChild("root"), RenderType::entityCutout);
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.root;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 

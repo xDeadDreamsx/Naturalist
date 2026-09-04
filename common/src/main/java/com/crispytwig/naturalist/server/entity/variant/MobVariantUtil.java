@@ -8,7 +8,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
@@ -20,7 +20,7 @@ public final class MobVariantUtil {
     private MobVariantUtil() {
     }
 
-    public static Optional<Holder.Reference<MobVariant>> byId(HolderLookup.Provider provider, ResourceKey<Registry<MobVariant>> registryKey, ResourceLocation id) {
+    public static Optional<Holder.Reference<MobVariant>> byId(HolderLookup.Provider provider, ResourceKey<Registry<MobVariant>> registryKey, Identifier id) {
         return provider.lookup(registryKey).flatMap(lookup -> lookup.get(ResourceKey.create(registryKey, id)));
     }
 
@@ -28,9 +28,9 @@ public final class MobVariantUtil {
         return provider.lookup(registryKey).flatMap(lookup -> lookup.get(key));
     }
 
-    public static Optional<ResourceLocation> readVariantId(CompoundTag tag, String[] legacyNames) {
+    public static Optional<Identifier> readVariantId(CompoundTag tag, String[] legacyNames) {
         if (tag.contains(DataDrivenVariantAnimal.VARIANT_TAG, Tag.TAG_STRING)) {
-            return Optional.ofNullable(ResourceLocation.tryParse(tag.getString(DataDrivenVariantAnimal.VARIANT_TAG)));
+            return Optional.ofNullable(Identifier.tryParse(tag.getString(DataDrivenVariantAnimal.VARIANT_TAG)));
         }
         if (legacyNames != null && legacyNames.length > 0 && tag.contains(DataDrivenVariantAnimal.VARIANT_TAG, Tag.TAG_ANY_NUMERIC)) {
             String name = legacyNames[Math.floorMod(tag.getInt(DataDrivenVariantAnimal.VARIANT_TAG), legacyNames.length)];

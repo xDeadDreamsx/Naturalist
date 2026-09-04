@@ -14,7 +14,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -83,7 +83,7 @@ public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal 
     }
 
     @Override
-    public ResourceLocation getFallbackVariantTexture() {
+    public Identifier getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/dragonfly/blue_dragonfly.png");
     }
 
@@ -119,13 +119,13 @@ public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal 
     //endregion
 
     //region Spawning
-    public static boolean checkDragonflySpawnRules(EntityType<? extends Dragonfly> type, ServerLevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
+    public static boolean checkDragonflySpawnRules(EntityType<? extends Dragonfly> type, ServerLevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         return level.getBlockState(pos.below()).is(NaturalistTags.BlockTags.DRAGONFLIES_SPAWNABLE_ON) && level.getRawBrightness(pos, 0) > 8;
     }
 
     @Override
     @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }

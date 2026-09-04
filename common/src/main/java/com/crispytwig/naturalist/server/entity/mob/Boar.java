@@ -1,5 +1,7 @@
 package com.crispytwig.naturalist.server.entity.mob;
 
+import net.minecraft.world.entity.EntityTypes;
+
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.base.NaturalistAnimal;
 import com.crispytwig.naturalist.server.entity.ai.goal.BabyPanicGoal;
@@ -13,7 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -79,7 +81,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     }
 
     @Override
-    public ResourceLocation getFallbackVariantTexture() {
+    public Identifier getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/boar.png");
     }
 
@@ -129,7 +131,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
 
     //region Spawning
     @Override
-    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
         this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, reason, spawnData);
     }
@@ -181,7 +183,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     public void thunderHit(@NotNull ServerLevel level, @NotNull LightningBolt lightning) {
         super.thunderHit(level, lightning);
         if (level.getDifficulty() != Difficulty.PEACEFUL) {
-            Zoglin zoglin = EntityType.ZOGLIN.create(level);
+            Zoglin zoglin = EntityTypes.ZOGLIN.create(level);
             assert zoglin != null;
             zoglin.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
             zoglin.setNoAi(this.isNoAi());

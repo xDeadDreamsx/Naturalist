@@ -7,7 +7,7 @@ import com.crispytwig.naturalist.server.entity.ai.goal.FlyingWanderGoal;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.crispytwig.naturalist.registry.NaturalistSoundEvents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -36,7 +36,6 @@ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
-import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -60,7 +59,7 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Vulture extends PathfinderMob implements FlyingAnimal, DataDrivenVariantAnimal {
+public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     //region Data
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.ROTTEN_FLESH);
     private static final int PERCH_COOLDOWN_AFTER_HURT = 200;
@@ -100,7 +99,7 @@ public class Vulture extends PathfinderMob implements FlyingAnimal, DataDrivenVa
     }
 
     @Override
-    public ResourceLocation getFallbackVariantTexture() {
+    public Identifier getFallbackVariantTexture() {
         return Naturalist.location("textures/entity/vulture.png");
     }
 
@@ -149,7 +148,7 @@ public class Vulture extends PathfinderMob implements FlyingAnimal, DataDrivenVa
     //endregion
 
     //region Spawning
-    public static boolean checkVultureSpawnRules(EntityType<Vulture> entityType, LevelAccessor state, MobSpawnType type, @NotNull BlockPos pos, RandomSource random) {
+    public static boolean checkVultureSpawnRules(EntityType<Vulture> entityType, LevelAccessor state, EntitySpawnReason type, @NotNull BlockPos pos, RandomSource random) {
         return state.getBlockState(pos.below()).is(BlockTags.VULTURES_SPAWNABLE_ON) && state.getRawBrightness(pos, 0) > 8;
     }
 
@@ -159,7 +158,7 @@ public class Vulture extends PathfinderMob implements FlyingAnimal, DataDrivenVa
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.selectVariantForSpawn(level);
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
@@ -205,6 +204,10 @@ public class Vulture extends PathfinderMob implements FlyingAnimal, DataDrivenVa
     }
 
     @Override
+    protected boolean omnidirectionalAirMover() {
+        return true;
+    }
+
     public boolean isFlying() {
         return !this.onGround();
     }

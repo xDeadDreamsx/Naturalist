@@ -20,16 +20,11 @@ public class MoleModel extends NaturalistEntityModel<Mole> {
     private final ModelPart skull;
 
 	public MoleModel(ModelPart root) {
+        super(root);
 		this.modelRoot = root;
 		this.skull = root.getChild("root").getChild("body").getChild("skull");
 	}
-
-	@Override
-	public @NonNull ModelPart root() {
-		return this.modelRoot;
-	}
-
-	public static LayerDefinition createBodyLayer() {
+public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
