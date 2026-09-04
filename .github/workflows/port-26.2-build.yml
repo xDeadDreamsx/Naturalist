@@ -27,6 +27,7 @@ jobs:
         run: |
           python3 .github/port/migrate_26_2.py
           python3 .github/port/structural_26_2.py
+          python3 .github/port/structural_26_2_3.py
           if ! git diff --quiet; then
             git config user.name "Naturalist 26.2 Port CI"
             git config user.email "actions@users.noreply.github.com"
