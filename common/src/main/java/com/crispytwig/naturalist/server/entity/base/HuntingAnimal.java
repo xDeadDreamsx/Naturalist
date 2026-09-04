@@ -1,6 +1,8 @@
 package com.crispytwig.naturalist.server.entity.base;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public interface HuntingAnimal {
     int HUNTING_COOLDOWN_TICKS = 2400;
@@ -31,5 +33,13 @@ public interface HuntingAnimal {
 
     default void loadHuntingCooldown(CompoundTag compound) {
         this.setHuntingCooldown(compound.getInt(HUNTING_COOLDOWN_TAG));
+    }
+
+    default void saveHuntingCooldown(ValueOutput output) {
+        output.putInt(HUNTING_COOLDOWN_TAG, this.getHuntingCooldown());
+    }
+
+    default void loadHuntingCooldown(ValueInput input) {
+        this.setHuntingCooldown(input.getIntOr(HUNTING_COOLDOWN_TAG, 0));
     }
 }
