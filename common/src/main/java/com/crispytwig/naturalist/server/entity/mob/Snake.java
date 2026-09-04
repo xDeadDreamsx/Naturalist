@@ -263,6 +263,12 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         return FOOD_ITEMS.test(stack);
     }
 
+    @Nullable
+    @Override
+    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
+        return null;
+    }
+
     @Override
     public boolean wantsToPickUp(@NotNull ServerLevel level, @NotNull ItemStack itemStack) {
         EquipmentSlot slot = getEquipmentSlotForItem(itemStack);
