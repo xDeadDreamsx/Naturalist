@@ -1,60 +1,4 @@
 === NATURALIST 26.2 COMPILE ERRORS ===
-11-
-12-> Task :compileJava
-13:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
-14-import net.minecraft.advancements.Criterion;
-15-                                 ^
-16-  symbol:   class Criterion
-17-  location: package net.minecraft.advancements
-18:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
-19-    private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
-20-                                                                  ^
-21-  symbol:   class Criterion
-22-  location: class ServerAdvancementManagerMixin
-23:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
-24-        Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
-25-                    ^
-26-  symbol:   class Criterion
-27-  location: class ServerAdvancementManagerMixin
-28-Note: Some input files use or override a deprecated API.
---
-42-> Compilation failed; see the compiler output below.
-43-  Note: Recompile with -Xlint:deprecation for details.
-44:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
-45-  import net.minecraft.advancements.Criterion;
-46-                                   ^
-47-    symbol:   class Criterion
-48-    location: package net.minecraft.advancements
-49:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
-50-      private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
-51-                                                                    ^
-52-    symbol:   class Criterion
-53-    location: class ServerAdvancementManagerMixin
-54:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
-55-          Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
-56-                      ^
-57-    symbol:   class Criterion
-58-    location: class ServerAdvancementManagerMixin
-59-  Note: Recompile with -Xlint:unchecked for details.
---
-102-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-103-Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-104:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
-105-import net.minecraft.advancements.Criterion;
-106-                                 ^
-107-  symbol:   class Criterion
-108-  location: package net.minecraft.advancements
-109:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
-110-    private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
-111-                                                                  ^
-112-  symbol:   class Criterion
-113-  location: class ServerAdvancementManagerMixin
-114:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
-115-        Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
-116-                    ^
-117-  symbol:   class Criterion
-118-  location: class ServerAdvancementManagerMixin
-119-Note: Some input files use or override a deprecated API.
 
 === FULL GRADLE FAILURE TAIL ===
 WARNING: A restricted method in java.lang.System has been called
@@ -68,154 +12,27 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Fabric Loom: 1.17.20
 
-> Task :compileJava
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
-import net.minecraft.advancements.Criterion;
-                                 ^
-  symbol:   class Criterion
-  location: package net.minecraft.advancements
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
-    private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
-                                                                  ^
-  symbol:   class Criterion
-  location: class ServerAdvancementManagerMixin
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
-        Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
-                    ^
-  symbol:   class Criterion
-  location: class ServerAdvancementManagerMixin
-Note: Some input files use or override a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-Note: Some input files use unchecked or unsafe operations.
-Note: Recompile with -Xlint:unchecked for details.
-3 errors
-
-> Task :compileJava FAILED
-
-[Incubating] Problems report is available at: file:///home/runner/work/Naturalist/Naturalist/build/reports/problems/problems-report.html
-
 FAILURE: Build failed with an exception.
 
+* Where:
+Build file '/home/runner/work/Naturalist/Naturalist/build.gradle' line: 42
+
 * What went wrong:
-Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
-> Compilation failed; see the compiler output below.
-  Note: Recompile with -Xlint:deprecation for details.
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
-  import net.minecraft.advancements.Criterion;
-                                   ^
-    symbol:   class Criterion
-    location: package net.minecraft.advancements
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
-      private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
-                                                                    ^
-    symbol:   class Criterion
-    location: class ServerAdvancementManagerMixin
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
-          Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
-                      ^
-    symbol:   class Criterion
-    location: class ServerAdvancementManagerMixin
-  Note: Recompile with -Xlint:unchecked for details.
-  Note: Some input files use or override a deprecated API.
-  Note: Some input files use unchecked or unsafe operations.
-  3 errors
+A problem occurred evaluating root project 'naturalist-fabric-26.2'.
+> Could not find method modLocalRuntime() for arguments [dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:4.12.4+26.2] on object of type org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler.
 
 * Try:
-> Check your code and dependencies to fix the compilation error(s)
+> Run with --info or --debug option to get more log output.
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
 
 * Exception is:
-org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
-	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:135)
-	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
-	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:133)
-	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:121)
-	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskExecuter.java:41)
-	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
-	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
-	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
-	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
-	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
-	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
-	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
-	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
-	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
-	at org.gradle.execution.plan.DefaultNodeExecutor.executeLocalTaskNode(DefaultNodeExecutor.java:55)
-	at org.gradle.execution.plan.DefaultNodeExecutor.execute(DefaultNodeExecutor.java:34)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:355)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:343)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:339)
-	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:84)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:339)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:328)
-	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
-	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
-	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
-import net.minecraft.advancements.Criterion;
-                                 ^
-  symbol:   class Criterion
-  location: package net.minecraft.advancements
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
-    private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
-                                                                  ^
-  symbol:   class Criterion
-  location: class ServerAdvancementManagerMixin
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
-        Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
-                    ^
-  symbol:   class Criterion
-  location: class ServerAdvancementManagerMixin
-Note: Some input files use or override a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-Note: Some input files use unchecked or unsafe operations.
-Note: Recompile with -Xlint:unchecked for details.
-3 errors
-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
-	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
-	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.execute(NormalizingJavaCompiler.java:52)
-	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.execute(NormalizingJavaCompiler.java:38)
-	at org.gradle.api.internal.tasks.compile.AnnotationProcessorDiscoveringCompiler.execute(AnnotationProcessorDiscoveringCompiler.java:52)
-	at org.gradle.api.internal.tasks.compile.AnnotationProcessorDiscoveringCompiler.execute(AnnotationProcessorDiscoveringCompiler.java:38)
-	at org.gradle.api.internal.tasks.compile.ModuleApplicationNameWritingCompiler.execute(ModuleApplicationNameWritingCompiler.java:46)
-	at org.gradle.api.internal.tasks.compile.ModuleApplicationNameWritingCompiler.execute(ModuleApplicationNameWritingCompiler.java:36)
-	at org.gradle.jvm.toolchain.internal.DefaultToolchainJavaCompiler.execute(DefaultToolchainJavaCompiler.java:57)
-	at org.gradle.api.tasks.compile.JavaCompile.lambda$createToolchainCompiler$3(JavaCompile.java:206)
-	at org.gradle.api.internal.tasks.compile.CleaningJavaCompiler.execute(CleaningJavaCompiler.java:53)
-	at org.gradle.api.internal.tasks.compile.incremental.IncrementalCompilerFactory.lambda$createRebuildAllCompiler$0(IncrementalCompilerFactory.java:55)
-	at org.gradle.api.internal.tasks.compile.incremental.SelectiveCompiler.execute(SelectiveCompiler.java:70)
-	at org.gradle.api.internal.tasks.compile.incremental.SelectiveCompiler.execute(SelectiveCompiler.java:44)
-	at org.gradle.api.internal.tasks.compile.incremental.IncrementalResultStoringCompiler.execute(IncrementalResultStoringCompiler.java:66)
-	at org.gradle.api.internal.tasks.compile.incremental.IncrementalResultStoringCompiler.execute(IncrementalResultStoringCompiler.java:52)
-	at org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationReportingCompiler$1.call(CompileJavaBuildOperationReportingCompiler.java:64)
-	at org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationReportingCompiler$1.call(CompileJavaBuildOperationReportingCompiler.java:48)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
-	at org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationReportingCompiler.execute(CompileJavaBuildOperationReportingCompiler.java:48)
-	at org.gradle.api.tasks.compile.JavaCompile.performCompilation(JavaCompile.java:224)
-	at org.gradle.api.tasks.compile.JavaCompile.performIncrementalCompilation(JavaCompile.java:165)
-	at org.gradle.api.tasks.compile.JavaCompile.compile(JavaCompile.java:150)
-	at org.gradle.internal.reflect.JavaMethod.invoke(JavaMethod.java:125)
-	at org.gradle.api.internal.project.taskfactory.IncrementalTaskAction.doExecute(IncrementalTaskAction.java:45)
-	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:51)
-	at org.gradle.api.internal.project.taskfactory.IncrementalTaskAction.execute(IncrementalTaskAction.java:26)
-	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:29)
-	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:259)
+org.gradle.api.GradleScriptException: A problem occurred evaluating root project 'naturalist-fabric-26.2'.
+	at org.gradle.groovy.scripts.internal.DefaultScriptRunnerFactory$ScriptRunnerImpl.run(DefaultScriptRunnerFactory.java:93)
+	at org.gradle.configuration.DefaultScriptPluginFactory$ScriptPluginImpl.lambda$apply$1(DefaultScriptPluginFactory.java:141)
+	at org.gradle.configuration.ProjectScriptTarget.addConfiguration(ProjectScriptTarget.java:79)
+	at org.gradle.configuration.DefaultScriptPluginFactory$ScriptPluginImpl.apply(DefaultScriptPluginFactory.java:144)
+	at org.gradle.configuration.BuildOperationScriptPlugin$1.run(BuildOperationScriptPlugin.java:68)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
@@ -223,14 +40,113 @@ Note: Recompile with -Xlint:unchecked for details.
 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
-	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:244)
-	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:227)
-	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:210)
-	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:176)
-	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:167)
-	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:47)
-	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:137)
-	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:134)
+	at org.gradle.configuration.BuildOperationScriptPlugin.lambda$apply$0(BuildOperationScriptPlugin.java:65)
+	at org.gradle.internal.code.DefaultUserCodeApplicationContext.apply(DefaultUserCodeApplicationContext.java:44)
+	at org.gradle.configuration.BuildOperationScriptPlugin.apply(BuildOperationScriptPlugin.java:65)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$applyToMutableState$0(DefaultProjectStateRegistry.java:443)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$fromMutableState$1(DefaultProjectStateRegistry.java:450)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.runWithModelLock(DefaultProjectStateRegistry.java:466)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.fromMutableState(DefaultProjectStateRegistry.java:450)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.applyToMutableState(DefaultProjectStateRegistry.java:442)
+	at org.gradle.configuration.project.BuildScriptProcessor.execute(BuildScriptProcessor.java:46)
+	at org.gradle.configuration.project.BuildScriptProcessor.execute(BuildScriptProcessor.java:27)
+	at org.gradle.configuration.project.ConfigureActionsProjectEvaluator.evaluate(ConfigureActionsProjectEvaluator.java:35)
+	at org.gradle.configuration.project.LifecycleProjectEvaluator$EvaluateProject.lambda$run$0(LifecycleProjectEvaluator.java:109)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$applyToMutableState$0(DefaultProjectStateRegistry.java:443)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.lambda$fromMutableState$1(DefaultProjectStateRegistry.java:450)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$runAndReleaseLocks$0(DefaultWorkerLeaseService.java:300)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAndReleaseLocks(DefaultWorkerLeaseService.java:298)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:294)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withReplacedLocks$4(DefaultWorkerLeaseService.java:450)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:372)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withReplacedLocks(DefaultWorkerLeaseService.java:449)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.runWithModelLock(DefaultProjectStateRegistry.java:471)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.fromMutableState(DefaultProjectStateRegistry.java:450)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.applyToMutableState(DefaultProjectStateRegistry.java:442)
+	at org.gradle.configuration.project.LifecycleProjectEvaluator$EvaluateProject.run(LifecycleProjectEvaluator.java:100)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.configuration.project.LifecycleProjectEvaluator.evaluate(LifecycleProjectEvaluator.java:72)
+	at org.gradle.api.internal.project.DefaultProject.evaluateUnchecked(DefaultProject.java:796)
+	at org.gradle.api.internal.project.ProjectLifecycleController.lambda$ensureSelfConfigured$2(ProjectLifecycleController.java:93)
+	at org.gradle.internal.model.StateTransitionController.lambda$doTransition$15(StateTransitionController.java:293)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:304)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:292)
+	at org.gradle.internal.model.StateTransitionController.lambda$maybeTransitionIfNotCurrentlyTransitioning$11(StateTransitionController.java:237)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:35)
+	at org.gradle.internal.model.StateTransitionController.maybeTransitionIfNotCurrentlyTransitioning(StateTransitionController.java:233)
+	at org.gradle.api.internal.project.ProjectLifecycleController.ensureSelfConfigured(ProjectLifecycleController.java:93)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$ProjectStateImpl.ensureConfigured(DefaultProjectStateRegistry.java:408)
+	at org.gradle.execution.TaskPathProjectEvaluator.configure(TaskPathProjectEvaluator.java:71)
+	at org.gradle.execution.TaskPathProjectEvaluator.configureHierarchy(TaskPathProjectEvaluator.java:85)
+	at org.gradle.configuration.DefaultProjectsPreparer.prepareProjects(DefaultProjectsPreparer.java:50)
+	at org.gradle.configuration.BuildTreePreparingProjectsPreparer.prepareProjects(BuildTreePreparingProjectsPreparer.java:65)
+	at org.gradle.configuration.BuildOperationFiringProjectsPreparer$ConfigureBuild.run(BuildOperationFiringProjectsPreparer.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.configuration.BuildOperationFiringProjectsPreparer.prepareProjects(BuildOperationFiringProjectsPreparer.java:40)
+	at org.gradle.initialization.VintageBuildModelController.lambda$prepareProjects$2(VintageBuildModelController.java:83)
+	at org.gradle.internal.model.StateTransitionController.lambda$doTransition$15(StateTransitionController.java:293)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:304)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:292)
+	at org.gradle.internal.model.StateTransitionController.lambda$transitionIfNotPreviously$12(StateTransitionController.java:251)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:35)
+	at org.gradle.internal.model.StateTransitionController.transitionIfNotPreviously(StateTransitionController.java:247)
+	at org.gradle.initialization.VintageBuildModelController.prepareProjects(VintageBuildModelController.java:83)
+	at org.gradle.initialization.VintageBuildModelController.prepareToScheduleTasks(VintageBuildModelController.java:70)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$prepareToScheduleTasks$7(DefaultBuildLifecycleController.java:185)
+	at org.gradle.internal.model.StateTransitionController.lambda$doTransition$15(StateTransitionController.java:293)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:304)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:292)
+	at org.gradle.internal.model.StateTransitionController.lambda$maybeTransition$10(StateTransitionController.java:228)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:35)
+	at org.gradle.internal.model.StateTransitionController.maybeTransition(StateTransitionController.java:224)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.prepareToScheduleTasks(DefaultBuildLifecycleController.java:183)
+	at org.gradle.internal.buildtree.DefaultBuildTreeWorkPreparer.scheduleRequestedTasks(DefaultBuildTreeWorkPreparer.java:35)
+	at org.gradle.internal.cc.impl.barrier.BarrierAwareBuildTreeWorkPreparer.scheduleRequestedTasks$lambda$0(BarrierAwareBuildTreeWorkPreparer.kt:34)
+	at org.gradle.internal.cc.impl.barrier.VintageConfigurationTimeActionRunner.runConfigurationTimeAction(VintageConfigurationTimeActionRunner.kt:48)
+	at org.gradle.internal.cc.impl.barrier.BarrierAwareBuildTreeWorkPreparer.scheduleRequestedTasks(BarrierAwareBuildTreeWorkPreparer.kt:33)
+	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController$scheduleAndRunRequestedTasks$1$finalizedGraph$1.call(VintageBuildTreeWorkController.kt:37)
+	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController$scheduleAndRunRequestedTasks$1$finalizedGraph$1.call(VintageBuildTreeWorkController.kt:37)
+	at org.gradle.internal.Try.ofFailable(Try.java:46)
+	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController$scheduleAndRunRequestedTasks$1.apply(VintageBuildTreeWorkController.kt:37)
+	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController$scheduleAndRunRequestedTasks$1.apply(VintageBuildTreeWorkController.kt:36)
+	at org.gradle.composite.internal.DefaultIncludedBuildTaskGraph.withNewWorkGraph(DefaultIncludedBuildTaskGraph.java:115)
+	at org.gradle.internal.cc.impl.VintageBuildTreeWorkController.scheduleAndRunRequestedTasks(VintageBuildTreeWorkController.kt:36)
+	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.lambda$scheduleAndRunTasks$1(DefaultBuildTreeLifecycleController.java:76)
+	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.lambda$runBuild$5(DefaultBuildTreeLifecycleController.java:121)
+	at org.gradle.internal.model.StateTransitionController.lambda$transition$7(StateTransitionController.java:207)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:304)
+	at org.gradle.internal.model.StateTransitionController.lambda$transition$8(StateTransitionController.java:207)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:45)
+	at org.gradle.internal.model.StateTransitionController.transition(StateTransitionController.java:207)
+	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.runBuild(DefaultBuildTreeLifecycleController.java:118)
+	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.scheduleAndRunTasks(DefaultBuildTreeLifecycleController.java:76)
+	at org.gradle.internal.buildtree.DefaultBuildTreeLifecycleController.scheduleAndRunTasks(DefaultBuildTreeLifecycleController.java:71)
+	at org.gradle.tooling.internal.provider.ExecuteBuildActionRunner.run(ExecuteBuildActionRunner.java:31)
+	at org.gradle.launcher.exec.ChainingBuildActionRunner.run(ChainingBuildActionRunner.java:35)
+	at org.gradle.internal.buildtree.ProblemReportingBuildActionRunner.run(ProblemReportingBuildActionRunner.java:54)
+	at org.gradle.launcher.exec.BuildOutcomeReportingBuildActionRunner.run(BuildOutcomeReportingBuildActionRunner.java:83)
+	at org.gradle.tooling.internal.provider.FileSystemWatchingBuildActionRunner.run(FileSystemWatchingBuildActionRunner.java:135)
+	at org.gradle.launcher.exec.BuildCompletionNotifyingBuildActionRunner.run(BuildCompletionNotifyingBuildActionRunner.java:65)
+	at org.gradle.launcher.exec.RootBuildLifecycleBuildActionExecutor.lambda$execute$0(RootBuildLifecycleBuildActionExecutor.java:101)
+	at org.gradle.composite.internal.DefaultRootBuildState.run(DefaultRootBuildState.java:126)
+	at org.gradle.launcher.exec.RootBuildLifecycleBuildActionExecutor.execute(RootBuildLifecycleBuildActionExecutor.java:101)
+	at org.gradle.launcher.exec.BuildTreeLifecycleBuildActionExecutor.runRootBuildAction(BuildTreeLifecycleBuildActionExecutor.java:104)
+	at org.gradle.launcher.exec.BuildTreeLifecycleBuildActionExecutor.execute(BuildTreeLifecycleBuildActionExecutor.java:74)
+	at org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor$2.call(RunAsBuildOperationBuildActionExecutor.java:65)
+	at org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor$2.call(RunAsBuildOperationBuildActionExecutor.java:61)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
@@ -238,192 +154,117 @@ Note: Recompile with -Xlint:unchecked for details.
 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
-	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:134)
-	at org.gradle.internal.execution.steps.ExecuteStep$Mutable.execute(ExecuteStep.java:80)
-	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
-	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
-	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
-	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:51)
-	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:29)
-	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:67)
-	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:39)
-	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
-	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:42)
-	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:24)
-	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
-	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
-	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:39)
-	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:28)
-	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
-	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
-	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:76)
-	at org.gradle.internal.Either$Right.fold(Either.java:176)
-	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
-	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:74)
-	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:49)
-	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:46)
-	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:35)
-	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
-	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
-	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
-	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
-	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
-	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
-	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
-	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.java:70)
-	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.java:32)
-	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:69)
-	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:37)
-	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:63)
-	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:34)
-	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
-	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:79)
-	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:65)
-	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:99)
-	at org.gradle.internal.execution.steps.ValidateStep$Mutable.execute(ValidateStep.java:65)
-	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.executeMutable(CaptureMutableStateBeforeExecutionStep.java:86)
-	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecutionStep.java:65)
-	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecutionStep.java:45)
-	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeWithNonEmptySources(SkipEmptyMutableWorkStep.java:210)
-	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:90)
-	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:53)
-	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
-	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
-	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.java:36)
-	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.java:23)
-	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
-	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:77)
-	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:43)
-	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
-	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$executeMutable$0(AssignMutableWorkspaceStep.java:34)
-	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:305)
-	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:30)
-	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:21)
-	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
-	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
-	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
-	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
-	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
-	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
-	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
-	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
-	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:56)
-	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:38)
-	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:68)
-	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:132)
-	... 30 more
+	at org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor.execute(RunAsBuildOperationBuildActionExecutor.java:61)
+	at org.gradle.launcher.exec.RunAsWorkerThreadBuildActionExecutor.lambda$execute$0(RunAsWorkerThreadBuildActionExecutor.java:36)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$runAndReleaseLocks$0(DefaultWorkerLeaseService.java:300)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAndReleaseLocks(DefaultWorkerLeaseService.java:298)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:294)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:286)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:130)
+	at org.gradle.launcher.exec.RunAsWorkerThreadBuildActionExecutor.execute(RunAsWorkerThreadBuildActionExecutor.java:36)
+	at org.gradle.tooling.internal.provider.continuous.ContinuousBuildActionExecutor.execute(ContinuousBuildActionExecutor.java:110)
+	at org.gradle.tooling.internal.provider.SubscribableBuildActionExecutor.execute(SubscribableBuildActionExecutor.java:64)
+	at org.gradle.internal.session.DefaultBuildSessionContext.execute(DefaultBuildSessionContext.java:46)
+	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor$ActionImpl.apply(BuildSessionLifecycleBuildActionExecutor.java:106)
+	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor$ActionImpl.apply(BuildSessionLifecycleBuildActionExecutor.java:94)
+	at org.gradle.internal.session.BuildSessionState.run(BuildSessionState.java:73)
+	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor.execute(BuildSessionLifecycleBuildActionExecutor.java:67)
+	at org.gradle.internal.buildprocess.execution.BuildSessionLifecycleBuildActionExecutor.execute(BuildSessionLifecycleBuildActionExecutor.java:45)
+	at org.gradle.internal.buildprocess.execution.StartParamsValidatingActionExecutor.execute(StartParamsValidatingActionExecutor.java:57)
+	at org.gradle.internal.buildprocess.execution.StartParamsValidatingActionExecutor.execute(StartParamsValidatingActionExecutor.java:32)
+	at org.gradle.internal.buildprocess.execution.SessionFailureReportingActionExecutor.execute(SessionFailureReportingActionExecutor.java:51)
+	at org.gradle.internal.buildprocess.execution.SessionFailureReportingActionExecutor.execute(SessionFailureReportingActionExecutor.java:39)
+	at org.gradle.internal.buildprocess.execution.SetupLoggingActionExecutor.execute(SetupLoggingActionExecutor.java:47)
+	at org.gradle.internal.buildprocess.execution.SetupLoggingActionExecutor.execute(SetupLoggingActionExecutor.java:31)
+	at org.gradle.launcher.daemon.server.exec.ExecuteBuild.doBuild(ExecuteBuild.java:70)
+	at org.gradle.launcher.daemon.server.exec.BuildCommandOnly.execute(BuildCommandOnly.java:37)
+	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+	at org.gradle.launcher.daemon.server.exec.WatchForDisconnection.execute(WatchForDisconnection.java:39)
+	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+	at org.gradle.launcher.daemon.server.exec.ResetDeprecationLogger.execute(ResetDeprecationLogger.java:29)
+	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+	at org.gradle.launcher.daemon.server.exec.RequestStopIfSingleUsedDaemon.execute(RequestStopIfSingleUsedDaemon.java:35)
+	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+	at org.gradle.launcher.daemon.server.exec.ForwardClientInput.lambda$execute$0(ForwardClientInput.java:40)
+	at org.gradle.internal.daemon.clientinput.ClientInputForwarder.forwardInput(ClientInputForwarder.java:80)
+	at org.gradle.launcher.daemon.server.exec.ForwardClientInput.execute(ForwardClientInput.java:37)
+	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+	at org.gradle.launcher.daemon.server.exec.LogAndCheckHealth.execute(LogAndCheckHealth.java:53)
+	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+	at org.gradle.launcher.daemon.server.exec.LogToClient.doBuild(LogToClient.java:63)
+	at org.gradle.launcher.daemon.server.exec.BuildCommandOnly.execute(BuildCommandOnly.java:37)
+	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+	at org.gradle.launcher.daemon.server.exec.EstablishBuildEnvironment.doBuild(EstablishBuildEnvironment.java:84)
+	at org.gradle.launcher.daemon.server.exec.BuildCommandOnly.execute(BuildCommandOnly.java:37)
+	at org.gradle.launcher.daemon.server.api.DaemonCommandExecution.proceed(DaemonCommandExecution.java:104)
+	at org.gradle.launcher.daemon.server.exec.StartBuildOrRespondWithBusy$1.run(StartBuildOrRespondWithBusy.java:52)
+	at org.gradle.launcher.daemon.server.DaemonStateCoordinator.lambda$runCommand$0(DaemonStateCoordinator.java:321)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: org.gradle.internal.metaobject.AbstractDynamicObject$CustomMessageMissingMethodException: Could not find method modLocalRuntime() for arguments [dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:4.12.4+26.2] on object of type org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler.
+	at org.gradle.internal.metaobject.AbstractDynamicObject$CustomMissingMethodExecutionFailed.<init>(AbstractDynamicObject.java:195)
+	at org.gradle.internal.metaobject.AbstractDynamicObject.methodMissingException(AbstractDynamicObject.java:189)
+	at org.gradle.internal.metaobject.ConfigureDelegate.invokeMethod(ConfigureDelegate.java:84)
+	at build_3imczq4xmyec832oe0avijzot$_run_closure4.doCall$original(/home/runner/work/Naturalist/Naturalist/build.gradle:42)
+	at build_3imczq4xmyec832oe0avijzot$_run_closure4.doCall(/home/runner/work/Naturalist/Naturalist/build.gradle)
+	at org.gradle.util.internal.ClosureBackedAction.execute(ClosureBackedAction.java:73)
+	at org.gradle.util.internal.ConfigureUtil.configureTarget(ConfigureUtil.java:166)
+	at org.gradle.util.internal.ConfigureUtil.configure(ConfigureUtil.java:107)
+	at org.gradle.api.internal.project.DefaultProject.dependencies(DefaultProject.java:1277)
+	at org.gradle.internal.metaobject.BeanDynamicObject$MetaClassAdapter.invokeMethod(BeanDynamicObject.java:583)
+	at org.gradle.internal.metaobject.BeanDynamicObject.tryInvokeMethod(BeanDynamicObject.java:225)
+	at org.gradle.internal.metaobject.CompositeDynamicObject.tryInvokeMethod(CompositeDynamicObject.java:111)
+	at org.gradle.internal.extensibility.MixInClosurePropertiesAsMethodsDynamicObject.tryInvokeMethod(MixInClosurePropertiesAsMethodsDynamicObject.java:37)
+	at org.gradle.groovy.scripts.BasicScript$ScriptDynamicObject.tryInvokeMethod(BasicScript.java:139)
+	at org.gradle.internal.metaobject.AbstractDynamicObject.invokeMethod(AbstractDynamicObject.java:168)
+	at org.gradle.api.internal.project.DefaultDynamicLookupRoutine.invokeMethod(DefaultDynamicLookupRoutine.java:57)
+	at org.gradle.groovy.scripts.BasicScript.invokeMethod(BasicScript.java:88)
+	at build_3imczq4xmyec832oe0avijzot.run(/home/runner/work/Naturalist/Naturalist/build.gradle:34)
+	at org.gradle.groovy.scripts.internal.DefaultScriptRunnerFactory$ScriptRunnerImpl.run(DefaultScriptRunnerFactory.java:91)
+	... 173 more
 
 
-BUILD FAILED in 39s
-1 actionable task: 1 executed
+BUILD FAILED in 15s
 
 === MINECRAFT 26.2 API INSPECTION ===
+=== EXACT Advancement ===
+=== EXACT AdvancementRequirements ===
 === EXACT Boat ===
-net/minecraft/world/entity/vehicle/boat/Boat.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/entity/vehicle/boat/Boat.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/entity/vehicle/boat/Boat.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/entity/vehicle/boat/Boat.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT ChunkSectionLayerMap ===
 === EXACT ClampedItemPropertyFunction ===
 === EXACT ContainerHelper ===
-net/minecraft/world/ContainerHelper.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/ContainerHelper.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/ContainerHelper.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/ContainerHelper.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT ContextAwarePredicate ===
-net/minecraft/advancements/predicates/ContextAwarePredicate.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/advancements/predicates/ContextAwarePredicate.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/advancements/predicates/ContextAwarePredicate.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/advancements/predicates/ContextAwarePredicate.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
+=== EXACT Criterion ===
 === EXACT DiggerItem ===
 === EXACT EntityType ===
-net/minecraft/world/entity/EntityType.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/entity/EntityType.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/entity/EntityType.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/entity/EntityType.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
+=== EXACT FilledBucketTrigger ===
 === EXACT GuiGraphics ===
 === EXACT GuiGraphicsExtractor ===
-net/minecraft/client/gui/GuiGraphicsExtractor.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/client/gui/GuiGraphicsExtractor.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/client/gui/GuiGraphicsExtractor.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT Input ===
 org/apache/tools/ant/taskdefs/Input.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/ant-1.10.15.jar
 org/gradle/api/tasks/Input.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-core-api-9.5.1.jar
 com/esotericsoftware/kryo/io/Input.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
-org/apache/commons/io/input/Input.class @ /home/runner/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.20.0/36f3474daec2849c149e877614e7f979b2082cd2/commons-io-2.20.0.jar
-net/minecraft/server/dialog/Input.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/entity/player/Input.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/server/dialog/Input.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/entity/player/Input.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/server/dialog/Input.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/entity/player/Input.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
 === EXACT InstantaneousMobEffect ===
-net/minecraft/world/effect/InstantaneousMobEffect.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/effect/InstantaneousMobEffect.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/effect/InstantaneousMobEffect.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/effect/InstantaneousMobEffect.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT InteractionResult ===
-net/minecraft/world/InteractionResult.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/InteractionResult.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/InteractionResult.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/InteractionResult.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT InteractionResultHolder ===
 === EXACT ItemInteractionResult ===
 === EXACT ItemNameBlockItem ===
 === EXACT ItemPredicate ===
-net/minecraft/advancements/predicates/ItemPredicate.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/advancements/predicates/ItemPredicate.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/advancements/predicates/ItemPredicate.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/advancements/predicates/ItemPredicate.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT ItemProperties ===
 === EXACT LightTexture ===
 === EXACT LivingEntity ===
-net/minecraft/world/entity/LivingEntity.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/entity/LivingEntity.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/entity/LivingEntity.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/entity/LivingEntity.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT NeutralMob ===
-net/minecraft/world/entity/NeutralMob.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/entity/NeutralMob.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/entity/NeutralMob.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/entity/NeutralMob.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT RecipeSerializer ===
-net/minecraft/world/item/crafting/RecipeSerializer.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/item/crafting/RecipeSerializer.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/item/crafting/RecipeSerializer.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/item/crafting/RecipeSerializer.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT ResourceKey ===
-net/minecraft/resources/ResourceKey.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/resources/ResourceKey.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/resources/ResourceKey.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/resources/ResourceKey.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT Saddleable ===
 === EXACT SimpleCriterionTrigger ===
-net/minecraft/advancements/triggers/SimpleCriterionTrigger.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/advancements/triggers/SimpleCriterionTrigger.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/advancements/triggers/SimpleCriterionTrigger.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/advancements/triggers/SimpleCriterionTrigger.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT SingleQuadParticle ===
-net/minecraft/client/particle/SingleQuadParticle.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/client/particle/SingleQuadParticle.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/client/particle/SingleQuadParticle.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT SwordItem ===
 === EXACT TextureSheetParticle ===
 === EXACT ThrowableItemProjectile ===
-net/minecraft/world/entity/projectile/throwableitemprojectile/ThrowableItemProjectile.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/entity/projectile/throwableitemprojectile/ThrowableItemProjectile.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/entity/projectile/throwableitemprojectile/ThrowableItemProjectile.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/entity/projectile/throwableitemprojectile/ThrowableItemProjectile.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT ValueInput ===
-net/minecraft/world/level/storage/ValueInput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/level/storage/ValueInput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/level/storage/ValueInput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/level/storage/ValueInput.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT ValueOutput ===
-net/minecraft/world/level/storage/ValueOutput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-net/minecraft/world/level/storage/ValueOutput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-net/minecraft/world/level/storage/ValueOutput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-net/minecraft/world/level/storage/ValueOutput.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === RELATED CLASS NAMES ===
 jcifs/netbios/SocketInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/jcifs-1.3.17.jar
 jcifs/smb/SmbFileInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/jcifs-1.3.17.jar
@@ -926,594 +767,3 @@ org/apache/commons/io/input/UnixLineEndingInputStream.class @ /home/runner/.grad
 org/apache/commons/io/input/UnsynchronizedBufferedInputStream$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
 org/apache/commons/io/input/UnsynchronizedBufferedInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
 === MINECRAFT JARS ===
-/home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
-/home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
-/home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
-/home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
-=== JAVAP net.minecraft.world.InteractionResult ===
-Compiled from "InteractionResult.java"
-public interface net.minecraft.world.InteractionResult {
-  public static final net.minecraft.world.InteractionResult$Success SUCCESS;
-  public static final net.minecraft.world.InteractionResult$Success SUCCESS_SERVER;
-  public static final net.minecraft.world.InteractionResult$Success CONSUME;
-  public static final net.minecraft.world.InteractionResult$Fail FAIL;
-  public static final net.minecraft.world.InteractionResult$Pass PASS;
-  public static final net.minecraft.world.InteractionResult$TryEmptyHandInteraction TRY_WITH_EMPTY_HAND;
-  public default boolean consumesAction();
-}
-=== JAVAP net.minecraft.world.entity.NeutralMob ===
-Compiled from "NeutralMob.java"
-public interface net.minecraft.world.entity.NeutralMob {
-  public static final java.lang.String TAG_ANGER_END_TIME;
-  public static final java.lang.String TAG_ANGRY_AT;
-  public static final long NO_ANGER_END_TIME;
-  public abstract long getPersistentAngerEndTime();
-  public default void setTimeToRemainAngry(long);
-  public abstract void setPersistentAngerEndTime(long);
-  public abstract net.minecraft.world.entity.EntityReference<net.minecraft.world.entity.LivingEntity> getPersistentAngerTarget();
-  public abstract void setPersistentAngerTarget(net.minecraft.world.entity.EntityReference<net.minecraft.world.entity.LivingEntity>);
-  public abstract void startPersistentAngerTimer();
-  public abstract net.minecraft.world.level.Level level();
-  public default void addPersistentAngerSaveData(net.minecraft.world.level.storage.ValueOutput);
-  public default void readPersistentAngerSaveData(net.minecraft.world.level.Level, net.minecraft.world.level.storage.ValueInput);
-  public default void updatePersistentAnger(net.minecraft.server.level.ServerLevel, boolean);
-  public default boolean isAngryAt(net.minecraft.world.entity.LivingEntity, net.minecraft.server.level.ServerLevel);
-  public default boolean isAngryAtAllPlayers(net.minecraft.server.level.ServerLevel);
-  public default boolean isAngry();
-  public default void playerDied(net.minecraft.server.level.ServerLevel, net.minecraft.world.entity.player.Player);
-  public default void forgetCurrentTargetAndRefreshUniversalAnger();
-  public default void stopBeingAngry();
-  public abstract net.minecraft.world.entity.LivingEntity getLastHurtByMob();
-  public abstract void setLastHurtByMob(net.minecraft.world.entity.LivingEntity);
-  public abstract void setTarget(net.minecraft.world.entity.LivingEntity);
-  public abstract boolean canAttack(net.minecraft.world.entity.LivingEntity);
-  public abstract net.minecraft.world.entity.LivingEntity getTarget();
-  public abstract net.minecraft.world.entity.LivingEntity getTargetUnchecked();
-}
-=== JAVAP net.minecraft.world.entity.LivingEntity ===
-Compiled from "LivingEntity.java"
-public abstract class net.minecraft.world.entity.LivingEntity extends net.minecraft.world.entity.Entity implements net.minecraft.world.entity.Attackable,net.minecraft.world.waypoints.WaypointTransmitter {
-  public static final java.lang.String TAG_ATTRIBUTES;
-  public static final java.lang.String TAG_SLEEPING_POS;
-  public static final java.lang.String TAG_EQUIPMENT;
-  public static final java.lang.String TAG_BRAIN;
-  public static final java.lang.String TAG_FALL_FLYING;
-  public static final java.lang.String TAG_HURT_TIME;
-  public static final java.lang.String TAG_DEATH_TIME;
-  public static final java.lang.String TAG_HEALTH;
-  public static final int EQUIPMENT_SLOT_OFFSET;
-  public static final int ARMOR_SLOT_OFFSET;
-  public static final int BODY_ARMOR_OFFSET;
-  public static final int SADDLE_OFFSET;
-  public static final int PLAYER_HURT_EXPERIENCE_TIME;
-  public static final double MIN_MOVEMENT_DISTANCE;
-  public static final double DEFAULT_BASE_GRAVITY;
-  public static final int DEATH_DURATION;
-  public static final float BASE_JUMP_POWER;
-  public static final float EXTRA_RENDER_CULLING_SIZE_WITH_BIG_HAT;
-  public static final float DEFAULT_BABY_SCALE;
-  public static final float BASE_HORIZONTAL_AIR_DRAG;
-  public static final float BASE_VERTICAL_AIR_DRAG;
-  public static final float WATER_DRAG;
-  public static final float SPRINTING_WATER_DRAG;
-  public static final float LAVA_DRAG;
-  public static final float LAVA_SHALLOW_VERTICAL_DRAG;
-  public static final float DOLPHINS_GRACE_WATER_DRAG;
-  public static final float FLYING_AIR_DRAG;
-  public static final float FLYING_VERTICAL_AIR_DRAG;
-  public static final float FLYING_LAVA_DRAG;
-  public static final float FLYING_WATER_DRAG;
-  public static final float ELYTRA_HORIZONTAL_AIR_DRAG;
-  public static final float ELYTRA_VERTICAL_AIR_DRAG;
-  public static final float BASE_SWIM_SPEED;
-  public static final java.util.function.Predicate<net.minecraft.world.entity.LivingEntity> PLAYER_NOT_WEARING_DISGUISE_ITEM;
-  public boolean swinging;
-  public net.minecraft.world.InteractionHand swingingArm;
-  public int swingTime;
-  public int removeArrowTime;
-  public int removeStingerTime;
-  public int hurtTime;
-  public int hurtDuration;
-  public int deathTime;
-  public float oAttackAnim;
-  public float attackAnim;
-  public final net.minecraft.world.entity.WalkAnimationState walkAnimation;
-  public float yBodyRot;
-  public float yBodyRotO;
-  public float yHeadRot;
-  public float yHeadRotO;
-  public final net.minecraft.world.entity.ElytraAnimationState elytraAnimationState;
-  public float xxa;
-  public float yya;
-  public float zza;
-  public net.minecraft.world.phys.Vec3 currentImpulseImpactPos;
-  public net.minecraft.world.entity.LivingEntity asLivingEntity();
-  public net.minecraft.world.entity.ai.Brain<? extends net.minecraft.world.entity.LivingEntity> getBrain();
-  public void kill(net.minecraft.server.level.ServerLevel);
-  public static net.minecraft.world.entity.ai.attributes.AttributeSupplier$Builder createLivingAttributes();
-  public boolean canBreatheUnderwater();
-  public float getSwimAmount(float);
-  public boolean hasLandedInLiquid();
-  public void baseTick();
-  public float getLuck();
-  public boolean isBaby();
-  public float getAgeScale();
-  public final float getScale();
-  public boolean isAffectedByFluids();
-  public boolean shouldDropExperience();
-  public final int getExperienceReward(net.minecraft.server.level.ServerLevel, net.minecraft.world.entity.Entity);
-  public net.minecraft.world.entity.LivingEntity getLastHurtByMob();
-  public net.minecraft.world.entity.player.Player getLastHurtByPlayer();
-  public net.minecraft.world.entity.LivingEntity getLastAttacker();
-  public int getLastHurtByMobTimestamp();
-  public void setLastHurtByPlayer(net.minecraft.world.entity.player.Player, int);
-  public void setLastHurtByPlayer(java.util.UUID, int);
-  public void setLastHurtByMob(net.minecraft.world.entity.LivingEntity);
-  public net.minecraft.world.entity.LivingEntity getLastHurtMob();
-  public int getLastHurtMobTimestamp();
-  public void setLastHurtMob(net.minecraft.world.entity.Entity);
-  public int getNoActionTime();
-  public void setNoActionTime(int);
-  public boolean shouldDiscardFriction();
-  public void setDiscardFriction(boolean);
-  public void onEquipItem(net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack, net.minecraft.world.item.ItemStack);
-  public void remove(net.minecraft.world.entity.Entity$RemovalReason);
-  public void onRemoval(net.minecraft.world.entity.Entity$RemovalReason);
-  public net.minecraft.world.entity.item.ItemEntity drop(net.minecraft.world.item.ItemStack, boolean, boolean);
-  public void updateDataBeforeSync();
-  public double getVisibilityPercent(net.minecraft.world.entity.Entity);
-  public boolean canAttack(net.minecraft.world.entity.LivingEntity);
-  public boolean canBeSeenAsEnemy();
-  public boolean canBeSeenByAnyone();
-  public static boolean areAllEffectsAmbient(java.util.Collection<net.minecraft.world.effect.MobEffectInstance>);
-  public boolean removeAllEffects();
-  public java.util.Collection<net.minecraft.world.effect.MobEffectInstance> getActiveEffects();
-  public java.util.Map<net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>, net.minecraft.world.effect.MobEffectInstance> getActiveEffectsMap();
-  public boolean hasEffect(net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>);
-  public net.minecraft.world.effect.MobEffectInstance getEffect(net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>);
-  public float getEffectBlendFactor(net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>, float);
-  public final boolean addEffect(net.minecraft.world.effect.MobEffectInstance);
-  public boolean addEffect(net.minecraft.world.effect.MobEffectInstance, net.minecraft.world.entity.Entity);
-  public boolean canBeAffected(net.minecraft.world.effect.MobEffectInstance);
-  public void forceAddEffect(net.minecraft.world.effect.MobEffectInstance, net.minecraft.world.entity.Entity);
-  public boolean isInvertedHealAndHarm();
-  public final net.minecraft.world.effect.MobEffectInstance removeEffectNoUpdate(net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>);
-  public boolean removeEffect(net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect>);
-  public void sendEffectToPassengers(net.minecraft.world.effect.MobEffectInstance);
-  public void heal(float);
-  public float getHealth();
-  public void setHealth(float);
-  public boolean isDeadOrDying();
-  public boolean hurtServer(net.minecraft.server.level.ServerLevel, net.minecraft.world.damagesource.DamageSource, float);
-  public void dealDefaultKnockback(net.minecraft.world.damagesource.DamageSource, float, boolean);
-  public float applyItemBlocking(net.minecraft.server.level.ServerLevel, net.minecraft.world.damagesource.DamageSource, float);
-  public net.minecraft.world.damagesource.DamageSource getLastDamageSource();
-  public void makeSound(net.minecraft.sounds.SoundEvent);
-  public void die(net.minecraft.world.damagesource.DamageSource);
-  public long getLootTableSeed();
-  public void dropFromLootTable(net.minecraft.server.level.ServerLevel, net.minecraft.world.damagesource.DamageSource, boolean, net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>);
-  public void dropFromLootTable(net.minecraft.server.level.ServerLevel, net.minecraft.world.damagesource.DamageSource, boolean, net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>, java.util.function.Consumer<net.minecraft.world.item.ItemStack>);
-  public boolean dropFromEntityInteractLootTable(net.minecraft.server.level.ServerLevel, net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>, net.minecraft.world.entity.Entity, net.minecraft.world.item.ItemInstance, java.util.function.BiConsumer<net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack>);
-  public boolean dropFromGiftLootTable(net.minecraft.server.level.ServerLevel, net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>, java.util.function.BiConsumer<net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack>);
-  public void knockback(double, double, double, net.minecraft.world.damagesource.DamageSource, float, boolean);
-  public void knockback(double, double, double, net.minecraft.world.damagesource.DamageSource, float);
-  public void indicateDamage(double, double);
-  public void skipDropExperience();
-  public boolean wasExperienceConsumed();
-  public float getHurtDir();
-  public java.util.Map<net.minecraft.world.item.enchantment.Enchantment, java.util.Set<net.minecraft.world.item.enchantment.effects.EnchantmentLocationBasedEffect>> activeLocationDependentEnchantments(net.minecraft.world.entity.EquipmentSlot);
-  public void postPiercingAttack();
-  public net.minecraft.world.entity.LivingEntity$Fallsounds getFallSounds();
-  public java.util.Optional<net.minecraft.core.BlockPos> getLastClimbablePos();
-  public boolean onClimbable();
-  public boolean isAlive();
-  public boolean isLookingAtMe(net.minecraft.world.entity.LivingEntity, double, boolean, boolean, double...);
-  public int getMaxFallDistance();
-  public boolean causeFallDamage(double, float, net.minecraft.world.damagesource.DamageSource);
-  public void setIgnoreFallDamageFromCurrentImpulse(boolean, net.minecraft.world.phys.Vec3);
-  public void applyPostImpulseGraceTime(int);
-  public boolean isIgnoringFallDamageFromCurrentImpulse();
-  public void tryResetCurrentImpulseContext();
-  public boolean isInPostImpulseGraceTime();
-  public void resetCurrentImpulseContext();
-  public void animateHurt(float);
-  public int getArmorValue();
-  public net.minecraft.world.damagesource.CombatTracker getCombatTracker();
-  public net.minecraft.world.entity.LivingEntity getKillCredit();
-  public final float getMaxHealth();
-  public final float getMaxAbsorption();
-  public final int getArrowCount();
-  public final void setArrowCount(int);
-  public final int getStingerCount();
-  public final void setStingerCount(int);
-  public void swing(net.minecraft.world.InteractionHand);
-  public void swing(net.minecraft.world.InteractionHand, boolean);
-  public void handleDamageEvent(net.minecraft.world.damagesource.DamageSource);
-  public void handleEntityEvent(byte);
-  public float getTicksSinceLastKineticHitFeedback(float);
-  public void makePoofParticles();
-  public net.minecraft.world.entity.ai.attributes.AttributeInstance getAttribute(net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute>);
-  public double getAttributeValue(net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute>);
-  public double getAttributeBaseValue(net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute>);
-  public net.minecraft.world.entity.ai.attributes.AttributeMap getAttributes();
-  public net.minecraft.world.item.ItemStack getMainHandItem();
-  public net.minecraft.world.item.ItemStack getOffhandItem();
-  public net.minecraft.world.item.ItemStack getItemHeldByArm(net.minecraft.world.entity.HumanoidArm);
-  public net.minecraft.world.item.ItemStack getWeaponItem();
-  public net.minecraft.world.item.component.AttackRange getAttackRangeWith(net.minecraft.world.item.ItemStack);
-  public net.minecraft.world.item.ItemStack getActiveItem();
-  public boolean isHolding(net.minecraft.world.item.Item);
-  public boolean isHolding(java.util.function.Predicate<net.minecraft.world.item.ItemStack>);
-  public net.minecraft.world.item.ItemStack getItemInHand(net.minecraft.world.InteractionHand);
-  public void setItemInHand(net.minecraft.world.InteractionHand, net.minecraft.world.item.ItemStack);
-  public boolean hasItemInSlot(net.minecraft.world.entity.EquipmentSlot);
-  public boolean canUseSlot(net.minecraft.world.entity.EquipmentSlot);
-  public net.minecraft.world.item.ItemStack getItemBySlot(net.minecraft.world.entity.EquipmentSlot);
-  public void setItemSlot(net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack);
-  public float getArmorCoverPercentage();
-  public void setSprinting(boolean);
-  public float getVoicePitch();
-  public void push(net.minecraft.world.entity.Entity);
-  public boolean shouldShowName();
-  public float getJumpBoostPower();
-  public void jumpFromGround();
-  public boolean canStandOnFluid(net.minecraft.world.level.material.FluidState);
-  public void travel(net.minecraft.world.phys.Vec3);
-  public net.minecraft.world.phys.shapes.VoxelShape getLiquidCollisionShape();
-  public void stopFallFlying();
-  public void calculateEntityAnimation(boolean);
-  public net.minecraft.world.phys.Vec3 getFluidFallingAdjustedMovement(double, boolean, net.minecraft.world.phys.Vec3);
-  public float getSpeed();
-  public void setSpeed(float);
-  public boolean doHurtTarget(net.minecraft.server.level.ServerLevel, net.minecraft.world.entity.Entity);
-  public void causeExtraKnockback(net.minecraft.world.entity.Entity, float, net.minecraft.world.phys.Vec3, net.minecraft.world.damagesource.DamageSource, float, boolean);
-  public void tick();
-  public boolean wasRecentlyStabbed(net.minecraft.world.entity.Entity, int);
-  public void rememberStabbedEntity(net.minecraft.world.entity.Entity);
-  public int stabbedEntities(java.util.function.Predicate<net.minecraft.world.entity.Entity>);
-  public boolean stabAttack(net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.entity.Entity, float, boolean, boolean, boolean);
-  public void onAttack();
-  public boolean equipmentHasChanged(net.minecraft.world.item.ItemStack, net.minecraft.world.item.ItemStack);
-  public void aiStep();
-  public boolean isSensitiveToWater();
-  public boolean isJumping();
-  public boolean isAutoSpinAttack();
-  public void stopRiding();
-  public void rideTick();
-  public net.minecraft.world.entity.InterpolationHandler getInterpolation();
-  public void lerpHeadTo(float, int);
-  public void setJumping(boolean);
-  public void onItemPickup(net.minecraft.world.entity.item.ItemEntity);
-  public void take(net.minecraft.world.entity.Entity, int);
-  public boolean hasLineOfSight(net.minecraft.world.entity.Entity);
-  public boolean hasLineOfSight(net.minecraft.world.entity.Entity, net.minecraft.world.level.ClipContext$Block, net.minecraft.world.level.ClipContext$Fluid, double);
-  public float getViewYRot(float);
-  public float getAttackAnim(float);
-  public boolean isPickable();
-  public boolean isPushable();
-  public float getYHeadRot();
-  public void setYHeadRot(float);
-  public void setYBodyRot(float);
-  public net.minecraft.world.phys.Vec3 getRelativePortalPosition(net.minecraft.core.Direction$Axis, net.minecraft.util.BlockUtil$FoundRectangle);
-  public static net.minecraft.world.phys.Vec3 resetForwardDirectionOfRelativePortalPosition(net.minecraft.world.phys.Vec3);
-  public float getAbsorptionAmount();
-  public final void setAbsorptionAmount(float);
-  public void onEnterCombat();
-  public void onLeaveCombat();
-  public abstract net.minecraft.world.entity.HumanoidArm getMainArm();
-  public boolean isUsingItem();
-  public net.minecraft.world.InteractionHand getUsedItemHand();
-  public void startUsingItem(net.minecraft.world.InteractionHand);
-  public void onSyncedDataUpdated(net.minecraft.network.syncher.EntityDataAccessor<?>);
-  public void lookAt(net.minecraft.commands.arguments.EntityAnchorArgument$Anchor, net.minecraft.world.phys.Vec3);
-  public float getPreciseBodyRotation(float);
-  public void spawnItemParticles(net.minecraft.world.item.ItemStack, int);
-  public void handleExtraItemsCreatedOnUse(net.minecraft.world.item.ItemStack);
-  public net.minecraft.world.item.ItemStack getUseItem();
-  public int getUseItemRemainingTicks();
-  public int getTicksUsingItem();
-  public float getTicksUsingItem(float);
-  public void releaseUsingItem();
-  public void stopUsingItem();
-  public boolean isBlocking();
-  public net.minecraft.world.item.ItemStack getItemBlockingWith();
-  public boolean isSuppressingSlidingDownLadder();
-  public boolean isFallFlying();
-  public boolean isVisuallySwimming();
-  public int getFallFlyingTicks();
-  public boolean randomTeleport(double, double, double, boolean);
-  public boolean isAffectedByPotions();
-  public boolean attackable();
-  public void setRecordPlayingNearby(net.minecraft.core.BlockPos, boolean);
-  public boolean canPickUpLoot();
-  public final net.minecraft.world.entity.EntityDimensions getDimensions(net.minecraft.world.entity.Pose);
-  public com.google.common.collect.ImmutableList<net.minecraft.world.entity.Pose> getDismountPoses();
-  public net.minecraft.world.phys.AABB getLocalBoundsForPose(net.minecraft.world.entity.Pose);
-  public boolean canUsePortal(boolean);
-  public java.util.Optional<net.minecraft.core.BlockPos> getSleepingPos();
-  public void setSleepingPos(net.minecraft.core.BlockPos);
-  public void clearSleepingPos();
-  public boolean isSleeping();
-  public void startSleeping(net.minecraft.core.BlockPos);
-  public void stopSleeping();
-  public net.minecraft.core.Direction getBedOrientation();
-  public boolean isInWall();
-  public net.minecraft.world.item.ItemStack getProjectile(net.minecraft.world.item.ItemStack);
-  public void onEquippedItemBroken(net.minecraft.world.item.Item, net.minecraft.world.entity.EquipmentSlot);
-  public final boolean canEquipWithDispenser(net.minecraft.world.item.ItemStack);
-  public net.minecraft.world.entity.EquipmentSlot getEquipmentSlotForItem(net.minecraft.world.item.ItemStack);
-  public boolean isEquippableInSlot(net.minecraft.world.item.ItemStack, net.minecraft.world.entity.EquipmentSlot);
-  public net.minecraft.world.entity.SlotAccess getSlot(int);
-  public boolean canFreeze();
-  public boolean isCurrentlyGlowing();
-  public float getVisualRotationYInDegrees();
-  public void recreateFromPacket(net.minecraft.network.protocol.game.ClientboundAddEntityPacket);
-  public float getSecondsToDisableBlocking();
-  public float maxUpStep();
-  public net.minecraft.world.phys.Vec3 getPassengerRidingPosition(net.minecraft.world.entity.Entity);
-  public void igniteForTicks(int);
-  public boolean hasInfiniteMaterials();
-  public boolean isInvulnerableTo(net.minecraft.server.level.ServerLevel, net.minecraft.world.damagesource.DamageSource);
-  public static boolean canGlideUsing(net.minecraft.world.item.ItemStack, net.minecraft.world.entity.EquipmentSlot);
-  public int getLastHurtByPlayerMemoryTime();
-  public boolean isTransmittingWaypoint();
-  public java.util.Optional<net.minecraft.world.waypoints.WaypointTransmitter$Connection> makeWaypointConnectionWith(net.minecraft.server.level.ServerPlayer);
-  public net.minecraft.world.waypoints.Waypoint$Icon waypointIcon();
-  public net.minecraft.world.damagesource.DamageSource createDamageSource();
-}
-=== JAVAP net.minecraft.world.entity.Mob ===
-Compiled from "Mob.java"
-public abstract class net.minecraft.world.entity.Mob extends net.minecraft.world.entity.LivingEntity implements net.minecraft.world.entity.Targeting,net.minecraft.world.entity.EquipmentUser,net.minecraft.world.entity.Leashable {
-  public static final float MAX_WEARING_ARMOR_CHANCE;
-  public static final float WEARING_ARMOR_UPGRADE_MATERIAL_CHANCE;
-  public static final float WEARING_ARMOR_UPGRADE_MATERIAL_ATTEMPTS;
-  public static final float MAX_PICKUP_LOOT_CHANCE;
-  public static final float MAX_ENCHANTED_ARMOR_CHANCE;
-  public static final float MAX_ENCHANTED_WEAPON_CHANCE;
-  public static final int UPDATE_GOAL_SELECTOR_EVERY_N_TICKS;
-  public static final java.lang.String TAG_DROP_CHANCES;
-  public static final java.lang.String TAG_LEFT_HANDED;
-  public static final java.lang.String TAG_CAN_PICK_UP_LOOT;
-  public static final java.lang.String TAG_NO_AI;
-  public static final java.lang.String TAG_PERSISTENCE_REQUIRED;
-  public int ambientSoundTime;
-  public static net.minecraft.world.entity.ai.attributes.AttributeSupplier$Builder createMobAttributes();
-  public float getPathfindingMalus(net.minecraft.world.level.pathfinder.PathType);
-  public void setPathfindingMalus(net.minecraft.world.level.pathfinder.PathType, float);
-  public void onPathfindingStart();
-  public void onPathfindingDone();
-  public net.minecraft.world.entity.ai.control.LookControl getLookControl();
-  public net.minecraft.world.entity.ai.control.MoveControl getMoveControl();
-  public net.minecraft.world.entity.ai.control.JumpControl getJumpControl();
-  public net.minecraft.world.entity.ai.navigation.PathNavigation getNavigation();
-  public net.minecraft.world.entity.LivingEntity getControllingPassenger();
-  public net.minecraft.world.entity.ai.sensing.Sensing getSensing();
-  public net.minecraft.world.entity.LivingEntity getTarget();
-  public net.minecraft.world.entity.LivingEntity getTargetUnchecked();
-  public void setTarget(net.minecraft.world.entity.LivingEntity);
-  public boolean canAttack(net.minecraft.world.entity.LivingEntity);
-  public boolean canUseNonMeleeWeapon(net.minecraft.world.item.ItemStack);
-  public void ate();
-  public int getAmbientSoundInterval();
-  public void playAmbientSound();
-  public void baseTick();
-  public void spawnAnim();
-  public void handleEntityEvent(byte);
-  public void tick();
-  public final java.util.Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>> getLootTable();
-  public long getLootTableSeed();
-  public void setZza(float);
-  public void setYya(float);
-  public void setXxa(float);
-  public void setSpeed(float);
-  public void stopInPlace();
-  public void aiStep();
-  public net.minecraft.world.item.ItemStack equipItemIfPossible(net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack);
-  public void setGuaranteedDrop(net.minecraft.world.entity.EquipmentSlot);
-  public boolean canReplaceEqualItem(net.minecraft.world.item.ItemStack, net.minecraft.world.item.ItemStack);
-  public boolean canHoldItem(net.minecraft.world.item.ItemStack);
-  public boolean wantsToPickUp(net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack);
-  public net.minecraft.tags.TagKey<net.minecraft.world.item.Item> getPreferredWeaponType();
-  public boolean removeWhenFarAway(double);
-  public boolean requiresCustomPersistence();
-  public void checkDespawn();
-  public int getMaxHeadXRot();
-  public int getMaxHeadYRot();
-  public int getHeadRotSpeed();
-  public void lookAt(net.minecraft.world.entity.Entity, float, float);
-  public static boolean checkMobSpawnRules(net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.Mob>, net.minecraft.world.level.LevelAccessor, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.core.BlockPos, net.minecraft.util.RandomSource);
-  public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor, net.minecraft.world.entity.EntitySpawnReason);
-  public boolean checkSpawnObstruction(net.minecraft.world.level.LevelReader);
-  public int getMaxSpawnClusterSize();
-  public boolean isMaxGroupSizeReached(int);
-  public int getMaxFallDistance();
-  public net.minecraft.world.item.ItemStack getBodyArmorItem();
-  public boolean isSaddled();
-  public boolean isWearingBodyArmor();
-  public net.minecraft.world.Container createEquipmentSlotContainer(net.minecraft.world.entity.EquipmentSlot);
-  public net.minecraft.world.entity.DropChances getDropChances();
-  public void dropPreservedEquipment(net.minecraft.server.level.ServerLevel);
-  public java.util.Set<net.minecraft.world.entity.EquipmentSlot> dropPreservedEquipment(net.minecraft.server.level.ServerLevel, java.util.function.Predicate<net.minecraft.world.item.ItemStack>);
-  public void equip(net.minecraft.world.entity.EquipmentTable);
-  public void equip(net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>, java.util.Map<net.minecraft.world.entity.EquipmentSlot, java.lang.Float>);
-  public static net.minecraft.world.item.Item getEquipmentForSlot(net.minecraft.world.entity.EquipmentSlot, int);
-  public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor, net.minecraft.world.DifficultyInstance, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.world.entity.SpawnGroupData);
-  public void setPersistenceRequired();
-  public void setDropChance(net.minecraft.world.entity.EquipmentSlot, float);
-  public boolean canPickUpLoot();
-  public void setCanPickUpLoot(boolean);
-  public boolean isPersistenceRequired();
-  public net.minecraft.world.InteractionResult interact(net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand, net.minecraft.world.phys.Vec3);
-  public boolean isWithinHome();
-  public boolean isWithinHome(net.minecraft.core.BlockPos);
-  public boolean isWithinHome(net.minecraft.world.phys.Vec3);
-  public void setHomeTo(net.minecraft.core.BlockPos, int);
-  public net.minecraft.core.BlockPos getHomePosition();
-  public int getHomeRadius();
-  public void clearHome();
-  public boolean hasHome();
-  public <T extends net.minecraft.world.entity.Mob> T convertTo(net.minecraft.world.entity.EntityType<T>, net.minecraft.world.entity.ConversionParams, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.world.entity.ConversionParams$AfterConversion<T>);
-  public <T extends net.minecraft.world.entity.Mob> T convertTo(net.minecraft.world.entity.EntityType<T>, net.minecraft.world.entity.ConversionParams, net.minecraft.world.entity.ConversionParams$AfterConversion<T>);
-  public net.minecraft.world.entity.Leashable$LeashData getLeashData();
-  public void setLeashData(net.minecraft.world.entity.Leashable$LeashData);
-  public void onLeashRemoved();
-  public void leashTooFarBehaviour();
-  public boolean canBeLeashed();
-  public boolean startRiding(net.minecraft.world.entity.Entity, boolean, boolean);
-  public boolean isEffectiveAi();
-  public void setNoAi(boolean);
-  public void setLeftHanded(boolean);
-  public void setAggressive(boolean);
-  public boolean isNoAi();
-  public boolean isLeftHanded();
-  public boolean isAggressive();
-  public void setBaby(boolean);
-  public net.minecraft.world.entity.HumanoidArm getMainArm();
-  public boolean isWithinMeleeAttackRange(net.minecraft.world.entity.LivingEntity);
-  public boolean doHurtTarget(net.minecraft.server.level.ServerLevel, net.minecraft.world.entity.Entity);
-  public void removeFreeWill();
-  public net.minecraft.world.entity.ai.goal.GoalSelector getGoalSelector();
-  public void removeAllGoals(java.util.function.Predicate<net.minecraft.world.entity.ai.goal.Goal>);
-  public net.minecraft.world.item.ItemStack getPickResult();
-  public void registerDebugValues(net.minecraft.server.level.ServerLevel, net.minecraft.util.debug.DebugValueSource$Registration);
-  public float chargeSpeedModifier();
-}
-=== JAVAP net.minecraft.world.entity.EntityType ===
-Compiled from "EntityType.java"
-public class net.minecraft.world.entity.EntityType<T extends net.minecraft.world.entity.Entity> implements net.minecraft.world.level.entity.EntityTypeTest<net.minecraft.world.entity.Entity, T>, net.minecraft.world.flag.FeatureElement {
-  public static final com.mojang.serialization.Codec<net.minecraft.world.entity.EntityType<?>> CODEC;
-  public static final net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, net.minecraft.world.entity.EntityType<?>> STREAM_CODEC;
-  public static net.minecraft.resources.Identifier getKey(net.minecraft.world.entity.EntityType<?>);
-  public net.minecraft.world.entity.EntityType(net.minecraft.world.entity.EntityType$EntityFactory<T>, net.minecraft.world.entity.MobCategory, boolean, boolean, boolean, boolean, net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block>, net.minecraft.world.entity.EntityDimensions, float, int, int, java.lang.String, java.util.Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>>, net.minecraft.world.flag.FeatureFlagSet, boolean);
-  public T spawn(net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack, net.minecraft.world.entity.LivingEntity, net.minecraft.core.BlockPos, net.minecraft.world.entity.EntitySpawnReason, boolean, boolean);
-  public static <T extends net.minecraft.world.entity.Entity> net.minecraft.world.entity.PostSpawnProcessor<T> createDefaultStackConfig(net.minecraft.world.level.Level, net.minecraft.world.item.ItemStack, net.minecraft.world.entity.LivingEntity);
-  public static <T extends net.minecraft.world.entity.Entity> net.minecraft.world.entity.PostSpawnProcessor<T> appendDefaultStackConfig(net.minecraft.world.entity.PostSpawnProcessor<T>, net.minecraft.world.level.Level, net.minecraft.world.item.ItemStack, net.minecraft.world.entity.LivingEntity);
-  public static <T extends net.minecraft.world.entity.Entity> net.minecraft.world.entity.PostSpawnProcessor<T> appendComponentsConfig(net.minecraft.world.entity.PostSpawnProcessor<T>, net.minecraft.world.item.ItemStack);
-  public static <T extends net.minecraft.world.entity.Entity> net.minecraft.world.entity.PostSpawnProcessor<T> appendCustomEntityStackConfig(net.minecraft.world.entity.PostSpawnProcessor<T>, net.minecraft.world.level.Level, net.minecraft.world.item.ItemStack, net.minecraft.world.entity.LivingEntity);
-  public T spawn(net.minecraft.server.level.ServerLevel, net.minecraft.core.BlockPos, net.minecraft.world.entity.EntitySpawnReason);
-  public T spawn(net.minecraft.server.level.ServerLevel, net.minecraft.world.entity.PostSpawnProcessor<T>, net.minecraft.core.BlockPos, net.minecraft.world.entity.EntitySpawnReason, boolean, boolean);
-  public T create(net.minecraft.server.level.ServerLevel, net.minecraft.world.entity.PostSpawnProcessor<T>, net.minecraft.core.BlockPos, net.minecraft.world.entity.EntitySpawnReason, boolean, boolean);
-  public static void updateCustomEntityTag(net.minecraft.world.level.Level, net.minecraft.world.entity.LivingEntity, net.minecraft.world.entity.Entity, net.minecraft.world.item.component.TypedEntityData<net.minecraft.world.entity.EntityType<?>>);
-  public boolean canSerialize();
-  public boolean canSummon();
-  public boolean fireImmune();
-  public boolean canSpawnFarFromPlayer();
-  public net.minecraft.world.entity.MobCategory getCategory();
-  public java.lang.String getDescriptionId();
-  public net.minecraft.network.chat.Component getDescription();
-  public java.lang.String toString();
-  public java.lang.String toShortString();
-  public java.util.Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>> getDefaultLootTable();
-  public float getWidth();
-  public float getHeight();
-  public net.minecraft.world.flag.FeatureFlagSet requiredFeatures();
-  public boolean canSpawn(net.minecraft.world.level.Level);
-  public T create(net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnReason);
-  public T create(net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnRequest);
-  public static java.util.Optional<net.minecraft.world.entity.Entity> create(net.minecraft.world.level.storage.ValueInput, net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnRequest);
-  public static java.util.Optional<net.minecraft.world.entity.Entity> create(net.minecraft.world.entity.EntityType<?>, net.minecraft.world.level.storage.ValueInput, net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnReason);
-  public net.minecraft.world.phys.AABB getSpawnAABB(double, double, double);
-  public boolean isBlockDangerous(net.minecraft.world.level.block.state.BlockState);
-  public net.minecraft.world.entity.EntityDimensions getDimensions();
-  public static java.util.Optional<net.minecraft.world.entity.EntityType<?>> by(net.minecraft.world.level.storage.ValueInput);
-  public static net.minecraft.world.entity.Entity loadEntityRecursive(net.minecraft.nbt.CompoundTag, net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnRequest, net.minecraft.world.entity.EntityProcessor);
-  public static net.minecraft.world.entity.Entity loadEntityRecursive(net.minecraft.world.entity.EntityType<?>, net.minecraft.nbt.CompoundTag, net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.world.entity.EntityProcessor);
-  public static net.minecraft.world.entity.Entity loadEntityRecursive(net.minecraft.world.level.storage.ValueInput, net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.world.entity.EntityProcessor);
-  public static net.minecraft.world.entity.Entity loadEntityRecursive(net.minecraft.world.level.storage.ValueInput, net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnRequest, net.minecraft.world.entity.EntityProcessor);
-  public static net.minecraft.world.entity.Entity loadEntityRecursive(net.minecraft.world.entity.EntityType<?>, net.minecraft.world.level.storage.ValueInput, net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.world.entity.EntityProcessor);
-  public static java.util.stream.Stream<net.minecraft.world.entity.Entity> loadEntitiesRecursive(net.minecraft.world.level.storage.ValueInput$ValueInputList, net.minecraft.world.level.Level, net.minecraft.world.entity.EntitySpawnReason);
-  public int clientTrackingRange();
-  public int updateInterval();
-  public boolean trackDeltas();
-  public T tryCast(net.minecraft.world.entity.Entity);
-  public java.lang.Class<? extends net.minecraft.world.entity.Entity> getBaseClass();
-  public net.minecraft.core.Holder$Reference<net.minecraft.world.entity.EntityType<?>> builtInRegistryHolder();
-  public boolean isAllowedInPeaceful();
-  public boolean onlyOpCanSetNbt();
-  public java.lang.Object tryCast(java.lang.Object);
-}
-=== JAVAP net.minecraft.world.ContainerHelper ===
-Compiled from "ContainerHelper.java"
-public class net.minecraft.world.ContainerHelper {
-  public static final java.lang.String TAG_ITEMS;
-  public net.minecraft.world.ContainerHelper();
-  public static net.minecraft.world.item.ItemStack removeItem(java.util.List<net.minecraft.world.item.ItemStack>, int, int);
-  public static net.minecraft.world.item.ItemStack takeItem(java.util.List<net.minecraft.world.item.ItemStack>, int);
-  public static void saveAllItems(net.minecraft.world.level.storage.ValueOutput, net.minecraft.core.NonNullList<net.minecraft.world.item.ItemStack>);
-  public static void saveAllItems(net.minecraft.world.level.storage.ValueOutput, net.minecraft.core.NonNullList<net.minecraft.world.item.ItemStack>, boolean);
-  public static void loadAllItems(net.minecraft.world.level.storage.ValueInput, net.minecraft.core.NonNullList<net.minecraft.world.item.ItemStack>);
-  public static int clearOrCountMatchingItems(net.minecraft.world.Container, java.util.function.Predicate<net.minecraft.world.item.ItemStack>, int, boolean);
-  public static int clearOrCountMatchingItems(net.minecraft.world.item.ItemStack, java.util.function.Predicate<net.minecraft.world.item.ItemStack>, int, boolean);
-}
-=== JAVAP net.minecraft.resources.ResourceKey ===
-Compiled from "ResourceKey.java"
-public class net.minecraft.resources.ResourceKey<T> {
-  public static <T> com.mojang.serialization.Codec<net.minecraft.resources.ResourceKey<T>> codec(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<T>>);
-  public static <T> net.minecraft.network.codec.StreamCodec<io.netty.buffer.ByteBuf, net.minecraft.resources.ResourceKey<T>> streamCodec(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<T>>);
-  public static <T> net.minecraft.resources.ResourceKey<T> create(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<T>>, net.minecraft.resources.Identifier);
-  public static <T> net.minecraft.resources.ResourceKey<net.minecraft.core.Registry<T>> createRegistryKey(net.minecraft.resources.Identifier);
-  public java.lang.String toString();
-  public boolean isFor(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<?>>);
-  public <E> java.util.Optional<net.minecraft.resources.ResourceKey<E>> cast(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<E>>);
-  public <E> net.minecraft.resources.ResourceKey<E> dependent(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<E>>, java.lang.String);
-  public <E> net.minecraft.resources.ResourceKey<E> dependent(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<E>>, java.util.function.UnaryOperator<java.lang.String>);
-  public net.minecraft.resources.Identifier identifier();
-  public net.minecraft.resources.Identifier registry();
-  public net.minecraft.resources.ResourceKey<net.minecraft.core.Registry<T>> registryKey();
-}
-=== JAVAP net.minecraft.world.level.storage.ValueInput ===
-Compiled from "ValueInput.java"
-public interface net.minecraft.world.level.storage.ValueInput {
-  public abstract <T> java.util.Optional<T> read(java.lang.String, com.mojang.serialization.Codec<T>);
-  public abstract <T> java.util.Optional<T> read(com.mojang.serialization.MapCodec<T>);
-  public abstract java.util.Optional<net.minecraft.world.level.storage.ValueInput> child(java.lang.String);
-  public abstract net.minecraft.world.level.storage.ValueInput childOrEmpty(java.lang.String);
-  public abstract java.util.Optional<net.minecraft.world.level.storage.ValueInput$ValueInputList> childrenList(java.lang.String);
-  public abstract net.minecraft.world.level.storage.ValueInput$ValueInputList childrenListOrEmpty(java.lang.String);
-  public abstract <T> java.util.Optional<net.minecraft.world.level.storage.ValueInput$TypedInputList<T>> list(java.lang.String, com.mojang.serialization.Codec<T>);
-  public abstract <T> net.minecraft.world.level.storage.ValueInput$TypedInputList<T> listOrEmpty(java.lang.String, com.mojang.serialization.Codec<T>);
-  public abstract boolean getBooleanOr(java.lang.String, boolean);
-  public abstract byte getByteOr(java.lang.String, byte);
-  public abstract int getShortOr(java.lang.String, short);
-  public abstract java.util.Optional<java.lang.Integer> getInt(java.lang.String);
-  public abstract int getIntOr(java.lang.String, int);
-  public abstract long getLongOr(java.lang.String, long);
-  public abstract java.util.Optional<java.lang.Long> getLong(java.lang.String);
-  public abstract float getFloatOr(java.lang.String, float);
-  public abstract double getDoubleOr(java.lang.String, double);
-  public abstract java.util.Optional<java.lang.String> getString(java.lang.String);
-  public abstract java.lang.String getStringOr(java.lang.String, java.lang.String);
-  public abstract java.util.Optional<int[]> getIntArray(java.lang.String);
-  public abstract net.minecraft.core.HolderLookup$Provider lookup();
-}
-=== JAVAP net.minecraft.world.level.storage.ValueOutput ===
-Compiled from "ValueOutput.java"
-public interface net.minecraft.world.level.storage.ValueOutput {
-  public abstract <T> void store(java.lang.String, com.mojang.serialization.Codec<T>, T);
-  public abstract <T> void storeNullable(java.lang.String, com.mojang.serialization.Codec<T>, T);
-  public abstract <T> void store(com.mojang.serialization.MapCodec<T>, T);
-  public abstract void putBoolean(java.lang.String, boolean);
-  public abstract void putByte(java.lang.String, byte);
-  public abstract void putShort(java.lang.String, short);
-  public abstract void putInt(java.lang.String, int);
-  public abstract void putLong(java.lang.String, long);
-  public abstract void putFloat(java.lang.String, float);
-  public abstract void putDouble(java.lang.String, double);
-  public abstract void putString(java.lang.String, java.lang.String);
-  public abstract void putIntArray(java.lang.String, int[]);
-  public abstract net.minecraft.world.level.storage.ValueOutput child(java.lang.String);
-  public abstract net.minecraft.world.level.storage.ValueOutput$ValueOutputList childrenList(java.lang.String);
-  public abstract <T> net.minecraft.world.level.storage.ValueOutput$TypedOutputList<T> list(java.lang.String, com.mojang.serialization.Codec<T>);
-  public abstract void discard(java.lang.String);
-  public abstract boolean isEmpty();
-}
-=== JAVAP net.minecraft.world.item.crafting.RecipeSerializer ===
-Compiled from "RecipeSerializer.java"
-public final class net.minecraft.world.item.crafting.RecipeSerializer<T extends net.minecraft.world.item.crafting.Recipe<?>> extends java.lang.Record {
-  public net.minecraft.world.item.crafting.RecipeSerializer(com.mojang.serialization.MapCodec<T>, net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, T>);
-  public final java.lang.String toString();
-  public final int hashCode();
-  public final boolean equals(java.lang.Object);
-  public com.mojang.serialization.MapCodec<T> codec();
-  public net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, T> streamCodec();
-}
