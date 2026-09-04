@@ -11,7 +11,7 @@ public final class NaturalistClientGameTest implements FabricClientGameTest {
     @Override
     public void runTest(ClientGameTestContext context) {
         try (TestSingleplayerContext singleplayer = context.worldBuilder().create()) {
-            singleplayer.getClientWorld().waitForChunksRender();
+            singleplayer.getConnection().waitForChunksRender();
             System.out.println(WORLD_JOINED_MARKER);
         }
     }
