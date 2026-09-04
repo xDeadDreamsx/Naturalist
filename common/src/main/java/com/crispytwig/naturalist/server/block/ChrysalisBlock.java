@@ -28,6 +28,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.ScheduledTickAccess;
 
 @SuppressWarnings("unused")
 public class ChrysalisBlock extends HorizontalDirectionalBlock {
@@ -67,7 +69,7 @@ public class ChrysalisBlock extends HorizontalDirectionalBlock {
             Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.get().create(level, EntitySpawnReason.BREEDING);
             assert butterfly != null;
             MobVariantUtil.selectVariantForSpawn(level, pos, NaturalistMobVariants.BUTTERFLY_VARIANT).ifPresent(butterfly::setVariant);
-            butterfly.moveTo(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 0.0F, 0.0F);
+            butterfly.snapTo(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 0.0F, 0.0F);
             level.addFreshEntity(butterfly);
         }
     }
@@ -109,8 +111,8 @@ public class ChrysalisBlock extends HorizontalDirectionalBlock {
     }
 
     @Override
-    public @NotNull BlockState updateShape(BlockState state, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor level, @NotNull BlockPos currentPos, @NotNull BlockPos facingPos) {
-        return facing == state.getValue(FACING) && !state.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+    protected @NotNull BlockState updateShape(BlockState state, @NotNull LevelReader level, @NotNull ScheduledTickAccess ticks, @NotNull BlockPos currentPos, @NotNull Direction facing, @NotNull BlockPos facingPos, @NotNull BlockState facingState, @NotNull RandomSource random) {
+        return facing == state.getValue(FACING) && !state.canSurvive(level, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, level, ticks, currentPos, facing, facingPos, facingState, random);
     }
 
     @Override

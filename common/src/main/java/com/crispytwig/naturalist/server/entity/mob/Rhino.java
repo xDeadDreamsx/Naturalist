@@ -190,12 +190,12 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public void knockback(double strength, double x, double z) {
+    public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
         if (this.isBaby()) {
             double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
-            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
+            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z, source, sourceStrength);
         } else {
-            super.knockback(strength, x, z);
+            super.knockback(strength, x, z, source, sourceStrength);
         }
     }
 
@@ -204,7 +204,6 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
         return super.isImmobile() || this.stunnedTick > 0;
     }
 
-    @Override
     protected void blockedByShield(LivingEntity defender) {
         this.stunnedTick = 60;
         this.resetChargeCooldownTicks();
@@ -396,7 +395,7 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
             if (this.mob.horizontalCollision && this.mob.onGround()) {
                 this.mob.jumpFromGround();
             }
-            if (this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            if (this.mob.level() instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING)) {
                 AABB boundingBox = this.mob.getBoundingBox().inflate(0.2);
                 for (BlockPos pos : BlockPos.betweenClosed(Mth.floor(boundingBox.minX), Mth.floor(boundingBox.minY), Mth.floor(boundingBox.minZ), Mth.floor(boundingBox.maxX), Mth.floor(boundingBox.maxY), Mth.floor(boundingBox.maxZ))) {
                     BlockState state = this.mob.level().getBlockState(pos);
@@ -414,14 +413,17 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
         }
 
         protected void tryToHurt() {
-            List<LivingEntity> nearbyEntities = this.mob.level().getNearbyEntities(LivingEntity.class, TargetingConditions.forCombat(), this.mob, this.mob.getBoundingBox());
+            List<LivingEntity> nearbyEntities = this.mob.level().getEntitiesOfClass(LivingEntity.class, this.mob.getBoundingBox(), entity -> entity != this.mob);
             if (!nearbyEntities.isEmpty()) {
                 LivingEntity livingEntity = nearbyEntities.getFirst();
                 if (!(livingEntity instanceof Rhino)) {
-                    livingEntity.hurt(livingEntity.damageSources().mobAttack(this.mob), (float) this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
+                    DamageSource attackSource = livingEntity.damageSources().mobAttack(this.mob);
+                    if (this.mob.level() instanceof ServerLevel serverLevel) {
+                        livingEntity.hurtServer(serverLevel, attackSource, (float) this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
+                    }
                     float speed = Mth.clamp(this.mob.getSpeed() * 1.65f, 0.2f, 3.0f);
-                    float shieldBlockModifier = livingEntity.isDamageSourceBlocked(livingEntity.damageSources().mobAttack(this.mob)) ? 0.5f : 1.0f;
-                    livingEntity.knockback(shieldBlockModifier * speed * 2.0D, this.chargeDirection.x(), this.chargeDirection.z());
+                    float shieldBlockModifier = livingEntity.getItemBlockingWith() != null ? 0.5f : 1.0f;
+                    livingEntity.knockback(shieldBlockModifier * speed * 2.0D, this.chargeDirection.x(), this.chargeDirection.z(), attackSource, 0.0F);
                     double knockbackResistance = Math.max(0.0, 1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
                     livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(0.0, 0.4f * knockbackResistance, 0.0));
                     this.mob.swing(InteractionHand.MAIN_HAND);
@@ -437,7 +439,7 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
         private final Rhino rhino;
 
         public RhinoNearestAttackablePlayerTargetGoal(Rhino mob) {
-            super(mob, Player.class, 10, true, true, EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
+            super(mob, Player.class, 10, true, true, (entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));
             this.rhino = mob;
         }
 

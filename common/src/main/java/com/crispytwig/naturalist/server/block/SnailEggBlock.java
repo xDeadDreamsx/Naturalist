@@ -23,6 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.ScheduledTickAccess;
 
 @SuppressWarnings("unused")
 public class SnailEggBlock extends Block {
@@ -50,11 +52,11 @@ public class SnailEggBlock extends Block {
         return level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
     }
 
-    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
+    protected @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull LevelReader level, @NotNull ScheduledTickAccess ticks, @NotNull BlockPos pos, @NotNull Direction direction, @NotNull BlockPos neighborPos, @NotNull BlockState neighborState, @NotNull RandomSource random) {
         if (direction == Direction.DOWN && !canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        return super.updateShape(state, level, ticks, pos, direction, neighborPos, neighborState, random);
     }
 
     public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
@@ -85,7 +87,7 @@ public class SnailEggBlock extends Block {
             Snail snail = NaturalistEntityTypes.SNAIL.get().create(level, EntitySpawnReason.BREEDING);
             if (snail != null) {
                 double d = (double)pos.getX() + this.getRandomSnailPositionOffset(random);
-                snail.moveTo(d, pos.getY(), (double)pos.getZ() + this.getRandomSnailPositionOffset(random), (float)random.nextInt(1, 361), 0.0F);
+                snail.snapTo(d, pos.getY(), (double)pos.getZ() + this.getRandomSnailPositionOffset(random), (float)random.nextInt(1, 361), 0.0F);
                 snail.setPersistenceRequired();
                 snail.setAge(-6000);
                 level.addFreshEntity(snail);

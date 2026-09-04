@@ -493,7 +493,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
             }
             if (this.attackCooldown <= 0 && this.shark.isWithinMeleeAttackRange(target) && this.shark.getSensing().hasLineOfSight(target) && this.shark.isFacing(target)) {
                 this.shark.swing(InteractionHand.MAIN_HAND);
-                this.shark.doHurtTarget(target);
+                if (this.shark.level() instanceof ServerLevel serverLevel) { this.shark.doHurtTarget(serverLevel, target); }
                 this.attackCooldown = ATTACK_COOLDOWN;
                 this.startRetreat(target);
             } else if (this.shark.distanceToSqr(target) < FUMBLE_DIST_SQR) {

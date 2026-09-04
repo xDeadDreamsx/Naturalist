@@ -77,7 +77,8 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     private boolean followingOwner = true;
     private int huntingCooldown;
     @Nullable
-    private UUID persistentAngerTarget;
+    private EntityReference<LivingEntity> persistentAngerTarget;
+    private long persistentAngerEndTime = -1L;
 
     private int tongueTicks;
 
@@ -177,160 +178,29 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int time) {
-        this.entityData.set(REMAINING_ANGER_TIME, time);
+    public long getPersistentAngerEndTime() {
+        return this.persistentAngerEndTime;
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
-        return this.entityData.get(REMAINING_ANGER_TIME);
+    public void setPersistentAngerEndTime(long endTime) {
+        this.persistentAngerEndTime = endTime;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID target) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> target) {
         this.persistentAngerTarget = target;
     }
 
     @Nullable
     @Override
-    public UUID getPersistentAngerTarget() {
+    public EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.persistentAngerTarget;
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
-        super.addAdditionalSaveData(compound);
-        this.saveVariant(compound);
-        this.addPersistentAngerSaveData(compound);
-        FollowingPet.savePet(this, compound);
-        this.saveHuntingCooldown(compound);
-    }
-
-    @Override
-    public void readAdditionalSaveData(@NotNull ValueInput compound) {
-        super.readAdditionalSaveData(compound);
-        this.loadVariant(compound);
-        this.readPersistentAngerSaveData(this.level(), compound);
-        FollowingPet.loadPet(this, compound);
-        this.loadHuntingCooldown(compound);
-    }
-    //endregion
-
-    //region Spawning
-    public static boolean checkSnakeSpawnRules(EntityType<Snake> entityType, LevelAccessor level, EntitySpawnReason type, BlockPos pos, RandomSource random) {
-        return level.getBlockState(pos.below()).is(BlockTags.DIRT) && isBrightEnoughToSpawn(level, pos);
-    }
-
-    @Override
-    public @NotNull SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty, @NotNull EntitySpawnReason reason, @Nullable SpawnGroupData spawnData) {
-        this.selectVariantForSpawn(level);
-        this.populateDefaultEquipmentSlots(random, difficulty);
-        return super.finalizeSpawn(level, difficulty, reason, spawnData);
-    }
-
-    @Override
-    protected void populateDefaultEquipmentSlots(@NotNull RandomSource random, @NotNull DifficultyInstance difficulty) {
-        if (random.nextFloat() < 0.2F) {
-            float chance = random.nextFloat();
-            ItemStack stack;
-            if (chance < 0.05F) {
-                stack = new ItemStack(Items.RABBIT_FOOT);
-            } else if (chance < 0.1F) {
-                stack = new ItemStack(Items.SLIME_BALL);
-            } else if (chance < 0.15F) {
-                stack = new ItemStack(Items.FEATHER);
-            } else if (chance < 0.3F) {
-                stack = new ItemStack(Items.RABBIT);
-            } else {
-                stack = new ItemStack(Items.CHICKEN);
-            }
-
-            this.setItemSlot(EquipmentSlot.MAINHAND, stack);
-        }
-    }
-
-    @Override
-    public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
-    }
-
-    public boolean isTameFood(ItemStack stack) {
-        return TAME_ITEMS.test(stack);
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        return null;
-    }
-    //endregion
-
-    //region Behavior
-    @Override
-    protected void registerGoals() {
-        super.registerGoals();
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(1, new SnakeMeleeAttackGoal(this, 1.75D, true));
-        this.goalSelector.addGoal(2, new SearchForItemsGoal(this, 1.2F, FOOD_ITEMS, 8.0D, 8.0D));
-        this.goalSelector.addGoal(3, new SleepGoal<>(this));
-        this.goalSelector.addGoal(4, new PetFollowOwnerGoal(this, 1.2D, 10.0F, 2.0F));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, (livingEntity, level) -> this.canHunt() && (livingEntity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny()))));
-        this.targetSelector.addGoal(6, new ResetUniversalAngerTargetGoal<>(this, false));
-    }
-
-    @Override
-    public boolean wantsToAttack(@NotNull LivingEntity target, @NotNull LivingEntity owner) {
-        return PetTargeting.wantsToAttack(target, owner);
-    }
-
-    @Override
-    protected float getClimbSpeedMultiplier() {
-        return 0.5F;
-    }
-
-    @Override
-    public float getSpeed() {
-        return this.getMainHandItem().isEmpty() ? super.getSpeed() : super.getSpeed() * 0.5F;
-    }
-
-    @Override
-    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
-        if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide()) {
-            ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());
-            itemEntity.setPickUpDelay(80);
-            itemEntity.setThrower(this);
-            this.playSound(SoundEvents.FOX_SPIT, 1.0F, 1.0F);
-            this.level().addFreshEntity(itemEntity);
-            this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-        }
-        return super.hurtServer(level, source, amount);
-    }
-
-    @Override
-    public boolean doHurtTarget(ServerLevel level, @NotNull Entity entity) {
-        if (this.isVenomous() && entity instanceof LivingEntity living) {
-            living.addEffect(new MobEffectInstance(MobEffects.POISON, 40));
-        }
-        return super.doHurtTarget(level, entity);
-    }
-
-    @Override
-    public boolean canAttack(@NotNull LivingEntity target) {
-        return PetTargeting.protectsOwnedPet(this, target) && super.canAttack(target);
-    }
-
-    @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+        this.setTimeToRemainAngry(PERSISTENT_ANGER_TIME.sample(this.random));
     }
 
     @Override
@@ -389,22 +259,18 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     }
 
     @Override
-    public boolean canTakeItem(@NotNull ItemStack itemStack) {
+    public boolean wantsToPickUp(@NotNull ServerLevel level, @NotNull ItemStack itemStack) {
         EquipmentSlot slot = getEquipmentSlotForItem(itemStack);
-        if (!this.getItemBySlot(slot).isEmpty()) {
-            return false;
-        } else {
-            return slot == EquipmentSlot.MAINHAND && super.canTakeItem(itemStack);
-        }
+        return slot == EquipmentSlot.MAINHAND && this.getItemBySlot(slot).isEmpty() && FOOD_ITEMS.test(itemStack);
     }
 
     @Override
-    protected void pickUpItem(@NotNull ItemEntity itemEntity) {
+    protected void pickUpItem(@NotNull ServerLevel level, @NotNull ItemEntity itemEntity) {
         ItemStack stack = itemEntity.getItem();
         if (this.getMainHandItem().isEmpty() && FOOD_ITEMS.test(stack)) {
             this.onItemPickup(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, stack);
-            this.handDropChances[EquipmentSlot.MAINHAND.getIndex()] = 2.0F;
+            this.setGuaranteedDrop(EquipmentSlot.MAINHAND);
             this.take(itemEntity, stack.getCount());
             itemEntity.discard();
         }
@@ -456,17 +322,15 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public boolean canSleep() {
-        long dayTime = this.level().getDayTime();
         if (this.isAngry() || this.level().isWaterAt(this.blockPosition())) {
             return false;
-        } else if (dayTime > 18000 && dayTime < 23000) {
-            return false;
-        } else return dayTime > 12000 && dayTime < 28000;
+        }
+        return !this.level().isBrightOutside();
     }
 
     private boolean canRattle() {
         boolean rattlesnake = this.isRattlesnake();
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
         if(!players.isEmpty() && rattlesnake && !players.getFirst().isCreative()){
             this.setTarget(players.getFirst());
         } else {

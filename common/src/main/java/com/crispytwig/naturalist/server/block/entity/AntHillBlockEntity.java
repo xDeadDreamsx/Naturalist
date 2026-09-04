@@ -20,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class AntHillBlockEntity extends BlockEntity {
     private static final int POLL_INTERVAL = 10;
@@ -55,19 +58,19 @@ public class AntHillBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
         if (this.owner != null) {
-            tag.putUUID("Owner", this.owner);
+            output.putIntArray("Owner", UUIDUtil.uuidToIntArray(this.owner));
         }
-        tag.put("Storage", this.storage.createTag(registries));
+        this.storage.storeAsItemList(output.list("Storage", ItemStack.CODEC));
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.owner = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
-        this.storage.fromTag(tag.getList("Storage", Tag.TAG_COMPOUND), registries);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        this.owner = input.getIntArray("Owner").filter(a -> a.length == 4).map(UUIDUtil::uuidFromIntArray).orElse(null);
+        this.storage.fromItemList(input.listOrEmpty("Storage", ItemStack.CODEC));
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, AntHillBlockEntity hill) {

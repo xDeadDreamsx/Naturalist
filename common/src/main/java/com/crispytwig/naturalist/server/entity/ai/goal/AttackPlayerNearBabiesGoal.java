@@ -9,7 +9,7 @@ public class AttackPlayerNearBabiesGoal extends NearestAttackableTargetGoal<Play
     private final float followDistanceMultiplier;
 
     public AttackPlayerNearBabiesGoal(Mob mob, float followDistanceMultiplier) {
-        super(mob, Player.class, 10, true, true, EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
+        super(mob, Player.class, 10, true, true, (entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));
         this.followDistanceMultiplier = followDistanceMultiplier;
     }
 

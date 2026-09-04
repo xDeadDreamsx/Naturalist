@@ -23,6 +23,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 @SuppressWarnings("unused")
 public class OstrichEggBlock extends TurtleEggBlock {
@@ -48,7 +49,7 @@ public class OstrichEggBlock extends TurtleEggBlock {
             Ostrich baby = NaturalistEntityTypes.OSTRICH.get().create(level, EntitySpawnReason.BREEDING);
             if (baby != null) {
                 baby.setAge(-24000);
-                baby.moveTo(pos.getX() + 0.3, pos.getY(), pos.getZ() + 0.3, 0.0F, 0.0F);
+                baby.snapTo(pos.getX() + 0.3, pos.getY(), pos.getZ() + 0.3, 0.0F, 0.0F);
                 level.addFreshEntity(baby);
             }
         }
@@ -116,7 +117,7 @@ public class OstrichEggBlock extends TurtleEggBlock {
         if (!(entity instanceof LivingEntity)) {
             return false;
         }
-        return entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+        return entity instanceof Player || (level instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING));
     }
 
     @Override

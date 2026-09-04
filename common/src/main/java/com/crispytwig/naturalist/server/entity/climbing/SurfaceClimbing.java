@@ -13,6 +13,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Vector3f;
 
 import java.util.*;
+import org.joml.Vector3fc;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class SurfaceClimbing {
     //region Data
@@ -23,7 +26,7 @@ public class SurfaceClimbing {
     private static final double WALL_NORMAL_Y = 0.9D;
 
     private final Mob mob;
-    private final EntityDataAccessor<Vector3f> normalData;
+    private final EntityDataAccessor<Vector3fc> normalData;
 
     private Vec3 normal = UP;
     private boolean attached = true;
@@ -47,7 +50,7 @@ public class SurfaceClimbing {
     private Vec3 smoothedVelocity = Vec3.ZERO;
     private final List<AABB> sampleBoxes = new ArrayList<>();
 
-    public SurfaceClimbing(Mob mob, EntityDataAccessor<Vector3f> normalData) {
+    public SurfaceClimbing(Mob mob, EntityDataAccessor<Vector3fc> normalData) {
         this.mob = mob;
         this.normalData = normalData;
     }
@@ -97,7 +100,7 @@ public class SurfaceClimbing {
             this.mob.resetFallDistance();
         }
         Vec3 synced = this.attached ? this.normal : UP;
-        Vector3f current = this.mob.getEntityData().get(this.normalData);
+        Vector3fc current = this.mob.getEntityData().get(this.normalData);
         if (current.x() != (float) synced.x || current.y() != (float) synced.y || current.z() != (float) synced.z) {
             this.mob.getEntityData().set(this.normalData, synced.toVector3f());
         }
@@ -397,9 +400,27 @@ public class SurfaceClimbing {
         }
     }
 
+    public void save(ValueOutput output) {
+        if (this.attached) {
+            output.putFloat("ClimbNormalX", (float) this.normal.x);
+            output.putFloat("ClimbNormalY", (float) this.normal.y);
+            output.putFloat("ClimbNormalZ", (float) this.normal.z);
+        }
+    }
+
+    public void load(ValueInput input) {
+        float y = input.getFloatOr("ClimbNormalY", Float.NaN);
+        if (!Float.isNaN(y)) {
+            Vec3 loaded = new Vec3(input.getFloatOr("ClimbNormalX", 0.0F), y, input.getFloatOr("ClimbNormalZ", 0.0F));
+            this.normal = loaded.lengthSqr() > 1.0E-4D ? loaded.normalize() : UP;
+            this.attached = true;
+            this.grace = GRACE_TICKS;
+        }
+    }
+
     public void load(CompoundTag tag) {
         if (tag.contains("ClimbNormalY")) {
-            Vec3 loaded = new Vec3(tag.getFloat("ClimbNormalX"), tag.getFloat("ClimbNormalY"), tag.getFloat("ClimbNormalZ"));
+            Vec3 loaded = new Vec3(tag.getFloatOr("ClimbNormalX", 0.0F), tag.getFloatOr("ClimbNormalY", 1.0F), tag.getFloatOr("ClimbNormalZ", 0.0F));
             this.normal = loaded.lengthSqr() > 1.0E-4D ? loaded.normalize() : UP;
             this.attached = true;
             this.grace = GRACE_TICKS;

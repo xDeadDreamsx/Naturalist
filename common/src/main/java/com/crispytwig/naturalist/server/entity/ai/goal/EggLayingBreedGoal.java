@@ -41,7 +41,7 @@ public class EggLayingBreedGoal<T extends Animal & EggLayingAnimal> extends Bree
         this.animal.resetLove();
         this.partner.resetLove();
         RandomSource randomSource = this.animal.getRandom();
-        if (this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+        if (this.level.getGameRules().get(GameRules.MOB_DROPS)) {
             this.level.addFreshEntity(new ExperienceOrb(this.level, this.animal.getX(), this.animal.getY(), this.animal.getZ(), randomSource.nextInt(7) + 1));
         }
     }

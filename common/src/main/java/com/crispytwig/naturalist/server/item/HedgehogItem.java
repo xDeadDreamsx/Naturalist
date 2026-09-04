@@ -51,7 +51,7 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
 
     private static float getStoredHealth(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        return tag.contains("Health", 99) ? tag.getFloat("Health") : MAX_HEALTH;
+        return tag.getFloatOr("Health", MAX_HEALTH);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
                 return InteractionResult.PASS;
             }
             Vec3 look = player.getLookAngle();
-            hedgehog.moveTo(player.getX() + look.x * 0.6, player.getEyeY() - 0.3 + look.y * 0.6, player.getZ() + look.z * 0.6, player.getYRot(), 0.0F);
+            hedgehog.snapTo(player.getX() + look.x * 0.6, player.getEyeY() - 0.3 + look.y * 0.6, player.getZ() + look.z * 0.6, player.getYRot(), 0.0F);
             hedgehog.loadFromHandTag(stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag());
             if (stack.has(DataComponents.CUSTOM_NAME)) {
                 hedgehog.setCustomName(stack.getHoverName());
@@ -120,7 +120,7 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
         }
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 0.5F, 0.9F);
         player.awardStat(Stats.ITEM_USED.get(this));
-        player.getCooldowns().addCooldown(this, 20);
+        player.getCooldowns().addCooldown(stack, 20);
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }

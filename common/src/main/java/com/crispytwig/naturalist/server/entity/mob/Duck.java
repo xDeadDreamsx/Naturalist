@@ -326,7 +326,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     }
 
     @Override
-    public int getBaseExperienceReward() {
+    protected int getBaseExperienceReward(ServerLevel level) {
         return 10;
     }
 
@@ -382,7 +382,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
         this.flap += this.flapping * 2.0F;
         if (!this.level().isClientSide() && this.isAlive() && !this.isBaby() && --this.eggTime <= 0) {
             this.playSound(SoundEvents.CHICKEN_EGG, 1.0F, NaturalistAnimal.defaultVoicePitch(this.random));
-            this.spawnAtLocation(NaturalistRegistry.DUCK_EGG.get());
+            if (this.level() instanceof ServerLevel serverLevel) { this.spawnAtLocation(serverLevel, NaturalistRegistry.DUCK_EGG.get()); }
             this.gameEvent(GameEvent.ENTITY_PLACE);
             this.eggTime = this.random.nextInt(6000) + 6000;
         }

@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 @SuppressWarnings("unused")
 public class TortoiseEggBlock extends TurtleEggBlock {
@@ -51,7 +52,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
 
     @Override
     public @NotNull ItemStack getCloneItemStack(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        ItemStack stack = super.getCloneItemStack(level, pos, state);
+        ItemStack stack = super.getCloneItemStack(level, pos, state, true);
         CompoundTag tag = new CompoundTag();
         tag.putInt(DataDrivenVariantAnimal.VARIANT_TAG, state.getValue(VARIANT));
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -80,7 +81,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
                 if (baby != null) {
                     baby.setVariantByLegacyIndex(variant);
                     baby.setAge(-24000);
-                    baby.moveTo(pos.getX() + 0.3 + i * 0.2, pos.getY(), pos.getZ() + 0.3, 0.0F, 0.0F);
+                    baby.snapTo(pos.getX() + 0.3 + i * 0.2, pos.getY(), pos.getZ() + 0.3, 0.0F, 0.0F);
                     level.addFreshEntity(baby);
                 }
             }
@@ -95,7 +96,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     }
 
     private boolean shouldUpdateHatchLevel(@NotNull Level level) {
-        float timeOfDay = level.getTimeOfDay(1.0F);
+        float timeOfDay = level.isBrightOutside() ? 0.25F : 0.75F;
         return timeOfDay < 0.69F && timeOfDay > 0.65F || level.getRandom().nextInt(500) == 0;
     }
 
@@ -143,7 +144,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
                 if (baby != null) {
                     baby.setVariantByLegacyIndex(variant);
                     baby.setAge(-24000);
-                    baby.moveTo(pos.getX() + 0.3 + i * 0.2, pos.getY(), pos.getZ() + 0.3, 0F, 0F);
+                    baby.snapTo(pos.getX() + 0.3 + i * 0.2, pos.getY(), pos.getZ() + 0.3, 0F, 0F);
                     level.addFreshEntity(baby);
                 }
             }
@@ -155,7 +156,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
             if (!(entity instanceof LivingEntity)) {
                 return false;
             } else {
-                return entity instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+                return entity instanceof Player || (level instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING));
             }
         } else {
             return false;

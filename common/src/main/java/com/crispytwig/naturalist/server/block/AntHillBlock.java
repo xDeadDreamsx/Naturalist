@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class AntHillBlock extends Block implements EntityBlock {
     public static final int MAX_WORKERS = 3;
@@ -175,7 +176,7 @@ public class AntHillBlock extends Block implements EntityBlock {
         if (ant == null) {
             return null;
         }
-        ant.moveTo(pos.getX() + 0.25D + random.nextDouble() * 0.5D, pos.getY(), pos.getZ() + 0.25D + random.nextDouble() * 0.5D, random.nextFloat() * 360.0F, 0.0F);
+        ant.snapTo(pos.getX() + 0.25D + random.nextDouble() * 0.5D, pos.getY(), pos.getZ() + 0.25D + random.nextDouble() * 0.5D, random.nextFloat() * 360.0F, 0.0F);
         ant.startHillCooldown();
         if (owner != null) {
             ant.setTame(true, false);

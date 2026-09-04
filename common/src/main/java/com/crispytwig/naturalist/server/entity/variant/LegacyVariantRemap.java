@@ -21,10 +21,10 @@ public final class LegacyVariantRemap {
     }
 
     public static void apply(CompoundTag tag) {
-        if (tag == null || !tag.contains("id", Tag.TAG_STRING)) {
+        if (tag == null || tag.getString("id").isEmpty()) {
             return;
         }
-        String id = tag.getString("id");
+        String id = tag.getStringOr("id", "");
         if (!id.startsWith("naturalist:")) {
             return;
         }

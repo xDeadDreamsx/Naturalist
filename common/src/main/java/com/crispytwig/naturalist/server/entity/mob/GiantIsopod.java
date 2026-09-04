@@ -266,8 +266,8 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
     }
 
     @Override
-    public void knockback(double strength, double x, double z) {
-        super.knockback(this.canHide() ? strength * 0.25D : strength, x, z);
+    public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
+        super.knockback(this.canHide() ? strength * 0.25D : strength, x, z, source, sourceStrength);
     }
 
     @Override

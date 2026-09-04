@@ -215,7 +215,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
 
     private void onTransform() {
         if (this.level() instanceof ServerLevel serverLevel) {
-            ItemParticleOption particle = new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(NaturalistRegistry.BLOBFISH.get()));
+            ItemParticleOption particle = new ItemParticleOption(ParticleTypes.ITEM, NaturalistRegistry.BLOBFISH.get());
             for (int i = 0; i < 16; i++) {
                 serverLevel.sendParticles(particle, this.getRandomX(1.0), this.getRandomY(), this.getRandomZ(1.0), 1, 0.0, 0.0, 0.0, 0.05);
             }

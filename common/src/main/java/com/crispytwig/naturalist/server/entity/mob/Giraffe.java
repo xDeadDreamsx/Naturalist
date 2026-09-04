@@ -163,14 +163,9 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
         float f = livingEntity.xxa * 0.5f;
         float g = livingEntity.zza;
 
-        if (this.isControlledByLocalInstance()) {
-            this.setSpeed((float)this.getAttributeValue(Attributes.MOVEMENT_SPEED));
-            super.travel(new Vec3(f, travelVector.y, g));
-        } else if (livingEntity instanceof Player) {
-            this.setDeltaMovement(Vec3.ZERO);
-        }
+        this.setSpeed((float)this.getAttributeValue(Attributes.MOVEMENT_SPEED));
+        super.travel(new Vec3(f, travelVector.y, g));
         this.calculateEntityAnimation(false);
-        this.tryCheckInsideBlocks();
     }
 
     @Override

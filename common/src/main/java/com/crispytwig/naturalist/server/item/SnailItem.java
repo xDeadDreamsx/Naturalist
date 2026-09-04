@@ -25,8 +25,8 @@ public class SnailItem extends CaughtMobItem {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (tag.contains("Color", 3)) {
-            Snail.Color color = Snail.Color.getTypeById(tag.getInt("Color"));
+        if (tag.contains("Color")) {
+            Snail.Color color = Snail.Color.getTypeById(tag.getIntOr("Color", 0));
             tooltip.add(Component.translatable(String.format("item.minecraft.firework_star.%s", color.toString().toLowerCase())).withStyle(ChatFormatting.GRAY));
         }
     }

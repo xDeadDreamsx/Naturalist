@@ -88,6 +88,7 @@ import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityReference;
 
 public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
     //region Data
@@ -111,9 +112,9 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     private long hideCacheTick = -1L;
 
     private final Set<BlockPos> ownedEggs = new LinkedHashSet<>();
-    private int remainingPersistentAngerTime;
+    private long persistentAngerEndTime = -1L;
     @Nullable
-    private UUID persistentAngerTarget;
+    private EntityReference<LivingEntity> persistentAngerTarget;
 
     private final AnimationTimer attackAnimTimer = new AnimationTimer(9);
 
@@ -256,29 +257,29 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int time) {
-        this.remainingPersistentAngerTime = time;
+    public long getPersistentAngerEndTime() {
+        return this.persistentAngerEndTime;
     }
 
     @Override
-    public int getRemainingPersistentAngerTime() {
-        return this.remainingPersistentAngerTime;
+    public void setPersistentAngerEndTime(long endTime) {
+        this.persistentAngerEndTime = endTime;
     }
 
     @Override
-    public void setPersistentAngerTarget(@Nullable UUID target) {
+    public void setPersistentAngerTarget(@Nullable EntityReference<LivingEntity> target) {
         this.persistentAngerTarget = target;
     }
 
     @Nullable
     @Override
-    public UUID getPersistentAngerTarget() {
+    public EntityReference<LivingEntity> getPersistentAngerTarget() {
         return this.persistentAngerTarget;
     }
 
     @Override
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+        this.setTimeToRemainAngry(PERSISTENT_ANGER_TIME.sample(this.random));
     }
 
     @Override
@@ -316,7 +317,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         if (this.isTame() || this.isBaby() || !this.canAttack(culprit)) {
             return;
         }
-        this.setPersistentAngerTarget(culprit.getUUID());
+        this.setPersistentAngerTarget(EntityReference.of(culprit));
         this.startPersistentAngerTimer();
         this.setTarget(culprit);
     }
@@ -331,12 +332,10 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         this.saveVariant(compound);
         compound.putBoolean("Saddled", this.isSaddled());
         compound.putBoolean("HasEgg", this.hasEgg());
-        long[] eggs = new long[this.ownedEggs.size()];
-        int i = 0;
+        ValueOutput.TypedOutputList<BlockPos> eggs = compound.list("OwnedEggs", BlockPos.CODEC);
         for (BlockPos pos : this.ownedEggs) {
-            eggs[i++] = pos.asLong();
+            eggs.add(pos);
         }
-        compound.putLongArray("OwnedEggs", eggs);
         this.addPersistentAngerSaveData(compound);
         DyeableAnimal.saveDye(this, compound);
         FollowingPet.savePet(this, compound);
@@ -349,8 +348,8 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         this.setSaddled(compound.getBooleanOr("Saddled", false));
         this.setHasEgg(compound.getBooleanOr("HasEgg", false));
         this.ownedEggs.clear();
-        for (long packed : compound.getLongArray("OwnedEggs")) {
-            this.ownedEggs.add(BlockPos.of(packed));
+        for (BlockPos pos : compound.listOrEmpty("OwnedEggs", BlockPos.CODEC)) {
+            this.ownedEggs.add(pos.immutable());
         }
         this.readPersistentAngerSaveData(this.level(), compound);
         DyeableAnimal.loadDye(this, compound);
@@ -435,10 +434,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         if (this.isTame() || this.isBaby() || this.isAggressive() || this.isVehicle()) {
             return false;
         }
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(16.0D)
-                        .selector((livingEntity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity)
-                                && !livingEntity.isDiscrete() && !livingEntity.isHolding(FOOD_ITEMS)),
-                this, this.getBoundingBox().inflate(16.0D, 8.0D, 16.0D));
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(16.0D), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
         return !players.isEmpty();
     }
 

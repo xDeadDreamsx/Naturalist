@@ -246,8 +246,8 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource source) {
-        return source.equals(this.damageSources().cactus()) || super.isInvulnerableTo(source);
+    public boolean isInvulnerableTo(ServerLevel level, DamageSource source) {
+        return source.equals(this.damageSources().cactus()) || super.isInvulnerableTo(level, source);
     }
 
     public void startle(@Nullable Vec3 fleeFrom) {
@@ -268,7 +268,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public boolean canTakeItem(@NotNull ItemStack itemStack) {
+    public boolean wantsToPickUp(@NotNull ServerLevel level, @NotNull ItemStack itemStack) {
         return !FOOD_ITEMS.test(this.getMainHandItem());
     }
 
@@ -278,7 +278,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     }
 
     @Override
-    protected void pickUpItem(ItemEntity itemEntity) {
+    protected void pickUpItem(ServerLevel level, ItemEntity itemEntity) {
         ItemStack itemstack = itemEntity.getItem();
         if (this.canHoldItem(itemstack)) {
             if (!this.getMainHandItem().isEmpty() && !FOOD_ITEMS.test(this.getMainHandItem())) {

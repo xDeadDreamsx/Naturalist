@@ -20,17 +20,17 @@ public class ThrownDuckEgg extends ThrowableItemProjectile {
     }
 
     public ThrownDuckEgg(Level level, LivingEntity livingEntity) {
-        super(NaturalistEntityTypes.DUCK_EGG.get(), livingEntity, level);
+        super(NaturalistEntityTypes.DUCK_EGG.get(), livingEntity, level, new ItemStack(NaturalistRegistry.DUCK_EGG.get()));
     }
 
     public ThrownDuckEgg(@NotNull Level level, double d, double e, double f) {
-        super(NaturalistEntityTypes.DUCK_EGG.get(), d, e, f, level);
+        super(NaturalistEntityTypes.DUCK_EGG.get(), d, e, f, level, new ItemStack(NaturalistRegistry.DUCK_EGG.get()));
     }
 
     public void handleEntityEvent(byte id) {
         if (id == 3) {
             for(int i = 0; i < 8; ++i) {
-                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getItem()), this.getX(), this.getY(), this.getZ(), ((double)this.random.nextFloat() - 0.5) * 0.08, ((double)this.random.nextFloat() - 0.5) * 0.08, ((double)this.random.nextFloat() - 0.5) * 0.08);
+                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getItem().getItem()), this.getX(), this.getY(), this.getZ(), ((double)this.random.nextFloat() - 0.5) * 0.08, ((double)this.random.nextFloat() - 0.5) * 0.08, ((double)this.random.nextFloat() - 0.5) * 0.08);
             }
         }
 
@@ -52,10 +52,10 @@ public class ThrownDuckEgg extends ThrowableItemProjectile {
                 }
 
                 for (int j = 0; j < i; ++j) {
-                    Duck duck = NaturalistEntityTypes.DUCK.get().create(this.level());
+                    Duck duck = NaturalistEntityTypes.DUCK.get().create(this.level(), EntitySpawnReason.BREEDING);
                     assert duck != null;
                     duck.setAge(-24000);
-                    duck.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+                    duck.snapTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
                     this.level().addFreshEntity(duck);
                 }
             }

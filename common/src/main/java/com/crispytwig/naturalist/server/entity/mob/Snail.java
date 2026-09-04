@@ -58,6 +58,7 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import java.util.*;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import org.joml.Vector3fc;
 
 @SuppressWarnings("unused")
 public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, EggLayingAnimal, DataDrivenVariantAnimal, SurfaceCrawler {
@@ -69,7 +70,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> LAYING_EGG = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Vector3f> ATTACH_NORMAL = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.VECTOR3);
+    private static final EntityDataAccessor<Vector3fc> ATTACH_NORMAL = SynchedEntityData.defineId(Snail.class, EntityDataSerializers.VECTOR3);
 
     int layEggCounter;
     int slimeBallTime;
@@ -232,8 +233,8 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     public void loadFromHandTag(@NotNull CompoundTag tag) {
         Catchable.loadDefaultDataFromHandTag(this, tag);
         this.loadVariant(tag);
-        if (tag.contains("Color", 3)) {
-            int i = tag.getInt("Color");
+        if (tag.contains("Color")) {
+            int i = tag.getIntOr("Color", 0);
             if (i >= 0 && i < Snail.Color.BY_ID.length) {
                 this.setSnailColor(Snail.Color.BY_ID[i]);
             }
@@ -362,13 +363,13 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
 
     @Override
     public boolean canHide() {
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
         return !players.isEmpty();
     }
 
     @Override
-    public void knockback(double strength, double x, double z) {
-        super.knockback(this.canHide() ? strength / 4 : strength, x, z);
+    public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
+        super.knockback(this.canHide() ? strength / 4 : strength, x, z, source, sourceStrength);
     }
 
     @Override
@@ -400,7 +401,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
         this.checkCrush();
         if (!this.level().isClientSide() && this.isAlive() && !this.isBaby() && --this.slimeBallTime <= 0) {
             this.playSound(SoundEvents.SLIME_SQUISH_SMALL, 1.0F, NaturalistAnimal.defaultVoicePitch(this.random));
-            this.spawnAtLocation(Items.SLIME_BALL);
+            if (this.level() instanceof ServerLevel serverLevel) { this.spawnAtLocation(serverLevel, Items.SLIME_BALL); }
             this.slimeBallTime = this.random.nextInt(1200) + 12000;
         }
     }

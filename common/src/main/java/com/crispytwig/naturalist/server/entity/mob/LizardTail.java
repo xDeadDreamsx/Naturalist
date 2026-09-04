@@ -103,7 +103,7 @@ public class LizardTail extends Mob implements DataDrivenVariantAnimal {
             this.setDeltaMovement(this.getDeltaMovement().add((this.random.nextFloat() * 2.0f - 1.0f) * 0.05f, 0.4f, (this.random.nextFloat() * 2.0f - 1.0f) * 0.05f));
             this.setOnGround(false);
             this.needsSync = true;
-            this.playSound(SoundEvents.SALMON_FLOP.value(), this.getSoundVolume(), this.getVoicePitch());
+            this.playSound(SoundEvents.SALMON_FLOP, this.getSoundVolume(), this.getVoicePitch());
         }
     }
     //endregion

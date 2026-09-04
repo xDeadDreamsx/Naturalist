@@ -276,7 +276,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     @Override
-    public int getBaseExperienceReward() {
+    protected int getBaseExperienceReward(ServerLevel level) {
         return 1 + this.random.nextInt(3);
     }
 

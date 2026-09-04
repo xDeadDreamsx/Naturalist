@@ -219,11 +219,11 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
     }
 
     @Override
-    public void knockback(double strength, double x, double z) {
+    public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
         if (this.isBaby()) {
-            super.knockback(strength / Math.max(1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.01), x, z);
+            super.knockback(strength / Math.max(1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.01), x, z, source, sourceStrength);
         } else {
-            super.knockback(strength, x, z);
+            super.knockback(strength, x, z, source, sourceStrength);
         }
     }
 
@@ -457,7 +457,7 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
             if (distToEnemySqr <= this.getAttackReachSqr(enemy) && this.ticksUntilNextAttack <= 0) {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(enemy);
+                if (this.mob.level() instanceof ServerLevel serverLevel) { this.mob.doHurtTarget(serverLevel, enemy); }
             }
         }
 

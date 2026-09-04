@@ -30,11 +30,11 @@ public final class MobVariantUtil {
     }
 
     public static Optional<Identifier> readVariantId(CompoundTag tag, String[] legacyNames) {
-        if (tag.contains(DataDrivenVariantAnimal.VARIANT_TAG, Tag.TAG_STRING)) {
-            return Optional.ofNullable(Identifier.tryParse(tag.getString(DataDrivenVariantAnimal.VARIANT_TAG)));
+        if (tag.getString(DataDrivenVariantAnimal.VARIANT_TAG).isPresent()) {
+            return Optional.ofNullable(Identifier.tryParse(tag.getStringOr(DataDrivenVariantAnimal.VARIANT_TAG, "")));
         }
-        if (legacyNames != null && legacyNames.length > 0 && tag.contains(DataDrivenVariantAnimal.VARIANT_TAG, Tag.TAG_ANY_NUMERIC)) {
-            String name = legacyNames[Math.floorMod(tag.getInt(DataDrivenVariantAnimal.VARIANT_TAG), legacyNames.length)];
+        if (legacyNames != null && legacyNames.length > 0 && tag.getInt(DataDrivenVariantAnimal.VARIANT_TAG).isPresent()) {
+            String name = legacyNames[Math.floorMod(tag.getIntOr(DataDrivenVariantAnimal.VARIANT_TAG, 0), legacyNames.length)];
             return Optional.of(Naturalist.location(name));
         }
         return Optional.empty();
