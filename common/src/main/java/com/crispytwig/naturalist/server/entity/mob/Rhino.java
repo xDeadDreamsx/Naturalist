@@ -47,6 +47,8 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
@@ -122,17 +124,17 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putInt("StunTick", this.stunnedTick);
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.stunnedTick = compound.getInt("StunTick");
+        this.stunnedTick = compound.getIntOr("StunTick", 0);
     }
     //endregion
 

@@ -39,6 +39,8 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import java.util.Objects;
 import java.util.Optional;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
@@ -142,7 +144,7 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("HasTail", this.hasTail());
@@ -151,10 +153,10 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setHasTail(compound.getBoolean("HasTail"));
+        this.setHasTail(compound.getBooleanOr("HasTail", false));
         DyeableAnimal.loadDye(this, compound);
         FollowingPet.loadPet(this, compound);
     }

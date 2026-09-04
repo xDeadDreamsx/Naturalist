@@ -13,6 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 public class DirtTrail extends Entity {
     private static final EntityDataAccessor<Boolean> SMALL = SynchedEntityData.defineId(DirtTrail.class, EntityDataSerializers.BOOLEAN);
@@ -57,10 +59,10 @@ public class DirtTrail extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    protected void readAdditionalSaveData(@NotNull ValueInput compound) {
     }
 
     @Override
-    protected void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    protected void addAdditionalSaveData(@NotNull ValueOutput compound) {
     }
 }

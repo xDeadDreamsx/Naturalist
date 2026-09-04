@@ -59,6 +59,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
 import java.util.List;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVariantAnimal {
@@ -128,14 +130,14 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         FollowingPet.savePet(this, compound);
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         FollowingPet.loadPet(this, compound);

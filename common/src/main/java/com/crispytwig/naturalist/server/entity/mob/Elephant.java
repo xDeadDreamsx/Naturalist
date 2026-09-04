@@ -60,6 +60,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Elephant extends TamableAnimal implements NeutralMob, IKMount, DataDrivenVariantAnimal {
@@ -159,7 +161,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         this.addPersistentAngerSaveData(compound);
@@ -170,19 +172,19 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
         for (int i = 0; i < items.size(); i++) {
             items.set(i, this.inventory.getItem(i));
         }
-        ContainerHelper.saveAllItems(compound, items, this.registryAccess());
+        ContainerHelper.saveAllItems(compound, items);
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
-        this.setSaddled(compound.getBoolean("Saddled"));
-        this.setChested(compound.getBoolean("Chested"));
-        this.tamingFood = compound.getInt("TamingFood");
+        this.setSaddled(compound.getBooleanOr("Saddled", false));
+        this.setChested(compound.getBooleanOr("Chested", false));
+        this.tamingFood = compound.getIntOr("TamingFood", 0);
         NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(compound, items, this.registryAccess());
+        ContainerHelper.loadAllItems(compound, items);
         for (int i = 0; i < items.size(); i++) {
             this.inventory.setItem(i, items.get(i));
         }

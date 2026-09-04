@@ -58,6 +58,8 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
@@ -195,7 +197,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         this.addPersistentAngerSaveData(compound);
@@ -204,7 +206,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.readPersistentAngerSaveData(this.level(), compound);

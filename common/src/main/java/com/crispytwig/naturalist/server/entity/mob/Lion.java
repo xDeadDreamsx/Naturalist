@@ -53,6 +53,8 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
@@ -156,7 +158,7 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("Mane", this.hasMane());
@@ -165,10 +167,10 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setHasMane(compound.getBoolean("Mane"));
+        this.setHasMane(compound.getBooleanOr("Mane", false));
         FollowingPet.loadPet(this, compound);
         this.loadHuntingCooldown(compound);
     }

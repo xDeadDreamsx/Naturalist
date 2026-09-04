@@ -47,6 +47,8 @@ import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
 import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
 import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
@@ -135,7 +137,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("Gray", this.isGray());
@@ -143,11 +145,11 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setGray(compound.getBoolean("Gray"));
-        this.conversionTime = compound.getInt("ConversionTime");
+        this.setGray(compound.getBooleanOr("Gray", false));
+        this.conversionTime = compound.getIntOr("ConversionTime", 0);
     }
 
     @Override

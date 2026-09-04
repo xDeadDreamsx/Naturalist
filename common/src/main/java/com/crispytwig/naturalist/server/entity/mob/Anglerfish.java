@@ -52,6 +52,8 @@ import com.crispytwig.naturalist.server.entity.util.AnimationSoundPlayer;
 import com.crispytwig.naturalist.server.entity.util.AnimationSoundTrack;
 import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrivenVariantAnimal {
@@ -138,14 +140,14 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         this.saveHuntingCooldown(compound);
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.loadHuntingCooldown(compound);

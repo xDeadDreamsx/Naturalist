@@ -53,6 +53,8 @@ import org.jetbrains.annotations.NotNull;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 
 @SuppressWarnings("unused")
@@ -151,16 +153,16 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
         return !this.hasCustomName();
     }
 
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
     }
 
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setFromHand(compound.getBoolean("FromHand"));
+        this.setFromHand(compound.getBooleanOr("FromHand", false));
     }
 
     public void saveToHandTag(@NotNull ItemStack stack) {

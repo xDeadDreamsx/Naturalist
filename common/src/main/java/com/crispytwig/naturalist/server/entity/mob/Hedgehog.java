@@ -64,6 +64,8 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingPet, HidingAnimal, Catchable, DataDrivenVariantAnimal {
@@ -190,7 +192,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
@@ -203,10 +205,10 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setFromHand(compound.getBoolean("FromHand"));
+        this.setFromHand(compound.getBooleanOr("FromHand", false));
         if (compound.contains("ThrowEnchantments")) {
             ItemEnchantments.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get("ThrowEnchantments"))
                     .result().ifPresent(this::setThrowEnchantments);

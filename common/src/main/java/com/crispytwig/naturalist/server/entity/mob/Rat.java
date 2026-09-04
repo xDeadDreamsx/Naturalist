@@ -69,6 +69,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
 import java.util.Optional;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 public class Rat extends TamableClimbingAnimal implements SleepingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal, ContainerBoundWorker {
     //region Data
@@ -249,7 +251,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
@@ -261,12 +263,12 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setFromHand(compound.getBoolean("FromHand"));
+        this.setFromHand(compound.getBooleanOr("FromHand", false));
         if (compound.contains("Workstation")) {
-            this.setWorkstation(BlockPos.of(compound.getLong("Workstation")));
+            this.setWorkstation(BlockPos.of(compound.getLongOr("Workstation", 0L)));
         } else {
             this.setWorkstation(null);
         }

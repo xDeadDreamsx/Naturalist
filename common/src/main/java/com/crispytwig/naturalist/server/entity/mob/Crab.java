@@ -82,6 +82,8 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal {
@@ -193,7 +195,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
@@ -201,10 +203,10 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setFromHand(compound.getBoolean("FromHand"));
+        this.setFromHand(compound.getBooleanOr("FromHand", false));
         FollowingPet.loadPet(this, compound);
     }
 

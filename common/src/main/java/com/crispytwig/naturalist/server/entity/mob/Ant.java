@@ -66,6 +66,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable, DataDrivenVariantAnimal {
     //region Data
@@ -152,7 +154,7 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putInt("HillCooldown", this.hillCooldown);
@@ -164,11 +166,11 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.hillCooldown = compound.getInt("HillCooldown");
-        this.setFromHand(compound.getBoolean("FromHand"));
+        this.hillCooldown = compound.getIntOr("HillCooldown", 0);
+        this.setFromHand(compound.getBooleanOr("FromHand", false));
         this.carriedFoodId = compound.hasUUID("CarriedFood") ? compound.getUUID("CarriedFood") : null;
         this.readPersistentAngerSaveData(this.level(), compound);
     }

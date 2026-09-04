@@ -72,6 +72,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
@@ -255,7 +257,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         this.addPersistentAngerSaveData(compound);
@@ -266,12 +268,12 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.readPersistentAngerSaveData(this.level(), compound);
         if (compound.contains("Sheared")) {
-            this.setSheared(compound.getBoolean("Sheared"));
+            this.setSheared(compound.getBooleanOr("Sheared", false));
         }
         DyeableAnimal.loadDye(this, compound);
         FollowingPet.loadPet(this, compound);

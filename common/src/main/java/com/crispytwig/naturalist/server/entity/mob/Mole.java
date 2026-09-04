@@ -64,6 +64,8 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVariantAnimal {
     //region Data
@@ -223,17 +225,17 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putInt("MoleState", this.getState());
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        int state = compound.getInt("MoleState");
+        int state = compound.getIntOr("MoleState", 0);
         this.entityData.set(DATA_STATE, state);
         this.applyStateEffects(state);
     }

@@ -67,6 +67,8 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
@@ -197,14 +199,14 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         this.saveHuntingCooldown(compound);
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         this.loadHuntingCooldown(compound);

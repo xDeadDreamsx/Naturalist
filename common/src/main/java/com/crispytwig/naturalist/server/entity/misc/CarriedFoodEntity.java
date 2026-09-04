@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 public class CarriedFoodEntity extends ItemEntity {
     private static final EntityDataAccessor<Integer> DATA_ANT_ID = SynchedEntityData.defineId(CarriedFoodEntity.class, EntityDataSerializers.INT);
@@ -126,7 +128,7 @@ public class CarriedFoodEntity extends ItemEntity {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag tag) {
+    public void addAdditionalSaveData(@NotNull ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         if (this.antUUID != null) {
             tag.putUUID("Ant", this.antUUID);
@@ -134,7 +136,7 @@ public class CarriedFoodEntity extends ItemEntity {
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag tag) {
+    public void readAdditionalSaveData(@NotNull ValueInput tag) {
         super.readAdditionalSaveData(tag);
         this.antUUID = tag.hasUUID("Ant") ? tag.getUUID("Ant") : null;
     }

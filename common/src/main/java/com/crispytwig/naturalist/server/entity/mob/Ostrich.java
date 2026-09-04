@@ -86,6 +86,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
     //region Data
@@ -325,7 +327,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("Saddled", this.isSaddled());
@@ -342,11 +344,11 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setSaddled(compound.getBoolean("Saddled"));
-        this.setHasEgg(compound.getBoolean("HasEgg"));
+        this.setSaddled(compound.getBooleanOr("Saddled", false));
+        this.setHasEgg(compound.getBooleanOr("HasEgg", false));
         this.ownedEggs.clear();
         for (long packed : compound.getLongArray("OwnedEggs")) {
             this.ownedEggs.add(BlockPos.of(packed));

@@ -57,6 +57,8 @@ import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import java.util.*;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
@@ -114,13 +116,13 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
     }

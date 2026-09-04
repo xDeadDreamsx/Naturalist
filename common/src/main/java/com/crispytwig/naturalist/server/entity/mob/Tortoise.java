@@ -51,6 +51,8 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAnimal, FollowingPet, DataDrivenVariantAnimal {
@@ -172,7 +174,7 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("HasEgg", this.hasEgg());
@@ -180,10 +182,10 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setHasEgg(compound.getBoolean("HasEgg"));
+        this.setHasEgg(compound.getBooleanOr("HasEgg", false));
         FollowingPet.loadPet(this, compound);
     }
     //endregion

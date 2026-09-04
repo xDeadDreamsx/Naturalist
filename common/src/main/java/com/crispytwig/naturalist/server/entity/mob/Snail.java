@@ -56,6 +56,8 @@ import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
 import java.util.*;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, EggLayingAnimal, DataDrivenVariantAnimal, SurfaceCrawler {
@@ -198,7 +200,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("FromHand", this.fromHand());
@@ -208,12 +210,12 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setFromHand(compound.getBoolean("FromHand"));
-        this.setSnailColor(Color.BY_ID[compound.getInt("Color")]);
-        this.setHasEgg(compound.getBoolean("HasEgg"));
+        this.setFromHand(compound.getBooleanOr("FromHand", false));
+        this.setSnailColor(Color.BY_ID[compound.getIntOr("Color", 0)]);
+        this.setHasEgg(compound.getBooleanOr("HasEgg", false));
         this.climbing.load(compound);
     }
 

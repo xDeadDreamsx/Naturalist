@@ -69,6 +69,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jspecify.annotations.NonNull;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Bird extends ShoulderRidingEntity implements DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
@@ -155,7 +157,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         DyeableAnimal.saveDye(this, compound);
@@ -163,7 +165,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         DyeableAnimal.loadDye(this, compound);

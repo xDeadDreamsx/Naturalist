@@ -54,6 +54,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jspecify.annotations.NonNull;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, Bucketable, DataDrivenVariantAnimal {
@@ -140,7 +142,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putInt("EggLayTime", this.eggTime);
@@ -149,11 +151,11 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         if (compound.contains("EggLayTime")) {
-            this.eggTime = compound.getInt("EggLayTime");
+            this.eggTime = compound.getIntOr("EggLayTime", 0);
         }
         DyeableAnimal.loadDye(this, compound);
         FollowingPet.loadPet(this, compound);

@@ -40,6 +40,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingPet, SleepingAnimal, DataDrivenVariantAnimal {
@@ -140,7 +142,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         DyeableAnimal.saveDye(this, compound);
@@ -148,7 +150,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
         DyeableAnimal.loadDye(this, compound);

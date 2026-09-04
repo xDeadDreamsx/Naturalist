@@ -43,6 +43,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 @SuppressWarnings("unused")
 public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
@@ -135,7 +137,7 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         this.saveVariant(compound);
         compound.putBoolean("Open", this.isOpen());
@@ -143,11 +145,11 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
         this.loadVariant(compound);
-        this.setOpen(compound.getBoolean("Open"));
-        this.setHasTreasure(compound.getBoolean("HasTreasure"));
+        this.setOpen(compound.getBooleanOr("Open", false));
+        this.setHasTreasure(compound.getBooleanOr("HasTreasure", false));
     }
 
     @Override
