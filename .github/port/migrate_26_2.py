@@ -24,7 +24,6 @@ DIRECT_REPLACEMENTS = {
     "ItemInteractionResult": "InteractionResult",
     "player.getCooldowns().isOnCooldown(stack.getItem())": "player.getCooldowns().isOnCooldown(stack)",
     "player.getCooldowns().addCooldown(stack.getItem(), 20)": "player.getCooldowns().addCooldown(stack, 20)",
-    # Repair the one nested generic transformed by the first migration pass.
     "CallbackInfoReturnable<InteractionResult cir)": "CallbackInfoReturnable<InteractionResult> cir)",
 }
 
@@ -190,15 +189,9 @@ def migrate_text(text: str) -> str:
         migrated = migrated.replace(old, new)
 
     migrated = migrated.replace("import net.minecraft.client.renderer.LightTexture;\n", "")
-
-    # ResourceKey.location() was renamed to identifier() in current Mojang mappings.
     migrated = migrated.replace(".location()", ".identifier()")
-
-    # Level#isClientSide is a method in 26.2 rather than a public field.
     migrated = re.sub(r"\.isClientSide(?!\s*\()", ".isClientSide()", migrated)
 
-    # InteractionResultHolder and ItemInteractionResult were folded into InteractionResult.
-    # Only consume a single, non-nested generic argument; outer generics must stay intact.
     migrated = re.sub(r"\bInteractionResultHolder\s*<[^<>]+>", "InteractionResult", migrated)
     for prefix, replacement in (
         ("InteractionResultHolder.sidedSuccess(", "InteractionResult.SUCCESS"),
@@ -211,7 +204,6 @@ def migrate_text(text: str) -> str:
     ):
         migrated = replace_balanced_call(migrated, prefix, replacement)
 
-    # 26.2 Player message split: old displayClientMessage(..., true) was overlay/action-bar text.
     migrated = re.sub(
         r"player\.displayClientMessage\((.*?),\s*true\);",
         r"player.sendOverlayMessage(\1);",
@@ -219,14 +211,29 @@ def migrate_text(text: str) -> str:
         flags=re.DOTALL,
     )
 
-    # Entity persistence hooks changed from CompoundTag to ValueOutput/ValueInput in 26.2.
-    # Restrict this migration to the two vanilla entity hooks so ItemStack CustomData remains NBT.
     migrated, changed_output = migrate_persistence_hook(migrated, "addAdditionalSaveData", "ValueOutput", False)
     migrated, changed_input = migrate_persistence_hook(migrated, "readAdditionalSaveData", "ValueInput", True)
     if changed_output:
         migrated = add_import(migrated, "net.minecraft.world.level.storage.ValueOutput")
     if changed_input:
         migrated = add_import(migrated, "net.minecraft.world.level.storage.ValueInput")
+
+    # TagKey is no longer accepted directly by Ingredient.of; resolve it to the registry HolderSet.
+    ingredient_pattern = r"Ingredient\.of\((NaturalistTags\.ItemTags\.[A-Za-z0-9_]+)\)"
+    migrated, ingredient_count = re.subn(
+        ingredient_pattern,
+        r"Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(\1))",
+        migrated,
+    )
+    if ingredient_count:
+        migrated = add_import(migrated, "net.minecraft.core.registries.BuiltInRegistries")
+
+    # EntityType#create(Level) was removed. Offspring creation now carries an explicit spawn reason.
+    migrated = re.sub(
+        r"(NaturalistEntityTypes\.[A-Z0-9_]+\.get\(\)\.create)\((serverLevel|level)\)",
+        r"\1(\2, EntitySpawnReason.BREEDING)",
+        migrated,
+    )
 
     return migrated
 
