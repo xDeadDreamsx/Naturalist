@@ -64,7 +64,7 @@ jobs:
           status=${PIPESTATUS[0]}
           exit "$status"
 
-      - name: Smoke-test Naturalist client startup
+      - name: Smoke-test Naturalist client startup and LambDynamicLights
         id: client_smoke
         if: steps.build.outcome == 'success'
         continue-on-error: true
@@ -102,7 +102,18 @@ jobs:
             exit "$status"
           fi
 
-      - name: Smoke-test Naturalist dedicated server and world data
+          if ! grep -Fq 'Initializing LambDynamicLights' /tmp/naturalist-client.log; then
+            echo "LambDynamicLights 26.2 was not initialized during the compatibility smoke test."
+            exit 1
+          fi
+
+          if grep -Eq 'cannot add it to event naturalist:|Unknown sound event[^\n]*naturalist:' /tmp/naturalist-client.log; then
+            echo "Naturalist has unresolved client sound-event resources."
+            grep -En 'cannot add it to event naturalist:|Unknown sound event[^\n]*naturalist:' /tmp/naturalist-client.log || true
+            exit 1
+          fi
+
+      - name: Smoke-test Naturalist dedicated server and fresh world data
         id: server_smoke
         if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success'
         continue-on-error: true
@@ -138,93 +149,74 @@ jobs:
             exit 1
           fi
 
-      - name: Inspect Minecraft 26.2 API after failed build
-        if: steps.build.outcome == 'failure'
+          if grep -Fq "Couldn't parse data file 'naturalist:" /tmp/naturalist-server.log; then
+            echo "Naturalist still has datapack files that Minecraft 26.2 cannot decode."
+            grep -Fn "Couldn't parse data file 'naturalist:" /tmp/naturalist-server.log || true
+            exit 1
+          fi
+
+          if grep -Eq "Recipe naturalist:.*can't be placed due to empty ingredients" /tmp/naturalist-server.log; then
+            echo "Naturalist still has a recipe with invalid 26.2 placement metadata."
+            grep -En "Recipe naturalist:.*can't be placed due to empty ingredients" /tmp/naturalist-server.log || true
+            exit 1
+          fi
+
+      - name: Smoke-test Naturalist singleplayer world join
+        id: world_smoke
+        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success' && steps.server_smoke.outcome == 'success'
+        continue-on-error: true
         shell: bash
         run: |
-          : > port-26.2-errors.txt
-          exec > >(tee -a port-26.2-errors.txt) 2>&1
-          echo "=== NATURALIST 26.2 COMPILE ERRORS ==="
-          if [ -f /tmp/naturalist-build.log ]; then
-            grep -n -E -B2 -A5 'error:|cannot find symbol|package .* does not exist|incompatible types|cannot be converted|does not override|has private access|cannot be applied|no suitable method|constructor .* cannot be applied|cannot infer type|overridden method is final' /tmp/naturalist-build.log | head -n 2200 || true
-            echo
-            echo "=== FULL GRADLE FAILURE TAIL ==="
-            tail -n 800 /tmp/naturalist-build.log || true
-          fi
-          echo
-          echo "=== MINECRAFT 26.2 API INSPECTION ==="
-          python3 - <<'PY'
-          import pathlib, zipfile
-          targets = {
-              'TextureSheetParticle', 'SingleQuadParticle', 'DiggerItem', 'SwordItem', 'LightTexture',
-              'Saddleable', 'Boat', 'ThrowableItemProjectile', 'InstantaneousMobEffect',
-              'ItemInteractionResult', 'InteractionResultHolder', 'ItemNameBlockItem',
-              'ClampedItemPropertyFunction', 'ItemProperties', 'Input', 'GuiGraphics',
-              'GuiGraphicsExtractor', 'SimpleCriterionTrigger', 'ContextAwarePredicate', 'ItemPredicate',
-              'ChunkSectionLayerMap', 'RecipeSerializer', 'NeutralMob', 'LivingEntity', 'EntityType',
-              'ContainerHelper', 'ResourceKey', 'InteractionResult', 'ValueInput', 'ValueOutput', 'Criterion',
-              'Advancement', 'AdvancementRequirements', 'FilledBucketTrigger'
-          }
-          patterns = ('TextureSheet', 'SingleQuad', 'Saddle', 'Boat', 'InteractionResult', 'ItemPropert',
-                      'Criterion', 'Predicate', 'ChunkSectionLayer', 'GuiGraphics', 'Digger', 'SwordItem',
-                      'ThrowableItem', 'Instantaneous', 'Input', 'ValueInput', 'ValueOutput', 'Advancement')
-          hits = {t: [] for t in targets}
-          nearby = []
-          jars = list(pathlib.Path.home().joinpath('.gradle').rglob('*.jar'))
-          for jar in jars:
-              try:
-                  with zipfile.ZipFile(jar) as zf:
-                      for name in zf.namelist():
-                          if not name.endswith('.class'):
-                              continue
-                          simple = name.rsplit('/', 1)[-1][:-6]
-                          if simple in hits and len(hits[simple]) < 10:
-                              hits[simple].append((jar, name))
-                          if any(p.lower() in simple.lower() for p in patterns) and len(nearby) < 500:
-                              nearby.append((jar, name))
-              except Exception:
-                  pass
-          for target in sorted(targets):
-              print(f'=== EXACT {target} ===')
-              for jar, name in hits[target]:
-                  print(f'{name} @ {jar}')
-          print('=== RELATED CLASS NAMES ===')
-          for jar, name in nearby:
-              print(f'{name} @ {jar}')
-          mc_jars = []
-          for jar in jars:
-              try:
-                  with zipfile.ZipFile(jar) as zf:
-                      if 'net/minecraft/world/entity/LivingEntity.class' in zf.namelist():
-                          mc_jars.append(jar)
-              except Exception:
-                  pass
-          print('=== MINECRAFT JARS ===')
-          for jar in mc_jars:
-              print(jar)
-          if mc_jars:
-              pathlib.Path('/tmp/naturalist_mcjar').write_text(str(mc_jars[0]))
-          PY
-          if [ -f /tmp/naturalist_mcjar ]; then
-            MCJAR="$(cat /tmp/naturalist_mcjar)"
-            for C in \
-              net.minecraft.world.InteractionResult \
-              net.minecraft.world.entity.NeutralMob \
-              net.minecraft.world.entity.LivingEntity \
-              net.minecraft.world.entity.Mob \
-              net.minecraft.world.entity.EntityType \
-              net.minecraft.world.ContainerHelper \
-              net.minecraft.resources.ResourceKey \
-              net.minecraft.world.level.storage.ValueInput \
-              net.minecraft.world.level.storage.ValueOutput \
-              net.minecraft.world.item.crafting.RecipeSerializer \
-              net.minecraft.advancements.Advancement \
-              net.minecraft.advancements.AdvancementRequirements \
-              net.minecraft.advancements.triggers.Criterion \
-              net.minecraft.advancements.triggers.FilledBucketTrigger; do
-              echo "=== JAVAP $C ==="
-              javap -classpath "$MCJAR" -public "$C" || true
+          set +e
+          rm -rf run/crash-reports
+
+          timeout --signal=TERM --kill-after=15s 150s xvfb-run -a ./gradlew runClient --args='--quickPlaySingleplayer world' --stacktrace --no-daemon 2>&1 | tee /tmp/naturalist-world.log
+          status=${PIPESTATUS[0]}
+
+          echo "Singleplayer world smoke-test exit status: $status"
+          if [ -d run/crash-reports ] && find run/crash-reports -maxdepth 1 -type f -print -quit | grep -q .; then
+            echo "Minecraft produced a crash report while joining the test world."
+            find run/crash-reports -maxdepth 1 -type f -print
+            for report in run/crash-reports/*; do
+              [ -f "$report" ] || continue
+              echo "===== $report ====="
+              cat "$report"
             done
+            exit 1
+          fi
+
+          if find run -maxdepth 2 -type f -name 'hs_err_pid*.log' -print -quit 2>/dev/null | grep -q .; then
+            echo "The JVM produced a fatal error log while joining the test world."
+            find run -maxdepth 2 -type f -name 'hs_err_pid*.log' -print
+            exit 1
+          fi
+
+          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ]; then
+            exit "$status"
+          fi
+
+          if ! grep -Fq 'Starting integrated minecraft server version 26.2' /tmp/naturalist-world.log; then
+            echo "Quick Play never started the Minecraft 26.2 integrated server."
+            tail -n 500 /tmp/naturalist-world.log || true
+            exit 1
+          fi
+
+          if ! grep -Fq 'logged in with entity id' /tmp/naturalist-world.log; then
+            echo "The test player never successfully entered the singleplayer world."
+            tail -n 500 /tmp/naturalist-world.log || true
+            exit 1
+          fi
+
+          if grep -Fq "Couldn't parse data file 'naturalist:" /tmp/naturalist-world.log; then
+            echo "Naturalist datapack decoding failed during integrated-server startup."
+            grep -Fn "Couldn't parse data file 'naturalist:" /tmp/naturalist-world.log || true
+            exit 1
+          fi
+
+          if grep -Eq 'cannot add it to event naturalist:|Unknown sound event[^\n]*naturalist:' /tmp/naturalist-world.log; then
+            echo "Naturalist has unresolved resources during the in-world client test."
+            grep -En 'cannot add it to event naturalist:|Unknown sound event[^\n]*naturalist:' /tmp/naturalist-world.log || true
+            exit 1
           fi
 
       - name: Persist failed-build diagnostics
@@ -233,6 +225,10 @@ jobs:
         run: |
           git config user.name "Naturalist 26.2 Port CI"
           git config user.email "actions@users.noreply.github.com"
+          {
+            echo "=== NATURALIST 26.2 BUILD FAILURE ==="
+            tail -n 1200 /tmp/naturalist-build.log || true
+          } > port-26.2-errors.txt
           git add port-26.2-errors.txt
           if ! git diff --cached --quiet; then
             git commit -m "Record current Naturalist 26.2 build diagnostics"
@@ -246,23 +242,23 @@ jobs:
       - name: Fail workflow if client smoke test failed
         if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'failure'
         run: |
-          if [ -f /tmp/naturalist-client.log ]; then
-            echo "===== CLIENT STARTUP LOG TAIL ====="
-            tail -n 500 /tmp/naturalist-client.log
-          fi
+          tail -n 500 /tmp/naturalist-client.log || true
           exit 1
 
       - name: Fail workflow if dedicated-server smoke test failed
         if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success' && steps.server_smoke.outcome == 'failure'
         run: |
-          if [ -f /tmp/naturalist-server.log ]; then
-            echo "===== SERVER STARTUP LOG TAIL ====="
-            tail -n 500 /tmp/naturalist-server.log
-          fi
+          tail -n 500 /tmp/naturalist-server.log || true
           exit 1
 
-      - name: Upload built jars
-        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success' && steps.server_smoke.outcome == 'success'
+      - name: Fail workflow if singleplayer world smoke test failed
+        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success' && steps.server_smoke.outcome == 'success' && steps.world_smoke.outcome == 'failure'
+        run: |
+          tail -n 500 /tmp/naturalist-world.log || true
+          exit 1
+
+      - name: Upload playability-tested jars
+        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success' && steps.server_smoke.outcome == 'success' && steps.world_smoke.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: naturalist-fabric-26.2
