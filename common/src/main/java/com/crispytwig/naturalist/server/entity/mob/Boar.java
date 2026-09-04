@@ -44,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 import com.crispytwig.naturalist.server.entity.util.AnimationTimer;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 
-import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
