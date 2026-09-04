@@ -14,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.levelgen.GenerationStep;
 
 import java.util.List;
@@ -26,7 +27,14 @@ public class NaturalistFabric implements ModInitializer {
         FabricNaturalistConfig.load();
         Naturalist.bootstrap();
 
-        Naturalist.createAttributes((type, builder) -> FabricDefaultAttributeRegistry.register(type, builder.build()));
+        Naturalist.createAttributes((type, builder) -> {
+            // TemptGoal requires minecraft:tempt_range in 26.2. Naturalist 2.0.3
+            // predates that attribute, so make it available to the port's mobs.
+            if (!builder.hasAttribute(Attributes.TEMPT_RANGE)) {
+                builder.add(Attributes.TEMPT_RANGE, 10.0D);
+            }
+            FabricDefaultAttributeRegistry.register(type, builder.build());
+        });
 
         Naturalist.registerSpawnPlacements(SpawnPlacements::register);
 
