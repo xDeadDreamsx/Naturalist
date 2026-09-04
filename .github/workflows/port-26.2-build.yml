@@ -28,10 +28,86 @@ jobs:
         run: ./gradlew --version
 
       - name: Build Naturalist for Fabric 26.2
+        id: build
+        continue-on-error: true
         run: ./gradlew build --stacktrace --no-daemon
 
+      - name: Inspect Minecraft 26.2 API after failed compile
+        if: steps.build.outcome == 'failure'
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import pathlib, zipfile
+          targets = {
+              'TextureSheetParticle', 'DiggerItem', 'SwordItem', 'LightTexture',
+              'Saddleable', 'Boat', 'ThrowableItemProjectile', 'InstantenousMobEffect',
+              'InstantaneousMobEffect', 'ItemInteractionResult', 'InteractionResultHolder',
+              'ItemNameBlockItem', 'ClampedItemPropertyFunction', 'ItemProperties', 'Input',
+              'GuiGraphics', 'SimpleCriterionTrigger', 'ContextAwarePredicate', 'ItemPredicate',
+              'ChunkSectionLayerMap', 'RecipeSerializer', 'NeutralMob', 'LivingEntity',
+              'EntityType', 'ContainerHelper', 'ResourceKey', 'InteractionResult'
+          }
+          patterns = ('TextureSheet', 'Saddle', 'Boat', 'InteractionResult', 'ItemPropert',
+                      'Criterion', 'Predicate', 'ChunkSectionLayer', 'GuiGraphics', 'Digger',
+                      'SwordItem', 'ThrowableItem', 'Instantaneous', 'Input')
+          hits = {t: [] for t in targets}
+          nearby = []
+          jars = list(pathlib.Path.home().joinpath('.gradle').rglob('*.jar'))
+          for jar in jars:
+              try:
+                  with zipfile.ZipFile(jar) as zf:
+                      for name in zf.namelist():
+                          if not name.endswith('.class'):
+                              continue
+                          simple = name.rsplit('/', 1)[-1][:-6]
+                          if simple in hits and len(hits[simple]) < 10:
+                              hits[simple].append((jar, name))
+                          if any(p.lower() in simple.lower() for p in patterns) and len(nearby) < 350:
+                              nearby.append((jar, name))
+              except Exception:
+                  pass
+          for target in sorted(targets):
+              print(f'=== EXACT {target} ===')
+              for jar, name in hits[target]:
+                  print(f'{name} @ {jar}')
+          print('=== RELATED CLASS NAMES ===')
+          for jar, name in nearby:
+              print(f'{name} @ {jar}')
+          mc_jars = []
+          for jar in jars:
+              try:
+                  with zipfile.ZipFile(jar) as zf:
+                      if 'net/minecraft/world/entity/LivingEntity.class' in zf.namelist():
+                          mc_jars.append(jar)
+              except Exception:
+                  pass
+          print('=== MINECRAFT JARS ===')
+          for jar in mc_jars:
+              print(jar)
+          if mc_jars:
+              pathlib.Path('/tmp/naturalist_mcjar').write_text(str(mc_jars[0]))
+          PY
+          if [ -f /tmp/naturalist_mcjar ]; then
+            MCJAR="$(cat /tmp/naturalist_mcjar)"
+            for C in \
+              net.minecraft.world.InteractionResult \
+              net.minecraft.world.entity.NeutralMob \
+              net.minecraft.world.entity.LivingEntity \
+              net.minecraft.world.entity.EntityType \
+              net.minecraft.world.ContainerHelper \
+              net.minecraft.resources.ResourceKey \
+              net.minecraft.world.item.crafting.RecipeSerializer; do
+              echo "=== JAVAP $C ==="
+              javap -classpath "$MCJAR" -public "$C" || true
+            done
+          fi
+
+      - name: Fail workflow if build failed
+        if: steps.build.outcome == 'failure'
+        run: exit 1
+
       - name: Upload built jars
-        if: success()
+        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: naturalist-fabric-26.2
