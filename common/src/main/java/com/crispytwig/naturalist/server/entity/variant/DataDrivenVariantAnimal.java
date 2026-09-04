@@ -11,6 +11,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.Optional;
 
@@ -66,6 +68,15 @@ public interface DataDrivenVariantAnimal {
 
     default void loadVariant(CompoundTag tag) {
         MobVariantUtil.readVariantId(tag, this.getLegacyVariantNames())
+                .ifPresent(location -> this.setVariantString(location.toString()));
+    }
+
+    default void saveVariant(ValueOutput output) {
+        output.putString(VARIANT_TAG, this.getVariantLocation().toString());
+    }
+
+    default void loadVariant(ValueInput input) {
+        MobVariantUtil.readVariantId(input, this.getLegacyVariantNames())
                 .ifPresent(location -> this.setVariantString(location.toString()));
     }
 
