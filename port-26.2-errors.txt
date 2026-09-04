@@ -1,4 +1,60 @@
 === NATURALIST 26.2 COMPILE ERRORS ===
+11-
+12-> Task :compileJava
+13:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
+14-import net.minecraft.advancements.Criterion;
+15-                                 ^
+16-  symbol:   class Criterion
+17-  location: package net.minecraft.advancements
+18:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
+19-    private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
+20-                                                                  ^
+21-  symbol:   class Criterion
+22-  location: class ServerAdvancementManagerMixin
+23:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
+24-        Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
+25-                    ^
+26-  symbol:   class Criterion
+27-  location: class ServerAdvancementManagerMixin
+28-Note: Some input files use or override a deprecated API.
+--
+42-> Compilation failed; see the compiler output below.
+43-  Note: Recompile with -Xlint:deprecation for details.
+44:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
+45-  import net.minecraft.advancements.Criterion;
+46-                                   ^
+47-    symbol:   class Criterion
+48-    location: package net.minecraft.advancements
+49:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
+50-      private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
+51-                                                                    ^
+52-    symbol:   class Criterion
+53-    location: class ServerAdvancementManagerMixin
+54:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
+55-          Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
+56-                      ^
+57-    symbol:   class Criterion
+58-    location: class ServerAdvancementManagerMixin
+59-  Note: Recompile with -Xlint:unchecked for details.
+--
+102-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+103-Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
+104:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
+105-import net.minecraft.advancements.Criterion;
+106-                                 ^
+107-  symbol:   class Criterion
+108-  location: package net.minecraft.advancements
+109:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
+110-    private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
+111-                                                                  ^
+112-  symbol:   class Criterion
+113-  location: class ServerAdvancementManagerMixin
+114:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
+115-        Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
+116-                    ^
+117-  symbol:   class Criterion
+118-  location: class ServerAdvancementManagerMixin
+119-Note: Some input files use or override a deprecated API.
 
 === FULL GRADLE FAILURE TAIL ===
 WARNING: A restricted method in java.lang.System has been called
@@ -13,42 +69,63 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.17.20
 
 > Task :compileJava
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
+import net.minecraft.advancements.Criterion;
+                                 ^
+  symbol:   class Criterion
+  location: package net.minecraft.advancements
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
+    private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
+                                                                  ^
+  symbol:   class Criterion
+  location: class ServerAdvancementManagerMixin
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
+        Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
+                    ^
+  symbol:   class Criterion
+  location: class ServerAdvancementManagerMixin
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
+3 errors
 
-> Task :processResources
-> Task :classes
-> Task :processIncludeJars
-> Task :jar
-> Task :sourcesJar
-> Task :assemble
-> Task :compileTestJava NO-SOURCE
-> Task :processTestResources NO-SOURCE
-> Task :testClasses UP-TO-DATE
-> Task :test NO-SOURCE
-
-> Task :validateAccessWidener FAILED
-Could not find method (register(Lnet/minecraft/world/item/Item;Lnet/minecraft/resources/Identifier;Lnet/minecraft/client/renderer/item/ClampedItemPropertyFunction;)V) in class (net/minecraft/client/renderer/item/ItemProperties) on line 5
-Could not find field (bufferSource:Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;) in class (net/minecraft/client/gui/GuiGraphics) on line 11
-access-widener validation failed for naturalist.accesswidener
+> Task :compileJava FAILED
 
 [Incubating] Problems report is available at: file:///home/runner/work/Naturalist/Naturalist/build/reports/problems/problems-report.html
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':validateAccessWidener' (registered by plugin 'fabric-loom').
-> access-widener validation failed for naturalist.accesswidener
+Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
+> Compilation failed; see the compiler output below.
+  Note: Recompile with -Xlint:deprecation for details.
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
+  import net.minecraft.advancements.Criterion;
+                                   ^
+    symbol:   class Criterion
+    location: package net.minecraft.advancements
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
+      private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
+                                                                    ^
+    symbol:   class Criterion
+    location: class ServerAdvancementManagerMixin
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
+          Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
+                      ^
+    symbol:   class Criterion
+    location: class ServerAdvancementManagerMixin
+  Note: Recompile with -Xlint:unchecked for details.
+  Note: Some input files use or override a deprecated API.
+  Note: Some input files use unchecked or unsafe operations.
+  3 errors
 
 * Try:
-> Run with --info or --debug option to get more log output.
+> Check your code and dependencies to fix the compilation error(s)
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
-> Get more help at https://help.gradle.org.
 
 * Exception is:
-org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':validateAccessWidener' (registered by plugin 'fabric-loom').
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:135)
 	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:133)
@@ -82,11 +159,61 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':validat
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-Caused by: java.lang.RuntimeException: access-widener validation failed for naturalist.accesswidener
-	at net.fabricmc.loom.task.ValidateAccessWidenerTask.run(ValidateAccessWidenerTask.java:103)
+Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:6: error: cannot find symbol
+import net.minecraft.advancements.Criterion;
+                                 ^
+  symbol:   class Criterion
+  location: package net.minecraft.advancements
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:75: error: cannot find symbol
+    private static void naturalist$addBucketCriterion(Map<String, Criterion<?>> criteria, HolderGetter<Item> items, String name, Item item) {
+                                                                  ^
+  symbol:   class Criterion
+  location: class ServerAdvancementManagerMixin
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/ServerAdvancementManagerMixin.java:47: error: cannot find symbol
+        Map<String, Criterion<?>> criteria = new HashMap<>(advancement.criteria());
+                    ^
+  symbol:   class Criterion
+  location: class ServerAdvancementManagerMixin
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+3 errors
+	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
+	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
+	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
+	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.execute(NormalizingJavaCompiler.java:52)
+	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.execute(NormalizingJavaCompiler.java:38)
+	at org.gradle.api.internal.tasks.compile.AnnotationProcessorDiscoveringCompiler.execute(AnnotationProcessorDiscoveringCompiler.java:52)
+	at org.gradle.api.internal.tasks.compile.AnnotationProcessorDiscoveringCompiler.execute(AnnotationProcessorDiscoveringCompiler.java:38)
+	at org.gradle.api.internal.tasks.compile.ModuleApplicationNameWritingCompiler.execute(ModuleApplicationNameWritingCompiler.java:46)
+	at org.gradle.api.internal.tasks.compile.ModuleApplicationNameWritingCompiler.execute(ModuleApplicationNameWritingCompiler.java:36)
+	at org.gradle.jvm.toolchain.internal.DefaultToolchainJavaCompiler.execute(DefaultToolchainJavaCompiler.java:57)
+	at org.gradle.api.tasks.compile.JavaCompile.lambda$createToolchainCompiler$3(JavaCompile.java:206)
+	at org.gradle.api.internal.tasks.compile.CleaningJavaCompiler.execute(CleaningJavaCompiler.java:53)
+	at org.gradle.api.internal.tasks.compile.incremental.IncrementalCompilerFactory.lambda$createRebuildAllCompiler$0(IncrementalCompilerFactory.java:55)
+	at org.gradle.api.internal.tasks.compile.incremental.SelectiveCompiler.execute(SelectiveCompiler.java:70)
+	at org.gradle.api.internal.tasks.compile.incremental.SelectiveCompiler.execute(SelectiveCompiler.java:44)
+	at org.gradle.api.internal.tasks.compile.incremental.IncrementalResultStoringCompiler.execute(IncrementalResultStoringCompiler.java:66)
+	at org.gradle.api.internal.tasks.compile.incremental.IncrementalResultStoringCompiler.execute(IncrementalResultStoringCompiler.java:52)
+	at org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationReportingCompiler$1.call(CompileJavaBuildOperationReportingCompiler.java:64)
+	at org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationReportingCompiler$1.call(CompileJavaBuildOperationReportingCompiler.java:48)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationReportingCompiler.execute(CompileJavaBuildOperationReportingCompiler.java:48)
+	at org.gradle.api.tasks.compile.JavaCompile.performCompilation(JavaCompile.java:224)
+	at org.gradle.api.tasks.compile.JavaCompile.performIncrementalCompilation(JavaCompile.java:165)
+	at org.gradle.api.tasks.compile.JavaCompile.compile(JavaCompile.java:150)
 	at org.gradle.internal.reflect.JavaMethod.invoke(JavaMethod.java:125)
-	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.doExecute(StandardTaskAction.java:58)
+	at org.gradle.api.internal.project.taskfactory.IncrementalTaskAction.doExecute(IncrementalTaskAction.java:45)
 	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:51)
+	at org.gradle.api.internal.project.taskfactory.IncrementalTaskAction.execute(IncrementalTaskAction.java:26)
 	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:29)
 	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:259)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
@@ -187,14 +314,8 @@ Caused by: java.lang.RuntimeException: access-widener validation failed for natu
 	... 30 more
 
 
-Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
-
-You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
-
-For more on this, please refer to https://docs.gradle.org/9.5.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
-
-BUILD FAILED in 1m
-6 actionable tasks: 6 executed
+BUILD FAILED in 39s
+1 actionable task: 1 executed
 
 === MINECRAFT 26.2 API INSPECTION ===
 === EXACT Boat ===
