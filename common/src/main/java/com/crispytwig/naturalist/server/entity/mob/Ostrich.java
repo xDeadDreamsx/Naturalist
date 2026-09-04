@@ -436,7 +436,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
             return false;
         }
         List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(16.0D)
-                        .selector(livingEntity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity)
+                        .selector((livingEntity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingEntity)
                                 && !livingEntity.isDiscrete() && !livingEntity.isHolding(FOOD_ITEMS)),
                 this, this.getBoundingBox().inflate(16.0D, 8.0D, 16.0D));
         return !players.isEmpty();
@@ -452,7 +452,9 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         if (this.isTame() && this.isOwnedBy(player) && this.isSaddled() && stack.is(NaturalistTags.ItemTags.SHEARS)) {
             if (!this.level().isClientSide()) {
                 this.setSaddled(false);
-                this.spawnAtLocation(Items.SADDLE);
+                if (this.level() instanceof ServerLevel serverLevel) {
+                    this.spawnAtLocation(serverLevel, Items.SADDLE);
+                }
                 stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
                 this.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
                 this.gameEvent(GameEvent.SHEAR, player);
@@ -554,13 +556,14 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     private boolean canBeSaddled() {
         return this.isAlive() && !this.isBaby() && this.isTame();
     }
-    }
 
     @Override
-    protected void dropEquipment() {
-        super.dropEquipment();
+    protected void dropEquipment(ServerLevel level) {
+        super.dropEquipment(level);
         if (this.isSaddled()) {
-            this.spawnAtLocation(Items.SADDLE);
+            if (this.level() instanceof ServerLevel serverLevel) {
+                    this.spawnAtLocation(serverLevel, Items.SADDLE);
+                }
         }
     }
 
@@ -588,29 +591,18 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     @Override
-    public void travel(@NotNull Vec3 travelVector) {
-        if (!this.isAlive()) {
-            return;
-        }
-        LivingEntity livingEntity = this.getControllingPassenger();
-        if (!this.isVehicle() || livingEntity == null) {
-            super.travel(travelVector);
-            return;
-        }
-        this.setYRot(livingEntity.getYRot());
-        this.yRotO = this.getYRot();
-        this.setXRot(livingEntity.getXRot() * 0.5f);
-        this.setRot(this.getYRot(), this.getXRot());
-        this.yHeadRot = this.getYRot();
-        this.yBodyRot = Mth.rotLerp(0.35F, this.yBodyRot, this.getYRot());
-        float g = livingEntity.zza;
+    protected void tickRidden(@NotNull Player controller, @NotNull Vec3 riddenInput) {
+        super.tickRidden(controller, riddenInput);
+        this.setRot(controller.getYRot(), controller.getXRot() * 0.5F);
+        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
+        float forward = controller.zza;
         if (this.playerJumpPendingScale > 0.0F && !this.isJumping && this.onGround()) {
             double jumpVelocity = this.getAttributeValue(Attributes.JUMP_STRENGTH) * this.playerJumpPendingScale * this.getBlockJumpFactor() + this.getJumpBoostPower();
             Vec3 deltaMovement = this.getDeltaMovement();
             this.setDeltaMovement(deltaMovement.x, jumpVelocity, deltaMovement.z);
             this.isJumping = true;
             this.hasImpulse = true;
-            if (g > 0.0F) {
+            if (forward > 0.0F) {
                 float sin = Mth.sin(this.getYRot() * Mth.DEG_TO_RAD);
                 float cos = Mth.cos(this.getYRot() * Mth.DEG_TO_RAD);
                 this.setDeltaMovement(this.getDeltaMovement().add(-0.4F * sin * this.playerJumpPendingScale, 0.0D, 0.4F * cos * this.playerJumpPendingScale));
@@ -620,14 +612,16 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         if (this.onGround() && this.playerJumpPendingScale == 0.0F) {
             this.isJumping = false;
         }
-        if (this.isControlledByLocalInstance()) {
-            this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.4F);
-            super.travel(new Vec3(livingEntity.xxa * 0.5f, travelVector.y, g));
-        } else if (livingEntity instanceof Player) {
-            this.setDeltaMovement(Vec3.ZERO);
-        }
-        this.calculateEntityAnimation(false);
-        this.tryCheckInsideBlocks();
+    }
+
+    @Override
+    protected @NotNull Vec3 getRiddenInput(@NotNull Player controller, @NotNull Vec3 selfInput) {
+        return new Vec3(controller.xxa * 0.5F, 0.0D, controller.zza);
+    }
+
+    @Override
+    protected float getRiddenSpeed(@NotNull Player controller) {
+        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.4F;
     }
 
     @Override
@@ -666,15 +660,8 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     private void updateEggAnger() {
-        if (this.remainingPersistentAngerTime <= 0) {
-            return;
-        }
-        LivingEntity target = this.getTarget();
-        boolean engaged = target != null && target.isAlive()
-                && this.persistentAngerTarget != null && this.persistentAngerTarget.matches(target)
-                && this.closerThan(target, this.getAttributeValue(Attributes.FOLLOW_RANGE));
-        if (!engaged && --this.remainingPersistentAngerTime <= 0) {
-            this.stopBeingAngry();
+        if (this.level() instanceof ServerLevel serverLevel) {
+            this.updatePersistentAnger(serverLevel, true);
         }
     }
 
@@ -730,7 +717,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
 
         public OstrichDefendEggGoal(Ostrich ostrich) {
             super(ostrich, Player.class, 10, true, false,
-                    entity -> !ostrich.isBaby() && !ostrich.isTame() && ostrich.isNearOwnedEgg(entity));
+                    (entity, level) -> !ostrich.isBaby() && !ostrich.isTame() && ostrich.isNearOwnedEgg(entity));
             this.ostrich = ostrich;
         }
 
