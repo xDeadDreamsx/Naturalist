@@ -131,7 +131,7 @@ public class MobPart extends Entity {
 
     @Override
     public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
-        return !this.isInvulnerableTo(level, source) && this.parent.hurtServer(level, source, amount);
+        return !this.isInvulnerableToBase(source) && this.parent.hurtServer(level, source, amount);
     }
 
     @Override

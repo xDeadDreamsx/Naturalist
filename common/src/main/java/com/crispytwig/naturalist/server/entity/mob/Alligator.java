@@ -260,8 +260,8 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(8, new BabySniffFlowersGoal(this, 1.0D, 16, 4, SoundEvents.FOX_SNIFF));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity) -> !this.isBaby() && (entity.isInWater() || this.isDefensive() || !this.level().isDay())));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity) -> {
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity, level) -> !this.isBaby() && (entity.isInWater() || this.isDefensive() || !this.level().isDay())));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity, level) -> {
             if(entity instanceof Alligator) return false;
             boolean isEntityNearAlligatorEggs = false;
             for (BlockPos pos : BlockPos.betweenClosed(entity.blockPosition().offset(-2, -2, -2), entity.blockPosition().offset(2, 2, 2))) {
@@ -272,7 +272,7 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
             }
             return !this.isBaby() && isEntityNearAlligatorEggs;
         }));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity) -> !this.isBaby() && this.canHunt() && entity.getType().is(NaturalistTags.EntityTypes.ALLIGATOR_HOSTILES)));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity, level) -> !this.isBaby() && this.canHunt() && entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.ALLIGATOR_HOSTILES)));
     }
 
     @Override
@@ -314,8 +314,8 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
     }
 
     @Override
-    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
-        boolean result = super.killedEntity(level, killed);
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed, @NotNull DamageSource source) {
+        boolean result = super.killedEntity(level, killed, source);
         if (result) {
             this.startHuntingCooldown();
         }

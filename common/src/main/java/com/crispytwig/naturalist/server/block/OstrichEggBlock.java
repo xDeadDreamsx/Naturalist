@@ -62,7 +62,7 @@ public class OstrichEggBlock extends TurtleEggBlock {
     }
 
     private boolean shouldUpdateHatchLevel(@NotNull Level level) {
-        return level.random.nextInt(3) == 0;
+        return level.getRandom().nextInt(3) == 0;
     }
 
     @Override
@@ -93,8 +93,8 @@ public class OstrichEggBlock extends TurtleEggBlock {
         if (!this.canDestroyEgg(level, entity)) {
             return;
         }
-        if (!level.isClientSide() && level.random.nextInt(chance) == 0 && state.is(this)) {
-            level.playSound(null, pos, NaturalistSoundEvents.OSTRICH_EGG_BREAK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.2f);
+        if (!level.isClientSide() && level.getRandom().nextInt(chance) == 0 && state.is(this)) {
+            level.playSound(null, pos, NaturalistSoundEvents.OSTRICH_EGG_BREAK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.getRandom().nextFloat() * 0.2f);
             level.destroyBlock(pos, false);
             if (entity instanceof Player player) {
                 this.angerNearbyOstriches(level, pos, player);
@@ -110,7 +110,7 @@ public class OstrichEggBlock extends TurtleEggBlock {
     }
 
     private boolean canDestroyEgg(@NotNull Level level, Entity entity) {
-        if (entity instanceof Ostrich || entity.getType().is(NaturalistTags.EntityTypes.SAFE_EGG_WALKERS)) {
+        if (entity instanceof Ostrich || entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.SAFE_EGG_WALKERS)) {
             return false;
         }
         if (!(entity instanceof LivingEntity)) {

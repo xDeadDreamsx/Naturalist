@@ -283,7 +283,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, livingEntity -> this.canHunt() && (livingEntity.getType().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny()))));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, (livingEntity, level) -> this.canHunt() && (livingEntity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES) || (livingEntity instanceof Slime slime && slime.isTiny()))));
         this.targetSelector.addGoal(6, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
@@ -334,8 +334,8 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     }
 
     @Override
-    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
-        boolean result = super.killedEntity(level, killed);
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed, @NotNull DamageSource source) {
+        boolean result = super.killedEntity(level, killed, source);
         if (result) {
             this.startHuntingCooldown();
         }

@@ -140,8 +140,7 @@ public class DesertScorpion extends Scorpion implements Catchable, DataDrivenVar
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, true,
-                entity -> this.fromHand() && entity instanceof Enemy));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, true, (entity, level) -> this.fromHand() && entity instanceof Enemy));
     }
 
     @Override

@@ -290,7 +290,7 @@ public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnim
             if (!this.level().isClientSide()) {
                 this.usePlayerItem(player, hand, stack);
                 this.heal(4.0F);
-                this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
+                this.playEatingSound();
             }
             return InteractionResult.SUCCESS;
         }

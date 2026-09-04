@@ -210,7 +210,7 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity) -> !this.isBaby() && entity.isInWater() && !this.isOwnedBy(entity)));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity, level) -> !this.isBaby() && entity.isInWater() && !this.isOwnedBy(entity)));
     }
 
     @Override
@@ -280,7 +280,7 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
                     this.swing(InteractionHand.MAIN_HAND);
                     float yRot = (this.getYRot() + 90) * Mth.DEG_TO_RAD;
                     ((ServerLevel)level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MELON.defaultBlockState()), this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100, this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
-                    ((ServerLevel)level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.MELON_SLICE)), this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100, this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
+                    ((ServerLevel)level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, Items.MELON_SLICE), this.getX() + Math.cos(yRot), this.getY() + 0.6, this.getZ() + Math.sin(yRot), 100, this.getBbWidth() / 4.0F, this.getBbHeight() / 4.0F, this.getBbWidth() / 4.0F, 0.05D);
                     this.playSound(SoundEvents.HORSE_EAT);
                     this.playSound(SoundEvents.WOOD_BREAK);
                     this.usePlayerItem(player, hand, itemStack);

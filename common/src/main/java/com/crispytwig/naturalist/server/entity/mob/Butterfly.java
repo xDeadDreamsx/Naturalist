@@ -73,7 +73,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
     public Butterfly(@NotNull EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, -1.0F);
         this.setPathfindingMalus(PathType.WATER, -1.0F);
         this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
         this.setPathfindingMalus(PathType.COCOA, -1.0F);
@@ -178,7 +178,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
         this.loadVariant(tag);
 
         if (tag.contains("Age")) {
-            this.setAge(tag.getInt("Age"));
+            this.setAge(tag.getIntOr("Age", 0));
         }
 
         if (tag.contains("HuntingCooldown")) {
@@ -273,7 +273,6 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
         };
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(false);
-        navigation.setCanPassDoors(true);
         return navigation;
     }
 
@@ -332,7 +331,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
     }
 
     private void spawnFluidParticle(@NotNull Level level, double x1, double x2, double z1, double z2, double y) {
-        level.addParticle(ParticleTypes.FALLING_NECTAR, Mth.lerp(level.random.nextDouble(), x1, x2), y, Mth.lerp(level.random.nextDouble(), z1, z2), 0.0D, 0.0D, 0.0D);
+        level.addParticle(ParticleTypes.FALLING_NECTAR, Mth.lerp(level.getRandom().nextDouble(), x1, x2), y, Mth.lerp(level.getRandom().nextDouble(), z1, z2), 0.0D, 0.0D, 0.0D);
     }
 
     @Override

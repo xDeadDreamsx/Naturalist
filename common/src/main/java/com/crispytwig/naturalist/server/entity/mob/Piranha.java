@@ -133,13 +133,13 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
         this.goalSelector.addGoal(2, new FollowFlockLeaderGoal(this));
         this.goalSelector.addGoal(3, new RandomSwimmingGoal(this, 1.0D, 10));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, LivingEntity::isInWater) {
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (entity, level) -> entity.isInWater()) {
             @Override
             public boolean canUse() {
                 return !Piranha.this.isFollower() && super.canUse();
             }
         });
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.PIRANHA_HOSTILES)) {
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity, level) -> entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.PIRANHA_HOSTILES)) {
             @Override
             public boolean canUse() {
                 return !Piranha.this.isFollower() && super.canUse();

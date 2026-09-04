@@ -228,7 +228,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         Catchable.loadDefaultDataFromHandTag(this, tag);
         this.loadVariant(tag);
         if (tag.contains("Age")) {
-            this.setAge(tag.getInt("Age"));
+            this.setAge(tag.getIntOr("Age", 0));
         }
         if (tag.contains("HeldItem")) {
             ItemStack held = ItemStack.parse(this.level().registryAccess(), tag.getCompound("HeldItem")).orElse(ItemStack.EMPTY);
@@ -298,7 +298,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
             if (this.isTame()) {
-                baby.setOwnerUUID(this.getOwnerUUID());
+                baby.setOwnerReference(this.getOwnerReference());
                 baby.setTame(true, true);
             }
         }
@@ -520,7 +520,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         if (this.isBaby() || this.isTame() || !this.getMainHandItem().isEmpty()) {
             return false;
         }
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
+        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D).selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
         boolean playerNear = false;
         for (Player player : players) {
             if (!player.isCrouching() && !FOOD_ITEMS.test(player.getMainHandItem()) && !FOOD_ITEMS.test(player.getOffhandItem())) {

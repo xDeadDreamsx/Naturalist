@@ -362,7 +362,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
 
     @Override
     public boolean canHide() {
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
+        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(5.0D).selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)), this, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D));
         return !players.isEmpty();
     }
 

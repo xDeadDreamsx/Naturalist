@@ -59,7 +59,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
     public Firefly(EntityType<? extends NaturalistAnimal> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, -1.0F);
         this.setPathfindingMalus(PathType.WATER, -1.0F);
         this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
         this.setPathfindingMalus(PathType.COCOA, -1.0F);
@@ -184,12 +184,11 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
         };
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(false);
-        navigation.setCanPassDoors(true);
         return navigation;
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
+    public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 
@@ -224,7 +223,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
                 this.entityData.set(GLOW_START_TICK, this.tickCount);
             }
         }
-        if (this.isSunBurnTick()) {
+        if (this.naturalist$isSunBurnTick()) {
             this.setSunTicks(this.getSunTicks() + 1);
             if (this.getSunTicks() > 600) {
                 BlockPos pos = this.blockPosition();
@@ -244,14 +243,13 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
 
     private boolean canGlow() {
         if (!this.level().isClientSide()) {
-            return this.level().isNight() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;
+            return !this.level().isBrightOutside() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;
         }
         return false;
     }
 
-    @Override
-    protected boolean isSunBurnTick() {
-        if (this.level().isDay() && !this.hasCustomName() && !this.level().isClientSide()) {
+    private boolean naturalist$isSunBurnTick() {
+        if (this.level().isBrightOutside() && !this.hasCustomName() && !this.level().isClientSide()) {
             float f = (float) this.level().getMaxLocalRawBrightness(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())) / 15.0F;
             return Mth.lerp(this.level().dimensionType().ambientLight(), f / (4.0F - 3.0F * f), 1.0F) > 0.5F;
         }
@@ -287,7 +285,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
 
         @Override
         public boolean canUse() {
-            return firefly.isSunBurnTick() && super.canUse();
+            return firefly.naturalist$isSunBurnTick() && super.canUse();
         }
 
         @Override
@@ -303,7 +301,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
                 if (!level.isClientSide()) {
                     ((ServerLevel)level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SHORT_GRASS.defaultBlockState()), firefly.getX(), firefly.getY(), firefly.getZ(), 50, firefly.getBbWidth() / 4.0F, firefly.getBbHeight() / 4.0F, firefly.getBbWidth() / 4.0F, 0.05D);
                 }
-                level.playSound(null, firefly.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
+                level.playSound(null, firefly.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level.getRandom().nextFloat() * 0.2F);
                 firefly.discard();
             }
         }

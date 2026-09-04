@@ -133,7 +133,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
     }
 
     private boolean wantsGray() {
-        return this.isInWaterOrBubble() && this.getY() <= this.getDeepY();
+        return this.isInWater() && this.getY() <= this.getDeepY();
     }
 
     @Override
@@ -190,8 +190,7 @@ public class Blobfish extends AbstractFish implements DataDrivenVariantAnimal {
         this.goalSelector.addGoal(0, new AvoidEntityGoal<>(this, Axolotl.class, 6.0F, 1.5D, 2.0D));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.6D, true));
         this.goalSelector.addGoal(2, new BlobfishStayDeepGoal(this, 1.0D, 20));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,
-                entity -> entity instanceof Crab || entity instanceof Snail));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity, level) -> entity instanceof Crab || entity instanceof Snail));
     }
 
     @Override

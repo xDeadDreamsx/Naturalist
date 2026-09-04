@@ -16,8 +16,8 @@ public class BetterGroundPathNavigation extends GroundPathNavigation {
     }
 
     public boolean canCutCorner(@NotNull PathType pathType) {
-        return (pathType != PathType.DANGER_FIRE && pathType != PathType.DANGER_POWDER_SNOW
-                && pathType != PathType.DANGER_OTHER && pathType != PathType.WALKABLE_DOOR);
+        return (pathType != PathType.FIRE_IN_NEIGHBOR && pathType != PathType.POWDER_SNOW
+                && pathType != PathType.DAMAGING_IN_NEIGHBOR && pathType != PathType.WALKABLE_DOOR);
     }
     @Override
     protected void followThePath() {

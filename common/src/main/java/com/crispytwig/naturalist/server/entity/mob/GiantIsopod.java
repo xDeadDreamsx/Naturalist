@@ -261,7 +261,7 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
             return true;
         }
         return !this.level().getNearbyPlayers(
-                TargetingConditions.forNonCombat().range(3.0D).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test),
+                TargetingConditions.forNonCombat().range(3.0D).selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)),
                 this, this.getBoundingBox().inflate(3.0D, 2.0D, 3.0D)).isEmpty();
     }
 

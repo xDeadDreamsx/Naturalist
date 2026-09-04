@@ -96,7 +96,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
 
     private boolean shouldUpdateHatchLevel(@NotNull Level level) {
         float timeOfDay = level.getTimeOfDay(1.0F);
-        return timeOfDay < 0.69F && timeOfDay > 0.65F || level.random.nextInt(500) == 0;
+        return timeOfDay < 0.69F && timeOfDay > 0.65F || level.getRandom().nextInt(500) == 0;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
         if (!this.canDestroyEgg(level, entity)) {
             return;
         }
-        if (!level.isClientSide() && level.random.nextInt(chance) == 0 && state.is(this)) {
+        if (!level.isClientSide() && level.getRandom().nextInt(chance) == 0 && state.is(this)) {
             this.decreaseEggs(level, pos, state);
         }
     }
@@ -133,7 +133,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
             int eggCount = state.getValue(EGGS);
 
             level.playSound(null, pos, NaturalistSoundEvents.TORTOISE_EGG_HATCH.get(),
-                    SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.2f);
+                    SoundSource.BLOCKS, 0.7f, 0.9f + level.getRandom().nextFloat() * 0.2f);
             level.levelEvent(2001, pos, Block.getId(state));
 
             level.removeBlock(pos, false);
@@ -151,7 +151,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     }
 
     private boolean canDestroyEgg(@NotNull Level level, Entity entity) {
-        if (!(entity instanceof Tortoise) && !(entity.getType().is(NaturalistTags.EntityTypes.SAFE_EGG_WALKERS))) {
+        if (!(entity instanceof Tortoise) && !(entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.SAFE_EGG_WALKERS))) {
             if (!(entity instanceof LivingEntity)) {
                 return false;
             } else {
@@ -163,7 +163,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     }
 
     private void decreaseEggs(Level level, BlockPos pos, BlockState state) {
-        level.playSound(null, pos, NaturalistSoundEvents.TORTOISE_EGG_BREAK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.2f);
+        level.playSound(null, pos, NaturalistSoundEvents.TORTOISE_EGG_BREAK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.getRandom().nextFloat() * 0.2f);
         int i = state.getValue(EGGS);
         if (i <= 1) {
             level.destroyBlock(pos, false);

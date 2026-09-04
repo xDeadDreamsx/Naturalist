@@ -148,12 +148,12 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
                 return super.canUse() && !isBaby();
             }
         });
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> this.canHunt() && entity.getType().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity, level) -> this.canHunt() && entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
     }
 
     @Override
-    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
-        boolean result = super.killedEntity(level, killed);
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed, @NotNull DamageSource source) {
+        boolean result = super.killedEntity(level, killed, source);
         if (result) {
             this.startHuntingCooldown();
         }

@@ -99,8 +99,8 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     public Bird(@NotNull EntityType<? extends ShoulderRidingEntity> entityType, @NotNull Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 10, false);
-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
-        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, -1.0F);
+        this.setPathfindingMalus(PathType.FIRE, -1.0F);
         this.setPathfindingMalus(PathType.COCOA, -1.0F);
     }
 
@@ -226,7 +226,6 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
         FlyingPathNavigation navigation = new FlyingPathNavigation(this, level);
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(true);
-        navigation.setCanPassDoors(true);
         return navigation;
     }
 
@@ -537,7 +536,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
         public BirdAvoidPlayerGoal(@NotNull Bird bird) {
             this.bird = bird;
             this.avoidTargeting = TargetingConditions.forCombat().range(MAX_DIST)
-                    .selector(entity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && !entity.isDiscrete());
+                    .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && !entity.isDiscrete());
             this.setFlags(EnumSet.of(Flag.MOVE));
         }
 
@@ -644,7 +643,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
                         1.0F, 1.0F + (this.bird.random.nextFloat() - this.bird.random.nextFloat()) * 0.2F);
             }
             if (level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack.copy()),
+                serverLevel.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack.getItem()),
                         this.targetSeeds.getX(), this.targetSeeds.getY() + 0.15D, this.targetSeeds.getZ(),
                         8, 0.15D, 0.1D, 0.15D, 0.02D);
             }

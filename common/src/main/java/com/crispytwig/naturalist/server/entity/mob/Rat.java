@@ -72,6 +72,8 @@ import java.util.Optional;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.ContainerHelper;
 
 public class Rat extends TamableClimbingAnimal implements SleepingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal, ContainerBoundWorker {
     //region Data
@@ -194,11 +196,6 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
 
     public void setWorkstation(@Nullable BlockPos pos) {
         this.workstationPos = pos == null ? null : pos.immutable();
-        if (this.workstationPos != null) {
-            this.restrictTo(this.workstationPos, WORK_RADIUS);
-        } else {
-            this.clearRestriction();
-        }
     }
 
     @Override
@@ -259,7 +256,9 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
         if (this.workstationPos != null) {
             compound.putLong("Workstation", this.workstationPos.asLong());
         }
-        compound.put("CarriedItems", this.carriedItems.createTag(this.registryAccess()));
+        NonNullList<ItemStack> carried = NonNullList.withSize(this.carriedItems.getContainerSize(), ItemStack.EMPTY);
+        for (int i = 0; i < carried.size(); i++) carried.set(i, this.carriedItems.getItem(i));
+        ContainerHelper.saveAllItems(compound.child("CarriedItems"), carried);
         FollowingPet.savePet(this, compound);
     }
 
@@ -273,9 +272,9 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
         } else {
             this.setWorkstation(null);
         }
-        if (compound.contains("CarriedItems", 9)) {
-            this.carriedItems.fromTag(compound.getList("CarriedItems", 10), this.registryAccess());
-        }
+        NonNullList<ItemStack> carried = NonNullList.withSize(this.carriedItems.getContainerSize(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(compound.childOrEmpty("CarriedItems"), carried);
+        for (int i = 0; i < carried.size(); i++) this.carriedItems.setItem(i, carried.get(i));
         FollowingPet.loadPet(this, compound);
     }
 
@@ -293,7 +292,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
     public void loadFromHandTag(@NotNull CompoundTag tag) {
         Catchable.loadDefaultDataFromHandTag(this, tag);
         this.loadVariant(tag);
-        this.setAge(tag.getInt("Age"));
+        this.setAge(tag.getIntOr("Age", 0));
         Catchable.loadTamableDataFromHandTag(this, tag);
     }
 
@@ -322,7 +321,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(mob, this.random));
             if (this.isTame()) {
-                baby.setOwnerUUID(this.getOwnerUUID());
+                baby.setOwnerReference(this.getOwnerReference());
                 baby.setTame(true, true);
             }
         }
@@ -373,7 +372,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
 
     @Override
     public boolean canSleep() {
-        if (this.level().isDay() || this.level().isThundering() || this.isInWater() || this.isOnFire()
+        if (this.level().isBrightOutside() || this.level().isThundering() || this.isInWater() || this.isOnFire()
                 || !this.onGround() || this.isOrderedToSit() || this.isPassenger()) {
             return false;
         }
@@ -415,7 +414,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
                 if (!this.level().isClientSide()) {
                     this.usePlayerItem(player, hand, stack);
                     this.heal(2.0F);
-                    this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
+                    this.playEatingSound();
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -470,7 +469,12 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
 
         @Override
         public boolean canUse() {
-            this.player = this.rat.level().getNearestPlayer(this.begTargeting, this.rat);
+            if (this.rat.level() instanceof ServerLevel serverLevel) {
+                this.player = serverLevel.getNearestPlayer(this.rat.getX(), this.rat.getY(), this.rat.getZ(), 4.0D,
+                        entity -> entity instanceof Player p && this.begTargeting.test(serverLevel, this.rat, p));
+            } else {
+                this.player = null;
+            }
             return this.player != null && this.playerHoldingFood(this.player);
         }
 

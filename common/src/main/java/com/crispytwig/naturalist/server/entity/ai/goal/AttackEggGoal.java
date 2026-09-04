@@ -26,7 +26,7 @@ public class AttackEggGoal extends RemoveBlockGoal {
 
     @Override
     public void playBreakSound(@NotNull Level level, @NotNull BlockPos pos) {
-        level.playSound(null, pos, this.breakSound, SoundSource.BLOCKS, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
+        level.playSound(null, pos, this.breakSound, SoundSource.BLOCKS, 0.7F, 0.9F + level.getRandom().nextFloat() * 0.2F);
     }
 
     @Override

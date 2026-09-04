@@ -104,10 +104,8 @@ public abstract class Scorpion extends Animal implements NocturnalHostile {
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
-                entity -> entity.getType().is(NaturalistTags.EntityTypes.SCORPION_HOSTILES)));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true,
-                player -> this.canHuntPlayers() && this.isInDarkness()));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true, (entity, level) -> entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.SCORPION_HOSTILES)));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true, (player, level) -> this.canHuntPlayers() && this.isInDarkness()));
     }
 
     protected boolean canHuntPlayers() {

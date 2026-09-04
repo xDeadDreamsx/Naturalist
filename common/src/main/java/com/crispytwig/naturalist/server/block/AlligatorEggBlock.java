@@ -56,7 +56,7 @@ public class AlligatorEggBlock extends TurtleEggBlock {
 
     private boolean shouldUpdateHatchLevel(Level level) {
         float timeOfDay = level.getTimeOfDay(1.0F);
-        return timeOfDay < 0.69F && timeOfDay > 0.65F || level.random.nextInt(500) == 0;
+        return timeOfDay < 0.69F && timeOfDay > 0.65F || level.getRandom().nextInt(500) == 0;
     }
 
     @Override
@@ -79,13 +79,13 @@ public class AlligatorEggBlock extends TurtleEggBlock {
         if (!this.canDestroyEgg(level, entity)) {
             return;
         }
-        if (!level.isClientSide() && level.random.nextInt(chance) == 0 && state.is(this)) {
+        if (!level.isClientSide() && level.getRandom().nextInt(chance) == 0 && state.is(this)) {
             this.decreaseEggs(level, pos, state);
         }
     }
 
     private boolean canDestroyEgg(Level level, Entity entity) {
-        if (!(entity instanceof Alligator) && !(entity.getType().is(NaturalistTags.EntityTypes.SAFE_EGG_WALKERS))) {
+        if (!(entity instanceof Alligator) && !(entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.SAFE_EGG_WALKERS))) {
             if (!(entity instanceof LivingEntity)) {
                 return false;
             } else {
@@ -97,7 +97,7 @@ public class AlligatorEggBlock extends TurtleEggBlock {
     }
 
     private void decreaseEggs(@NotNull Level level, BlockPos pos, BlockState state) {
-        level.playSound(null, pos, NaturalistSoundEvents.GATOR_EGG_BREAK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.random.nextFloat() * 0.2f);
+        level.playSound(null, pos, NaturalistSoundEvents.GATOR_EGG_BREAK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + level.getRandom().nextFloat() * 0.2f);
         int i = state.getValue(EGGS);
         if (i <= 1) {
             level.destroyBlock(pos, false);

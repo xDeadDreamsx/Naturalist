@@ -80,13 +80,13 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
         this.setCanPickUpLoot(true);
-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, -1.0F);
         this.setPathfindingMalus(PathType.WATER, -1.0F);
         this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
         this.setPathfindingMalus(PathType.COCOA, -1.0F);
         this.setPathfindingMalus(PathType.FENCE, -1.0F);
-        this.setPathfindingMalus(PathType.DANGER_OTHER, 0.0F);
-        this.setPathfindingMalus(PathType.DAMAGE_OTHER, 0.0F);
+        this.setPathfindingMalus(PathType.DAMAGING_IN_NEIGHBOR, 0.0F);
+        this.setPathfindingMalus(PathType.DAMAGING, 0.0F);
     }
 
     public static Builder createAttributes() {
@@ -178,8 +178,8 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
         this.goalSelector.addGoal(3, new HighAltitudeFlyingWanderGoal(this));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Monster.class, 10, false, false, entity -> entity.getType().is(EntityTypes.VULTURE_HOSTILES) && !FOOD_ITEMS.test(this.getMainHandItem())));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, entity -> entity.getHealth() <= 6 && !entity.getMainHandItem().isEmpty() && !FOOD_ITEMS.test(this.getMainHandItem())));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Monster.class, 10, false, false, (entity, level) -> entity.getType().builtInRegistryHolder().is(EntityTypes.VULTURE_HOSTILES) && !FOOD_ITEMS.test(this.getMainHandItem())));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, (entity, level) -> entity.getHealth() <= 6 && !entity.getMainHandItem().isEmpty() && !FOOD_ITEMS.test(this.getMainHandItem())));
     }
 
     @Override
@@ -187,7 +187,6 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
         VulturePathNavigation navigation = new VulturePathNavigation(this, level);
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(true);
-        navigation.setCanPassDoors(true);
         return navigation;
     }
 
@@ -352,7 +351,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
                     }
                     this.ticksSinceEaten = 0;
                 } else if (this.ticksSinceEaten > 560 && this.random.nextFloat() < 0.1f) {
-                    this.playSound(this.getEatingSound(stack), 1.0f, 1.0f);
+                    this.playEatingSound();
                     this.level().broadcastEntityEvent(this, (byte)45);
                 }
             }
@@ -367,7 +366,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
             if (!itemStack.isEmpty()) {
                 for (int i = 0; i < 8; ++i) {
                     Vec3 vec3 = new Vec3(((double)this.random.nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0).xRot(-this.getXRot() * Mth.DEG_TO_RAD).yRot(-this.getYRot() * Mth.DEG_TO_RAD);
-                    this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, itemStack), this.getX() + this.getLookAngle().x / 2.0, this.getY(), this.getZ() + this.getLookAngle().z / 2.0, vec3.x, vec3.y + 0.05, vec3.z);
+                    this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, itemStack.getItem()), this.getX() + this.getLookAngle().x / 2.0, this.getY(), this.getZ() + this.getLookAngle().z / 2.0, vec3.x, vec3.y + 0.05, vec3.z);
                 }
             }
         }
@@ -444,7 +443,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
                 if (enemy instanceof Player && this.mob.getMainHandItem().isEmpty() && !enemy.getMainHandItem().isEmpty()) {
                     this.mob.setItemSlot(EquipmentSlot.MAINHAND, enemy.getMainHandItem().split(1));
                     Level level = this.mob.level();
-                    level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.NEUTRAL, 0.2F, ((level.random.nextFloat() - level.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                    level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.NEUTRAL, 0.2F, ((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
                     this.mob.setTarget(null);
                     this.mob.setAggressive(false);
                 }
@@ -466,7 +465,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
             this.vulture = vulture;
             this.detectRange = detectRange;
             this.speedModifier = speedModifier;
-            this.fleeConditions = TargetingConditions.forNonCombat().range(detectRange).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
+            this.fleeConditions = TargetingConditions.forNonCombat().range(detectRange).selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));
             this.setFlags(EnumSet.of(Flag.MOVE));
         }
 
@@ -677,7 +676,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
 
                 int groundY = level.getHeight(Types.WORLD_SURFACE, mobPos.getX(), mobPos.getZ());
                 int minAltitude = groundY + MIN_ALTITUDE_ABOVE_GROUND;
-                int maxAltitude = Math.min(groundY + MAX_ALTITUDE_ABOVE_GROUND, level.getMaxBuildHeight() - ALTITUDE_MARGIN_FROM_BUILD_LIMIT);
+                int maxAltitude = Math.min(groundY + MAX_ALTITUDE_ABOVE_GROUND, level.getMaxY() - ALTITUDE_MARGIN_FROM_BUILD_LIMIT);
                 preferredAltitude = Mth.nextInt(mob.getRandom(), minAltitude, maxAltitude);
                 wanderAttemptsUntilAltitudeChange = ALTITUDE_CHANGE_INTERVAL_MIN + mob.getRandom().nextInt(ALTITUDE_CHANGE_INTERVAL_RANGE);
             } else {

@@ -283,8 +283,7 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
         this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(3, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(4, new HurtByTargetGoal(this).setAlertOthers(Tiger.class));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
-                entity -> entity.getType().is(NaturalistTags.EntityTypes.TIGER_HOSTILES) && !entity.isBaby()
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true, (entity, level) -> entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.TIGER_HOSTILES) && !entity.isBaby()
                         && !this.isSleeping() && !this.isBaby() && !this.isStalking() && this.isNightTime() && this.canHunt()));
     }
 
@@ -304,8 +303,8 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
     }
 
     @Override
-    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
-        boolean result = super.killedEntity(level, killed);
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed, @NotNull DamageSource source) {
+        boolean result = super.killedEntity(level, killed, source);
         if (result) {
             this.startHuntingCooldown();
         }

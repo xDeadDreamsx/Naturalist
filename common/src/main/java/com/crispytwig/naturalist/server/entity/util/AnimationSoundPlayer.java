@@ -39,7 +39,7 @@ public final class AnimationSoundPlayer {
                 this.lastSeconds = NOT_PLAYING;
                 return;
             }
-            float now = this.state.getAccumulatedTime() / 1000.0F;
+            float now = this.state.getTimeInMillis(entity.tickCount) / 1000.0F;
             float previous = this.lastSeconds;
             this.lastSeconds = now;
             if (previous == NOT_PLAYING || now < previous) {

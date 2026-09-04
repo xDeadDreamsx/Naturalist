@@ -22,6 +22,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.entity.EntityReference;
+import net.minecraft.core.UUIDUtil;
 
 public interface
 Catchable {
@@ -70,46 +72,48 @@ Catchable {
     static void loadDefaultDataFromHandTag(@NotNull Mob mob, @Nullable CompoundTag tag) {
         if (tag == null) return;
         if (tag.contains("NoAI")) {
-            mob.setNoAi(tag.getBoolean("NoAI"));
+            mob.setNoAi(tag.getBooleanOr("NoAI", false));
         }
 
         if (tag.contains("Silent")) {
-            mob.setSilent(tag.getBoolean("Silent"));
+            mob.setSilent(tag.getBooleanOr("Silent", false));
         }
 
         if (tag.contains("NoGravity")) {
-            mob.setNoGravity(tag.getBoolean("NoGravity"));
+            mob.setNoGravity(tag.getBooleanOr("NoGravity", false));
         }
 
         if (tag.contains("Glowing")) {
-            mob.setGlowingTag(tag.getBoolean("Glowing"));
+            mob.setGlowingTag(tag.getBooleanOr("Glowing", false));
         }
 
         if (tag.contains("Invulnerable")) {
-            mob.setInvulnerable(tag.getBoolean("Invulnerable"));
+            mob.setInvulnerable(tag.getBooleanOr("Invulnerable", false));
         }
 
-        if (tag.contains("Health", 99)) {
-            mob.setHealth(tag.getFloat("Health"));
+        if (tag.contains("Health")) {
+            mob.setHealth(tag.getFloatOr("Health", mob.getHealth()));
         }
 
     }
 
     static <T extends TamableAnimal & FollowingPet> void saveTamableDataToHandTag(@NotNull T entity, @NotNull CompoundTag tag) {
-        if (entity.isTame() && entity.getOwnerUUID() != null) {
+        EntityReference<LivingEntity> owner = entity.getOwnerReference();
+        if (entity.isTame() && owner != null) {
             tag.putBoolean("Tame", true);
-            tag.putUUID("Owner", entity.getOwnerUUID());
+            tag.putIntArray("Owner", UUIDUtil.uuidToIntArray(owner.getUUID()));
             tag.putBoolean("FollowingOwner", entity.isFollowingOwner());
             tag.putBoolean("Sitting", entity.isOrderedToSit());
         }
     }
 
     static <T extends TamableAnimal & FollowingPet> void loadTamableDataFromHandTag(@NotNull T entity, @NotNull CompoundTag tag) {
-        if (tag.getBoolean("Tame") && tag.hasUUID("Owner")) {
-            entity.setOwnerUUID(tag.getUUID("Owner"));
+        int[] owner = tag.getIntArray("Owner").orElse(null);
+        if (tag.getBooleanOr("Tame", false) && owner != null && owner.length == 4) {
+            entity.setOwnerReference(EntityReference.of(UUIDUtil.uuidFromIntArray(owner)));
             entity.setTame(true, true);
-            entity.setFollowingOwner(tag.getBoolean("FollowingOwner"));
-            entity.setOrderedToSit(tag.getBoolean("Sitting"));
+            entity.setFollowingOwner(tag.getBooleanOr("FollowingOwner", false));
+            entity.setOrderedToSit(tag.getBooleanOr("Sitting", false));
         }
     }
 

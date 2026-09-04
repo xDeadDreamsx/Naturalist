@@ -50,7 +50,7 @@ public class LayEggGoal<T extends Animal & EggLayingAnimal> extends MoveToBlockG
                 Level level = this.animal.level();
                 level.playSound(null, pos, SoundEvents.TURTLE_LAY_EGG,
                         SoundSource.BLOCKS, 0.3f,
-                        0.9f + level.random.nextFloat() * 0.2f);
+                        0.9f + level.getRandom().nextFloat() * 0.2f);
 
                 BlockState eggState = this.animal.createEggBlockState(this.animal.getRandom().nextInt(4) + 1);
 

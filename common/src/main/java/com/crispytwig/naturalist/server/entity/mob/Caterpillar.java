@@ -124,7 +124,7 @@ public class Caterpillar extends ClimbingAnimal implements Catchable, DataDriven
         this.loadVariant(tag);
 
         if (tag.contains("Age")) {
-            this.setAge(tag.getInt("Age"));
+            this.setAge(tag.getIntOr("Age", 0));
         }
     }
 
@@ -239,7 +239,7 @@ public class Caterpillar extends ClimbingAnimal implements Catchable, DataDriven
                 }
                 caterpillar.discard();
                 level.setBlockAndUpdate(caterpillar.blockPosition(), NaturalistRegistry.CHRYSALIS_BLOCK.get().defaultBlockState().setValue(ChrysalisBlock.FACING, facing));
-                level.playSound(null, caterpillar.blockPosition(), SoundEvents.GRASS_PLACE, SoundSource.BLOCKS, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
+                level.playSound(null, caterpillar.blockPosition(), SoundEvents.GRASS_PLACE, SoundSource.BLOCKS, 0.7F, 0.9F + level.getRandom().nextFloat() * 0.2F);
             }
         }
 

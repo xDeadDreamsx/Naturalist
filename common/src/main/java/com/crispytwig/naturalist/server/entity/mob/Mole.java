@@ -388,7 +388,7 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
         if (!entity.isAlive() || entity.isSpectator()) {
             return false;
         }
-        if (entity.getType().is(EntityTypeTags.UNDEAD)) {
+        if (entity.getType().builtInRegistryHolder().is(EntityTypeTags.UNDEAD)) {
             return true;
         }
         if (this.attackerMemoryTicks > 0 && entity.getUUID().equals(this.rememberedAttacker)) {
@@ -502,7 +502,7 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
             if (!this.level().isClientSide()) {
                 this.usePlayerItem(player, hand, stack);
                 this.heal(2.0F);
-                this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
+                this.playEatingSound();
             }
             return InteractionResult.SUCCESS;
         }

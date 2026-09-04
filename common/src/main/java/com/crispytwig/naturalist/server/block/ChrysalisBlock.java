@@ -57,7 +57,7 @@ public class ChrysalisBlock extends HorizontalDirectionalBlock {
     public void randomTick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
         int age = state.getValue(AGE);
         if (age < 3) {
-            if (level.random.nextInt(5) == 0) {
+            if (level.getRandom().nextInt(5) == 0) {
                 level.setBlock(pos, state.setValue(AGE, age + 1), 2);
             }
         } else {

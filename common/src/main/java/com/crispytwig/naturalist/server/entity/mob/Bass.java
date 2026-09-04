@@ -230,7 +230,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Catfish.class, 8.0F, 1.0D, 1.5D));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Bass.class, 10.0F, 1.3D, 1.7D, (living) -> living instanceof Bass other && other.getSizeTier() > this.getSizeTier()));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.4D, true));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Bass.class, 10, true, false, (living) -> living instanceof Bass prey && Bass.this.canEatTarget(prey)) {
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Bass.class, 10, true, false, (living, level) -> living instanceof Bass prey && Bass.this.canEatTarget(prey)) {
             @Override
             public boolean canUse() {
                 return Bass.this.canHunt() && super.canUse();

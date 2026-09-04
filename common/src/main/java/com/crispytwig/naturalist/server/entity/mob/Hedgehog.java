@@ -237,7 +237,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     public void loadFromHandTag(@NotNull CompoundTag tag) {
         Catchable.loadDefaultDataFromHandTag(this, tag);
         this.loadVariant(tag);
-        this.setAge(tag.getInt("Age"));
+        this.setAge(tag.getIntOr("Age", 0));
         DyeableAnimal.loadDye(this, tag);
         Catchable.loadTamableDataFromHandTag(this, tag);
     }
@@ -267,7 +267,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
             if (this.isTame()) {
-                baby.setOwnerUUID(this.getOwnerUUID());
+                baby.setOwnerReference(this.getOwnerReference());
                 baby.setTame(true, true);
                 baby.setDyeColor(this.getDyeColor() == null ? DyeColor.RED : this.getDyeColor());
             }
@@ -327,7 +327,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         if (this.isTame() || this.isRolling() || this.isSprinting() || this.isInSittingPose()) {
             return false;
         }
-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(6.0).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test), this, this.getBoundingBox().inflate(6.0, 3.0, 6.0));
+        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(6.0).selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)), this, this.getBoundingBox().inflate(6.0, 3.0, 6.0));
         for (Player player : players) {
             if (!player.isCrouching() && !FOOD_ITEMS.test(player.getMainHandItem()) && !FOOD_ITEMS.test(player.getOffhandItem())) {
                 return true;
@@ -448,7 +448,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
                             }
                             ItemStack particleStack = this.getCaughtItemStack();
                             this.saveToHandTag(particleStack);
-                            ((ServerLevel) this.level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, particleStack), this.getX(), this.getY(0.5), this.getZ(), 8, 0.1, 0.1, 0.1, 0.05);
+                            ((ServerLevel) this.level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, particleStack.getItem()), this.getX(), this.getY(0.5), this.getZ(), 8, 0.1, 0.1, 0.1, 0.05);
                             if (this.random.nextInt(this.getThrowEnchantmentLevel(Enchantments.UNBREAKING) + 1) == 0) {
                                 Holder<DamageType> throwDamage = this.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(NaturalistDamageTypes.HEDGEHOG_THROW);
                                 this.hurt(new DamageSource(throwDamage, target), 2.0F);

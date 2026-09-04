@@ -164,8 +164,8 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
     }
 
     @Override
-    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
-        boolean result = super.killedEntity(level, killed);
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed, @NotNull DamageSource source) {
+        boolean result = super.killedEntity(level, killed, source);
         if (result) {
             this.startHuntingCooldown();
         }
@@ -253,8 +253,7 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
         });
         this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0D, 20));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false,
-                entity -> this.canHunt() && entity.getType().is(NaturalistTags.EntityTypes.ANGLERFISH_HOSTILES)));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity, level) -> this.canHunt() && entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.ANGLERFISH_HOSTILES)));
     }
 
     @Override

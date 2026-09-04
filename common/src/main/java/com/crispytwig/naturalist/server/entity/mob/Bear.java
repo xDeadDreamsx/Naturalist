@@ -75,6 +75,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 
 @SuppressWarnings("unused")
 public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
@@ -337,7 +338,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
         this.targetSelector.addGoal(2, new BearAttackPlayerNearBabiesGoal(this, Player.class, 20, false, true, null));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 20, true, false, (entity, level) -> this.isHostileWhenDark(entity)));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity, level) -> entity.getType().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby() && this.canHunt()));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity, level) -> entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby() && this.canHunt()));
         this.targetSelector.addGoal(5, new ResetUniversalAngerTargetGoal<>(this, false));
     }
 
@@ -459,22 +460,22 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
-    public boolean canTakeItem(@NotNull ItemStack itemStack) {
+    public boolean canHoldItem(@NotNull ItemStack itemStack) {
         EquipmentSlot slot = this.getEquipmentSlotForItem(itemStack);
         if (!this.getItemBySlot(slot).isEmpty() || this.isBaby()) {
             return false;
         } else {
-            return slot == EquipmentSlot.MAINHAND && super.canTakeItem(itemStack);
+            return slot == EquipmentSlot.MAINHAND && super.canHoldItem(itemStack);
         }
     }
 
     @Override
-    protected void pickUpItem(@NotNull ItemEntity itemEntity) {
+    protected void pickUpItem(@NotNull ServerLevel level, @NotNull ItemEntity itemEntity) {
         ItemStack stack = itemEntity.getItem();
         if (this.getMainHandItem().isEmpty() && FOOD_ITEMS.test(stack) && !this.isBaby() && !this.isSleeping()) {
             this.onItemPickup(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, stack);
-            this.handDropChances[EquipmentSlot.MAINHAND.getIndex()] = 2.0F;
+            this.setDropChance(EquipmentSlot.MAINHAND, 2.0F);
             this.take(itemEntity, stack.getCount());
             itemEntity.discard();
         }
@@ -525,15 +526,6 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
             }
             this.setSniffing(false);
         }
-        this.level().getProfiler().push("looting");
-        if (!this.level().isClientSide() && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-            for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(1.0D, 0.0D, 1.0D))) {
-                if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(itementity.getItem())) {
-                    this.pickUpItem(itementity);
-                }
-            }
-        }
-        this.level().getProfiler().pop();
     }
 
     @Override
@@ -598,7 +590,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
                 Vec3 posVec = new Vec3(((double)this.random.nextFloat() - 0.5D) * 0.8D, y, 1.0D + ((double)this.random.nextFloat() - 0.5D) * 0.4D);
                 posVec = posVec.yRot(-this.yBodyRot * Mth.DEG_TO_RAD);
                 posVec = posVec.add(this.getX(), this.getEyeY() - 0.2D, this.getZ() - 0.1D);
-                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, eatingStack), posVec.x, posVec.y, posVec.z, speedVec .x, speedVec .y + 0.05D, speedVec .z);
+                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, eatingStack.getItem()), posVec.x, posVec.y, posVec.z, speedVec .x, speedVec .y + 0.05D, speedVec .z);
             }
         }
     }
@@ -664,7 +656,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     static class BearAttackPlayerNearBabiesGoal extends NearestAttackableTargetGoal<Player> {
         private final Bear bear;
 
-        public BearAttackPlayerNearBabiesGoal(Bear mob, Class<Player> targetType, int randomInterval, boolean mustSee, boolean mustReach, @Nullable Predicate<LivingEntity> targetPredicate) {
+        public BearAttackPlayerNearBabiesGoal(Bear mob, Class<Player> targetType, int randomInterval, boolean mustSee, boolean mustReach, @Nullable TargetingConditions.Selector targetPredicate) {
             super(mob, targetType, randomInterval, mustSee, mustReach, targetPredicate);
             this.bear = mob;
         }
@@ -750,7 +742,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
         }
 
         protected void onReachedTarget() {
-            if (bear.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            if (bear.level() instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING)) {
                 BlockState state = bear.level().getBlockState(blockPos);
                 bear.setSniffing(false);
                 if (state.getBlock() instanceof BeehiveBlock && state.getValue(BeehiveBlock.HONEY_LEVEL) >= 5) {
@@ -786,7 +778,9 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
         private void harvestHoney(BlockState state) {
             state.setValue(BeehiveBlock.HONEY_LEVEL, 0);
-            BeehiveBlock.dropHoneycomb(bear.level(), blockPos);
+            if (bear.level() instanceof ServerLevel serverLevel) {
+                BeehiveBlock.dropHoneycomb(serverLevel, new ItemStack(Items.SHEARS), state, serverLevel.getBlockEntity(blockPos), bear, blockPos);
+            }
             bear.playSound(SoundEvents.BEEHIVE_SHEAR, 1.0F, 1.0F);
             bear.level().setBlock(blockPos, state.setValue(BeehiveBlock.HONEY_LEVEL, 0), 2);
             bear.swing(InteractionHand.MAIN_HAND);
@@ -794,7 +788,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
         private void pickSweetBerries(@NotNull BlockState state) {
             state.setValue(SweetBerryBushBlock.AGE, 1);
-            int berryAmount = 1 + bear.level().random.nextInt(2) + (state.getValue(SweetBerryBushBlock.AGE) == 3 ? 1 : 0);
+            int berryAmount = 1 + bear.level().getRandom().nextInt(2) + (state.getValue(SweetBerryBushBlock.AGE) == 3 ? 1 : 0);
             Block.popResource(bear.level(), this.blockPos, new ItemStack(Items.SWEET_BERRIES, berryAmount));
             bear.playSound(SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, 1.0F, 1.0F);
             bear.level().setBlock(this.blockPos, state.setValue(SweetBerryBushBlock.AGE, 1), 2);
@@ -948,7 +942,9 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
         public void stop() {
             ItemStack stack = bear.getItemBySlot(EquipmentSlot.MAINHAND);
             if (!stack.isEmpty()) {
-                bear.spawnAtLocation(stack);
+                if (bear.level() instanceof ServerLevel serverLevel) {
+                    bear.spawnAtLocation(serverLevel, stack);
+                }
                 bear.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                 this.cooldown = bear.tickCount + (bear.random.nextInt(150) + 10) * 20;
             }

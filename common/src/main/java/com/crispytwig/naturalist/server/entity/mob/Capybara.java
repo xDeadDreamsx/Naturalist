@@ -172,7 +172,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
             if (this.isTame()) {
-                baby.setOwnerUUID(this.getOwnerUUID());
+                baby.setOwnerReference(this.getOwnerReference());
                 baby.setTame(true, true);
                 baby.setDyeColor(this.getDyeColor() == null ? DyeColor.RED : this.getDyeColor());
             }

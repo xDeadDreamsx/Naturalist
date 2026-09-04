@@ -201,10 +201,8 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new BabyHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
-                entity -> entity.getType().is(NaturalistTags.EntityTypes.KOMODO_DRAGON_HOSTILES) && !this.isBaby()));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true,
-                player -> this.isPlayerTargeting() && !this.isBaby()));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true, (entity, level) -> entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.KOMODO_DRAGON_HOSTILES) && !this.isBaby()));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true, (player, level) -> this.isPlayerTargeting() && !this.isBaby()));
     }
 
     @Override

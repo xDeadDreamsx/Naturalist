@@ -213,7 +213,7 @@ public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal 
     @Override
     protected void customServerAiStep(ServerLevel level) {
         super.customServerAiStep(level);
-        if (!(this.targetPosition == null || this.level().isEmptyBlock(this.targetPosition) && this.targetPosition.getY() > this.level().getMinBuildHeight())) {
+        if (!(this.targetPosition == null || this.level().isEmptyBlock(this.targetPosition) && this.targetPosition.getY() > this.level().getMinY())) {
             this.targetPosition = null;
         }
         if (this.getHoverTicks() > 0) {

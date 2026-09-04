@@ -189,7 +189,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
         this.loadVariant(tag);
         if (tag.contains("Age")) {
-            this.setAge(tag.getInt("Age"));
+            this.setAge(tag.getIntOr("Age", 0));
         }
     }
 

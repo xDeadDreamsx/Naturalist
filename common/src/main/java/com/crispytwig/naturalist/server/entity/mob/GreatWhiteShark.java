@@ -173,7 +173,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     public void baseTick() {
         int air = this.getAirSupply();
         super.baseTick();
-        if (!this.isAlive() || this.isInWaterOrBubble()) {
+        if (!this.isAlive() || this.isInWater()) {
             this.setAirSupply(this.getMaxAirSupply());
             return;
         }
@@ -259,10 +259,8 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
         this.goalSelector.addGoal(1, new SharkAttackGoal(this));
         this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1.0D, 10));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false,
-                entity -> this.canHunt() && entity.getType().is(NaturalistTags.EntityTypes.GREAT_WHITE_SHARK_HOSTILES) && entity.isInWater()));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false,
-                player -> this.canHunt() && player.isInWater() && this.getLightLevelDependentMagicValue() < 0.5F));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, (entity, level) -> this.canHunt() && entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.GREAT_WHITE_SHARK_HOSTILES) && entity.isInWater()));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, (player, level) -> this.canHunt() && player.isInWater() && this.getLightLevelDependentMagicValue() < 0.5F));
     }
 
     @Override
@@ -274,8 +272,8 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     }
 
     @Override
-    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed) {
-        boolean result = super.killedEntity(level, killed);
+    public boolean killedEntity(@NotNull ServerLevel level, @NotNull LivingEntity killed, @NotNull DamageSource source) {
+        boolean result = super.killedEntity(level, killed, source);
         if (result) {
             this.startHuntingCooldown();
         }

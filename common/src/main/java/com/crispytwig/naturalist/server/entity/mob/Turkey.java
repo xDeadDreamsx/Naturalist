@@ -174,8 +174,7 @@ public class Turkey extends Animal implements DataDrivenVariantAnimal {
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F, 0.02F));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,
-                entity -> entity.getType().is(NaturalistTags.EntityTypes.TURKEY_HOSTILES)));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, (entity, level) -> entity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.TURKEY_HOSTILES)));
     }
 
     @Override
