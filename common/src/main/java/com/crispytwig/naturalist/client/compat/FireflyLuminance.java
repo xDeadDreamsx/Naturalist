@@ -4,10 +4,8 @@ import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.server.entity.mob.Firefly;
 import dev.lambdaurora.lambdynlights.api.entity.luminance.EntityLuminance;
 import dev.lambdaurora.lambdynlights.api.item.ItemLightSourceManager;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Range;
-import org.jspecify.annotations.NonNull;
 
 public final class FireflyLuminance implements EntityLuminance {
     public static final FireflyLuminance INSTANCE = new FireflyLuminance();
@@ -19,12 +17,12 @@ public final class FireflyLuminance implements EntityLuminance {
     private FireflyLuminance() {}
 
     @Override
-    public @NonNull Type type() {
+    public Type type() {
         return TYPE;
     }
 
     @Override
-    public @Range(from = 0, to = 15) int getLuminance(@NonNull ItemLightSourceManager itemLightSourceManager, @NonNull Entity entity) {
+    public @Range(from = 0, to = 15) int getLuminance(ItemLightSourceManager itemLightSourceManager, Entity entity) {
         if (entity instanceof Firefly firefly) {
             return firefly.getGlowLuminance();
         }
