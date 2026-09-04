@@ -1,30 +1,2205 @@
 === NATURALIST 26.2 COMPILE ERRORS ===
 11-
 12-> Task :compileJava
-13:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/BottleItemMixin.java:30: error: > or ',' expected
-14-    private void onUse(Level level, @NotNull Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResult cir) {
-15-                                                                                                                               ^
-16-1 error
-17-
-18-> Task :compileJava FAILED
+13:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:8: error: cannot find symbol
+14-import net.minecraft.client.gui.GuiGraphics;
+15-                               ^
+16-  symbol:   class GuiGraphics
+17-  location: package net.minecraft.client.gui
+18:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:29: error: cannot find symbol
+19-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+20-                            ^
+21-  symbol:   class GuiGraphics
+22-  location: class ElephantInventoryScreen
+23:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:43: error: cannot find symbol
+24-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+25-                       ^
+26-  symbol:   class GuiGraphics
+27-  location: class ElephantInventoryScreen
+28:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:8: error: cannot find symbol
+29-import net.minecraft.client.particle.TextureSheetParticle;
+30-                                    ^
+31-  symbol:   class TextureSheetParticle
+32-  location: package net.minecraft.client.particle
+33:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:12: error: cannot find symbol
+34-public class CaptureNetSwingParticle extends TextureSheetParticle {
+35-                                             ^
+36-  symbol: class TextureSheetParticle
+37:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:65: error: cannot find symbol
+38-import net.minecraft.world.item.DiggerItem;
+39-                               ^
+40-  symbol:   class DiggerItem
+41-  location: package net.minecraft.world.item
+42:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:67: error: cannot find symbol
+43-import net.minecraft.world.item.SwordItem;
+44-                               ^
+45-  symbol:   class SwordItem
+46-  location: package net.minecraft.world.item
+47:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ostrich.java:54: error: cannot find symbol
+48-import net.minecraft.world.entity.Saddleable;
+49-                                 ^
+50-  symbol:   class Saddleable
+51-  location: package net.minecraft.world.entity
+52:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ostrich.java:90: error: cannot find symbol
+53-public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
+54-                                                                                                                  ^
+55-  symbol: class Saddleable
+56:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:51: error: interface expected here
+57-    public static class Serializer implements RecipeSerializer<BugNetInteractionRecipe> {
+58-                                              ^
+59:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:8: error: cannot find symbol
+60-import net.minecraft.world.item.ItemNameBlockItem;
+61-                               ^
+62-  symbol:   class ItemNameBlockItem
+63-  location: package net.minecraft.world.item
+64:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:16: error: cannot find symbol
+65-public class GlowGoopItem extends ItemNameBlockItem {
+66-                                  ^
+67-  symbol: class ItemNameBlockItem
+68:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:17: error: cannot find symbol
+69-    public GlowGoopItem(Block block, @NotNull Properties properties) {
+70-                                              ^
+71-  symbol:   class Properties
+72-  location: class GlowGoopItem
+73:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/NaturalistClient.java:20: error: cannot find symbol
+74-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+75-                                         ^
+76-  symbol:   class ClampedItemPropertyFunction
+77-  location: package net.minecraft.client.renderer.item
+78:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/NaturalistClient.java:21: error: cannot find symbol
+79-import net.minecraft.client.renderer.item.ItemProperties;
+80-                                         ^
+81-  symbol:   class ItemProperties
+82-  location: package net.minecraft.client.renderer.item
+83:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/client/NaturalistFabricClient.java:11: error: cannot find symbol
+84-import net.fabricmc.fabric.api.client.rendering.v1.ChunkSectionLayerMap;
+85-                                                  ^
+86-  symbol:   class ChunkSectionLayerMap
+87-  location: package net.fabricmc.fabric.api.client.rendering.v1
+88:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:23: error: cannot assign a value to final variable imageWidth
+89-        this.imageWidth = 176;
+90-            ^
+91:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:24: error: cannot assign a value to final variable imageHeight
+92-        this.imageHeight = 204;
+93-            ^
+94:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:28: error: method does not override or implement a method from a supertype
+95-    @Override
+96-    ^
+97:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:42: error: method does not override or implement a method from a supertype
+98-    @Override
+99-    ^
+100:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:65: error: Elephant is not abstract and does not override abstract method setPersistentAngerTarget(@org.jspecify.annotations.Nullable EntityReference<LivingEntity>) in NeutralMob
+101-public class Elephant extends TamableAnimal implements NeutralMob, IKMount, DataDrivenVariantAnimal {
+102-       ^
+103:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:338: error: getPersistentAngerTarget() in Elephant cannot implement getPersistentAngerTarget() in NeutralMob
+104-    public UUID getPersistentAngerTarget() {
+105-                ^
+106-  return type UUID is not compatible with EntityReference<LivingEntity>
+107:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:161: error: method does not override or implement a method from a supertype
+108-    @Override
+109-    ^
+110:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:163: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+111-        super.addAdditionalSaveData(compound);
+112-             ^
+113-  required: ValueOutput
+114-  found:    CompoundTag
+115:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+116:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:165: error: method addPersistentAngerSaveData in interface NeutralMob cannot be applied to given types;
+117-        this.addPersistentAngerSaveData(compound);
+118-            ^
+119-  required: ValueOutput
+120-  found:    CompoundTag
+121:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+122:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:173: error: no suitable method found for saveAllItems(CompoundTag,NonNullList<ItemStack>,RegistryAccess)
+123-        ContainerHelper.saveAllItems(compound, items, this.registryAccess());
+124-                       ^
+125-    method ContainerHelper.saveAllItems(ValueOutput,NonNullList<ItemStack>) is not applicable
+126-      (actual and formal argument lists differ in length)
+127-    method ContainerHelper.saveAllItems(ValueOutput,NonNullList<ItemStack>,boolean) is not applicable
+128:      (argument mismatch; CompoundTag cannot be converted to ValueOutput)
+129:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:176: error: method does not override or implement a method from a supertype
+130-    @Override
+131-    ^
+132:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:178: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+133-        super.readAdditionalSaveData(compound);
+134-             ^
+135-  required: ValueInput
+136-  found:    CompoundTag
+137:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+138:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:180: error: method readPersistentAngerSaveData in interface NeutralMob cannot be applied to given types;
+139-        this.readPersistentAngerSaveData(this.level(), compound);
+140-            ^
+141-  required: Level,ValueInput
+142-  found:    Level,CompoundTag
+143:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+144:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:181: error: method setSaddled in class Elephant cannot be applied to given types;
+145-        this.setSaddled(compound.getBoolean("Saddled"));
+146-            ^
+147-  required: boolean
+148-  found:    Optional<Boolean>
+149:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+150:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:182: error: method setChested in class Elephant cannot be applied to given types;
+151-        this.setChested(compound.getBoolean("Chested"));
+152-            ^
+153-  required: boolean
+154-  found:    Optional<Boolean>
+155:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+156:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:183: error: incompatible types: Optional<Integer> cannot be converted to int
+157-        this.tamingFood = compound.getInt("TamingFood");
+158-                                         ^
+159:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:185: error: method loadAllItems in class ContainerHelper cannot be applied to given types;
+160-        ContainerHelper.loadAllItems(compound, items, this.registryAccess());
+161-                       ^
+162-  required: ValueInput,NonNullList<ItemStack>
+163-  found:    CompoundTag,NonNullList<ItemStack>,RegistryAccess
+164-  reason: actual and formal argument lists differ in length
+165:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:217: error: no suitable method found for create(ServerLevel)
+166-        Elephant baby = NaturalistEntityTypes.ELEPHANT.get().create(serverLevel);
+167-                                                            ^
+168-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Elephant>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+169-      (actual and formal argument lists differ in length)
+170-    method EntityType.create(Level,EntitySpawnReason) is not applicable
 --
-25-Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
-26-> Compilation failed; see the compiler output below.
-27:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/BottleItemMixin.java:30: error: > or ',' expected
-28-      private void onUse(Level level, @NotNull Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResult cir) {
-29-                                                                                                                                 ^
-30-  1 error
-31-
-32-* Try:
+176-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+177-      (actual and formal argument lists differ in length)
+178:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:262: error: cannot find symbol
+179-        if (this.isControlledByLocalInstance()) {
+180-                ^
+181-  symbol: method isControlledByLocalInstance()
+182:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:269: error: cannot find symbol
+183-        this.tryCheckInsideBlocks();
+184-            ^
+185-  symbol: method tryCheckInsideBlocks()
+186:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:282: error: method does not override or implement a method from a supertype
+187-    @Override
+188-    ^
+189:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:286: error: no suitable method found for knockback(double,double,double)
+190-            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
+191-                 ^
+192-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
+193-      (actual and formal argument lists differ in length)
+194-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
+195-      (actual and formal argument lists differ in length)
+196:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:288: error: no suitable method found for knockback(double,double,double)
+197-            super.knockback(strength, x, z);
+198-                 ^
+199-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
+200-      (actual and formal argument lists differ in length)
+201-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
+202-      (actual and formal argument lists differ in length)
+203:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:297: error: method does not override or implement a method from a supertype
+204-    @Override
+205-    ^
+206:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:299: error: incompatible types: void cannot be converted to boolean
+207-        boolean shouldHurt = target.hurt(target.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+208-                                        ^
+209:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:302: error: cannot find symbol
+210-            float shieldBlockModifier = livingEntity.isDamageSourceBlocked(target.damageSources().mobAttack(this)) ? 0.5f : 1.0f;
+211-                                                    ^
+212-  symbol:   method isDamageSourceBlocked(DamageSource)
+213-  location: variable livingEntity of type LivingEntity
+214:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:303: error: no suitable method found for knockback(double,double,double)
+215-            livingEntity.knockback(shieldBlockModifier * 3.0D, knockbackDirection.x(), knockbackDirection.z());
+216-                        ^
+217-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
+218-      (actual and formal argument lists differ in length)
+219-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
+220-      (actual and formal argument lists differ in length)
+221:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:321: error: method does not override or implement a method from a supertype
+222-    @Override
+223-    ^
+224:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:326: error: method does not override or implement a method from a supertype
+225-    @Override
+226-    ^
+227:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:331: error: method does not override or implement a method from a supertype
+228-    @Override
+229-    ^
+230:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:337: error: method does not override or implement a method from a supertype
+231-    @Override
+232-    ^
+233:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:418: error: no suitable method found for playSound(Reference<SoundEvent>,float,float)
+234-                    this.playSound(SoundEvents.HORSE_SADDLE, 1.0F, 1.0F);
+235-                        ^
+236-    method Entity.playSound(SoundEvent,float,float) is not applicable
+237:      (argument mismatch; Reference<SoundEvent> cannot be converted to SoundEvent)
+238-    method Entity.playSound(SoundEvent) is not applicable
+239-      (actual and formal argument lists differ in length)
+240:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:508: error: method does not override or implement a method from a supertype
+241-    @Override
+242-    ^
+243:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:510: error: method dropEquipment in class LivingEntity cannot be applied to given types;
+244-        super.dropEquipment();
+245-             ^
+246-  required: ServerLevel
+247-  found:    no arguments
+248-  reason: actual and formal argument lists differ in length
+249:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:529: error: no suitable method found for spawnAtLocation(ItemStack,float)
+250-        ItemEntity item = this.spawnAtLocation(stack, this.getBbHeight());
+251-                              ^
+252-    method Entity.spawnAtLocation(ServerLevel,ItemLike) is not applicable
+253:      (argument mismatch; ItemStack cannot be converted to ServerLevel)
+254-    method Entity.spawnAtLocation(ServerLevel,ItemStack) is not applicable
+255:      (argument mismatch; ItemStack cannot be converted to ServerLevel)
+256-    method Entity.spawnAtLocation(ServerLevel,ItemStack,Vec3) is not applicable
+257-      (actual and formal argument lists differ in length)
+258-    method Entity.spawnAtLocation(ServerLevel,ItemStack,float) is not applicable
+259-      (actual and formal argument lists differ in length)
+260:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:554: error: method does not override or implement a method from a supertype
+261-    @Override
+262-    ^
+263:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:556: error: method customServerAiStep in class Animal cannot be applied to given types;
+264-        super.customServerAiStep();
+265-             ^
+266-  required: ServerLevel
+267-  found:    no arguments
+268-  reason: actual and formal argument lists differ in length
+269:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:604: error: method doHurtTarget in class Mob cannot be applied to given types;
+270-                this.mob.doHurtTarget(target);
+271-                        ^
+272-  required: ServerLevel,Entity
+273-  found:    LivingEntity
+274-  reason: actual and formal argument lists differ in length
+275:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/TerrainLegSolver.java:96: error: cannot find symbol
+276-            if (pos.getY() < level.getMinBuildHeight()) {
+277-                                  ^
+278-  symbol:   method getMinBuildHeight()
+279-  location: variable level of type Level
+280:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:18: error: cannot find symbol
+281-        this.lifetime = 4;
+282-            ^
+283-  symbol: variable lifetime
+284:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:19: error: cannot find symbol
+285-        this.quadSize = 0.8F;
+286-            ^
+287-  symbol: variable quadSize
+288:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:20: error: cannot find symbol
+289-        this.hasPhysics = false;
+290-            ^
+291-  symbol: variable hasPhysics
+292:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:21: error: cannot find symbol
+293-        this.gravity = 0.0F;
+294-            ^
+295-  symbol: variable gravity
+296:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:22: error: cannot find symbol
+297-        this.friction = 1.0F;
+298-            ^
+299-  symbol: variable friction
+300:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:23: error: cannot find symbol
+301-        this.xd = 0.0;
+302-            ^
+303-  symbol: variable xd
+304:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:24: error: cannot find symbol
+305-        this.yd = 0.0;
+306-            ^
+307-  symbol: variable yd
+308:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:25: error: cannot find symbol
+309-        this.zd = 0.0;
+310-            ^
+311-  symbol: variable zd
+312:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:26: error: cannot find symbol
+313-        this.setSpriteFromAge(sprites);
+314-            ^
+315-  symbol: method setSpriteFromAge(SpriteSet)
+316:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:29: error: method does not override or implement a method from a supertype
+317-    @Override
+318-    ^
+319:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:31: error: cannot find symbol
+320-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+321-                                 ^
+322-  symbol:   variable PARTICLE_SHEET_TRANSLUCENT
+323-  location: class ParticleRenderType
+324:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:34: error: method does not override or implement a method from a supertype
+325-    @Override
+326-    ^
+327:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:39: error: method does not override or implement a method from a supertype
+328-    @Override
+329-    ^
+330:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:41: error: cannot find symbol
+331-        super.tick();
+332-        ^
+333-  symbol:   variable super
+334-  location: class CaptureNetSwingParticle
+335:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:42: error: cannot find symbol
+336-        this.setSpriteFromAge(this.sprites);
+337-            ^
+338-  symbol: method setSpriteFromAge(SpriteSet)
+339:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:45: error: Provider is not abstract and does not override abstract method createParticle(SimpleParticleType,ClientLevel,double,double,double,double,double,double,RandomSource) in ParticleProvider
+340-    public static class Provider implements ParticleProvider<SimpleParticleType> {
+341-                  ^
+342:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:52: error: method does not override or implement a method from a supertype
+343-        @Override
+344-        ^
+345:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:54: error: incompatible types: CaptureNetSwingParticle cannot be converted to Particle
+346-            return new CaptureNetSwingParticle(level, x, y, z, this.sprites);
+347-                   ^
+348:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:50: error: no suitable method found for of(TagKey<Item>)
+349-    private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS);
+350-                                                                 ^
+351-    method Ingredient.of(ItemLike) is not applicable
+352:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+353-    method Ingredient.of(ItemLike...) is not applicable
+354:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+355-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+356:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+357-    method Ingredient.of(HolderSet<Item>) is not applicable
+358:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+359:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:144: error: method does not override or implement a method from a supertype
+360-    @Override
+361-    ^
+362:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:146: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+363-        super.addAdditionalSaveData(compound);
+364-             ^
+365-  required: ValueOutput
+366-  found:    CompoundTag
+367:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+368:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:153: error: method does not override or implement a method from a supertype
+369-    @Override
+370-    ^
+371:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:155: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+372-        super.readAdditionalSaveData(compound);
+373-             ^
+374-  required: ValueInput
+375-  found:    CompoundTag
+376:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+377:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:157: error: method setHasTail in class Lizard cannot be applied to given types;
+378-        this.setHasTail(compound.getBoolean("HasTail"));
+379-            ^
+380-  required: boolean
+381-  found:    Optional<Boolean>
+382:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+383:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:194: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Lizard cannot override hurt(DamageSource,float) in Entity
+384-    public boolean hurt(@NotNull DamageSource source, float amount) {
+385-                   ^
+386:  overridden method is final
+387:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:193: error: method does not override or implement a method from a supertype
+388-    @Override
+389-    ^
+390:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:198: error: no suitable method found for create(Level)
+391-            LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level());
+392-                                                                           ^
+393-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<LizardTail>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+394-      (actual and formal argument lists differ in length)
+395-    method EntityType.create(Level,EntitySpawnReason) is not applicable
 --
-70-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-71-Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-72:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/BottleItemMixin.java:30: error: > or ',' expected
-73-    private void onUse(Level level, @NotNull Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResult cir) {
-74-                                                                                                                               ^
-75-1 error
-76-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
-77-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
+401-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+402-      (actual and formal argument lists differ in length)
+403:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:209: error: incompatible types: void cannot be converted to boolean
+404-        return super.hurt(source, amount);
+405-                         ^
+406:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:35: error: incompatible types: Optional<Integer> cannot be converted to int
+407-            int id = tag.getInt("DyeColor");
+408-                               ^
+409:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:43: error: cannot find symbol
+410-            DyeColor color = dyeItem.getDyeColor();
+411-                                    ^
+412-  symbol:   method getDyeColor()
+413-  location: variable dyeItem of type DyeItem
+414:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/FollowingPet.java:27: error: method setFollowingOwner in interface FollowingPet cannot be applied to given types;
+415-            pet.setFollowingOwner(tag.getBoolean("FollowingOwner"));
+416-               ^
+417-  required: boolean
+418-  found:    Optional<Boolean>
+419:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+420:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:23: error: MobPart is not abstract and does not override abstract method addAdditionalSaveData(ValueOutput) in Entity
+421-public class MobPart extends Entity {
+422-       ^
+423:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:106: error: method does not override or implement a method from a supertype
+424-    @Override
+425-    ^
+426:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:110: error: method does not override or implement a method from a supertype
+427-    @Override
+428-    ^
+429:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:130: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in MobPart cannot override hurt(DamageSource,float) in Entity
+430-    public boolean hurt(@NotNull DamageSource source, float amount) {
+431-                   ^
+432:  overridden method is final
+433:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:129: error: method does not override or implement a method from a supertype
+434-    @Override
+435-    ^
+436:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:131: error: cannot find symbol
+437-        return !this.isInvulnerableTo(source) && this.parent.hurt(source, amount);
+438-                    ^
+439-  symbol: method isInvulnerableTo(DamageSource)
+440:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:131: error: 'void' type not allowed here
+441-        return !this.isInvulnerableTo(source) && this.parent.hurt(source, amount);
+442-                                                                 ^
+443:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:134: error: method does not override or implement a method from a supertype
+444-    @Override
+445-    ^
+446:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:136: error: method interact in class Mob cannot be applied to given types;
+447-        return this.parent.interact(player, hand);
+448-                          ^
+449-  required: Player,InteractionHand,Vec3
+450-  found:    Player,InteractionHand
+451-  reason: actual and formal argument lists differ in length
+452:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:77: error: Bear is not abstract and does not override abstract method setPersistentAngerTarget(@org.jspecify.annotations.Nullable EntityReference<LivingEntity>) in NeutralMob
+453-public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
+454-       ^
+455:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:233: error: getPersistentAngerTarget() in Bear cannot implement getPersistentAngerTarget() in NeutralMob
+456-    public UUID getPersistentAngerTarget() {
+457-                ^
+458-  return type UUID is not compatible with EntityReference<LivingEntity>
+459:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:79: error: no suitable method found for of(TagKey<Item>)
+460-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS);
+461-                                                           ^
+462-    method Ingredient.of(ItemLike) is not applicable
+463:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+464-    method Ingredient.of(ItemLike...) is not applicable
+465:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+466-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+467:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+468-    method Ingredient.of(HolderSet<Item>) is not applicable
+469:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+470:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:167: error: cannot find symbol
+471-        long dayTime = this.level().getDayTime();
+472-                                   ^
+473-  symbol:   method getDayTime()
+474-  location: class Level
+475:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:216: error: method does not override or implement a method from a supertype
+476-    @Override
+477-    ^
+478:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:221: error: method does not override or implement a method from a supertype
+479-    @Override
+480-    ^
+481:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:226: error: method does not override or implement a method from a supertype
+482-    @Override
+483-    ^
+484:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:232: error: method does not override or implement a method from a supertype
+485-    @Override
+486-    ^
+487:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:257: error: method does not override or implement a method from a supertype
+488-    @Override
+489-    ^
+490:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:259: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+491-        super.addAdditionalSaveData(compound);
+492-             ^
+493-  required: ValueOutput
+494-  found:    CompoundTag
+495:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+496:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:261: error: method addPersistentAngerSaveData in interface NeutralMob cannot be applied to given types;
+497-        this.addPersistentAngerSaveData(compound);
+498-            ^
+499-  required: ValueOutput
+500-  found:    CompoundTag
+501:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+502:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:268: error: method does not override or implement a method from a supertype
+503-    @Override
+504-    ^
+505:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:270: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+506-        super.readAdditionalSaveData(compound);
+507-             ^
+508-  required: ValueInput
+509-  found:    CompoundTag
+510:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+511:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:272: error: method readPersistentAngerSaveData in interface NeutralMob cannot be applied to given types;
+512-        this.readPersistentAngerSaveData(this.level(), compound);
+513-            ^
+514-  required: Level,ValueInput
+515-  found:    Level,CompoundTag
+516:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+517:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:274: error: method setSheared in class Bear cannot be applied to given types;
+518-            this.setSheared(compound.getBoolean("Sheared"));
+519-                ^
+520-  required: boolean
+521-  found:    Optional<Boolean>
+522:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+523:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:303: error: no suitable method found for create(ServerLevel)
+524-        AgeableMob baby = (AgeableMob) this.getType().create(serverLevel);
+525-                                                     ^
+526-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<CAP#1>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+527-      (actual and formal argument lists differ in length)
+528-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+536-  where CAP#1 is a fresh type-variable:
+537-    CAP#1 extends Entity from capture of ?
+538:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:338: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+539-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 20, true, false, this::isHostileWhenDark));
+540-                                       ^
+541:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:339: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+542-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby() && this.canHunt()));
+543-                                       ^
+544:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:358: error: method does not override or implement a method from a supertype
+545-    @Override
+546-    ^
+547:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:361: error: no suitable method found for knockback(double,double,double)
+548-            super.knockback(strength / Math.max(1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.01), x, z);
+549-                 ^
+550-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
+551-      (actual and formal argument lists differ in length)
+552-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
+553-      (actual and formal argument lists differ in length)
+554:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:363: error: no suitable method found for knockback(double,double,double)
+555-            super.knockback(strength, x, z);
+556-                 ^
+557-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
+558-      (actual and formal argument lists differ in length)
+559-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
+560-      (actual and formal argument lists differ in length)
+561:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:368: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Bear cannot override hurt(DamageSource,float) in Entity
+562-    public boolean hurt(@NotNull DamageSource source, float amount) {
+563-                   ^
+564:  overridden method is final
+565:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:367: error: method does not override or implement a method from a supertype
+566-    @Override
+567-    ^
+568:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:381: error: incompatible types: void cannot be converted to boolean
+569-        return super.hurt(source, amount);
+570-                         ^
+571:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:389: error: method does not override or implement a method from a supertype
+572-    @Override
+573-    ^
+574:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:391: error: method isInvulnerableTo in class LivingEntity cannot be applied to given types;
+575-        return source.equals(this.damageSources().sweetBerryBush()) || super.isInvulnerableTo(source);
+576-                                                                            ^
+577-  required: ServerLevel,DamageSource
+578-  found:    DamageSource
+579-  reason: actual and formal argument lists differ in length
+580:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:399: error: method does not override or implement a method from a supertype
+581-    @Override
+582-    ^
+583:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:401: error: method killedEntity in class Entity cannot be applied to given types;
+584-        boolean result = super.killedEntity(level, killed);
+585-                              ^
+586-  required: ServerLevel,LivingEntity,DamageSource
+587-  found:    ServerLevel,LivingEntity
+588-  reason: actual and formal argument lists differ in length
+589:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:469: error: method does not override or implement a method from a supertype
+590-    @Override
+591-    ^
+592:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:475: error: cannot find symbol
+593-            return slot == EquipmentSlot.MAINHAND && super.canTakeItem(itemStack);
+594-                                                          ^
+595-  symbol: method canTakeItem(ItemStack)
+596:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:479: error: method does not override or implement a method from a supertype
+597-    @Override
+598-    ^
+599:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:485: error: cannot find symbol
+600-            this.handDropChances[EquipmentSlot.MAINHAND.getIndex()] = 2.0F;
+601-                ^
+602-  symbol: variable handDropChances
+603:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:536: error: cannot find symbol
+604-        this.level().getProfiler().push("looting");
+605-                    ^
+606-  symbol:   method getProfiler()
+607-  location: class Level
+608:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:537: error: cannot find symbol
+609-        if (!this.level().isClientSide() && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+610-                                                                                                                                                    ^
+611-  symbol:   variable RULE_MOBGRIEFING
+612-  location: class GameRules
+613:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:537: error: cannot find symbol
+614-        if (!this.level().isClientSide() && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+615-                                                                                                                ^
+616-  symbol:   method getGameRules()
+617-  location: class Level
+618:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:539: error: method wantsToPickUp in class Mob cannot be applied to given types;
+619-                if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(itementity.getItem())) {
+620-                                                                                      ^
+621-  required: ServerLevel,ItemStack
+622-  found:    ItemStack
+623-  reason: actual and formal argument lists differ in length
+624:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:539: error: method wantsToPickUp in class Mob cannot be applied to given types;
+625-                if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(itementity.getItem())) {
+626-                                                                                                    ^
+627-  required: ServerLevel,ItemStack
+628-  found:    ItemStack,<any>
+629:  reason: argument mismatch; ItemStack cannot be converted to ServerLevel
+630:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:544: error: cannot find symbol
+631-        this.level().getProfiler().pop();
+632-                    ^
+633-  symbol:   method getProfiler()
+634-  location: class Level
+635:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:547: error: method does not override or implement a method from a supertype
+636-    @Override
+637-    ^
+638:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:549: error: method customServerAiStep in class Animal cannot be applied to given types;
+639-        super.customServerAiStep();
+640-             ^
+641-  required: ServerLevel
+642-  found:    no arguments
+643-  reason: actual and formal argument lists differ in length
+644:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:609: error: no suitable constructor found for ItemParticleOption(ParticleType<ItemParticleOption>,ItemStack)
+645-                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, eatingStack), posVec.x, posVec.y, posVec.z, speedVec .x, speedVec .y + 0.05D, speedVec .z);
+646-                                         ^
+647-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,Item) is not applicable
+648:      (argument mismatch; ItemStack cannot be converted to Item)
+649-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,ItemStackTemplate) is not applicable
+650:      (argument mismatch; ItemStack cannot be converted to ItemStackTemplate)
+651:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:676: error: no suitable constructor found for NearestAttackableTargetGoal(Bear,Class<Player>,int,boolean,boolean,Predicate<LivingEntity>)
+652-            super(mob, targetType, randomInterval, mustSee, mustReach, targetPredicate);
+653-            ^
+654-    constructor NearestAttackableTargetGoal.NearestAttackableTargetGoal(Mob,Class<Player>,boolean) is not applicable
+655-      (actual and formal argument lists differ in length)
+656-    constructor NearestAttackableTargetGoal.NearestAttackableTargetGoal(Mob,Class<Player>,boolean,Selector) is not applicable
+--
+659-      (actual and formal argument lists differ in length)
+660-    constructor NearestAttackableTargetGoal.NearestAttackableTargetGoal(Mob,Class<Player>,int,boolean,boolean,@org.jspecify.annotations.Nullable Selector) is not applicable
+661:      (argument mismatch; Predicate<LivingEntity> cannot be converted to Selector)
+662:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:761: error: cannot find symbol
+663-            if (bear.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+664-                                                                ^
+665-  symbol:   variable RULE_MOBGRIEFING
+666-  location: class GameRules
+667:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:761: error: cannot find symbol
+668-            if (bear.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+669-                            ^
+670-  symbol:   method getGameRules()
+671-  location: class Level
+672:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:797: error: method dropHoneycomb in class BeehiveBlock cannot be applied to given types;
+673-            BeehiveBlock.dropHoneycomb(bear.level(), blockPos);
+674-                        ^
+675-  required: ServerLevel,ItemStack,BlockState,BlockEntity,Entity,BlockPos
+676-  found:    Level,BlockPos
+677-  reason: actual and formal argument lists differ in length
+678:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:797: error: method dropHoneycomb in class BeehiveBlock cannot be applied to given types;
+679-            BeehiveBlock.dropHoneycomb(bear.level(), blockPos);
+680-                                      ^
+681-  required: ServerLevel,ItemStack,BlockState,BlockEntity,Entity,BlockPos
+682-  found:    Level,BlockPos,<any>,<any>,<any>,<any>
+683:  reason: argument mismatch; Level cannot be converted to ServerLevel
+684:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:805: error: random has protected access in Level
+685-            int berryAmount = 1 + bear.level().random.nextInt(2) + (state.getValue(SweetBerryBushBlock.AGE) == 3 ? 1 : 0);
+686-                                              ^
+687:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/ai/goal/BabySniffFlowersGoal.java:60: error: cannot find symbol
+688-                    if (this.mob.isWithinRestriction(mutable) && this.isValidTarget(this.mob.level(), mutable)) {
+689-                                ^
+690-  symbol:   method isWithinRestriction(MutableBlockPos)
+691-  location: variable mob of type PathfinderMob
+692:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:959: error: no suitable method found for spawnAtLocation(ItemStack)
+693-                bear.spawnAtLocation(stack);
+694-                    ^
+695-    method Entity.spawnAtLocation(ServerLevel,ItemLike) is not applicable
+696-      (actual and formal argument lists differ in length)
+697-    method Entity.spawnAtLocation(ServerLevel,ItemStack) is not applicable
+--
+701-    method Entity.spawnAtLocation(ServerLevel,ItemStack,float) is not applicable
+702-      (actual and formal argument lists differ in length)
+703:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/HuntingAnimal.java:33: error: method setHuntingCooldown in interface HuntingAnimal cannot be applied to given types;
+704-        this.setHuntingCooldown(compound.getInt(HUNTING_COOLDOWN_TAG));
+705-            ^
+706-  required: int
+707-  found:    Optional<Integer>
+708:  reason: argument mismatch; Optional<Integer> cannot be converted to int
+709:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/NocturnalHostile.java:14: error: cannot find symbol
+710-        return ((LivingEntity) this).level().isNight();
+711-                                            ^
+712-  symbol:   method isNight()
+713-  location: class Level
+714:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:77: error: no suitable method found for of(TagKey<Item>)
+715-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TIGER_FOOD_ITEMS);
+716-                                                           ^
+717-    method Ingredient.of(ItemLike) is not applicable
+718:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+719-    method Ingredient.of(ItemLike...) is not applicable
+720:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+721-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+722:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+723-    method Ingredient.of(HolderSet<Item>) is not applicable
+724:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+725:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:219: error: method does not override or implement a method from a supertype
+726-    @Override
+727-    ^
+728:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:221: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+729-        super.addAdditionalSaveData(compound);
+730-             ^
+731-  required: ValueOutput
+732-  found:    CompoundTag
+733:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+734:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:227: error: method does not override or implement a method from a supertype
+735-    @Override
+736-    ^
+737:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:229: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+738-        super.readAdditionalSaveData(compound);
+739-             ^
+740-  required: ValueInput
+741-  found:    CompoundTag
+742:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+743:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:245: error: no suitable method found for create(ServerLevel)
+744-        Tiger baby = NaturalistEntityTypes.TIGER.get().create(level);
+745-                                                      ^
+746-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Tiger>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+747-      (actual and formal argument lists differ in length)
+748-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+754-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+755-      (actual and formal argument lists differ in length)
+756:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:283: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+757-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
+758-                                       ^
+759:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:303: error: method does not override or implement a method from a supertype
+760-    @Override
+761-    ^
+762:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:305: error: method killedEntity in class Entity cannot be applied to given types;
+763-        boolean result = super.killedEntity(level, killed);
+764-                              ^
+765-  required: ServerLevel,LivingEntity,DamageSource
+766-  found:    ServerLevel,LivingEntity
+767-  reason: actual and formal argument lists differ in length
+768:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:379: error: method does not override or implement a method from a supertype
+769-    @Override
+770-    ^
+771:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:392: error: cannot find symbol
+772-        long dayTime = this.level().getDayTime();
+773-                                   ^
+774-  symbol:   method getDayTime()
+775-  location: class Level
+776:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/AnimationSoundPlayer.java:42: error: cannot find symbol
+777-            float now = this.state.getAccumulatedTime() / 1000.0F;
+778-                                  ^
+779-  symbol:   method getAccumulatedTime()
+780-  location: variable state of type AnimationState
+781:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/NaturalistAnimal.java:37: error: cannot find symbol
+782-        if (!mob.level().isClientSide() && mob.getNavigation().isInProgress() && mob.isInWaterOrBubble() && path != null) {
+783-                                                                                    ^
+784-  symbol:   method isInWaterOrBubble()
+785-  location: variable mob of type Mob
+786:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:60: error: cannot find symbol
+787-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+788-                                         ^
+789-  symbol:   variable DANGER_FIRE
+790-  location: class PathType
+791:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:95: error: method does not override or implement a method from a supertype
+792-    @Override
+793-    ^
+794:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:97: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
+795-        super.addAdditionalSaveData(compound);
+796-             ^
+797-  required: ValueOutput
+798-  found:    CompoundTag
+799:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+800:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:101: error: method does not override or implement a method from a supertype
+801-    @Override
+802-    ^
+803:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:103: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
+804-        super.readAdditionalSaveData(compound);
+805-             ^
+806-  required: ValueInput
+807-  found:    CompoundTag
+808:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+809:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:185: error: cannot find symbol
+810-        navigation.setCanPassDoors(true);
+811-                  ^
+812-  symbol:   method setCanPassDoors(boolean)
+813-  location: variable navigation of type FlyingPathNavigation
+814:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:189: error: method does not override or implement a method from a supertype
+815-    @Override
+816-    ^
+817:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:237: error: random has protected access in Level
+818-                level().playSound(null, this.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level().random.nextFloat() * 0.2F);
+819-                                                                                                                                                 ^
+820:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:245: error: cannot find symbol
+821-            return this.level().isNight() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;
+822-                               ^
+823-  symbol:   method isNight()
+824-  location: class Level
+825:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:250: error: method does not override or implement a method from a supertype
+826-    @Override
+827-    ^
+828:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:252: error: cannot find symbol
+829-        if (this.level().isDay() && !this.hasCustomName() && !this.level().isClientSide()) {
+830-                        ^
+831-  symbol:   method isDay()
+832-  location: class Level
+833:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:304: error: random has protected access in Level
+834-                level.playSound(null, firefly.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
+835-                                                                                                                                                ^
+836:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:98: error: method does not override or implement a method from a supertype
+837-    @Override
+838-    ^
+839:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:100: error: method addAdditionalSaveData in class AbstractFish cannot be applied to given types;
+840-        super.addAdditionalSaveData(compound);
+841-             ^
+842-  required: ValueOutput
+843-  found:    CompoundTag
+844:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+845:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:104: error: method does not override or implement a method from a supertype
+846-    @Override
+847-    ^
+848:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:106: error: method readAdditionalSaveData in class AbstractFish cannot be applied to given types;
+849-        super.readAdditionalSaveData(compound);
+850-             ^
+851-  required: ValueInput
+852-  found:    CompoundTag
+853:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+854:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:133: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+855-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, LivingEntity::isInWater) {
+856-                                       ^
+857:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:134: error: method does not override or implement a method from a supertype
+858-            @Override
+859-            ^
+860:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:136: error: cannot find symbol
+861-                return !Piranha.this.isFollower() && super.canUse();
+862-                                                          ^
+863-  symbol: method canUse()
+864:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:139: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+865-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.PIRANHA_HOSTILES)) {
+866-                                       ^
+867:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:140: error: method does not override or implement a method from a supertype
+868-            @Override
+869-            ^
+870:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:142: error: cannot find symbol
+871-                return !Piranha.this.isFollower() && super.canUse();
+872-                                                          ^
+873-  symbol: method canUse()
+874:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:165: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Piranha cannot override hurt(DamageSource,float) in Entity
+875-    public boolean hurt(@NotNull DamageSource source, float amount) {
+876-                   ^
+877:  overridden method is final
+878:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:164: error: method does not override or implement a method from a supertype
+879-    @Override
+880-    ^
+881:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:166: error: incompatible types: void cannot be converted to boolean
+882-        boolean hurt = super.hurt(source, amount);
+883-                                 ^
+884:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:147: error: method does not override or implement a method from a supertype
+885-    @Override
+886-    ^
+887:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:149: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
+888-        super.addAdditionalSaveData(compound);
+889-             ^
+890-  required: ValueOutput
+891-  found:    CompoundTag
+892:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+893:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:153: error: method does not override or implement a method from a supertype
+894-    @Override
+895-    ^
+896:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:155: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
+897-        super.readAdditionalSaveData(compound);
+898-             ^
+899-  required: ValueInput
+900-  found:    CompoundTag
+901:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+902:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:178: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Whale cannot override hurt(DamageSource,float) in Entity
+903-    public boolean hurt(@NotNull DamageSource source, float amount) {
+904-                   ^
+905:  overridden method is final
+906:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:177: error: method does not override or implement a method from a supertype
+907-    @Override
+908-    ^
+909:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:182: error: incompatible types: void cannot be converted to boolean
+910-        return super.hurt(source, amount);
+911-                         ^
+912:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:247: error: no suitable method found for create(ServerLevel)
+913-        Whale baby = NaturalistEntityTypes.WHALE.get().create(serverLevel);
+914-                                                      ^
+915-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Whale>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+916-      (actual and formal argument lists differ in length)
+917-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+923-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+924-      (actual and formal argument lists differ in length)
+925:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:291: error: cannot find symbol
+926-                this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
+927-                                   ^
+928-  symbol: method getEatingSound(ItemStack)
+929:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:101: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
+930-        super.addAdditionalSaveData(compound);
+931-             ^
+932-  required: ValueOutput
+933-  found:    CompoundTag
+934:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+935:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:107: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
+936-        super.readAdditionalSaveData(compound);
+937-             ^
+938-  required: ValueInput
+939-  found:    CompoundTag
+940:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+941:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:109: error: method setFromHand in class Caterpillar cannot be applied to given types;
+942-        this.setFromHand(compound.getBoolean("FromHand"));
+943-            ^
+944-  required: boolean
+945-  found:    Optional<Boolean>
+946:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+947:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:125: error: method setAge in class AgeableMob cannot be applied to given types;
+948-            this.setAge(tag.getInt("Age"));
+949-                ^
+950-  required: int
+951-  found:    Optional<Integer>
+952:  reason: argument mismatch; Optional<Integer> cannot be converted to int
+953:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:149: error: cannot find symbol
+954-        return this.isBaby() && stack.is(ItemTags.FLOWERS);
+955-                                                 ^
+956-  symbol:   variable FLOWERS
+957-  location: class ItemTags
+958:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:174: error: getScale() in Caterpillar cannot override getScale() in LivingEntity
+959-    public float getScale() {
+960-                 ^
+961:  overridden method is final
+962:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:178: error: method does not override or implement a method from a supertype
+963-    @Override
+964-    ^
+965:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:240: error: random has protected access in Level
+966-                level.playSound(null, caterpillar.blockPosition(), SoundEvents.GRASS_PLACE, SoundSource.BLOCKS, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
+967-                                                                                                                                  ^
+968:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:73: error: method setNoAi in class Mob cannot be applied to given types;
+969-            mob.setNoAi(tag.getBoolean("NoAI"));
+970-               ^
+971-  required: boolean
+972-  found:    Optional<Boolean>
+973:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+974:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:77: error: method setSilent in class Entity cannot be applied to given types;
+975-            mob.setSilent(tag.getBoolean("Silent"));
+976-               ^
+977-  required: boolean
+978-  found:    Optional<Boolean>
+979:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+980:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:81: error: method setNoGravity in class Entity cannot be applied to given types;
+981-            mob.setNoGravity(tag.getBoolean("NoGravity"));
+982-               ^
+983-  required: boolean
+984-  found:    Optional<Boolean>
+985:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+986:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:85: error: method setGlowingTag in class Entity cannot be applied to given types;
+987-            mob.setGlowingTag(tag.getBoolean("Glowing"));
+988-               ^
+989-  required: boolean
+990-  found:    Optional<Boolean>
+991:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+992:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:89: error: method setInvulnerable in class Entity cannot be applied to given types;
+993-            mob.setInvulnerable(tag.getBoolean("Invulnerable"));
+994-               ^
+995-  required: boolean
+996-  found:    Optional<Boolean>
+997:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+998:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:92: error: method contains in class CompoundTag cannot be applied to given types;
+999-        if (tag.contains("Health", 99)) {
+1000-               ^
+1001-  required: String
+1002-  found:    String,int
+1003-  reason: actual and formal argument lists differ in length
+1004:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:93: error: method setHealth in class LivingEntity cannot be applied to given types;
+1005-            mob.setHealth(tag.getFloat("Health"));
+1006-               ^
+1007-  required: float
+1008-  found:    Optional<Float>
+1009:  reason: argument mismatch; Optional<Float> cannot be converted to float
+1010:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:99: error: cannot find symbol
+1011-        if (entity.isTame() && entity.getOwnerUUID() != null) {
+1012-                                     ^
+1013-  symbol:   method getOwnerUUID()
+1014-  location: variable entity of type T
+1015-  where T is a type-variable:
+1016-    T extends TamableAnimal,FollowingPet declared in method <T>saveTamableDataToHandTag( T,@org.jetbrains.annotations.NotNull CompoundTag)
+1017:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:101: error: cannot find symbol
+1018-            tag.putUUID("Owner", entity.getOwnerUUID());
+1019-                                       ^
+1020-  symbol:   method getOwnerUUID()
+1021-  location: variable entity of type T
+1022-  where T is a type-variable:
+1023-    T extends TamableAnimal,FollowingPet declared in method <T>saveTamableDataToHandTag( T,@org.jetbrains.annotations.NotNull CompoundTag)
+1024:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:108: error: cannot find symbol
+1025-        if (tag.getBoolean("Tame") && tag.hasUUID("Owner")) {
+1026-                                         ^
+1027-  symbol:   method hasUUID(String)
+1028-  location: variable tag of type CompoundTag
+1029:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:109: error: cannot find symbol
+1030-            entity.setOwnerUUID(tag.getUUID("Owner"));
+1031-                                   ^
+1032-  symbol:   method getUUID(String)
+1033-  location: variable tag of type CompoundTag
+1034:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:111: error: method setFollowingOwner in interface FollowingPet cannot be applied to given types;
+1035-            entity.setFollowingOwner(tag.getBoolean("FollowingOwner"));
+1036-                  ^
+1037-  required: boolean
+1038-  found:    Optional<Boolean>
+1039:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+1040:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:112: error: method setOrderedToSit in class TamableAnimal cannot be applied to given types;
+1041-            entity.setOrderedToSit(tag.getBoolean("Sitting"));
+1042-                  ^
+1043-  required: boolean
+1044-  found:    Optional<Boolean>
+1045:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+1046:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:83: error: no suitable method found for of(TagKey<Item>)
+1047-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.RAT_FOOD);
+1048-                                                           ^
+1049-    method Ingredient.of(ItemLike) is not applicable
+1050:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+1051-    method Ingredient.of(ItemLike...) is not applicable
+1052:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+1053-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+1054:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+1055-    method Ingredient.of(HolderSet<Item>) is not applicable
+1056:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+1057:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:195: error: cannot find symbol
+1058-            this.restrictTo(this.workstationPos, WORK_RADIUS);
+1059-                ^
+1060-  symbol: method restrictTo(BlockPos,int)
+1061:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:197: error: cannot find symbol
+1062-            this.clearRestriction();
+1063-                ^
+1064-  symbol: method clearRestriction()
+1065:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:251: error: method does not override or implement a method from a supertype
+1066-    @Override
+1067-    ^
+1068:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:253: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+1069-        super.addAdditionalSaveData(compound);
+1070-             ^
+1071-  required: ValueOutput
+1072-  found:    CompoundTag
+1073:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1074:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:259: error: cannot find symbol
+1075-        compound.put("CarriedItems", this.carriedItems.createTag(this.registryAccess()));
+1076-                                                      ^
+1077-  symbol:   method createTag(RegistryAccess)
+1078-  location: variable carriedItems of type SimpleContainer
+1079:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:263: error: method does not override or implement a method from a supertype
+1080-    @Override
+1081-    ^
+1082:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:265: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+1083-        super.readAdditionalSaveData(compound);
+1084-             ^
+1085-  required: ValueInput
+1086-  found:    CompoundTag
+1087:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1088:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:267: error: method setFromHand in class Rat cannot be applied to given types;
+1089-        this.setFromHand(compound.getBoolean("FromHand"));
+1090-            ^
+1091-  required: boolean
+1092-  found:    Optional<Boolean>
+1093:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+1094:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:269: error: method of in class BlockPos cannot be applied to given types;
+1095-            this.setWorkstation(BlockPos.of(compound.getLong("Workstation")));
+1096-                                        ^
+1097-  required: long
+1098-  found:    Optional<Long>
+1099:  reason: argument mismatch; Optional<Long> cannot be converted to long
+1100:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:273: error: method contains in class CompoundTag cannot be applied to given types;
+1101-        if (compound.contains("CarriedItems", 9)) {
+1102-                    ^
+1103-  required: String
+1104-  found:    String,int
+1105-  reason: actual and formal argument lists differ in length
+1106:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:274: error: method getList in class CompoundTag cannot be applied to given types;
+1107-            this.carriedItems.fromTag(compound.getList("CarriedItems", 10), this.registryAccess());
+1108-                                              ^
+1109-  required: String
+1110-  found:    String,int
+1111-  reason: actual and formal argument lists differ in length
+1112:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:293: error: method setAge in class AgeableMob cannot be applied to given types;
+1113-        this.setAge(tag.getInt("Age"));
+1114-            ^
+1115-  required: int
+1116-  found:    Optional<Integer>
+1117:  reason: argument mismatch; Optional<Integer> cannot be converted to int
+1118:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:318: error: no suitable method found for create(ServerLevel)
+1119-        Rat baby = NaturalistEntityTypes.RAT.get().create(level);
+1120-                                                  ^
+1121-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Rat>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+1122-      (actual and formal argument lists differ in length)
+1123-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+1129-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+1130-      (actual and formal argument lists differ in length)
+1131:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:322: error: cannot find symbol
+1132-                baby.setOwnerUUID(this.getOwnerUUID());
+1133-                                      ^
+1134-  symbol: method getOwnerUUID()
+1135:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:373: error: cannot find symbol
+1136-        if (this.level().isDay() || this.level().isThundering() || this.isInWater() || this.isOnFire()
+1137-                        ^
+1138-  symbol:   method isDay()
+1139-  location: class Level
+1140:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:415: error: cannot find symbol
+1141-                    this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
+1142-                                       ^
+1143-  symbol: method getEatingSound(ItemStack)
+1144:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:470: error: no suitable method found for getNearestPlayer(TargetingConditions,Rat)
+1145-            this.player = this.rat.level().getNearestPlayer(this.begTargeting, this.rat);
+1146-                                          ^
+1147-    method EntityGetter.getNearestPlayer(double,double,double,double,@org.jspecify.annotations.Nullable Predicate<Entity>) is not applicable
+1148-      (actual and formal argument lists differ in length)
+1149-    method EntityGetter.getNearestPlayer(Entity,double) is not applicable
+1150:      (argument mismatch; TargetingConditions cannot be converted to Entity)
+1151-    method EntityGetter.getNearestPlayer(double,double,double,double,boolean) is not applicable
+1152-      (actual and formal argument lists differ in length)
+1153:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:127: error: method does not override or implement a method from a supertype
+1154-    @Override
+1155-    ^
+1156:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:129: error: method addAdditionalSaveData in class AbstractFish cannot be applied to given types;
+1157-        super.addAdditionalSaveData(compound);
+1158-             ^
+1159-  required: ValueOutput
+1160-  found:    CompoundTag
+1161:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1162:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:133: error: method does not override or implement a method from a supertype
+1163-    @Override
+1164-    ^
+1165:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:135: error: method readAdditionalSaveData in class AbstractFish cannot be applied to given types;
+1166-        super.readAdditionalSaveData(compound);
+1167-             ^
+1168-  required: ValueInput
+1169-  found:    CompoundTag
+1170:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1171:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:198: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Ray cannot override hurt(DamageSource,float) in Entity
+1172-    public boolean hurt(@NotNull DamageSource source, float amount) {
+1173-                   ^
+1174:  overridden method is final
+1175:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:197: error: method does not override or implement a method from a supertype
+1176-    @Override
+1177-    ^
+1178:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:199: error: incompatible types: void cannot be converted to boolean
+1179-        boolean hurt = super.hurt(source, amount);
+1180-                                 ^
+1181:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:214: error: method does not override or implement a method from a supertype
+1182-    @Override
+1183-    ^
+1184:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:216: error: method doHurtTarget in class Mob cannot be applied to given types;
+1185-        boolean result = super.doHurtTarget(target);
+1186-                              ^
+1187-  required: ServerLevel,Entity
+1188-  found:    Entity
+1189-  reason: actual and formal argument lists differ in length
+1190:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:108: error: method does not override or implement a method from a supertype
+1191-    @Override
+1192-    ^
+1193:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:110: error: method addAdditionalSaveData in class Mob cannot be applied to given types;
+1194-        super.addAdditionalSaveData(compound);
+1195-             ^
+1196-  required: ValueOutput
+1197-  found:    CompoundTag
+1198:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1199:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:114: error: method does not override or implement a method from a supertype
+1200-    @Override
+1201-    ^
+1202:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:116: error: method readAdditionalSaveData in class Mob cannot be applied to given types;
+1203-        super.readAdditionalSaveData(compound);
+1204-             ^
+1205-  required: ValueInput
+1206-  found:    CompoundTag
+1207:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1208:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:182: error: no suitable method found for playSound(Reference<SoundEvent>)
+1209-            this.playSound(SoundEvents.GENERIC_EAT);
+1210-                ^
+1211-    method Entity.playSound(SoundEvent,float,float) is not applicable
+1212-      (actual and formal argument lists differ in length)
+1213-    method Entity.playSound(SoundEvent) is not applicable
+1214:      (argument mismatch; Reference<SoundEvent> cannot be converted to SoundEvent)
+1215:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:189: error: cannot find symbol
+1216-                areaEffectCloud.setParticle(ParticleTypes.DRAGON_BREATH);
+1217-                               ^
+1218-  symbol:   method setParticle(ParticleType<PowerParticleOption>)
+1219-  location: variable areaEffectCloud of type AreaEffectCloud
+1220:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:192: error: cannot find symbol
+1221-                areaEffectCloud.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
+1222-                                                                          ^
+1223-  symbol:   variable HARM
+1224-  location: class MobEffects
+1225:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:210: error: method does not override or implement a method from a supertype
+1226-    @Override
+1227-    ^
+1228:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:212: error: method customServerAiStep in class Mob cannot be applied to given types;
+1229-        super.customServerAiStep();
+1230-             ^
+1231-  required: ServerLevel
+1232-  found:    no arguments
+1233-  reason: actual and formal argument lists differ in length
+1234:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:213: error: cannot find symbol
+1235-        if (!(this.targetPosition == null || this.level().isEmptyBlock(this.targetPosition) && this.targetPosition.getY() > this.level().getMinBuildHeight())) {
+1236-                                                                                                                                        ^
+1237-  symbol:   method getMinBuildHeight()
+1238-  location: class Level
+1239:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:107: error: method does not override or implement a method from a supertype
+1240-    @Override
+1241-    ^
+1242:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:109: error: method addAdditionalSaveData in class AbstractFish cannot be applied to given types;
+1243-        super.addAdditionalSaveData(compound);
+1244-             ^
+1245-  required: ValueOutput
+1246-  found:    CompoundTag
+1247:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1248:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:114: error: method does not override or implement a method from a supertype
+1249-    @Override
+1250-    ^
+1251:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:116: error: method readAdditionalSaveData in class AbstractFish cannot be applied to given types;
+1252-        super.readAdditionalSaveData(compound);
+1253-             ^
+1254-  required: ValueInput
+1255-  found:    CompoundTag
+1256:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1257:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:149: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+1258-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> this.canHunt() && entity.getType().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
+1259-                                       ^
+1260:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:152: error: method does not override or implement a method from a supertype
+1261-    @Override
+1262-    ^
+1263:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:154: error: method killedEntity in class Entity cannot be applied to given types;
+1264-        boolean result = super.killedEntity(level, killed);
+1265-                              ^
+1266-  required: ServerLevel,LivingEntity,DamageSource
+1267-  found:    ServerLevel,LivingEntity
+1268-  reason: actual and formal argument lists differ in length
+1269:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:161: error: method does not override or implement a method from a supertype
+1270-    @Override
+1271-    ^
+1272:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:170: error: method doHurtTarget in class Mob cannot be applied to given types;
+1273-        return super.doHurtTarget(target);
+1274-                    ^
+1275-  required: ServerLevel,Entity
+1276-  found:    Entity
+1277-  reason: actual and formal argument lists differ in length
+1278:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:108: error: method does not override or implement a method from a supertype
+1279-    @Override
+1280-    ^
+1281:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:110: error: method addAdditionalSaveData in class AbstractFish cannot be applied to given types;
+1282-        super.addAdditionalSaveData(compound);
+1283-             ^
+1284-  required: ValueOutput
+1285-  found:    CompoundTag
+1286:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1287:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:115: error: method does not override or implement a method from a supertype
+1288-    @Override
+1289-    ^
+1290:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:117: error: method readAdditionalSaveData in class AbstractFish cannot be applied to given types;
+1291-        super.readAdditionalSaveData(compound);
+1292-             ^
+1293-  required: ValueInput
+1294-  found:    CompoundTag
+1295:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1296:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:119: error: incompatible types: Optional<Integer> cannot be converted to int
+1297-        this.eatCooldown = compound.getInt("EatCooldown");
+1298-                                          ^
+1299:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:231: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+1300-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Bass.class, 10, true, false, (living) -> living instanceof Bass prey && Bass.this.canEatTarget(prey)) {
+1301-                                       ^
+1302:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:232: error: method does not override or implement a method from a supertype
+1303-            @Override
+1304-            ^
+1305:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:234: error: cannot find symbol
+1306-                return Bass.this.canHunt() && super.canUse();
+1307-                                                   ^
+1308-  symbol: method canUse()
+1309:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:254: error: method does not override or implement a method from a supertype
+1310-    @Override
+1311-    ^
+1312:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:267: error: method doHurtTarget in class Mob cannot be applied to given types;
+1313-        return super.doHurtTarget(target);
+1314-                    ^
+1315-  required: ServerLevel,Entity
+1316-  found:    Entity
+1317-  reason: actual and formal argument lists differ in length
+1318:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:272: error: no suitable constructor found for ItemParticleOption(ParticleType<ItemParticleOption>,ItemStack)
+1319-            ItemParticleOption bassParticle = new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(NaturalistRegistry.BASS.get()));
+1320-                                              ^
+1321-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,Item) is not applicable
+1322:      (argument mismatch; ItemStack cannot be converted to Item)
+1323-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,ItemStackTemplate) is not applicable
+1324:      (argument mismatch; ItemStack cannot be converted to ItemStackTemplate)
+1325:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:64: error: no suitable method found for of(TagKey<Item>)
+1326-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.KOMODO_DRAGON_FOOD_ITEMS);
+1327-                                                           ^
+1328-    method Ingredient.of(ItemLike) is not applicable
+1329:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+1330-    method Ingredient.of(ItemLike...) is not applicable
+1331:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+1332-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+1333:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+1334-    method Ingredient.of(HolderSet<Item>) is not applicable
+1335:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+1336:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:129: error: method does not override or implement a method from a supertype
+1337-    @Override
+1338-    ^
+1339:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:131: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
+1340-        super.addAdditionalSaveData(compound);
+1341-             ^
+1342-  required: ValueOutput
+1343-  found:    CompoundTag
+1344:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1345:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:135: error: method does not override or implement a method from a supertype
+1346-    @Override
+1347-    ^
+1348:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:137: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
+1349-        super.readAdditionalSaveData(compound);
+1350-             ^
+1351-  required: ValueInput
+1352-  found:    CompoundTag
+1353:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1354:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:178: error: no suitable method found for create(ServerLevel)
+1355-        KomodoDragon baby = NaturalistEntityTypes.KOMODO_DRAGON.get().create(level);
+1356-                                                                     ^
+1357-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<KomodoDragon>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+1358-      (actual and formal argument lists differ in length)
+1359-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+1365-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+1366-      (actual and formal argument lists differ in length)
+1367:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:201: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+1368-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
+1369-                                       ^
+1370:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:203: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+1371-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true,
+1372-                                       ^
+1373:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:209: error: cannot find symbol
+1374-        return this.level().isDay() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());
+1375-                           ^
+1376-  symbol:   method isDay()
+1377-  location: class Level
+1378:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:212: error: method does not override or implement a method from a supertype
+1379-    @Override
+1380-    ^
+1381:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:214: error: method doHurtTarget in class Mob cannot be applied to given types;
+1382-        boolean result = super.doHurtTarget(entity);
+1383-                              ^
+1384-  required: ServerLevel,Entity
+1385-  found:    Entity
+1386-  reason: actual and formal argument lists differ in length
+1387:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:244: error: method does not override or implement a method from a supertype
+1388-    @Override
+1389-    ^
+1390:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:47: error: no suitable method found for of(TagKey<Item>)
+1391-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.CAPYBARA_FOOD_ITEMS);
+1392-                                                           ^
+1393-    method Ingredient.of(ItemLike) is not applicable
+1394:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+1395-    method Ingredient.of(ItemLike...) is not applicable
+1396:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+1397-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+1398:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+1399-    method Ingredient.of(HolderSet<Item>) is not applicable
+1400:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+1401:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:133: error: cannot find symbol
+1402-        long dayTime = this.level().getDayTime() % 24000;
+1403-                                   ^
+1404-  symbol:   method getDayTime()
+1405-  location: class Level
+1406:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:142: error: method does not override or implement a method from a supertype
+1407-    @Override
+1408-    ^
+1409:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:144: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+1410-        super.addAdditionalSaveData(compound);
+1411-             ^
+1412-  required: ValueOutput
+1413-  found:    CompoundTag
+1414:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1415:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:150: error: method does not override or implement a method from a supertype
+1416-    @Override
+1417-    ^
+1418:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:152: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+1419-        super.readAdditionalSaveData(compound);
+1420-             ^
+1421-  required: ValueInput
+1422-  found:    CompoundTag
+1423:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1424:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:168: error: no suitable method found for create(ServerLevel)
+1425-        Capybara baby = NaturalistEntityTypes.CAPYBARA.get().create(serverLevel);
+1426-                                                            ^
+1427-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Capybara>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+1428-      (actual and formal argument lists differ in length)
+1429-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+1435-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+1436-      (actual and formal argument lists differ in length)
+1437:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:172: error: cannot find symbol
+1438-                baby.setOwnerUUID(this.getOwnerUUID());
+1439-                                      ^
+1440-  symbol: method getOwnerUUID()
+1441:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:222: error: method does not override or implement a method from a supertype
+1442-    @Override
+1443-    ^
+1444:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:276: error: method does not override or implement a method from a supertype
+1445-    @Override
+1446-    ^
+1447:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:281: error: method does not override or implement a method from a supertype
+1448-    @Override
+1449-    ^
+1450:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Capybara.java:283: error: method customServerAiStep in class Animal cannot be applied to given types;
+1451-        super.customServerAiStep();
+1452-             ^
+1453-  required: ServerLevel
+1454-  found:    no arguments
+1455-  reason: actual and formal argument lists differ in length
+1456:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/LizardTail.java:77: error: method does not override or implement a method from a supertype
+1457-    @Override
+1458-    ^
+1459:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/LizardTail.java:79: error: method addAdditionalSaveData in class Mob cannot be applied to given types;
+1460-        super.addAdditionalSaveData(compound);
+1461-             ^
+1462-  required: ValueOutput
+1463-  found:    CompoundTag
+1464:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1465:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/LizardTail.java:83: error: method does not override or implement a method from a supertype
+1466-    @Override
+1467-    ^
+1468:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/LizardTail.java:85: error: method readAdditionalSaveData in class Mob cannot be applied to given types;
+1469-        super.readAdditionalSaveData(compound);
+1470-             ^
+1471-  required: ValueInput
+1472-  found:    CompoundTag
+1473:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1474:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/LizardTail.java:91: error: method does not override or implement a method from a supertype
+1475-    @Override
+1476-    ^
+1477:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/LizardTail.java:93: error: no suitable method found for knockback(double,double,double)
+1478-        super.knockback(strength * 1.5D, x, z);
+1479-             ^
+1480-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
+1481-      (actual and formal argument lists differ in length)
+1482-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
+1483-      (actual and formal argument lists differ in length)
+1484:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/LizardTail.java:102: error: cannot find symbol
+1485-            this.hasImpulse = true;
+1486-                ^
+1487-  symbol: variable hasImpulse
+1488:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Starfish.java:114: error: method does not override or implement a method from a supertype
+1489-    @Override
+1490-    ^
+1491:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Starfish.java:116: error: method addAdditionalSaveData in class Mob cannot be applied to given types;
+1492-        super.addAdditionalSaveData(compound);
+1493-             ^
+1494-  required: ValueOutput
+1495-  found:    CompoundTag
+1496:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1497:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Starfish.java:121: error: method does not override or implement a method from a supertype
+1498-    @Override
+1499-    ^
+1500:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Starfish.java:123: error: method readAdditionalSaveData in class Mob cannot be applied to given types;
+1501-        super.readAdditionalSaveData(compound);
+1502-             ^
+1503-  required: ValueInput
+1504-  found:    CompoundTag
+1505:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1506:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Starfish.java:125: error: method setFromBucket in class Starfish cannot be applied to given types;
+1507-        this.setFromBucket(compound.getBoolean("FromBucket"));
+1508-            ^
+1509-  required: boolean
+1510-  found:    Optional<Boolean>
+1511:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+1512:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Starfish.java:179: error: no suitable method found for spawnAtLocation(ItemLike)
+1513-        this.spawnAtLocation(this.getPlaceableBlock());
+1514-            ^
+1515-    method Entity.spawnAtLocation(ServerLevel,ItemLike) is not applicable
+1516-      (actual and formal argument lists differ in length)
+1517-    method Entity.spawnAtLocation(ServerLevel,ItemStack) is not applicable
+--
+1521-    method Entity.spawnAtLocation(ServerLevel,ItemStack,float) is not applicable
+1522-      (actual and formal argument lists differ in length)
+1523:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:225: error: method does not override or implement a method from a supertype
+1524-    @Override
+1525-    ^
+1526:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:227: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
+1527-        super.addAdditionalSaveData(compound);
+1528-             ^
+1529-  required: ValueOutput
+1530-  found:    CompoundTag
+1531:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1532:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:232: error: method does not override or implement a method from a supertype
+1533-    @Override
+1534-    ^
+1535:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:234: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
+1536-        super.readAdditionalSaveData(compound);
+1537-             ^
+1538-  required: ValueInput
+1539-  found:    CompoundTag
+1540:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1541:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:236: error: incompatible types: Optional<Integer> cannot be converted to int
+1542-        int state = compound.getInt("MoleState");
+1543-                                   ^
+1544:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:251: error: no suitable method found for create(ServerLevel)
+1545-        Mole baby = NaturalistEntityTypes.MOLE.get().create(level);
+1546-                                                    ^
+1547-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Mole>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+1548-      (actual and formal argument lists differ in length)
+1549-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+1555-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+1556-      (actual and formal argument lists differ in length)
+1557:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:314: error: method does not override or implement a method from a supertype
+1558-    @Override
+1559-    ^
+1560:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:316: error: method customServerAiStep in class Animal cannot be applied to given types;
+1561-        super.customServerAiStep();
+1562-             ^
+1563-  required: ServerLevel
+1564-  found:    no arguments
+1565-  reason: actual and formal argument lists differ in length
+1566:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:389: error: cannot find symbol
+1567-        if (entity.getType().is(EntityTypeTags.UNDEAD)) {
+1568-                            ^
+1569-  symbol:   method is(TagKey<EntityType<?>>)
+1570-  location: class EntityType<CAP#1>
+1571-  where CAP#1 is a fresh type-variable:
+1572-    CAP#1 extends Entity from capture of ?
+1573:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:453: error: no suitable method found for create(Level)
+1574-        DirtTrail trail = NaturalistEntityTypes.DIRT_TRAIL.get().create(this.level());
+1575-                                                                ^
+1576-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<DirtTrail>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+1577-      (actual and formal argument lists differ in length)
+1578-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+1584-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+1585-      (actual and formal argument lists differ in length)
+1586:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:463: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Mole cannot override hurt(DamageSource,float) in Entity
+1587-    public boolean hurt(@NotNull DamageSource source, float amount) {
+1588-                   ^
+1589:  overridden method is final
+1590:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:462: error: method does not override or implement a method from a supertype
+1591-    @Override
+1592-    ^
+1593:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:468: error: incompatible types: void cannot be converted to boolean
+1594-        boolean hurt = super.hurt(source, amount);
+1595-                                 ^
+1596:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Mole.java:503: error: cannot find symbol
+1597-                this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
+1598-                                   ^
+1599-  symbol: method getEatingSound(ItemStack)
+1600:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:87: error: method does not override or implement a method from a supertype
+1601-    @Override
+1602-    ^
+1603:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:89: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
+1604-        super.addAdditionalSaveData(compound);
+1605-             ^
+1606-  required: ValueOutput
+1607-  found:    CompoundTag
+1608:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1609:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:93: error: method does not override or implement a method from a supertype
+1610-    @Override
+1611-    ^
+1612:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:95: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
+1613-        super.readAdditionalSaveData(compound);
+1614-             ^
+1615-  required: ValueInput
+1616-  found:    CompoundTag
+1617:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1618:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:109: error: no suitable method found for create(ServerLevel)
+1619-        Deer baby = NaturalistEntityTypes.DEER.get().create(serverLevel);
+1620-                                                    ^
+1621-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Deer>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+1622-      (actual and formal argument lists differ in length)
+1623-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+1629-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+1630-      (actual and formal argument lists differ in length)
+1631:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:133: error: cannot find symbol
+1632-        this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, Animal.class, 10.0F, 1.5D, 2.0D, livingEntity -> livingEntity.getType().is(NaturalistTags.EntityTypes.DEER_PREDATORS)));
+1633-                                                                                                                                        ^
+1634-  symbol:   method is(TagKey<EntityType<?>>)
+1635-  location: class EntityType<CAP#1>
+1636-  where CAP#1 is a fresh type-variable:
+1637-    CAP#1 extends Entity from capture of ?
+1638:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:142: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Deer cannot override hurt(DamageSource,float) in Entity
+1639-    public boolean hurt(@NotNull DamageSource source, float amount) {
+1640-                   ^
+1641:  overridden method is final
+1642:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:141: error: method does not override or implement a method from a supertype
+1643-    @Override
+1644-    ^
+1645:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:143: error: incompatible types: void cannot be converted to boolean
+1646-        boolean lastHurt = super.hurt(source, amount);
+1647-                                     ^
+1648:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:185: error: method does not override or implement a method from a supertype
+1649-    @Override
+1650-    ^
+1651:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Deer.java:187: error: method customServerAiStep in class Animal cannot be applied to given types;
+1652-        super.customServerAiStep();
+1653-             ^
+1654-  required: ServerLevel
+1655-  found:    no arguments
+1656-  reason: actual and formal argument lists differ in length
+1657:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:74: error: cannot find symbol
+1658-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+1659-                                         ^
+1660-  symbol:   variable DANGER_FIRE
+1661-  location: class PathType
+1662:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:155: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
+1663-        super.addAdditionalSaveData(compound);
+1664-             ^
+1665-  required: ValueOutput
+1666-  found:    CompoundTag
+1667:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1668:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:161: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
+1669-        super.readAdditionalSaveData(compound);
+1670-             ^
+1671-  required: ValueInput
+1672-  found:    CompoundTag
+1673:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1674:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:163: error: method setFromHand in class Butterfly cannot be applied to given types;
+1675-        this.setFromHand(compound.getBoolean("FromHand"));
+1676-            ^
+1677-  required: boolean
+1678-  found:    Optional<Boolean>
+1679:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+1680:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:179: error: method setAge in class AgeableMob cannot be applied to given types;
+1681-            this.setAge(tag.getInt("Age"));
+1682-                ^
+1683-  required: int
+1684-  found:    Optional<Integer>
+1685:  reason: argument mismatch; Optional<Integer> cannot be converted to int
+1686:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:183: error: method setMemoryWithExpiry in class Brain<E> cannot be applied to given types;
+1687-            this.getBrain().setMemoryWithExpiry(MemoryModuleType.HAS_HUNTING_COOLDOWN, true, tag.getLong("HuntingCooldown"));
+1688-                           ^
+1689-  required: MemoryModuleType<U>,U,long
+1690-  found:    MemoryModuleType<Boolean>,boolean,Optional<Long>
+1691:  reason: cannot infer type-variable(s) U
+1692:    (argument mismatch; Optional<Long> cannot be converted to long)
+1693-  where U,E are type-variables:
+1694-    U extends Object declared in method <U>setMemoryWithExpiry(MemoryModuleType<U>,U,long)
+1695-    E extends LivingEntity declared in class Brain
+1696:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:239: error: cannot find symbol
+1697-        return stack.is(ItemTags.FLOWERS);
+1698-                                ^
+1699-  symbol:   variable FLOWERS
+1700-  location: class ItemTags
+1701:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:244: error: no suitable method found for create(ServerLevel)
+1702-        return NaturalistEntityTypes.CATERPILLAR.get().create(serverLevel);
+1703-                                                      ^
+1704-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Caterpillar>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+1705-      (actual and formal argument lists differ in length)
+1706-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+1712-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+1713-      (actual and formal argument lists differ in length)
+1714:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:248: error: isBaby() in Butterfly cannot override isBaby() in AgeableMob
+1715-    public boolean isBaby() {
+1716-                   ^
+1717:  overridden method is final
+1718:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:257: error: cannot find symbol
+1719-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.25D, Ingredient.of(ItemTags.FLOWERS), false));
+1720-                                                                                      ^
+1721-  symbol:   variable FLOWERS
+1722-  location: class ItemTags
+1723:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:274: error: cannot find symbol
+1724-        navigation.setCanPassDoors(true);
+1725-                  ^
+1726-  symbol:   method setCanPassDoors(boolean)
+1727-  location: variable navigation of type FlyingPathNavigation
+1728:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:297: error: method does not override or implement a method from a supertype
+1729-    @Override
+1730-    ^
+1731:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:333: error: random has protected access in Level
+1732-        level.addParticle(ParticleTypes.FALLING_NECTAR, Mth.lerp(level.random.nextDouble(), x1, x2), y, Mth.lerp(level.random.nextDouble(), z1, z2), 0.0D, 0.0D, 0.0D);
+1733-                                                                      ^
+1734:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:333: error: random has protected access in Level
+1735-        level.addParticle(ParticleTypes.FALLING_NECTAR, Mth.lerp(level.random.nextDouble(), x1, x2), y, Mth.lerp(level.random.nextDouble(), z1, z2), 0.0D, 0.0D, 0.0D);
+1736-                                                                                                                      ^
+1737:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:94: error: no suitable method found for of(TagKey<Item>)
+1738-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.CRAB_FOOD);
+1739-                                                           ^
+1740-    method Ingredient.of(ItemLike) is not applicable
+1741:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+1742-    method Ingredient.of(ItemLike...) is not applicable
+1743:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+1744-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+1745:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+1746-    method Ingredient.of(HolderSet<Item>) is not applicable
+1747:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+1748:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:195: error: method does not override or implement a method from a supertype
+1749-    @Override
+1750-    ^
+1751:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:197: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+1752-        super.addAdditionalSaveData(compound);
+1753-             ^
+1754-  required: ValueOutput
+1755-  found:    CompoundTag
+1756:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1757:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:203: error: method does not override or implement a method from a supertype
+1758-    @Override
+1759-    ^
+1760:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:205: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+1761-        super.readAdditionalSaveData(compound);
+1762-             ^
+1763-  required: ValueInput
+1764-  found:    CompoundTag
+1765:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1766:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:207: error: method setFromHand in class Crab cannot be applied to given types;
+1767-        this.setFromHand(compound.getBoolean("FromHand"));
+1768-            ^
+1769-  required: boolean
+1770-  found:    Optional<Boolean>
+1771:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+1772:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:219: error: cannot find symbol
+1773-            tag.put("HeldItem", held.save(this.level().registryAccess()));
+1774-                                    ^
+1775-  symbol:   method save(RegistryAccess)
+1776-  location: variable held of type ItemStack
+1777:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:230: error: method setAge in class AgeableMob cannot be applied to given types;
+1778-            this.setAge(tag.getInt("Age"));
+1779-                ^
+1780-  required: int
+1781-  found:    Optional<Integer>
+1782:  reason: argument mismatch; Optional<Integer> cannot be converted to int
+1783:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:233: error: cannot find symbol
+1784-            ItemStack held = ItemStack.parse(this.level().registryAccess(), tag.getCompound("HeldItem")).orElse(ItemStack.EMPTY);
+1785-                                      ^
+1786-  symbol:   method parse(RegistryAccess,Optional<CompoundTag>)
+1787-  location: class ItemStack
+1788:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:296: error: no suitable method found for create(ServerLevel)
+1789-        Crab baby = NaturalistEntityTypes.CRAB.get().create(serverLevel);
+1790-                                                    ^
+1791-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Crab>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+1792-      (actual and formal argument lists differ in length)
+1793-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+1799-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+1800-      (actual and formal argument lists differ in length)
+1801:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:300: error: cannot find symbol
+1802-                baby.setOwnerUUID(this.getOwnerUUID());
+1803-                                      ^
+1804-  symbol: method getOwnerUUID()
+1805:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:403: error: method does not override or implement a method from a supertype
+1806-    @Override
+1807-    ^
+1808:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:409: error: cannot find symbol
+1809-        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem;
+1810-                                          ^
+1811-  symbol:   class SwordItem
+1812-  location: class Crab
+1813:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:409: error: cannot find symbol
+1814-        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem;
+1815-                                                                                  ^
+1816-  symbol:   class DiggerItem
+1817-  location: class Crab
+1818:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:412: error: method does not override or implement a method from a supertype
+1819-    @Override
+1820-    ^
+1821:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:414: error: method doHurtTarget in class Mob cannot be applied to given types;
+1822-        boolean hurt = super.doHurtTarget(target);
+1823-                            ^
+1824-  required: ServerLevel,Entity
+1825-  found:    Entity
+1826-  reason: actual and formal argument lists differ in length
+1827:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:522: error: method selector in class TargetingConditions cannot be applied to given types;
+1828-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(4.0D).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test), this, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D));
+1829-                                                                                                           ^
+1830-  required: Selector
+1831-  found:    EntitySele[...]:test
+1832-  reason: argument mismatch; invalid method reference
+1833:      method test in interface Predicate<T> cannot be applied to given types
+1834-        required: Entity
+1835-        found:    LivingEntity,ServerLevel
+1836-        reason: actual and formal argument lists differ in length
+1837-  where T is a type-variable:
+1838-    T extends Object declared in interface Predicate
+1839:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:544: error: method does not override or implement a method from a supertype
+1840-    @Override
+1841-    ^
+1842:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:546: error: no suitable method found for knockback(double,double,double)
+1843-        super.knockback(this.canHide() ? strength / 4 : strength, x, z);
+1844-             ^
+1845-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
+1846-      (actual and formal argument lists differ in length)
+1847-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
+1848-      (actual and formal argument lists differ in length)
+1849:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:550: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Crab cannot override hurt(DamageSource,float) in Entity
+1850-    public boolean hurt(@NotNull DamageSource source, float amount) {
+1851-                   ^
+1852:  overridden method is final
+1853:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:549: error: method does not override or implement a method from a supertype
+1854-    @Override
+1855-    ^
+1856:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:551: error: incompatible types: void cannot be converted to boolean
+1857-        return super.hurt(source, this.canHide() ? amount * 0.8F : amount);
+1858-                         ^
+1859:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Scorpion.java:107: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+1860-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
+1861-                                       ^
+1862:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Scorpion.java:109: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+1863-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, true,
+1864-                                       ^
+1865:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Scorpion.java:125: error: method does not override or implement a method from a supertype
+1866-    @Override
+1867-    ^
+1868:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Scorpion.java:127: error: method doHurtTarget in class Mob cannot be applied to given types;
+1869-        boolean result = super.doHurtTarget(entity);
+1870-                              ^
+1871-  required: ServerLevel,Entity
+1872-  found:    Entity
+1873-  reason: actual and formal argument lists differ in length
+1874:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Scorpion.java:139: error: no suitable method found for playSound(Reference<SoundEvent>,float,float)
+1875-            this.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
+1876-                ^
+1877-    method Entity.playSound(SoundEvent,float,float) is not applicable
+1878:      (argument mismatch; Reference<SoundEvent> cannot be converted to SoundEvent)
+1879-    method Entity.playSound(SoundEvent) is not applicable
+1880-      (actual and formal argument lists differ in length)
+1881:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Scorpion.java:146: error: method does not override or implement a method from a supertype
+1882-    @Override
+1883-    ^
+1884:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Scorpion.java:148: error: method customServerAiStep in class Animal cannot be applied to given types;
+1885-        super.customServerAiStep();
+1886-             ^
+1887-  required: ServerLevel
+1888-  found:    no arguments
+1889-  reason: actual and formal argument lists differ in length
+1890:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/DesertScorpion.java:74: error: method does not override or implement a method from a supertype
+1891-    @Override
+1892-    ^
+1893:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/DesertScorpion.java:76: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
+1894-        super.addAdditionalSaveData(compound);
+1895-             ^
+1896-  required: ValueOutput
+1897-  found:    CompoundTag
+1898:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1899:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/DesertScorpion.java:81: error: method does not override or implement a method from a supertype
+1900-    @Override
+1901-    ^
+1902:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/DesertScorpion.java:83: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
+1903-        super.readAdditionalSaveData(compound);
+1904-             ^
+1905-  required: ValueInput
+1906-  found:    CompoundTag
+1907:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1908:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/DesertScorpion.java:85: error: method setFromHand in class DesertScorpion cannot be applied to given types;
+1909-        this.setFromHand(compound.getBoolean("FromHand"));
+1910-            ^
+1911-  required: boolean
+1912-  found:    Optional<Boolean>
+1913:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+1914:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/DesertScorpion.java:141: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+1915-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, true,
+1916-                                       ^
+1917:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:140: error: method does not override or implement a method from a supertype
+1918-    @Override
+1919-    ^
+1920:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:142: error: method addAdditionalSaveData in class AbstractFish cannot be applied to given types;
+1921-        super.addAdditionalSaveData(compound);
+1922-             ^
+1923-  required: ValueOutput
+1924-  found:    CompoundTag
+1925:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1926:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:147: error: method does not override or implement a method from a supertype
+1927-    @Override
+1928-    ^
+1929:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:149: error: method readAdditionalSaveData in class AbstractFish cannot be applied to given types;
+1930-        super.readAdditionalSaveData(compound);
+1931-             ^
+1932-  required: ValueInput
+1933-  found:    CompoundTag
+1934:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+1935:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:164: error: method does not override or implement a method from a supertype
+1936-    @Override
+1937-    ^
+1938:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:166: error: method killedEntity in class Entity cannot be applied to given types;
+1939-        boolean result = super.killedEntity(level, killed);
+1940-                              ^
+1941-  required: ServerLevel,LivingEntity,DamageSource
+1942-  found:    ServerLevel,LivingEntity
+1943-  reason: actual and formal argument lists differ in length
+1944:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:248: error: method doHurtTarget in class Mob cannot be applied to given types;
+1945-                    this.mob.doHurtTarget(target);
+1946-                            ^
+1947-  required: ServerLevel,Entity
+1948-  found:    LivingEntity
+1949-  reason: actual and formal argument lists differ in length
+1950:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:254: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+1951-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false,
+1952-                                       ^
+1953:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:259: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Anglerfish cannot override hurt(DamageSource,float) in Entity
+1954-    public boolean hurt(@NotNull DamageSource source, float amount) {
+1955-                   ^
+1956:  overridden method is final
+1957:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:258: error: method does not override or implement a method from a supertype
+1958-    @Override
+1959-    ^
+1960:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Anglerfish.java:260: error: incompatible types: void cannot be converted to boolean
+1961-        boolean hurt = super.hurt(source, amount);
+1962-                                 ^
+1963:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:76: error: no suitable method found for of(TagKey<Item>)
+1964-    private static final Ingredient TAME_FOOD = Ingredient.of(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS);
+1965-                                                          ^
+1966-    method Ingredient.of(ItemLike) is not applicable
+1967:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+1968-    method Ingredient.of(ItemLike...) is not applicable
+1969:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+1970-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+1971:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+1972-    method Ingredient.of(HolderSet<Item>) is not applicable
+1973:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+1974:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:99: error: cannot find symbol
+1975-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+1976-                                         ^
+1977-  symbol:   variable DANGER_FIRE
+1978-  location: class PathType
+1979:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:100: error: cannot find symbol
+1980-        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+1981-                                         ^
+1982-  symbol:   variable DAMAGE_FIRE
+1983-  location: class PathType
+1984:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:157: error: method does not override or implement a method from a supertype
+1985-    @Override
+1986-    ^
+1987:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:159: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+1988-        super.addAdditionalSaveData(compound);
+1989-             ^
+1990-  required: ValueOutput
+1991-  found:    CompoundTag
+1992:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+1993:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:165: error: method does not override or implement a method from a supertype
+1994-    @Override
+1995-    ^
+1996:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:167: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+1997-        super.readAdditionalSaveData(compound);
+1998-             ^
+1999-  required: ValueInput
+2000-  found:    CompoundTag
+2001:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+2002:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:201: error: isBaby() in Bird cannot override isBaby() in AgeableMob
+2003-    public boolean isBaby() {
+2004-                   ^
+2005:  overridden method is final
+2006:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:226: error: cannot find symbol
+2007-        navigation.setCanPassDoors(true);
+2008-                  ^
+2009-  symbol:   method setCanPassDoors(boolean)
+2010-  location: variable navigation of type FlyingPathNavigation
+2011:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:239: error: method does not override or implement a method from a supertype
+2012-    @Override
+2013-    ^
+2014:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:269: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Bird cannot override hurt(DamageSource,float) in Entity
+2015-    public boolean hurt(@NotNull DamageSource source, float amount) {
+2016-                   ^
+2017:  overridden method is final
+2018:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:268: error: method does not override or implement a method from a supertype
+2019-    @Override
+2020-    ^
+2021:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:270: error: method isInvulnerableTo in class LivingEntity cannot be applied to given types;
+2022-        if (this.isInvulnerableTo(source)) {
+2023-                ^
+2024-  required: ServerLevel,DamageSource
+2025-  found:    DamageSource
+2026-  reason: actual and formal argument lists differ in length
+2027:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:277: error: incompatible types: void cannot be converted to boolean
+2028-            return super.hurt(source, amount);
+2029-                             ^
+2030:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:432: error: cannot find symbol
+2031-        if (this.level().isNight()) {
+2032-                        ^
+2033-  symbol:   method isNight()
+2034-  location: class Level
+2035:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:448: error: cannot find symbol
+2036-        if (this.level() instanceof ServerLevel serverLevel && !this.level().isNight()) {
+2037-                                                                            ^
+2038-  symbol:   method isNight()
+2039-  location: class Level
+2040:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:537: error: method selector in class TargetingConditions cannot be applied to given types;
+2041-                    .selector(entity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && !entity.isDiscrete());
+2042-                    ^
+2043-  required: Selector
+2044-  found:    (entity)->[...]ete()
+2045-  reason: argument mismatch; incompatible parameter types in lambda expression
+2046:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:546: error: no suitable method found for getNearestPlayer(TargetingConditions,Bird)
+2047-            this.toAvoid = this.bird.level().getNearestPlayer(this.avoidTargeting, this.bird);
+2048-                                            ^
+2049-    method EntityGetter.getNearestPlayer(double,double,double,double,@org.jspecify.annotations.Nullable Predicate<Entity>) is not applicable
+2050-      (actual and formal argument lists differ in length)
+2051-    method EntityGetter.getNearestPlayer(Entity,double) is not applicable
+2052:      (argument mismatch; TargetingConditions cannot be converted to Entity)
+2053-    method EntityGetter.getNearestPlayer(double,double,double,double,boolean) is not applicable
+2054-      (actual and formal argument lists differ in length)
+2055:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:644: error: no suitable constructor found for ItemParticleOption(ParticleType<ItemParticleOption>,ItemStack)
+2056-                serverLevel.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack.copy()),
+2057-                                          ^
+2058-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,Item) is not applicable
+2059:      (argument mismatch; ItemStack cannot be converted to Item)
+2060-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,ItemStackTemplate) is not applicable
+2061:      (argument mismatch; ItemStack cannot be converted to ItemStackTemplate)
+2062:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:73: error: no suitable method found for of(TagKey<Item>)
+2063-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.HEDGEHOG_FOOD_ITEMS);
+2064-                                                           ^
+2065-    method Ingredient.of(ItemLike) is not applicable
+2066:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+2067-    method Ingredient.of(ItemLike...) is not applicable
+2068:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+2069-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+2070:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+2071-    method Ingredient.of(HolderSet<Item>) is not applicable
+2072:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+2073:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:192: error: method does not override or implement a method from a supertype
+2074-    @Override
+2075-    ^
+2076:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:194: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+2077-        super.addAdditionalSaveData(compound);
+2078-             ^
+2079-  required: ValueOutput
+2080-  found:    CompoundTag
+2081:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+2082:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:205: error: method does not override or implement a method from a supertype
+2083-    @Override
+2084-    ^
+2085:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:207: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+2086-        super.readAdditionalSaveData(compound);
+2087-             ^
+2088-  required: ValueInput
+2089-  found:    CompoundTag
+2090:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+2091:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:209: error: method setFromHand in class Hedgehog cannot be applied to given types;
+2092-        this.setFromHand(compound.getBoolean("FromHand"));
+2093-            ^
+2094-  required: boolean
+2095-  found:    Optional<Boolean>
+2096:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+2097:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:237: error: method setAge in class AgeableMob cannot be applied to given types;
+2098-        this.setAge(tag.getInt("Age"));
+2099-            ^
+2100-  required: int
+2101-  found:    Optional<Integer>
+2102:  reason: argument mismatch; Optional<Integer> cannot be converted to int
+2103:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:263: error: no suitable method found for create(ServerLevel)
+2104-        Hedgehog baby = NaturalistEntityTypes.HEDGEHOG.get().create(serverLevel);
+2105-                                                            ^
+2106-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Hedgehog>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+2107-      (actual and formal argument lists differ in length)
+2108-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+2114-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+2115-      (actual and formal argument lists differ in length)
+2116:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:267: error: cannot find symbol
+2117-                baby.setOwnerUUID(this.getOwnerUUID());
+2118-                                      ^
+2119-  symbol: method getOwnerUUID()
+2120:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:327: error: method selector in class TargetingConditions cannot be applied to given types;
+2121-        List<Player> players = this.level().getNearbyPlayers(TargetingConditions.forNonCombat().range(6.0).selector(EntitySelector.NO_CREATIVE_OR_SPECTATOR::test), this, this.getBoundingBox().inflate(6.0, 3.0, 6.0));
+2122-                                                                                                          ^
+2123-  required: Selector
+2124-  found:    EntitySele[...]:test
+2125-  reason: argument mismatch; invalid method reference
+2126:      method test in interface Predicate<T> cannot be applied to given types
+2127-        required: Entity
+2128-        found:    LivingEntity,ServerLevel
+2129-        reason: actual and formal argument lists differ in length
+2130-  where T is a type-variable:
+2131-    T extends Object declared in interface Predicate
+2132:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:349: error: method does not override or implement a method from a supertype
+2133-    @Override
+2134-    ^
+2135:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:354: error: method does not override or implement a method from a supertype
+2136-    @Override
+2137-    ^
+2138:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:356: error: method isInvulnerableTo in class LivingEntity cannot be applied to given types;
+2139-        return super.isInvulnerableTo(source) || source.is(DamageTypes.CACTUS) || source.is(DamageTypes.SWEET_BERRY_BUSH)
+2140-                    ^
+2141-  required: ServerLevel,DamageSource
+2142-  found:    DamageSource
+2143-  reason: actual and formal argument lists differ in length
+2144:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:413: error: method does not override or implement a method from a supertype
+2145-    @Override
+2146-    ^
+2147:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:438: error: incompatible types: void cannot be converted to boolean
+2148-                        if (target.hurt(this.damageSources().thrown(this, this.getOwner()), 2.0F + this.getThrowEnchantmentLevel(Enchantments.THORNS))) {
+2149-                                       ^
+2150:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:441: error: no suitable method found for knockback(double,double,double)
+2151-                                target.knockback(punch * 0.6, -motion.x, -motion.z);
+2152-                                      ^
+2153-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
+2154-      (actual and formal argument lists differ in length)
+2155-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
+2156-      (actual and formal argument lists differ in length)
+2157:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:448: error: no suitable constructor found for ItemParticleOption(ParticleType<ItemParticleOption>,ItemStack)
+2158-                            ((ServerLevel) this.level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, particleStack), this.getX(), this.getY(0.5), this.getZ(), 8, 0.1, 0.1, 0.1, 0.05);
+2159-                                                                       ^
+2160-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,Item) is not applicable
+2161:      (argument mismatch; ItemStack cannot be converted to Item)
+2162-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,ItemStackTemplate) is not applicable
+2163:      (argument mismatch; ItemStack cannot be converted to ItemStackTemplate)
+2164:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:450: error: cannot find symbol
+2165-                                Holder<DamageType> throwDamage = this.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(NaturalistDamageTypes.HEDGEHOG_THROW);
+2166-                                                                                      ^
+2167-  symbol:   method registryOrThrow(ResourceKey<Registry<DamageType>>)
+2168-  location: interface RegistryAccess
+2169:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java:503: error: cannot find symbol
+2170-        return this.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(key).map(this.throwEnchantments::getLevel).orElse(0);
+2171-                                    ^
+2172-  symbol:   method registryOrThrow(ResourceKey<Registry<Enchantment>>)
+2173-  location: interface RegistryAccess
+2174:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:54: error: no suitable method found for of(TagKey<Item>)
+2175-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TURKEY_FOOD_ITEMS);
+2176-                                                           ^
+2177-    method Ingredient.of(ItemLike) is not applicable
+2178:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+2179-    method Ingredient.of(ItemLike...) is not applicable
+2180:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+2181-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+2182:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+2183-    method Ingredient.of(HolderSet<Item>) is not applicable
+2184:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+2185:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:121: error: method does not override or implement a method from a supertype
+2186-    @Override
+2187-    ^
+2188:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:123: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
+2189-        super.addAdditionalSaveData(compound);
+2190-             ^
+2191-  required: ValueOutput
+2192-  found:    CompoundTag
+2193:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+2194:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:127: error: method does not override or implement a method from a supertype
+2195-    @Override
+2196-    ^
+2197:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:129: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
+2198-        super.readAdditionalSaveData(compound);
+2199-             ^
+2200-  required: ValueInput
+2201-  found:    CompoundTag
+2202:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+2203:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:143: error: no suitable method found for create(ServerLevel)
+2204-        Turkey baby = NaturalistEntityTypes.TURKEY.get().create(level);
+2205-                                                        ^
+2206-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Turkey>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+2207-      (actual and formal argument lists differ in length)
+2208-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+2214-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+2215-      (actual and formal argument lists differ in length)
+2216:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:174: error: cannot infer type arguments for NearestAttackableTargetGoal<>
+2217-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false,
+2218-                                       ^
+2219:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:178: error: method does not override or implement a method from a supertype
+2220-    @Override
+2221-    ^
+2222:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:216: error: method does not override or implement a method from a supertype
+2223-    @Override
+2224-    ^
+2225:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Turkey.java:218: error: method customServerAiStep in class Animal cannot be applied to given types;
+2226-        super.customServerAiStep();
+2227-             ^
+2228-  required: ServerLevel
+2229-  found:    no arguments
+2230-  reason: actual and formal argument lists differ in length
+2231:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tortoise.java:60: error: no suitable method found for of(TagKey<Item>)
+2232-    private static final Ingredient TEMPT_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS);
+2233-                                                            ^
+2234-    method Ingredient.of(ItemLike) is not applicable
+2235:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
+2236-    method Ingredient.of(ItemLike...) is not applicable
+2237:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
+2238-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
+2239:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
+2240-    method Ingredient.of(HolderSet<Item>) is not applicable
+2241:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
+2242:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tortoise.java:174: error: method does not override or implement a method from a supertype
+2243-    @Override
+2244-    ^
+2245:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tortoise.java:176: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+2246-        super.addAdditionalSaveData(compound);
+2247-             ^
+2248-  required: ValueOutput
+2249-  found:    CompoundTag
+2250:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+2251:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tortoise.java:182: error: method does not override or implement a method from a supertype
+2252-    @Override
+2253-    ^
+2254:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tortoise.java:184: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
+2255-        super.readAdditionalSaveData(compound);
+2256-             ^
+2257-  required: ValueInput
+2258-  found:    CompoundTag
+2259:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
+2260:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tortoise.java:186: error: method setHasEgg in class Tortoise cannot be applied to given types;
+2261-        this.setHasEgg(compound.getBoolean("HasEgg"));
+2262-            ^
+2263-  required: boolean
+2264-  found:    Optional<Boolean>
+2265:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
+2266:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tortoise.java:222: error: no suitable method found for create(ServerLevel)
+2267-        Tortoise tortoise = NaturalistEntityTypes.TORTOISE.get().create(serverLevel);
+2268-                                                                ^
+2269-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Tortoise>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
+2270-      (actual and formal argument lists differ in length)
+2271-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+--
+2277-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
+2278-      (actual and formal argument lists differ in length)
+2279:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tortoise.java:226: error: cannot find symbol
+2280-            tortoise.setOwnerUUID(this.random.nextBoolean() ? tortoiseParent.getOwnerUUID() : this.getOwnerUUID());
+2281-                    ^
+grep: write error: Broken pipe
 
 === MINECRAFT 26.2 API INSPECTION ===
 === EXACT Boat ===
