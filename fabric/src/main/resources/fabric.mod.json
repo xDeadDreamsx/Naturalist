@@ -1,41 +1,27 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
+  "id": "naturalist",
   "version": "${version}",
-  "name": "${mod_name}",
-  "description": "${mod_description}",
-  "authors": [
-    "${mod_authors}"
-  ],
+  "name": "Naturalist",
+  "description": "Enhances the overworld by adding new wildlife with unique behavior.",
+  "authors": ["Starfish Studios", "CrispyTwig"],
   "contact": {
-    "issues": "https://github.com/crispytwig/Naturalist/issues"
+    "issues": "https://github.com/crispytwig/Naturalist/issues",
+    "sources": "https://github.com/crispytwig/Naturalist"
   },
-  "license": "${mod_license}",
+  "license": "All Rights Reserved / MIT (see LICENSE)",
   "icon": "naturalist.png",
   "environment": "*",
   "accessWidener": "naturalist.accesswidener",
   "entrypoints": {
-    "main": [
-      "com.crispytwig.naturalist.fabric.NaturalistFabric"
-    ],
-    "client": [
-      "com.crispytwig.naturalist.fabric.client.NaturalistFabricClient"
-    ],
-    "lambdynlights:initializer": [
-      "com.crispytwig.naturalist.client.compat.LambDynamicLightsCompat"
-    ]
+    "main": ["com.crispytwig.naturalist.fabric.NaturalistFabric"],
+    "client": ["com.crispytwig.naturalist.fabric.client.NaturalistFabricClient"]
   },
-  "mixins": [
-    "naturalist.mixins.json",
-    "naturalist.fieldguide.mixins.json"
-  ],
+  "mixins": ["naturalist.mixins.json"],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
     "fabric-api": ">=${fabric_api_version}",
     "minecraft": "~${minecraft_version}",
-    "java": ">=21"
-  },
-  "suggests": {
-    "lambdynlights": "*"
+    "java": ">=25"
   }
 }
