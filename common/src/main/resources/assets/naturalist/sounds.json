@@ -659,19 +659,8 @@
   "entity.blobfish.flop": {
     "sounds": [
       {
-        "name": "minecraft:entity/pufferfish/flop1",
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:entity/pufferfish/flop2",
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:entity/pufferfish/flop3",
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:entity/pufferfish/flop4",
+        "name": "minecraft:entity.puffer_fish.flop",
+        "type": "event",
         "volume": 0.3
       }
     ],
@@ -703,11 +692,8 @@
   "entity.piranha.flop": {
     "sounds": [
       {
-        "name": "minecraft:entity/pufferfish/flop1",
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:entity/pufferfish/flop2",
+        "name": "minecraft:entity.puffer_fish.flop",
+        "type": "event",
         "volume": 0.3
       }
     ],
@@ -1464,11 +1450,10 @@
   },
   "entity.zebra.eat": {
     "sounds": [
-      "minecraft:entity/horse/eat1",
-      "minecraft:entity/horse/eat2",
-      "minecraft:entity/horse/eat3",
-      "minecraft:entity/horse/eat4",
-      "minecraft:entity/horse/eat5"
+      {
+        "name": "minecraft:entity.horse.eat",
+        "type": "event"
+      }
     ],
     "subtitle": "naturalist.subtitles.entity.zebra.eat"
   },
@@ -1684,19 +1669,8 @@
   "entity.catfish.flop": {
     "sounds": [
       {
-        "name": "minecraft:entity/pufferfish/flop1",
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:entity/pufferfish/flop2",
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:entity/pufferfish/flop3",
-        "volume": 0.3
-      },
-      {
-        "name": "minecraft:entity/pufferfish/flop4",
+        "name": "minecraft:entity.puffer_fish.flop",
+        "type": "event",
         "volume": 0.3
       }
     ],
