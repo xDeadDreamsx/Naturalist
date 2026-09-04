@@ -18,46 +18,15 @@ jobs:
       - name: Checkout port branch
         uses: actions/checkout@v4
 
-      - name: Apply safe mechanical 26.2 migrations
+      - name: Apply Minecraft 26.2 migration pass
         shell: bash
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          roots = [Path('common/src/main/java'), Path('fabric/src/main/java')]
-          replacements = {
-              'import net.minecraft.world.level.GameRules;':
-                  'import net.minecraft.world.level.gamerules.GameRules;',
-              'import net.minecraft.advancements.CriteriaTriggers;':
-                  'import net.minecraft.advancements.triggers.CriteriaTriggers;',
-              'import net.minecraft.client.renderer.RenderType;':
-                  'import net.minecraft.client.renderer.rendertype.RenderTypes;',
-              'RenderType::entityCutout': 'RenderTypes::entityCutoutCull',
-              'RenderType::entityTranslucent': 'RenderTypes::entityTranslucent',
-          }
-
-          changed = []
-          for root in roots:
-              if not root.exists():
-                  continue
-              for path in root.rglob('*.java'):
-                  text = path.read_text(encoding='utf-8')
-                  migrated = text
-                  for old, new in replacements.items():
-                      migrated = migrated.replace(old, new)
-                  migrated = migrated.replace('import net.minecraft.client.renderer.LightTexture;\n', '')
-                  if migrated != text:
-                      path.write_text(migrated, encoding='utf-8')
-                      changed.append(str(path))
-          print('Mechanical migrations changed', len(changed), 'files')
-          for path in changed:
-              print(path)
-          PY
+          python3 .github/port/migrate_26_2.py
           if ! git diff --quiet; then
             git config user.name "Naturalist 26.2 Port CI"
             git config user.email "actions@users.noreply.github.com"
             git add common/src/main/java fabric/src/main/java
-            git commit -m "Apply safe Minecraft 26.2 package migrations"
+            git commit -m "Apply Minecraft 26.2 API migration pass"
             git push origin HEAD:port/26.2-fabric
           fi
 
@@ -91,24 +60,24 @@ jobs:
           exec > >(tee -a port-26.2-errors.txt) 2>&1
           echo "=== NATURALIST 26.2 COMPILE ERRORS ==="
           if [ -f /tmp/naturalist-build.log ]; then
-            grep -n -E -B2 -A5 'error:|cannot find symbol|package .* does not exist|incompatible types|cannot be converted|does not override|has private access|cannot be applied|no suitable method|constructor .* cannot be applied|cannot infer type' /tmp/naturalist-build.log | head -n 1800 || true
+            grep -n -E -B2 -A5 'error:|cannot find symbol|package .* does not exist|incompatible types|cannot be converted|does not override|has private access|cannot be applied|no suitable method|constructor .* cannot be applied|cannot infer type|overridden method is final' /tmp/naturalist-build.log | head -n 2200 || true
           fi
           echo
           echo "=== MINECRAFT 26.2 API INSPECTION ==="
           python3 - <<'PY'
           import pathlib, zipfile
           targets = {
-              'TextureSheetParticle', 'DiggerItem', 'SwordItem', 'LightTexture',
-              'Saddleable', 'Boat', 'ThrowableItemProjectile', 'InstantenousMobEffect',
-              'InstantaneousMobEffect', 'ItemInteractionResult', 'InteractionResultHolder',
-              'ItemNameBlockItem', 'ClampedItemPropertyFunction', 'ItemProperties', 'Input',
-              'GuiGraphics', 'SimpleCriterionTrigger', 'ContextAwarePredicate', 'ItemPredicate',
-              'ChunkSectionLayerMap', 'RecipeSerializer', 'NeutralMob', 'LivingEntity',
-              'EntityType', 'ContainerHelper', 'ResourceKey', 'InteractionResult'
+              'TextureSheetParticle', 'SingleQuadParticle', 'DiggerItem', 'SwordItem', 'LightTexture',
+              'Saddleable', 'Boat', 'ThrowableItemProjectile', 'InstantaneousMobEffect',
+              'ItemInteractionResult', 'InteractionResultHolder', 'ItemNameBlockItem',
+              'ClampedItemPropertyFunction', 'ItemProperties', 'Input', 'GuiGraphics',
+              'GuiGraphicsExtractor', 'SimpleCriterionTrigger', 'ContextAwarePredicate', 'ItemPredicate',
+              'ChunkSectionLayerMap', 'RecipeSerializer', 'NeutralMob', 'LivingEntity', 'EntityType',
+              'ContainerHelper', 'ResourceKey', 'InteractionResult', 'ValueInput', 'ValueOutput'
           }
-          patterns = ('TextureSheet', 'Saddle', 'Boat', 'InteractionResult', 'ItemPropert',
-                      'Criterion', 'Predicate', 'ChunkSectionLayer', 'GuiGraphics', 'Digger',
-                      'SwordItem', 'ThrowableItem', 'Instantaneous', 'Input')
+          patterns = ('TextureSheet', 'SingleQuad', 'Saddle', 'Boat', 'InteractionResult', 'ItemPropert',
+                      'Criterion', 'Predicate', 'ChunkSectionLayer', 'GuiGraphics', 'Digger', 'SwordItem',
+                      'ThrowableItem', 'Instantaneous', 'Input', 'ValueInput', 'ValueOutput')
           hits = {t: [] for t in targets}
           nearby = []
           jars = list(pathlib.Path.home().joinpath('.gradle').rglob('*.jar'))
@@ -121,7 +90,7 @@ jobs:
                           simple = name.rsplit('/', 1)[-1][:-6]
                           if simple in hits and len(hits[simple]) < 10:
                               hits[simple].append((jar, name))
-                          if any(p.lower() in simple.lower() for p in patterns) and len(nearby) < 350:
+                          if any(p.lower() in simple.lower() for p in patterns) and len(nearby) < 500:
                               nearby.append((jar, name))
               except Exception:
                   pass
@@ -152,9 +121,12 @@ jobs:
               net.minecraft.world.InteractionResult \
               net.minecraft.world.entity.NeutralMob \
               net.minecraft.world.entity.LivingEntity \
+              net.minecraft.world.entity.Mob \
               net.minecraft.world.entity.EntityType \
               net.minecraft.world.ContainerHelper \
               net.minecraft.resources.ResourceKey \
+              net.minecraft.world.level.storage.ValueInput \
+              net.minecraft.world.level.storage.ValueOutput \
               net.minecraft.world.item.crafting.RecipeSerializer; do
               echo "=== JAVAP $C ==="
               javap -classpath "$MCJAR" -public "$C" || true
@@ -170,7 +142,7 @@ jobs:
           git add port-26.2-errors.txt
           if ! git diff --cached --quiet; then
             git commit -m "Record current Naturalist 26.2 compile errors"
-            git push origin HEAD:port/26.2-fabric
+            git push origin HEAD:port/26.2-fabric || true
           fi
 
       - name: Fail workflow if build failed
