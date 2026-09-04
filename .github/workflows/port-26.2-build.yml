@@ -6,20 +6,14 @@ on:
       - port/26.2-fabric
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  port-and-build:
-    if: ${{ !contains(github.event.head_commit.message, '[port-applied]') }}
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
     steps:
       - name: Checkout port branch
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Java 25
         uses: actions/setup-java@v5
@@ -27,43 +21,8 @@ jobs:
           distribution: temurin
           java-version: '25'
 
-      - name: Reconstruct initial port patch
-        shell: bash
-        run: |
-          cat .github/port/patchchunk_* > /tmp/naturalist-port.patch.gz.b64
-          base64 --decode /tmp/naturalist-port.patch.gz.b64 > /tmp/naturalist-port.patch.gz
-          gzip --decompress --stdout /tmp/naturalist-port.patch.gz > /tmp/naturalist-port.patch
-          echo "Patch lines: $(wc -l < /tmp/naturalist-port.patch)"
-
-      - name: Apply Fabric 26.2 source port
-        shell: bash
-        run: |
-          # These files were already updated on the branch so restore their exact
-          # 1.21.1 base versions before applying the generated whole-project patch.
-          git checkout 118375922e03c826d0cf30ac178ba5be200b130b -- \
-            build.gradle \
-            settings.gradle \
-            gradle.properties \
-            gradle/wrapper/gradle-wrapper.properties \
-            fabric/src/main/resources/fabric.mod.json
-          git apply --index /tmp/naturalist-port.patch
-          python - <<'PY'
-          from pathlib import Path
-          p = Path('fabric/src/main/resources/fabric.mod.json')
-          s = p.read_text()
-          s = s.replace('${loader_version}', '${fabric_loader_version}')
-          p.write_text(s)
-          PY
-          git add -A
-          git diff --cached --stat
-
-      - name: Commit applied source port
-        shell: bash
-        run: |
-          git config user.name "Naturalist 26.2 Port Bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "[port-applied] Apply initial Fabric 26.2 source port" || true
-          git push origin HEAD:port/26.2-fabric
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
 
       - name: Show Gradle environment
         run: ./gradlew --version
