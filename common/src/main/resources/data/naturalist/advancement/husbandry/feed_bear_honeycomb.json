@@ -26,10 +26,10 @@
             "condition": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
-              "type": "naturalist:bear",
               "flags": {
                 "is_baby": false
-              }
+              },
+              "entity_type": "naturalist:bear"
             }
           }
         ],

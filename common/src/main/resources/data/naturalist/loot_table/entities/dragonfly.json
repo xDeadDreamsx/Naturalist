@@ -8,7 +8,7 @@
           "condition": "minecraft:damage_source_properties",
           "predicate": {
             "source_entity": {
-              "type": "minecraft:frog"
+              "entity_type": "minecraft:frog"
             }
           }
         }

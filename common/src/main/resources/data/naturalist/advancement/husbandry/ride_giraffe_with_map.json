@@ -33,7 +33,7 @@
                 }
               },
               "vehicle": {
-                "type": "naturalist:giraffe"
+                "entity_type": "naturalist:giraffe"
               }
             }
           }
@@ -56,7 +56,7 @@
                 }
               },
               "vehicle": {
-                "type": "naturalist:giraffe"
+                "entity_type": "naturalist:giraffe"
               }
             }
           }
