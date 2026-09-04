@@ -13,6 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 public class ThrownDuckEgg extends ThrowableItemProjectile {
     public ThrownDuckEgg(EntityType<ThrownDuckEgg> thrownDuckEggEntityType, Level level) {
