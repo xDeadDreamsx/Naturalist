@@ -1,1213 +1,434 @@
 === NATURALIST 26.2 COMPILE ERRORS ===
 11-
 12-> Task :compileJava
-13:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:235: error: cannot find symbol
-14-            ItemStack held = tag.get("HeldItem").flatMap(encoded -> ItemStack.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), encoded).result()).orElse(ItemStack.EMPTY);
-15-                                                ^
-16-  symbol:   method flatMap((encoded)-[...]ult())
-17-  location: interface Tag
-18:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:378: error: method does not override or implement a method from a supertype
-19-    @Override
-20-    ^
-21:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:380: error: method getAttackBoundingBox in class Mob cannot be applied to given types;
-22-        return super.getAttackBoundingBox().inflate(0.9D, 0.5D, 0.9D);
-23-                    ^
-24-  required: double
-25-  found:    no arguments
-26-  reason: actual and formal argument lists differ in length
-27:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:66: error: Snake is not abstract and does not override abstract method isFood(ItemStack) in Animal
-28-public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
-29-       ^
-30:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:223: error: cannot find symbol
-31-            return (this.isOwnedBy(player) || this.isTame() || (this.isTameFood(stack) && !this.isTame())) ? InteractionResult.CONSUME : InteractionResult.PASS;
-32-                                                                    ^
-33-  symbol: method isTameFood(ItemStack)
-34:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:226: error: cannot find symbol
-35-            if (this.isTameFood(stack) && this.getHealth() < this.getMaxHealth()) {
-36-                    ^
-37-  symbol: method isTameFood(ItemStack)
-38:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:233: error: cannot find symbol
-39-            if (this.isOwnedBy(player) && !this.isTameFood(stack)) {
-40-                                               ^
-41-  symbol: method isTameFood(ItemStack)
-42:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:242: error: cannot find symbol
-43-        if (this.isTameFood(stack)) {
-44-                ^
-45-  symbol: method isTameFood(ItemStack)
-46:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java:263: error: cannot find symbol
-47-        return !this.level().getNearbyPlayers(
-48-                            ^
-49-  symbol:   method getNearbyPlayers(TargetingConditions,GiantIsopod,AABB)
-50-  location: class Level
-51:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snail.java:351: error: cannot find symbol
-52-            DyeColor dyeColor = dyeItem.getDyeColor();
-53-                                       ^
-54-  symbol:   method getDyeColor()
-55-  location: variable dyeItem of type DyeItem
-56:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/CrabModel.java:107: error: cannot find symbol
-57-		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
-58-		                                                    ^
-59-  symbol:   method getMainCamera()
-60-  location: variable gameRenderer of type GameRenderer
-61:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/HedgehogModel.java:68: error: cannot find symbol
-62-		this.animate(entity.hideAnimationState, HedgehogAnimations.HEDGEHOG_HIDE, ageInTicks);
-63-		    ^
-64-  symbol: method animate(SmoothAnimationState,AnimationDefinition,float)
-65:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/HedgehogModel.java:69: error: cannot find symbol
-66-		this.animate(entity.unhideAnimationState, HedgehogAnimations.HEDGEHOG_UNHIDE, ageInTicks);
-67-		    ^
-68-  symbol: method animate(SmoothAnimationState,AnimationDefinition,float)
-69:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/VultureModel.java:30: error: method does not override or implement a method from a supertype
-70-@Override
-71-^
-72:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/DirtTrailModel.java:31: error: method does not override or implement a method from a supertype
-73-@Override
-74-^
-75:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/DirtTrail.java:19: error: DirtTrail is not abstract and does not override abstract method hurtServer(ServerLevel,DamageSource,float) in Entity
-76-public class DirtTrail extends Entity {
-77-       ^
-78:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/SnakeModel.java:38: error: method does not override or implement a method from a supertype
-79-@Override
-80-^
-81:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/SnailModel.java:99: error: cannot find symbol
-82-		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
-83-		                                                    ^
-84-  symbol:   method getMainCamera()
-85-  location: variable gameRenderer of type GameRenderer
-86:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/ParrotFlight.java:28: error: cannot find symbol
-87-        return isParrot(player.getShoulderEntityLeft()) && isParrot(player.getShoulderEntityRight());
-88-                              ^
-89-  symbol:   method getShoulderEntityLeft()
-90-  location: variable player of type Player
-91:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/ParrotFlight.java:28: error: cannot find symbol
-92-        return isParrot(player.getShoulderEntityLeft()) && isParrot(player.getShoulderEntityRight());
-93-                                                                          ^
-94-  symbol:   method getShoulderEntityRight()
-95-  location: variable player of type Player
-96:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/ParrotFlight.java:36: error: cannot find symbol
-97-        return !tag.isEmpty() && EntityType.byString(tag.getString("id")).filter(type -> type == EntityTypes.PARROT).isPresent();
-98-                                           ^
-99-  symbol:   method byString(Optional<String>)
-100-  location: class EntityType
-101:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/BeachedMob.java:43: error: cannot find symbol
-102-        mob.hasImpulse = true;
-103-           ^
-104-  symbol:   variable hasImpulse
-105-  location: variable mob of type Mob
-106:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:23: error: cannot find symbol
-107-        super(NaturalistEntityTypes.DUCK_EGG.get(), livingEntity, level, new ItemStack(NaturalistRegistry.DUCK_EGG.get()));
-108-                                                                             ^
-109-  symbol:   class ItemStack
-110-  location: class ThrownDuckEgg
-111:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:27: error: cannot find symbol
-112-        super(NaturalistEntityTypes.DUCK_EGG.get(), d, e, f, level, new ItemStack(NaturalistRegistry.DUCK_EGG.get()));
-113-                                                                        ^
-114-  symbol:   class ItemStack
-115-  location: class ThrownDuckEgg
-116:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:55: error: cannot find symbol
-117-                    Duck duck = NaturalistEntityTypes.DUCK.get().create(this.level(), EntitySpawnReason.BREEDING);
-118-                                                                                      ^
-119-  symbol:   variable EntitySpawnReason
-120-  location: class ThrownDuckEgg
-121:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/MobVariantUtil.java:57: error: cannot find symbol
-122-        Optional<Registry<MobVariant>> maybeRegistry = level.registryAccess().registry(registryKey);
-123-                                                                             ^
-124-  symbol:   method registry(ResourceKey<Registry<MobVariant>>)
-125-  location: interface RegistryAccess
-126:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/MobVariantUtil.java:63: error: cannot find symbol
-127-        List<Holder.Reference<MobVariant>> pool = registry.holders()
-128-                                                          ^
-129-  symbol:   method holders()
-130-  location: variable registry of type Registry<MobVariant>
-131:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/MobVariantUtil.java:68: error: cannot find symbol
-132-            pool = registry.holders()
-133-                           ^
-134-  symbol:   method holders()
-135-  location: variable registry of type Registry<MobVariant>
-136:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/PetTargeting.java:17: error: cannot find symbol
-137-        return !self.isTame() || self.getOwnerUUID() == null || !(target instanceof OwnableEntity ownable)
-138-                                     ^
-139-  symbol:   method getOwnerUUID()
-140-  location: variable self of type TamableAnimal
-141:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/PetTargeting.java:18: error: cannot find symbol
-142-                || !self.getOwnerUUID().equals(ownable.getOwnerUUID());
-143-                        ^
-144-  symbol:   method getOwnerUUID()
-145-  location: variable self of type TamableAnimal
-146:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/PetTargeting.java:18: error: cannot find symbol
-147-                || !self.getOwnerUUID().equals(ownable.getOwnerUUID());
-148-                                                      ^
-149-  symbol:   method getOwnerUUID()
-150-  location: variable ownable of type OwnableEntity
-151:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:20: error: BugNetInteractionRecipe is not abstract and does not override abstract method recipeBookCategory() in Recipe
-152-public record BugNetInteractionRecipe(EntityType<?> entityType, ItemStack dropStack) implements Recipe<RecipeInput> {
-153-       ^
-154:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:47: error: getType() in BugNetInteractionRecipe cannot implement getType() in Recipe
-155-    public @NotNull RecipeType<?> getType() {
-156-                                  ^
-157-  return type RecipeType<?> is not compatible with RecipeType<? extends Recipe<RecipeInput>>
-158-  where T is a type-variable:
-159-    T extends RecipeInput declared in interface Recipe
-160:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:42: error: getSerializer() in BugNetInteractionRecipe cannot implement getSerializer() in Recipe
-161-    public @NotNull RecipeSerializer<?> getSerializer() {
-162-                                        ^
-163-  return type RecipeSerializer<?> is not compatible with RecipeSerializer<? extends Recipe<RecipeInput>>
-164-  where T is a type-variable:
-165-    T extends RecipeInput declared in interface Recipe
-166:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:26: error: method does not override or implement a method from a supertype
-167-    @Override
-168-    ^
-169:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:31: error: method does not override or implement a method from a supertype
-170-    @Override
-171-    ^
-172:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:36: error: method does not override or implement a method from a supertype
-173-    @Override
-174-    ^
-175:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:41: error: method does not override or implement a method from a supertype
-176-    @Override
-177-    ^
-178:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:46: error: method does not override or implement a method from a supertype
-179-    @Override
-180-    ^
-181:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:65: error: incompatible types: Optional<Reference<EntityType<?>>> cannot be converted to EntityType<?>
-182-                    EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(buf.readIdentifier());
-183-                                                                                ^
-184:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/effect/AntivenomMobEffect.java:16: error: method does not override or implement a method from a supertype
-185-    @Override
-186-    ^
-187:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:37: error: method does not override or implement a method from a supertype
-188-    @Override
-189-    ^
-190:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:39: error: method saveAdditional in class BlockEntity cannot be applied to given types;
-191-        super.saveAdditional(tag, registries);
-192-             ^
-193-  required: ValueOutput
-194-  found:    CompoundTag,Provider
-195-  reason: actual and formal argument lists differ in length
-196:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:41: error: cannot find symbol
-197-            tag.put("Flower", this.flower.save(registries));
-198-                                         ^
-199-  symbol:   method save(Provider)
-200-  location: variable flower of type ItemStack
-201:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:45: error: method does not override or implement a method from a supertype
-202-    @Override
-203-    ^
-204:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:47: error: method loadAdditional in class BlockEntity cannot be applied to given types;
-205-        super.loadAdditional(tag, registries);
-206-             ^
-207-  required: ValueInput
-208-  found:    CompoundTag,Provider
-209-  reason: actual and formal argument lists differ in length
-210:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:48: error: method contains in class CompoundTag cannot be applied to given types;
-211-        this.flower = tag.contains("Flower", Tag.TAG_COMPOUND)
-212-                         ^
-213-  required: String
-214-  found:    String,byte
-215-  reason: actual and formal argument lists differ in length
-216:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:49: error: cannot find symbol
-217-                ? ItemStack.parse(registries, tag.getCompound("Flower")).orElse(ItemStack.EMPTY)
-218-                           ^
-219-  symbol:   method parse(Provider,Optional<CompoundTag>)
-220-  location: class ItemStack
-221:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/SnailShellBlock.java:89: error: cannot find symbol
-222-            if (tag.contains("Color", Tag.TAG_ANY_NUMERIC)) {
-223-                                         ^
-224-  symbol:   variable TAG_ANY_NUMERIC
-225-  location: interface Tag
-226:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/SnailShellBlock.java:90: error: method byId in enum DyeColor cannot be applied to given types;
-227-                color = DyeColor.byId(tag.getInt("Color"));
-228-                                ^
-229-  required: int
-230-  found:    Optional<Integer>
-231:  reason: argument mismatch; Optional<Integer> cannot be converted to int
-232:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/StarfishBlock.java:41: error: method does not override or implement a method from a supertype
-233-    @Override
-234-    ^
-235:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/StarfishBlock.java:70: error: cannot find symbol
-236-            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
-237-                 ^
-238-  symbol:   method scheduleTick(BlockPos,FlowingFluid,int)
-239-  location: variable level of type LevelReader
-240:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/OstrichEggBlock.java:77: error: method does not override or implement a method from a supertype
-241-    @Override
-242-    ^
-243:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/GlowGoopBlock.java:66: error: method does not override or implement a method from a supertype
-244-    @Override
-245-    ^
-246:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/TortoiseEggBlock.java:53: error: method does not override or implement a method from a supertype
-247-    @Override
-248-    ^
-249:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/TortoiseEggBlock.java:111: error: method does not override or implement a method from a supertype
-250-    @Override
-251-    ^
-252:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/AntHillBlock.java:112: error: method does not override or implement a method from a supertype
-253-    @Override
-254-    ^
-255:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/AntHillBlock.java:117: error: cannot find symbol
-256-        super.onRemove(state, level, pos, newState, movedByPiston);
-257-             ^
-258-  symbol: method onRemove(BlockState,Level,BlockPos,BlockState,boolean)
-259:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/AlligatorEggBlock.java:71: error: method does not override or implement a method from a supertype
-260-    @Override
-261-    ^
-262:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:52: error: constructor MobBucketItem in class MobBucketItem cannot be applied to given types;
-263-        super(entityType, content, emptySound, properties);
-264-        ^
-265-  required: EntityType<? extends Mob>,Fluid,SoundEvent,Properties
-266-  found:    EntityType<CAP#1>,Fluid,SoundEvent,Properties
-267:  reason: argument mismatch; EntityType<CAP#1> cannot be converted to EntityType<? extends Mob>
-268-  where CAP#1 is a fresh type-variable:
-269-    CAP#1 extends Entity from capture of ?
-270:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:106: error: cannot find symbol
-271-        player.setItemInHand(context.getHand(), release(level, player, context.getItemInHand(), placePos).getObject());
-272-                                                                                                         ^
-273-  symbol:   method getObject()
-274-  location: interface InteractionResult
-275:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:117: error: method does not override or implement a method from a supertype
-276-    @Override
-277-    ^
-278:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:119: error: cannot find symbol
-279-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
-280-                                                                                          ^
-281-  symbol:   method getUnsafe()
-282-  location: class CustomData
-283:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/CaughtMobItem.java:61: error: method does not override or implement a method from a supertype
-284-    @Override
-285-    ^
-286:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:72: error: method does not override or implement a method from a supertype
-287-    @Override
-288-    ^
-289:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:77: error: method does not override or implement a method from a supertype
-290-    @Override
-291-    ^
-292:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:74: error: method save in class Entity cannot be applied to given types;
-293-        mob.save(entityTag);
-294-           ^
-295-  required: ValueOutput
-296-  found:    CompoundTag
-297:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-298:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:104: error: no suitable method found for loadEntityRecursive(CompoundTag,ServerLevel,(e)->{ e.m[...] e; })
-299-            Entity entity = EntityType.loadEntityRecursive(tag, serverLevel, e -> {
-300-                                      ^
-301-    method EntityType.loadEntityRecursive(CompoundTag,Level,EntitySpawnRequest,EntityProcessor) is not applicable
-302-      (actual and formal argument lists differ in length)
-303-    method EntityType.loadEntityRecursive(EntityType<?>,CompoundTag,Level,EntitySpawnReason,EntityProcessor) is not applicable
+13:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:42: error: cannot find symbol
+14-    private final EntityType<? extends Mob> variantEntityType;
+15-                                       ^
+16-  symbol:   class Mob
+17-  location: class NaturalistBucketItem
+18:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:48: error: cannot find symbol
+19-    public NaturalistBucketItem(EntityType<? extends Mob> entityType, Fluid content, SoundEvent emptySound, Properties properties) {
+20-                                                     ^
+21-  symbol:   class Mob
+22-  location: class NaturalistBucketItem
+23:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:52: error: cannot find symbol
+24-    public NaturalistBucketItem(EntityType<? extends Mob> entityType, Fluid content, SoundEvent emptySound, Properties properties, boolean allowMidWater, @Nullable String tooltipPrefix, @Nullable String[] variantNames) {
+25-                                                     ^
+26-  symbol:   class Mob
+27-  location: class NaturalistBucketItem
+28:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:378: error: method does not override or implement a method from a supertype
+29-    @Override
+30-    ^
+31:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:380: error: method getAttackBoundingBox in class Mob cannot be applied to given types;
+32-        return super.getAttackBoundingBox().inflate(0.9D, 0.5D, 0.9D);
+33-                    ^
+34-  required: double
+35-  found:    no arguments
+36-  reason: actual and formal argument lists differ in length
+37:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:66: error: Snake is not abstract and does not override abstract method isFood(ItemStack) in Animal
+38-public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
+39-       ^
+40:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snail.java:351: error: cannot find symbol
+41-            DyeColor dyeColor = stack.get(DataComponents.DYE);
+42-                                ^
+43-  symbol:   variable stack
+44-  location: class Snail
+45:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/BeachedMob.java:43: error: cannot find symbol
+46-        mob.hasImpulse = true;
+47-           ^
+48-  symbol:   variable hasImpulse
+49-  location: variable mob of type Mob
+50:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:47: error: incompatible types: RecipeSerializer<CAP#1> cannot be converted to RecipeSerializer<? extends Recipe<RecipeInput>>
+51-        return NaturalistRecipes.BUG_NET_SERIALIZER.get();
+52-                                                       ^
+53-  where CAP#1 is a fresh type-variable:
+54-    CAP#1 extends Recipe<?> from capture of ?
+55:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:56: error: method saveAdditional in class SnailShellBlockEntity cannot be applied to given types;
+56-        this.saveAdditional(tag, registries);
+57-            ^
+58-  required: ValueOutput
+59-  found:    CompoundTag,Provider
+60-  reason: actual and formal argument lists differ in length
+61:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/GlowGoopBlock.java:66: error: method does not override or implement a method from a supertype
+62-    @Override
+63-    ^
+64:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/TortoiseEggBlock.java:53: error: method does not override or implement a method from a supertype
+65-    @Override
+66-    ^
+67:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/CaughtMobItem.java:61: error: method does not override or implement a method from a supertype
+68-    @Override
+69-    ^
+70:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:72: error: method does not override or implement a method from a supertype
+71-    @Override
+72-    ^
+73:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:77: error: method does not override or implement a method from a supertype
+74-    @Override
+75-    ^
+76:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:75: error: method save in class Entity cannot be applied to given types;
+77-        mob.save(entityTag);
+78-           ^
+79-  required: ValueOutput
+80-  found:    CompoundTag
+81:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+82:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:105: error: no suitable method found for loadEntityRecursive(CompoundTag,ServerLevel,(e)->{ e.m[...] e; })
+83-            Entity entity = EntityType.loadEntityRecursive(tag, serverLevel, e -> {
+84-                                      ^
+85-    method EntityType.loadEntityRecursive(CompoundTag,Level,EntitySpawnRequest,EntityProcessor) is not applicable
+86-      (actual and formal argument lists differ in length)
+87-    method EntityType.loadEntityRecursive(EntityType<?>,CompoundTag,Level,EntitySpawnReason,EntityProcessor) is not applicable
 --
-309-    method EntityType.loadEntityRecursive(EntityType<?>,ValueInput,Level,EntitySpawnReason,EntityProcessor) is not applicable
-310-      (actual and formal argument lists differ in length)
-311:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:129: error: method does not override or implement a method from a supertype
-312-    @Override
-313-    ^
-314:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:136: error: method contains in class CompoundTag cannot be applied to given types;
-315-        if (tag.contains("CustomName", 8) && context.registries() != null) {
-316-               ^
-317-  required: String
-318-  found:    String,int
-319-  reason: actual and formal argument lists differ in length
-320:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:137: error: cannot find symbol
-321-            label = Component.Serializer.fromJson(tag.getString("CustomName"), context.registries());
-322-                             ^
-323-  symbol:   variable Serializer
-324-  location: interface Component
-325:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:140: error: cannot find symbol
-326-            label = EntityType.byString(tag.getString("id")).map(EntityType::getDescription).orElse(null);
-327-                              ^
-328-  symbol:   method byString(Optional<String>)
-329-  location: class EntityType
-330:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/BugNetItem.java:60: error: cannot find symbol
-331-        Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = player.level().getRecipeManager().getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
-332-                                                                                   ^
-333-  symbol:   method getRecipeManager()
-334-  location: class Level
-335:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:22: error: method does not override or implement a method from a supertype
-336-    @Override
-337-    ^
-338:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:27: error: cannot find symbol
-339-        if (Screen.hasShiftDown()) {
-340-                  ^
-341-  symbol:   method hasShiftDown()
-342-  location: class Screen
-343:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistEntityTypes.java:73: error: method build in class Builder<T> cannot be applied to given types;
-344-        return ENTITY_TYPES.register(id, () -> builder.build(Naturalist.location(id).toString()));
-345-                                                      ^
-346-  required: ResourceKey<EntityType<?>>
-347-  found:    String
-348:  reason: argument mismatch; String cannot be converted to ResourceKey<EntityType<?>>
-349-  where T is a type-variable:
-350-    T extends Entity declared in class Builder
-351:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:14: error: cannot find symbol
-352-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AntHillBlockEntity>> ANT_HILL = BLOCK_ENTITY_TYPES.register("ant_hill", () -> BlockEntityType.Builder.of(AntHillBlockEntity::new, NaturalistRegistry.ANT_HILL.get()).build(null));
-353-                                                                                                                                                                        ^
-354-  symbol:   variable Builder
-355-  location: class BlockEntityType
-356:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:15: error: cannot find symbol
-357-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SnailShellBlockEntity>> SNAIL_SHELL = BLOCK_ENTITY_TYPES.register("snail_shell", () -> BlockEntityType.Builder.of(SnailShellBlockEntity::new, NaturalistRegistry.SNAIL_SHELL_BLOCK.get()).build(null));
-358-                                                                                                                                                                                 ^
-359-  symbol:   variable Builder
-360-  location: class BlockEntityType
-361:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistRegistry.java:79: error: cannot find symbol
-362-    public static final DeferredHolder<Item, Item> LIZARD_TAIL = ITEMS.register("lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.8F).effect(new MobEffectInstance(MobEffects.POISON, 100, 0), 1.0F).build())));
-363-                                                                                                                                                                                                           ^
-364-  symbol:   method effect(MobEffectInstance,float)
-365-  location: class Builder
-366:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/Naturalist.java:152: error: invalid method reference
-367-        r.register(NaturalistEntityTypes.SNAKE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
-368-                                                                                                                                ^
-369:  cannot find symbol
-370-    symbol:   method checkSnakeSpawnRules()
-371-    location: class Snake
-372:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FoxMixin.java:33: error: cannot find symbol
-373-        if (spawnType != EntitySpawnReason.NATURAL && spawnType != EntitySpawnReason.CHUNK_GENERATION && spawnType != EntitySpawnReason.SPAWN_EGG) {
-374-                                                                                                                                       ^
-375-  symbol:   variable SPAWN_EGG
-376-  location: class EntitySpawnReason
-377:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/LocalPlayerMixin.java:27: error: cannot find symbol
-378-        if (!this.input.jumping || self.onGround() || self.getAbilities().flying || !ParrotFlight.canAscend(self)) {
-379-                       ^
-380-  symbol:   variable jumping
-381-  location: variable input of type Input
-382:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/EnchantedCountIncreaseFunctionMixin.java:24: error: cannot find symbol
-383-        if (this.enchantment.is(Enchantments.LOOTING) && context.getParamOrNull(LootContextParams.DIRECT_ATTACKING_ENTITY) instanceof Hedgehog hedgehog) {
-384-                                                                ^
-385-  symbol:   method getParamOrNull(ContextKey<Entity>)
-386-  location: variable context of type LootContext
-387:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/platform/FabricRegistrationProvider.java:18: error: incompatible types: Optional<Reference<CAP#1>> cannot be converted to Registry<T>
-388-        this.registry = (Registry<T>) BuiltInRegistries.REGISTRY.get(registryKey.identifier());
-389-                                                                    ^
-390-  where T is a type-variable:
-391-    T extends Object declared in class FabricRegistrationProvider
-392-  where CAP#1 is a fresh type-variable:
-393-    CAP#1 extends Registry<?> from capture of ? extends Registry<?>
-394:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/platform/FabricRegistryHelper.java:18: error: constructor SpawnEggItem in class SpawnEggItem cannot be applied to given types;
-395-        return new SpawnEggItem(type.get(), primaryColor, secondaryColor, properties);
-396-               ^
-397-  required: Properties
-398-  found:    CAP#1,int,int,Properties
-399-  reason: actual and formal argument lists differ in length
-400-  where CAP#1 is a fresh type-variable:
-401-    CAP#1 extends EntityType<? extends Mob> from capture of ? extends EntityType<? extends Mob>
-402:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/NaturalistFabric.java:35: error: method registerPotionMixes in class Naturalist cannot be applied to given types;
-403-                Naturalist.registerPotionMixes(builder::registerItemRecipe));
-404-                          ^
-405-  required: BrewingRegistrar
-406-  found:    builder::r[...]ecipe
-407-  reason: argument mismatch; invalid method reference
-408:      method registerItemRecipe in interface FabricPotionBrewingBuilder cannot be applied to given types
-409-        required: Item,Ingredient,Item
-410-        found:    Holder<Potion>,Item,Holder<Potion>
-411:        reason: argument mismatch; Holder<Potion> cannot be converted to Item
-412-Note: Some input files use or override a deprecated API.
-413-Note: Recompile with -Xlint:deprecation for details.
-414-Note: Some input files use unchecked or unsafe operations.
-415-Note: Recompile with -Xlint:unchecked for details.
-416-86 errors
+93-    method EntityType.loadEntityRecursive(EntityType<?>,ValueInput,Level,EntitySpawnReason,EntityProcessor) is not applicable
+94-      (actual and formal argument lists differ in length)
+95:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:137: error: method contains in class CompoundTag cannot be applied to given types;
+96-        if (tag.contains("CustomName", 8) && context.registries() != null) {
+97-               ^
+98-  required: String
+99-  found:    String,int
+100-  reason: actual and formal argument lists differ in length
+101:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:138: error: cannot find symbol
+102-            label = Component.Serializer.fromJson(tag.getString("CustomName"), context.registries());
+103-                             ^
+104-  symbol:   variable Serializer
+105-  location: interface Component
+106:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:141: error: cannot find symbol
+107-            label = EntityType.byString(tag.getString("id")).map(EntityType::getDescription).orElse(null);
+108-                              ^
+109-  symbol:   method byString(Optional<String>)
+110-  location: class EntityType
+111:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/SnailItem.java:25: error: method does not override or implement a method from a supertype
+112-    @Override
+113-    ^
+114:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/BugNetItem.java:60: error: cannot find symbol
+115-        Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = player.level().getRecipeManager().getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
+116-                                                                                   ^
+117-  symbol:   method getRecipeManager()
+118-  location: class Level
+119:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:23: error: method does not override or implement a method from a supertype
+120-    @Override
+121-    ^
+122:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:29: error: cannot find symbol
+123-            tooltip.accept(Component.literal("Place up to 3").withStyle(ChatFormatting.GRAY));
+124-                   ^
+125-  symbol:   method accept(MutableComponent)
+126-  location: variable tooltip of type List<Component>
+127:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:30: error: cannot find symbol
+128-            tooltip.accept(Component.literal("in one space!").withStyle(ChatFormatting.GRAY));
+129-                   ^
+130-  symbol:   method accept(MutableComponent)
+131-  location: variable tooltip of type List<Component>
+132:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:32: error: cannot find symbol
+133-            tooltip.accept(Component.literal("Hold ").withStyle(ChatFormatting.GRAY).append(Component.literal("Shift").withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC)).append(Component.literal(" for info!").withStyle(ChatFormatting.GRAY)));
+134-                   ^
+135-  symbol:   method accept(MutableComponent)
+136-  location: variable tooltip of type List<Component>
+137:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:14: error: cannot find symbol
+138-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AntHillBlockEntity>> ANT_HILL = BLOCK_ENTITY_TYPES.register("ant_hill", () -> BlockEntityType.Builder.of(AntHillBlockEntity::new, NaturalistRegistry.ANT_HILL.get()).build(null));
+139-                                                                                                                                                                        ^
+140-  symbol:   variable Builder
+141-  location: class BlockEntityType
+142:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:15: error: cannot find symbol
+143-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SnailShellBlockEntity>> SNAIL_SHELL = BLOCK_ENTITY_TYPES.register("snail_shell", () -> BlockEntityType.Builder.of(SnailShellBlockEntity::new, NaturalistRegistry.SNAIL_SHELL_BLOCK.get()).build(null));
+144-                                                                                                                                                                                 ^
+145-  symbol:   variable Builder
+146-  location: class BlockEntityType
+147:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/NaturalistFabric.java:35: error: method registerPotionRecipe in interface FabricPotionBrewingBuilder cannot be applied to given types;
+148-                Naturalist.registerPotionMixes((from, ingredient, to) -> builder.registerPotionRecipe(from, ingredient, to)));
+149-                                                                                ^
+150-  required: Holder<Potion>,Ingredient,Holder<Potion>
+151-  found:    Holder<Potion>,Item,Holder<Potion>
+152:  reason: argument mismatch; Item cannot be converted to Ingredient
+153-Note: Some input files use or override a deprecated API.
+154-Note: Recompile with -Xlint:deprecation for details.
+155-Note: Some input files use unchecked or unsafe operations.
+156-Note: Recompile with -Xlint:unchecked for details.
+157-29 errors
 --
-425-Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
-426-> Compilation failed; see the compiler output below.
-427:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:380: error: method getAttackBoundingBox in class Mob cannot be applied to given types;
-428-          return super.getAttackBoundingBox().inflate(0.9D, 0.5D, 0.9D);
-429-                      ^
-430-    required: double
-431-    found:    no arguments
-432-    reason: actual and formal argument lists differ in length
-433:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:39: error: method saveAdditional in class BlockEntity cannot be applied to given types;
-434-          super.saveAdditional(tag, registries);
-435-               ^
-436-    required: ValueOutput
-437-    found:    CompoundTag,Provider
-438-    reason: actual and formal argument lists differ in length
-439:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:47: error: method loadAdditional in class BlockEntity cannot be applied to given types;
-440-          super.loadAdditional(tag, registries);
-441-               ^
-442-    required: ValueInput
-443-    found:    CompoundTag,Provider
-444-    reason: actual and formal argument lists differ in length
-445:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:48: error: method contains in class CompoundTag cannot be applied to given types;
-446-          this.flower = tag.contains("Flower", Tag.TAG_COMPOUND)
-447-                           ^
-448-    required: String
-449-    found:    String,byte
-450-    reason: actual and formal argument lists differ in length
-451:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/SnailShellBlock.java:90: error: method byId in enum DyeColor cannot be applied to given types;
-452-                  color = DyeColor.byId(tag.getInt("Color"));
-453-                                  ^
-454-    required: int
-455-    found:    Optional<Integer>
-456:    reason: argument mismatch; Optional<Integer> cannot be converted to int
-457:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:52: error: constructor MobBucketItem in class MobBucketItem cannot be applied to given types;
-458-          super(entityType, content, emptySound, properties);
-459-          ^
-460-    required: EntityType<? extends Mob>,Fluid,SoundEvent,Properties
-461-    found:    EntityType<CAP#1>,Fluid,SoundEvent,Properties
-462:    reason: argument mismatch; EntityType<CAP#1> cannot be converted to EntityType<? extends Mob>
-463-    where CAP#1 is a fresh type-variable:
-464-      CAP#1 extends Entity from capture of ?
-465:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:74: error: method save in class Entity cannot be applied to given types;
-466-          mob.save(entityTag);
-467-             ^
-468-    required: ValueOutput
-469-    found:    CompoundTag
-470:    reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-471:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:136: error: method contains in class CompoundTag cannot be applied to given types;
-472-          if (tag.contains("CustomName", 8) && context.registries() != null) {
-473-                 ^
-474-    required: String
-475-    found:    String,int
-476-    reason: actual and formal argument lists differ in length
-477:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistEntityTypes.java:73: error: method build in class Builder<T> cannot be applied to given types;
-478-          return ENTITY_TYPES.register(id, () -> builder.build(Naturalist.location(id).toString()));
-479-                                                        ^
-480-    required: ResourceKey<EntityType<?>>
-481-    found:    String
-482:    reason: argument mismatch; String cannot be converted to ResourceKey<EntityType<?>>
-483-    where T is a type-variable:
-484-      T extends Entity declared in class Builder
-485:  /home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/platform/FabricRegistryHelper.java:18: error: constructor SpawnEggItem in class SpawnEggItem cannot be applied to given types;
-486-          return new SpawnEggItem(type.get(), primaryColor, secondaryColor, properties);
-487-                 ^
-488-    required: Properties
-489-    found:    CAP#1,int,int,Properties
-490-    reason: actual and formal argument lists differ in length
-491-    where CAP#1 is a fresh type-variable:
-492-      CAP#1 extends EntityType<? extends Mob> from capture of ? extends EntityType<? extends Mob>
-493:  /home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/NaturalistFabric.java:35: error: method registerPotionMixes in class Naturalist cannot be applied to given types;
-494-                  Naturalist.registerPotionMixes(builder::registerItemRecipe));
-495-                            ^
-496-    required: BrewingRegistrar
-497-    found:    builder::r[...]ecipe
-498-    reason: argument mismatch; invalid method reference
-499:        method registerItemRecipe in interface FabricPotionBrewingBuilder cannot be applied to given types
-500-          required: Item,Ingredient,Item
-501-          found:    Holder<Potion>,Item,Holder<Potion>
-502:          reason: argument mismatch; Holder<Potion> cannot be converted to Item
-503:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:104: error: no suitable method found for loadEntityRecursive(CompoundTag,ServerLevel,(e)->{ e.m[...] e; })
-504-              Entity entity = EntityType.loadEntityRecursive(tag, serverLevel, e -> {
-505-                                        ^
-506-      method EntityType.loadEntityRecursive(CompoundTag,Level,EntitySpawnRequest,EntityProcessor) is not applicable
-507-        (actual and formal argument lists differ in length)
-508-      method EntityType.loadEntityRecursive(EntityType<?>,CompoundTag,Level,EntitySpawnReason,EntityProcessor) is not applicable
+166-Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
+167-> Compilation failed; see the compiler output below.
+168:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:380: error: method getAttackBoundingBox in class Mob cannot be applied to given types;
+169-          return super.getAttackBoundingBox().inflate(0.9D, 0.5D, 0.9D);
+170-                      ^
+171-    required: double
+172-    found:    no arguments
+173-    reason: actual and formal argument lists differ in length
+174:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:56: error: method saveAdditional in class SnailShellBlockEntity cannot be applied to given types;
+175-          this.saveAdditional(tag, registries);
+176-              ^
+177-    required: ValueOutput
+178-    found:    CompoundTag,Provider
+179-    reason: actual and formal argument lists differ in length
+180:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:75: error: method save in class Entity cannot be applied to given types;
+181-          mob.save(entityTag);
+182-             ^
+183-    required: ValueOutput
+184-    found:    CompoundTag
+185:    reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+186:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:137: error: method contains in class CompoundTag cannot be applied to given types;
+187-          if (tag.contains("CustomName", 8) && context.registries() != null) {
+188-                 ^
+189-    required: String
+190-    found:    String,int
+191-    reason: actual and formal argument lists differ in length
+192:  /home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/NaturalistFabric.java:35: error: method registerPotionRecipe in interface FabricPotionBrewingBuilder cannot be applied to given types;
+193-                  Naturalist.registerPotionMixes((from, ingredient, to) -> builder.registerPotionRecipe(from, ingredient, to)));
+194-                                                                                  ^
+195-    required: Holder<Potion>,Ingredient,Holder<Potion>
+196-    found:    Holder<Potion>,Item,Holder<Potion>
+197:    reason: argument mismatch; Item cannot be converted to Ingredient
+198:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:105: error: no suitable method found for loadEntityRecursive(CompoundTag,ServerLevel,(e)->{ e.m[...] e; })
+199-              Entity entity = EntityType.loadEntityRecursive(tag, serverLevel, e -> {
+200-                                        ^
+201-      method EntityType.loadEntityRecursive(CompoundTag,Level,EntitySpawnRequest,EntityProcessor) is not applicable
+202-        (actual and formal argument lists differ in length)
+203-      method EntityType.loadEntityRecursive(EntityType<?>,CompoundTag,Level,EntitySpawnReason,EntityProcessor) is not applicable
 --
-515-        (actual and formal argument lists differ in length)
-516-  Note: Recompile with -Xlint:deprecation for details.
-517:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/Naturalist.java:152: error: invalid method reference
-518-          r.register(NaturalistEntityTypes.SNAKE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
-519-                                                                                                                                  ^
-520:    cannot find symbol
-521-      symbol:   method checkSnakeSpawnRules()
-522-      location: class Snake
-523:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/BeachedMob.java:43: error: cannot find symbol
-524-          mob.hasImpulse = true;
-525-             ^
-526-    symbol:   variable hasImpulse
-527-    location: variable mob of type Mob
-528:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:23: error: cannot find symbol
-529-          super(NaturalistEntityTypes.DUCK_EGG.get(), livingEntity, level, new ItemStack(NaturalistRegistry.DUCK_EGG.get()));
-530-                                                                               ^
-531-    symbol:   class ItemStack
-532-    location: class ThrownDuckEgg
-533:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:27: error: cannot find symbol
-534-          super(NaturalistEntityTypes.DUCK_EGG.get(), d, e, f, level, new ItemStack(NaturalistRegistry.DUCK_EGG.get()));
-535-                                                                          ^
-536-    symbol:   class ItemStack
-537-    location: class ThrownDuckEgg
-538:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:55: error: cannot find symbol
-539-                      Duck duck = NaturalistEntityTypes.DUCK.get().create(this.level(), EntitySpawnReason.BREEDING);
-540-                                                                                        ^
-541-    symbol:   variable EntitySpawnReason
-542-    location: class ThrownDuckEgg
-543:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/SnailShellBlock.java:89: error: cannot find symbol
-544-              if (tag.contains("Color", Tag.TAG_ANY_NUMERIC)) {
-545-                                           ^
-546-    symbol:   variable TAG_ANY_NUMERIC
-547-    location: interface Tag
-548:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:137: error: cannot find symbol
-549-              label = Component.Serializer.fromJson(tag.getString("CustomName"), context.registries());
-550-                               ^
-551-    symbol:   variable Serializer
-552-    location: interface Component
-553:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:14: error: cannot find symbol
-554-      public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AntHillBlockEntity>> ANT_HILL = BLOCK_ENTITY_TYPES.register("ant_hill", () -> BlockEntityType.Builder.of(AntHillBlockEntity::new, NaturalistRegistry.ANT_HILL.get()).build(null));
-555-                                                                                                                                                                          ^
-556-    symbol:   variable Builder
-557-    location: class BlockEntityType
-558:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:15: error: cannot find symbol
-559-      public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SnailShellBlockEntity>> SNAIL_SHELL = BLOCK_ENTITY_TYPES.register("snail_shell", () -> BlockEntityType.Builder.of(SnailShellBlockEntity::new, NaturalistRegistry.SNAIL_SHELL_BLOCK.get()).build(null));
-560-                                                                                                                                                                                   ^
-561-    symbol:   variable Builder
-562-    location: class BlockEntityType
-563:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FoxMixin.java:33: error: cannot find symbol
-564-          if (spawnType != EntitySpawnReason.NATURAL && spawnType != EntitySpawnReason.CHUNK_GENERATION && spawnType != EntitySpawnReason.SPAWN_EGG) {
-565-                                                                                                                                         ^
-566-    symbol:   variable SPAWN_EGG
-567-    location: class EntitySpawnReason
-568:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/LocalPlayerMixin.java:27: error: cannot find symbol
-569-          if (!this.input.jumping || self.onGround() || self.getAbilities().flying || !ParrotFlight.canAscend(self)) {
-570-                         ^
-571-    symbol:   variable jumping
-572-    location: variable input of type Input
-573-  Note: Recompile with -Xlint:unchecked for details.
-574-  Note: Some input files use or override a deprecated API.
-575:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:378: error: method does not override or implement a method from a supertype
-576-      @Override
-577-      ^
-578:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/VultureModel.java:30: error: method does not override or implement a method from a supertype
-579-  @Override
-580-  ^
-581:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/DirtTrailModel.java:31: error: method does not override or implement a method from a supertype
-582-  @Override
-583-  ^
-584:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/SnakeModel.java:38: error: method does not override or implement a method from a supertype
-585-  @Override
-586-  ^
-587:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:26: error: method does not override or implement a method from a supertype
-588-      @Override
-589-      ^
-590:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:31: error: method does not override or implement a method from a supertype
-591-      @Override
-592-      ^
-593:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:36: error: method does not override or implement a method from a supertype
-594-      @Override
-595-      ^
-596:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:41: error: method does not override or implement a method from a supertype
-597-      @Override
-598-      ^
-599:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:46: error: method does not override or implement a method from a supertype
-600-      @Override
-601-      ^
-602:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/effect/AntivenomMobEffect.java:16: error: method does not override or implement a method from a supertype
-603-      @Override
-604-      ^
-605:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:37: error: method does not override or implement a method from a supertype
-606-      @Override
-607-      ^
-608:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:45: error: method does not override or implement a method from a supertype
-609-      @Override
-610-      ^
-611:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/StarfishBlock.java:41: error: method does not override or implement a method from a supertype
-612-      @Override
-613-      ^
-614:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/OstrichEggBlock.java:77: error: method does not override or implement a method from a supertype
-615-      @Override
-616-      ^
-617:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/GlowGoopBlock.java:66: error: method does not override or implement a method from a supertype
-618-      @Override
-619-      ^
-620:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/TortoiseEggBlock.java:53: error: method does not override or implement a method from a supertype
-621-      @Override
-622-      ^
-623:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/TortoiseEggBlock.java:111: error: method does not override or implement a method from a supertype
-624-      @Override
-625-      ^
-626:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/AntHillBlock.java:112: error: method does not override or implement a method from a supertype
-627-      @Override
-628-      ^
-629:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/AlligatorEggBlock.java:71: error: method does not override or implement a method from a supertype
-630-      @Override
-631-      ^
-632:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:117: error: method does not override or implement a method from a supertype
-633-      @Override
-634-      ^
-635:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/CaughtMobItem.java:61: error: method does not override or implement a method from a supertype
-636-      @Override
-637-      ^
-638:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:72: error: method does not override or implement a method from a supertype
-639-      @Override
-640-      ^
-641:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:77: error: method does not override or implement a method from a supertype
-642-      @Override
-643-      ^
-644:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:129: error: method does not override or implement a method from a supertype
-645-      @Override
-646-      ^
-647:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:22: error: method does not override or implement a method from a supertype
-648-      @Override
-649-      ^
-650-  Note: Some input files use unchecked or unsafe operations.
-651:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:235: error: cannot find symbol
-652-              ItemStack held = tag.get("HeldItem").flatMap(encoded -> ItemStack.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), encoded).result()).orElse(ItemStack.EMPTY);
-653-                                                  ^
-654-    symbol:   method flatMap((encoded)-[...]ult())
-655-    location: interface Tag
-656:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java:263: error: cannot find symbol
-657-          return !this.level().getNearbyPlayers(
-658-                              ^
-659-    symbol:   method getNearbyPlayers(TargetingConditions,GiantIsopod,AABB)
-660-    location: class Level
-661:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snail.java:351: error: cannot find symbol
-662-              DyeColor dyeColor = dyeItem.getDyeColor();
-663-                                         ^
-664-    symbol:   method getDyeColor()
-665-    location: variable dyeItem of type DyeItem
-666:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/CrabModel.java:107: error: cannot find symbol
-667-  		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
-668-  		                                                    ^
-669-    symbol:   method getMainCamera()
-670-    location: variable gameRenderer of type GameRenderer
-671:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/SnailModel.java:99: error: cannot find symbol
-672-  		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
-673-  		                                                    ^
-674-    symbol:   method getMainCamera()
-675-    location: variable gameRenderer of type GameRenderer
-676:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/ParrotFlight.java:28: error: cannot find symbol
-677-          return isParrot(player.getShoulderEntityLeft()) && isParrot(player.getShoulderEntityRight());
-678-                                ^
-679-    symbol:   method getShoulderEntityLeft()
-680-    location: variable player of type Player
-681:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/ParrotFlight.java:28: error: cannot find symbol
-682-          return isParrot(player.getShoulderEntityLeft()) && isParrot(player.getShoulderEntityRight());
-683-                                                                            ^
-684-    symbol:   method getShoulderEntityRight()
-685-    location: variable player of type Player
-686:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/ParrotFlight.java:36: error: cannot find symbol
-687-          return !tag.isEmpty() && EntityType.byString(tag.getString("id")).filter(type -> type == EntityTypes.PARROT).isPresent();
-688-                                             ^
-689-    symbol:   method byString(Optional<String>)
-690-    location: class EntityType
-691:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/MobVariantUtil.java:57: error: cannot find symbol
-692-          Optional<Registry<MobVariant>> maybeRegistry = level.registryAccess().registry(registryKey);
-693-                                                                               ^
-694-    symbol:   method registry(ResourceKey<Registry<MobVariant>>)
-695-    location: interface RegistryAccess
-696:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/MobVariantUtil.java:63: error: cannot find symbol
-697-          List<Holder.Reference<MobVariant>> pool = registry.holders()
-698-                                                            ^
-699-    symbol:   method holders()
-700-    location: variable registry of type Registry<MobVariant>
-701:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/MobVariantUtil.java:68: error: cannot find symbol
-702-              pool = registry.holders()
-703-                             ^
-704-    symbol:   method holders()
-705-    location: variable registry of type Registry<MobVariant>
-706:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/PetTargeting.java:17: error: cannot find symbol
-707-          return !self.isTame() || self.getOwnerUUID() == null || !(target instanceof OwnableEntity ownable)
-708-                                       ^
-709-    symbol:   method getOwnerUUID()
-710-    location: variable self of type TamableAnimal
-711:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/PetTargeting.java:18: error: cannot find symbol
-712-                  || !self.getOwnerUUID().equals(ownable.getOwnerUUID());
-713-                          ^
-714-    symbol:   method getOwnerUUID()
-715-    location: variable self of type TamableAnimal
-716:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/PetTargeting.java:18: error: cannot find symbol
-717-                  || !self.getOwnerUUID().equals(ownable.getOwnerUUID());
-718-                                                        ^
-719-    symbol:   method getOwnerUUID()
-720-    location: variable ownable of type OwnableEntity
-721:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:41: error: cannot find symbol
-722-              tag.put("Flower", this.flower.save(registries));
-723-                                           ^
-724-    symbol:   method save(Provider)
-725-    location: variable flower of type ItemStack
-726:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:49: error: cannot find symbol
-727-                  ? ItemStack.parse(registries, tag.getCompound("Flower")).orElse(ItemStack.EMPTY)
-728-                             ^
-729-    symbol:   method parse(Provider,Optional<CompoundTag>)
-730-    location: class ItemStack
-731:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/StarfishBlock.java:70: error: cannot find symbol
-732-              level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
-733-                   ^
-734-    symbol:   method scheduleTick(BlockPos,FlowingFluid,int)
-735-    location: variable level of type LevelReader
-736:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:106: error: cannot find symbol
-737-          player.setItemInHand(context.getHand(), release(level, player, context.getItemInHand(), placePos).getObject());
-738-                                                                                                           ^
-739-    symbol:   method getObject()
-740-    location: interface InteractionResult
-741:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:119: error: cannot find symbol
-742-          CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
-743-                                                                                            ^
-744-    symbol:   method getUnsafe()
-745-    location: class CustomData
-746:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:140: error: cannot find symbol
-747-              label = EntityType.byString(tag.getString("id")).map(EntityType::getDescription).orElse(null);
-748-                                ^
-749-    symbol:   method byString(Optional<String>)
-750-    location: class EntityType
-751:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/BugNetItem.java:60: error: cannot find symbol
-752-          Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = player.level().getRecipeManager().getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
-753-                                                                                     ^
-754-    symbol:   method getRecipeManager()
-755-    location: class Level
-756:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:27: error: cannot find symbol
-757-          if (Screen.hasShiftDown()) {
-758-                    ^
-759-    symbol:   method hasShiftDown()
-760-    location: class Screen
-761:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistRegistry.java:79: error: cannot find symbol
-762-      public static final DeferredHolder<Item, Item> LIZARD_TAIL = ITEMS.register("lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.8F).effect(new MobEffectInstance(MobEffects.POISON, 100, 0), 1.0F).build())));
-763-                                                                                                                                                                                                             ^
-764-    symbol:   method effect(MobEffectInstance,float)
-765-    location: class Builder
-766:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/EnchantedCountIncreaseFunctionMixin.java:24: error: cannot find symbol
-767-          if (this.enchantment.is(Enchantments.LOOTING) && context.getParamOrNull(LootContextParams.DIRECT_ATTACKING_ENTITY) instanceof Hedgehog hedgehog) {
-768-                                                                  ^
-769-    symbol:   method getParamOrNull(ContextKey<Entity>)
-770-    location: variable context of type LootContext
-771:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:223: error: cannot find symbol
-772-              return (this.isOwnedBy(player) || this.isTame() || (this.isTameFood(stack) && !this.isTame())) ? InteractionResult.CONSUME : InteractionResult.PASS;
-773-                                                                      ^
-774-    symbol: method isTameFood(ItemStack)
-775:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:226: error: cannot find symbol
-776-              if (this.isTameFood(stack) && this.getHealth() < this.getMaxHealth()) {
-777-                      ^
-778-    symbol: method isTameFood(ItemStack)
-779:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:233: error: cannot find symbol
-780-              if (this.isOwnedBy(player) && !this.isTameFood(stack)) {
-781-                                                 ^
-782-    symbol: method isTameFood(ItemStack)
-783:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:242: error: cannot find symbol
-784-          if (this.isTameFood(stack)) {
-785-                  ^
-786-    symbol: method isTameFood(ItemStack)
-787:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/HedgehogModel.java:68: error: cannot find symbol
-788-  		this.animate(entity.hideAnimationState, HedgehogAnimations.HEDGEHOG_HIDE, ageInTicks);
-789-  		    ^
-790-    symbol: method animate(SmoothAnimationState,AnimationDefinition,float)
-791:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/HedgehogModel.java:69: error: cannot find symbol
-792-  		this.animate(entity.unhideAnimationState, HedgehogAnimations.HEDGEHOG_UNHIDE, ageInTicks);
-793-  		    ^
-794-    symbol: method animate(SmoothAnimationState,AnimationDefinition,float)
-795:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/AntHillBlock.java:117: error: cannot find symbol
-796-          super.onRemove(state, level, pos, newState, movedByPiston);
-797-               ^
-798-    symbol: method onRemove(BlockState,Level,BlockPos,BlockState,boolean)
-799:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:47: error: getType() in BugNetInteractionRecipe cannot implement getType() in Recipe
-800-      public @NotNull RecipeType<?> getType() {
-801-                                    ^
-802-    return type RecipeType<?> is not compatible with RecipeType<? extends Recipe<RecipeInput>>
-803-    where T is a type-variable:
-804-      T extends RecipeInput declared in interface Recipe
-805:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:42: error: getSerializer() in BugNetInteractionRecipe cannot implement getSerializer() in Recipe
-806-      public @NotNull RecipeSerializer<?> getSerializer() {
-807-                                          ^
-808-    return type RecipeSerializer<?> is not compatible with RecipeSerializer<? extends Recipe<RecipeInput>>
-809-    where T is a type-variable:
-810-      T extends RecipeInput declared in interface Recipe
-811:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:65: error: incompatible types: Optional<Reference<EntityType<?>>> cannot be converted to EntityType<?>
-812-                      EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(buf.readIdentifier());
-813-                                                                                  ^
-814:  /home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/platform/FabricRegistrationProvider.java:18: error: incompatible types: Optional<Reference<CAP#1>> cannot be converted to Registry<T>
-815-          this.registry = (Registry<T>) BuiltInRegistries.REGISTRY.get(registryKey.identifier());
-816-                                                                      ^
-817-    where T is a type-variable:
-818-      T extends Object declared in class FabricRegistrationProvider
-819-    where CAP#1 is a fresh type-variable:
-820-      CAP#1 extends Registry<?> from capture of ? extends Registry<?>
-821:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:66: error: Snake is not abstract and does not override abstract method isFood(ItemStack) in Animal
-822-  public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
-823-         ^
-824:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/DirtTrail.java:19: error: DirtTrail is not abstract and does not override abstract method hurtServer(ServerLevel,DamageSource,float) in Entity
-825-  public class DirtTrail extends Entity {
-826-         ^
-827:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:20: error: BugNetInteractionRecipe is not abstract and does not override abstract method recipeBookCategory() in Recipe
-828-  public record BugNetInteractionRecipe(EntityType<?> entityType, ItemStack dropStack) implements Recipe<RecipeInput> {
-829-         ^
-830-  86 errors
-831-
-832-* Try:
+210-        (actual and formal argument lists differ in length)
+211-  Note: Recompile with -Xlint:deprecation for details.
+212:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:47: error: incompatible types: RecipeSerializer<CAP#1> cannot be converted to RecipeSerializer<? extends Recipe<RecipeInput>>
+213-          return NaturalistRecipes.BUG_NET_SERIALIZER.get();
+214-                                                         ^
+215-    where CAP#1 is a fresh type-variable:
+216-      CAP#1 extends Recipe<?> from capture of ?
+217:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:66: error: Snake is not abstract and does not override abstract method isFood(ItemStack) in Animal
+218-  public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
+219-         ^
+220:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:42: error: cannot find symbol
+221-      private final EntityType<? extends Mob> variantEntityType;
+222-                                         ^
+223-    symbol:   class Mob
+224-    location: class NaturalistBucketItem
+225:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:48: error: cannot find symbol
+226-      public NaturalistBucketItem(EntityType<? extends Mob> entityType, Fluid content, SoundEvent emptySound, Properties properties) {
+227-                                                       ^
+228-    symbol:   class Mob
+229-    location: class NaturalistBucketItem
+230:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:52: error: cannot find symbol
+231-      public NaturalistBucketItem(EntityType<? extends Mob> entityType, Fluid content, SoundEvent emptySound, Properties properties, boolean allowMidWater, @Nullable String tooltipPrefix, @Nullable String[] variantNames) {
+232-                                                       ^
+233-    symbol:   class Mob
+234-    location: class NaturalistBucketItem
+235:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snail.java:351: error: cannot find symbol
+236-              DyeColor dyeColor = stack.get(DataComponents.DYE);
+237-                                  ^
+238-    symbol:   variable stack
+239-    location: class Snail
+240:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/BeachedMob.java:43: error: cannot find symbol
+241-          mob.hasImpulse = true;
+242-             ^
+243-    symbol:   variable hasImpulse
+244-    location: variable mob of type Mob
+245:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:138: error: cannot find symbol
+246-              label = Component.Serializer.fromJson(tag.getString("CustomName"), context.registries());
+247-                               ^
+248-    symbol:   variable Serializer
+249-    location: interface Component
+250:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:14: error: cannot find symbol
+251-      public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AntHillBlockEntity>> ANT_HILL = BLOCK_ENTITY_TYPES.register("ant_hill", () -> BlockEntityType.Builder.of(AntHillBlockEntity::new, NaturalistRegistry.ANT_HILL.get()).build(null));
+252-                                                                                                                                                                          ^
+253-    symbol:   variable Builder
+254-    location: class BlockEntityType
+255:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:15: error: cannot find symbol
+256-      public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SnailShellBlockEntity>> SNAIL_SHELL = BLOCK_ENTITY_TYPES.register("snail_shell", () -> BlockEntityType.Builder.of(SnailShellBlockEntity::new, NaturalistRegistry.SNAIL_SHELL_BLOCK.get()).build(null));
+257-                                                                                                                                                                                   ^
+258-    symbol:   variable Builder
+259-    location: class BlockEntityType
+260-  Note: Recompile with -Xlint:unchecked for details.
+261-  Note: Some input files use or override a deprecated API.
+262:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:378: error: method does not override or implement a method from a supertype
+263-      @Override
+264-      ^
+265:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/GlowGoopBlock.java:66: error: method does not override or implement a method from a supertype
+266-      @Override
+267-      ^
+268:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/TortoiseEggBlock.java:53: error: method does not override or implement a method from a supertype
+269-      @Override
+270-      ^
+271:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/CaughtMobItem.java:61: error: method does not override or implement a method from a supertype
+272-      @Override
+273-      ^
+274:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:72: error: method does not override or implement a method from a supertype
+275-      @Override
+276-      ^
+277:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:77: error: method does not override or implement a method from a supertype
+278-      @Override
+279-      ^
+280:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/SnailItem.java:25: error: method does not override or implement a method from a supertype
+281-      @Override
+282-      ^
+283:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:23: error: method does not override or implement a method from a supertype
+284-      @Override
+285-      ^
+286-  Note: Some input files use unchecked or unsafe operations.
+287:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:141: error: cannot find symbol
+288-              label = EntityType.byString(tag.getString("id")).map(EntityType::getDescription).orElse(null);
+289-                                ^
+290-    symbol:   method byString(Optional<String>)
+291-    location: class EntityType
+292:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/BugNetItem.java:60: error: cannot find symbol
+293-          Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = player.level().getRecipeManager().getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
+294-                                                                                     ^
+295-    symbol:   method getRecipeManager()
+296-    location: class Level
+297:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:29: error: cannot find symbol
+298-              tooltip.accept(Component.literal("Place up to 3").withStyle(ChatFormatting.GRAY));
+299-                     ^
+300-    symbol:   method accept(MutableComponent)
+301-    location: variable tooltip of type List<Component>
+302:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:30: error: cannot find symbol
+303-              tooltip.accept(Component.literal("in one space!").withStyle(ChatFormatting.GRAY));
+304-                     ^
+305-    symbol:   method accept(MutableComponent)
+306-    location: variable tooltip of type List<Component>
+307:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:32: error: cannot find symbol
+308-              tooltip.accept(Component.literal("Hold ").withStyle(ChatFormatting.GRAY).append(Component.literal("Shift").withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC)).append(Component.literal(" for info!").withStyle(ChatFormatting.GRAY)));
+309-                     ^
+310-    symbol:   method accept(MutableComponent)
+311-    location: variable tooltip of type List<Component>
+312-  29 errors
 --
-870-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-871-Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-872:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:235: error: cannot find symbol
-873-            ItemStack held = tag.get("HeldItem").flatMap(encoded -> ItemStack.CODEC.parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), encoded).result()).orElse(ItemStack.EMPTY);
-874-                                                ^
-875-  symbol:   method flatMap((encoded)-[...]ult())
-876-  location: interface Tag
-877:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:378: error: method does not override or implement a method from a supertype
-878-    @Override
-879-    ^
-880:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:380: error: method getAttackBoundingBox in class Mob cannot be applied to given types;
-881-        return super.getAttackBoundingBox().inflate(0.9D, 0.5D, 0.9D);
-882-                    ^
-883-  required: double
-884-  found:    no arguments
-885-  reason: actual and formal argument lists differ in length
-886:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:66: error: Snake is not abstract and does not override abstract method isFood(ItemStack) in Animal
-887-public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
-888-       ^
-889:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:223: error: cannot find symbol
-890-            return (this.isOwnedBy(player) || this.isTame() || (this.isTameFood(stack) && !this.isTame())) ? InteractionResult.CONSUME : InteractionResult.PASS;
-891-                                                                    ^
-892-  symbol: method isTameFood(ItemStack)
-893:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:226: error: cannot find symbol
-894-            if (this.isTameFood(stack) && this.getHealth() < this.getMaxHealth()) {
-895-                    ^
-896-  symbol: method isTameFood(ItemStack)
-897:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:233: error: cannot find symbol
-898-            if (this.isOwnedBy(player) && !this.isTameFood(stack)) {
-899-                                               ^
-900-  symbol: method isTameFood(ItemStack)
-901:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:242: error: cannot find symbol
-902-        if (this.isTameFood(stack)) {
-903-                ^
-904-  symbol: method isTameFood(ItemStack)
-905:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java:263: error: cannot find symbol
-906-        return !this.level().getNearbyPlayers(
-907-                            ^
-908-  symbol:   method getNearbyPlayers(TargetingConditions,GiantIsopod,AABB)
-909-  location: class Level
-910:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snail.java:351: error: cannot find symbol
-911-            DyeColor dyeColor = dyeItem.getDyeColor();
-912-                                       ^
-913-  symbol:   method getDyeColor()
-914-  location: variable dyeItem of type DyeItem
-915:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/CrabModel.java:107: error: cannot find symbol
-916-		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
-917-		                                                    ^
-918-  symbol:   method getMainCamera()
-919-  location: variable gameRenderer of type GameRenderer
-920:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/HedgehogModel.java:68: error: cannot find symbol
-921-		this.animate(entity.hideAnimationState, HedgehogAnimations.HEDGEHOG_HIDE, ageInTicks);
-922-		    ^
-923-  symbol: method animate(SmoothAnimationState,AnimationDefinition,float)
-924:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/HedgehogModel.java:69: error: cannot find symbol
-925-		this.animate(entity.unhideAnimationState, HedgehogAnimations.HEDGEHOG_UNHIDE, ageInTicks);
-926-		    ^
-927-  symbol: method animate(SmoothAnimationState,AnimationDefinition,float)
-928:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/VultureModel.java:30: error: method does not override or implement a method from a supertype
-929-@Override
-930-^
-931:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/DirtTrailModel.java:31: error: method does not override or implement a method from a supertype
-932-@Override
-933-^
-934:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/DirtTrail.java:19: error: DirtTrail is not abstract and does not override abstract method hurtServer(ServerLevel,DamageSource,float) in Entity
-935-public class DirtTrail extends Entity {
-936-       ^
-937:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/SnakeModel.java:38: error: method does not override or implement a method from a supertype
-938-@Override
-939-^
-940:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/SnailModel.java:99: error: cannot find symbol
-941-		Vec3 toCamera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(entity.position());
-942-		                                                    ^
-943-  symbol:   method getMainCamera()
-944-  location: variable gameRenderer of type GameRenderer
-945:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/ParrotFlight.java:28: error: cannot find symbol
-946-        return isParrot(player.getShoulderEntityLeft()) && isParrot(player.getShoulderEntityRight());
-947-                              ^
-948-  symbol:   method getShoulderEntityLeft()
-949-  location: variable player of type Player
-950:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/ParrotFlight.java:28: error: cannot find symbol
-951-        return isParrot(player.getShoulderEntityLeft()) && isParrot(player.getShoulderEntityRight());
-952-                                                                          ^
-953-  symbol:   method getShoulderEntityRight()
-954-  location: variable player of type Player
-955:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/ParrotFlight.java:36: error: cannot find symbol
-956-        return !tag.isEmpty() && EntityType.byString(tag.getString("id")).filter(type -> type == EntityTypes.PARROT).isPresent();
-957-                                           ^
-958-  symbol:   method byString(Optional<String>)
-959-  location: class EntityType
-960:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/BeachedMob.java:43: error: cannot find symbol
-961-        mob.hasImpulse = true;
-962-           ^
-963-  symbol:   variable hasImpulse
-964-  location: variable mob of type Mob
-965:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:23: error: cannot find symbol
-966-        super(NaturalistEntityTypes.DUCK_EGG.get(), livingEntity, level, new ItemStack(NaturalistRegistry.DUCK_EGG.get()));
-967-                                                                             ^
-968-  symbol:   class ItemStack
-969-  location: class ThrownDuckEgg
-970:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:27: error: cannot find symbol
-971-        super(NaturalistEntityTypes.DUCK_EGG.get(), d, e, f, level, new ItemStack(NaturalistRegistry.DUCK_EGG.get()));
-972-                                                                        ^
-973-  symbol:   class ItemStack
-974-  location: class ThrownDuckEgg
-975:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:55: error: cannot find symbol
-976-                    Duck duck = NaturalistEntityTypes.DUCK.get().create(this.level(), EntitySpawnReason.BREEDING);
-977-                                                                                      ^
-978-  symbol:   variable EntitySpawnReason
-979-  location: class ThrownDuckEgg
-980:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/MobVariantUtil.java:57: error: cannot find symbol
-981-        Optional<Registry<MobVariant>> maybeRegistry = level.registryAccess().registry(registryKey);
-982-                                                                             ^
-983-  symbol:   method registry(ResourceKey<Registry<MobVariant>>)
-984-  location: interface RegistryAccess
-985:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/MobVariantUtil.java:63: error: cannot find symbol
-986-        List<Holder.Reference<MobVariant>> pool = registry.holders()
-987-                                                          ^
-988-  symbol:   method holders()
-989-  location: variable registry of type Registry<MobVariant>
-990:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/MobVariantUtil.java:68: error: cannot find symbol
-991-            pool = registry.holders()
-992-                           ^
-993-  symbol:   method holders()
-994-  location: variable registry of type Registry<MobVariant>
-995:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/PetTargeting.java:17: error: cannot find symbol
-996-        return !self.isTame() || self.getOwnerUUID() == null || !(target instanceof OwnableEntity ownable)
-997-                                     ^
-998-  symbol:   method getOwnerUUID()
-999-  location: variable self of type TamableAnimal
-1000:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/PetTargeting.java:18: error: cannot find symbol
-1001-                || !self.getOwnerUUID().equals(ownable.getOwnerUUID());
-1002-                        ^
-1003-  symbol:   method getOwnerUUID()
-1004-  location: variable self of type TamableAnimal
-1005:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/PetTargeting.java:18: error: cannot find symbol
-1006-                || !self.getOwnerUUID().equals(ownable.getOwnerUUID());
-1007-                                                      ^
-1008-  symbol:   method getOwnerUUID()
-1009-  location: variable ownable of type OwnableEntity
-1010:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:20: error: BugNetInteractionRecipe is not abstract and does not override abstract method recipeBookCategory() in Recipe
-1011-public record BugNetInteractionRecipe(EntityType<?> entityType, ItemStack dropStack) implements Recipe<RecipeInput> {
-1012-       ^
-1013:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:47: error: getType() in BugNetInteractionRecipe cannot implement getType() in Recipe
-1014-    public @NotNull RecipeType<?> getType() {
-1015-                                  ^
-1016-  return type RecipeType<?> is not compatible with RecipeType<? extends Recipe<RecipeInput>>
-1017-  where T is a type-variable:
-1018-    T extends RecipeInput declared in interface Recipe
-1019:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:42: error: getSerializer() in BugNetInteractionRecipe cannot implement getSerializer() in Recipe
-1020-    public @NotNull RecipeSerializer<?> getSerializer() {
-1021-                                        ^
-1022-  return type RecipeSerializer<?> is not compatible with RecipeSerializer<? extends Recipe<RecipeInput>>
-1023-  where T is a type-variable:
-1024-    T extends RecipeInput declared in interface Recipe
-1025:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:26: error: method does not override or implement a method from a supertype
-1026-    @Override
-1027-    ^
-1028:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:31: error: method does not override or implement a method from a supertype
-1029-    @Override
-1030-    ^
-1031:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:36: error: method does not override or implement a method from a supertype
-1032-    @Override
-1033-    ^
-1034:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:41: error: method does not override or implement a method from a supertype
-1035-    @Override
-1036-    ^
-1037:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:46: error: method does not override or implement a method from a supertype
-1038-    @Override
-1039-    ^
-1040:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:65: error: incompatible types: Optional<Reference<EntityType<?>>> cannot be converted to EntityType<?>
-1041-                    EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(buf.readIdentifier());
-1042-                                                                                ^
-1043:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/effect/AntivenomMobEffect.java:16: error: method does not override or implement a method from a supertype
-1044-    @Override
-1045-    ^
-1046:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:37: error: method does not override or implement a method from a supertype
-1047-    @Override
-1048-    ^
-1049:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:39: error: method saveAdditional in class BlockEntity cannot be applied to given types;
-1050-        super.saveAdditional(tag, registries);
-1051-             ^
-1052-  required: ValueOutput
-1053-  found:    CompoundTag,Provider
-1054-  reason: actual and formal argument lists differ in length
-1055:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:41: error: cannot find symbol
-1056-            tag.put("Flower", this.flower.save(registries));
-1057-                                         ^
-1058-  symbol:   method save(Provider)
-1059-  location: variable flower of type ItemStack
-1060:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:45: error: method does not override or implement a method from a supertype
-1061-    @Override
-1062-    ^
-1063:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:47: error: method loadAdditional in class BlockEntity cannot be applied to given types;
-1064-        super.loadAdditional(tag, registries);
-1065-             ^
-1066-  required: ValueInput
-1067-  found:    CompoundTag,Provider
-1068-  reason: actual and formal argument lists differ in length
-1069:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:48: error: method contains in class CompoundTag cannot be applied to given types;
-1070-        this.flower = tag.contains("Flower", Tag.TAG_COMPOUND)
-1071-                         ^
-1072-  required: String
-1073-  found:    String,byte
-1074-  reason: actual and formal argument lists differ in length
-1075:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:49: error: cannot find symbol
-1076-                ? ItemStack.parse(registries, tag.getCompound("Flower")).orElse(ItemStack.EMPTY)
-1077-                           ^
-1078-  symbol:   method parse(Provider,Optional<CompoundTag>)
-1079-  location: class ItemStack
-1080:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/SnailShellBlock.java:89: error: cannot find symbol
-1081-            if (tag.contains("Color", Tag.TAG_ANY_NUMERIC)) {
-1082-                                         ^
-1083-  symbol:   variable TAG_ANY_NUMERIC
-1084-  location: interface Tag
-1085:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/SnailShellBlock.java:90: error: method byId in enum DyeColor cannot be applied to given types;
-1086-                color = DyeColor.byId(tag.getInt("Color"));
-1087-                                ^
-1088-  required: int
-1089-  found:    Optional<Integer>
-1090:  reason: argument mismatch; Optional<Integer> cannot be converted to int
-1091:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/StarfishBlock.java:41: error: method does not override or implement a method from a supertype
-1092-    @Override
-1093-    ^
-1094:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/StarfishBlock.java:70: error: cannot find symbol
-1095-            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
-1096-                 ^
-1097-  symbol:   method scheduleTick(BlockPos,FlowingFluid,int)
-1098-  location: variable level of type LevelReader
-1099:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/OstrichEggBlock.java:77: error: method does not override or implement a method from a supertype
-1100-    @Override
-1101-    ^
-1102:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/GlowGoopBlock.java:66: error: method does not override or implement a method from a supertype
-1103-    @Override
-1104-    ^
-1105:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/TortoiseEggBlock.java:53: error: method does not override or implement a method from a supertype
-1106-    @Override
-1107-    ^
-1108:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/TortoiseEggBlock.java:111: error: method does not override or implement a method from a supertype
-1109-    @Override
-1110-    ^
-1111:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/AntHillBlock.java:112: error: method does not override or implement a method from a supertype
-1112-    @Override
-1113-    ^
-1114:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/AntHillBlock.java:117: error: cannot find symbol
-1115-        super.onRemove(state, level, pos, newState, movedByPiston);
-1116-             ^
-1117-  symbol: method onRemove(BlockState,Level,BlockPos,BlockState,boolean)
-1118:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/AlligatorEggBlock.java:71: error: method does not override or implement a method from a supertype
-1119-    @Override
-1120-    ^
-1121:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:52: error: constructor MobBucketItem in class MobBucketItem cannot be applied to given types;
-1122-        super(entityType, content, emptySound, properties);
-1123-        ^
-1124-  required: EntityType<? extends Mob>,Fluid,SoundEvent,Properties
-1125-  found:    EntityType<CAP#1>,Fluid,SoundEvent,Properties
-1126:  reason: argument mismatch; EntityType<CAP#1> cannot be converted to EntityType<? extends Mob>
-1127-  where CAP#1 is a fresh type-variable:
-1128-    CAP#1 extends Entity from capture of ?
-1129:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:106: error: cannot find symbol
-1130-        player.setItemInHand(context.getHand(), release(level, player, context.getItemInHand(), placePos).getObject());
-1131-                                                                                                         ^
-1132-  symbol:   method getObject()
-1133-  location: interface InteractionResult
-1134:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:117: error: method does not override or implement a method from a supertype
-1135-    @Override
-1136-    ^
-1137:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:119: error: cannot find symbol
-1138-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).getUnsafe();
-1139-                                                                                          ^
-1140-  symbol:   method getUnsafe()
-1141-  location: class CustomData
-1142:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/CaughtMobItem.java:61: error: method does not override or implement a method from a supertype
-1143-    @Override
-1144-    ^
-1145:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:72: error: method does not override or implement a method from a supertype
-1146-    @Override
-1147-    ^
-1148:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:77: error: method does not override or implement a method from a supertype
-1149-    @Override
-1150-    ^
-1151:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:74: error: method save in class Entity cannot be applied to given types;
-1152-        mob.save(entityTag);
-1153-           ^
-1154-  required: ValueOutput
-1155-  found:    CompoundTag
-1156:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1157:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:104: error: no suitable method found for loadEntityRecursive(CompoundTag,ServerLevel,(e)->{ e.m[...] e; })
-1158-            Entity entity = EntityType.loadEntityRecursive(tag, serverLevel, e -> {
-1159-                                      ^
-1160-    method EntityType.loadEntityRecursive(CompoundTag,Level,EntitySpawnRequest,EntityProcessor) is not applicable
-1161-      (actual and formal argument lists differ in length)
-1162-    method EntityType.loadEntityRecursive(EntityType<?>,CompoundTag,Level,EntitySpawnReason,EntityProcessor) is not applicable
+383-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+384-Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
+385:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:42: error: cannot find symbol
+386-    private final EntityType<? extends Mob> variantEntityType;
+387-                                       ^
+388-  symbol:   class Mob
+389-  location: class NaturalistBucketItem
+390:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:48: error: cannot find symbol
+391-    public NaturalistBucketItem(EntityType<? extends Mob> entityType, Fluid content, SoundEvent emptySound, Properties properties) {
+392-                                                     ^
+393-  symbol:   class Mob
+394-  location: class NaturalistBucketItem
+395:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:52: error: cannot find symbol
+396-    public NaturalistBucketItem(EntityType<? extends Mob> entityType, Fluid content, SoundEvent emptySound, Properties properties, boolean allowMidWater, @Nullable String tooltipPrefix, @Nullable String[] variantNames) {
+397-                                                     ^
+398-  symbol:   class Mob
+399-  location: class NaturalistBucketItem
+400:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:378: error: method does not override or implement a method from a supertype
+401-    @Override
+402-    ^
+403:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GreatWhiteShark.java:380: error: method getAttackBoundingBox in class Mob cannot be applied to given types;
+404-        return super.getAttackBoundingBox().inflate(0.9D, 0.5D, 0.9D);
+405-                    ^
+406-  required: double
+407-  found:    no arguments
+408-  reason: actual and formal argument lists differ in length
+409:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java:66: error: Snake is not abstract and does not override abstract method isFood(ItemStack) in Animal
+410-public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
+411-       ^
+412:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snail.java:351: error: cannot find symbol
+413-            DyeColor dyeColor = stack.get(DataComponents.DYE);
+414-                                ^
+415-  symbol:   variable stack
+416-  location: class Snail
+417:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/BeachedMob.java:43: error: cannot find symbol
+418-        mob.hasImpulse = true;
+419-           ^
+420-  symbol:   variable hasImpulse
+421-  location: variable mob of type Mob
+422:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:47: error: incompatible types: RecipeSerializer<CAP#1> cannot be converted to RecipeSerializer<? extends Recipe<RecipeInput>>
+423-        return NaturalistRecipes.BUG_NET_SERIALIZER.get();
+424-                                                       ^
+425-  where CAP#1 is a fresh type-variable:
+426-    CAP#1 extends Recipe<?> from capture of ?
+427:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/entity/SnailShellBlockEntity.java:56: error: method saveAdditional in class SnailShellBlockEntity cannot be applied to given types;
+428-        this.saveAdditional(tag, registries);
+429-            ^
+430-  required: ValueOutput
+431-  found:    CompoundTag,Provider
+432-  reason: actual and formal argument lists differ in length
+433:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/GlowGoopBlock.java:66: error: method does not override or implement a method from a supertype
+434-    @Override
+435-    ^
+436:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/TortoiseEggBlock.java:53: error: method does not override or implement a method from a supertype
+437-    @Override
+438-    ^
+439:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/CaughtMobItem.java:61: error: method does not override or implement a method from a supertype
+440-    @Override
+441-    ^
+442:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:72: error: method does not override or implement a method from a supertype
+443-    @Override
+444-    ^
+445:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:77: error: method does not override or implement a method from a supertype
+446-    @Override
+447-    ^
+448:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:75: error: method save in class Entity cannot be applied to given types;
+449-        mob.save(entityTag);
+450-           ^
+451-  required: ValueOutput
+452-  found:    CompoundTag
+453:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
+454:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:105: error: no suitable method found for loadEntityRecursive(CompoundTag,ServerLevel,(e)->{ e.m[...] e; })
+455-            Entity entity = EntityType.loadEntityRecursive(tag, serverLevel, e -> {
+456-                                      ^
+457-    method EntityType.loadEntityRecursive(CompoundTag,Level,EntitySpawnRequest,EntityProcessor) is not applicable
+458-      (actual and formal argument lists differ in length)
+459-    method EntityType.loadEntityRecursive(EntityType<?>,CompoundTag,Level,EntitySpawnReason,EntityProcessor) is not applicable
 --
-1168-    method EntityType.loadEntityRecursive(EntityType<?>,ValueInput,Level,EntitySpawnReason,EntityProcessor) is not applicable
-1169-      (actual and formal argument lists differ in length)
-1170:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:129: error: method does not override or implement a method from a supertype
-1171-    @Override
-1172-    ^
-1173:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:136: error: method contains in class CompoundTag cannot be applied to given types;
-1174-        if (tag.contains("CustomName", 8) && context.registries() != null) {
-1175-               ^
-1176-  required: String
-1177-  found:    String,int
-1178-  reason: actual and formal argument lists differ in length
-1179:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:137: error: cannot find symbol
-1180-            label = Component.Serializer.fromJson(tag.getString("CustomName"), context.registries());
-1181-                             ^
-1182-  symbol:   variable Serializer
-1183-  location: interface Component
-1184:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:140: error: cannot find symbol
-1185-            label = EntityType.byString(tag.getString("id")).map(EntityType::getDescription).orElse(null);
-1186-                              ^
-1187-  symbol:   method byString(Optional<String>)
-1188-  location: class EntityType
-1189:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/BugNetItem.java:60: error: cannot find symbol
-1190-        Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = player.level().getRecipeManager().getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
-1191-                                                                                   ^
-1192-  symbol:   method getRecipeManager()
-1193-  location: class Level
-1194:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:22: error: method does not override or implement a method from a supertype
-1195-    @Override
-1196-    ^
-1197:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:27: error: cannot find symbol
-1198-        if (Screen.hasShiftDown()) {
-1199-                  ^
-1200-  symbol:   method hasShiftDown()
-1201-  location: class Screen
-1202:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistEntityTypes.java:73: error: method build in class Builder<T> cannot be applied to given types;
-1203-        return ENTITY_TYPES.register(id, () -> builder.build(Naturalist.location(id).toString()));
-1204-                                                      ^
-1205-  required: ResourceKey<EntityType<?>>
-1206-  found:    String
-1207:  reason: argument mismatch; String cannot be converted to ResourceKey<EntityType<?>>
-1208-  where T is a type-variable:
-1209-    T extends Entity declared in class Builder
-1210:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:14: error: cannot find symbol
-1211-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AntHillBlockEntity>> ANT_HILL = BLOCK_ENTITY_TYPES.register("ant_hill", () -> BlockEntityType.Builder.of(AntHillBlockEntity::new, NaturalistRegistry.ANT_HILL.get()).build(null));
-1212-                                                                                                                                                                        ^
-1213-  symbol:   variable Builder
-1214-  location: class BlockEntityType
-1215:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:15: error: cannot find symbol
-1216-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SnailShellBlockEntity>> SNAIL_SHELL = BLOCK_ENTITY_TYPES.register("snail_shell", () -> BlockEntityType.Builder.of(SnailShellBlockEntity::new, NaturalistRegistry.SNAIL_SHELL_BLOCK.get()).build(null));
-1217-                                                                                                                                                                                 ^
-1218-  symbol:   variable Builder
-1219-  location: class BlockEntityType
-1220:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistRegistry.java:79: error: cannot find symbol
-1221-    public static final DeferredHolder<Item, Item> LIZARD_TAIL = ITEMS.register("lizard_tail", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.8F).effect(new MobEffectInstance(MobEffects.POISON, 100, 0), 1.0F).build())));
-1222-                                                                                                                                                                                                           ^
-1223-  symbol:   method effect(MobEffectInstance,float)
-1224-  location: class Builder
-1225:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/Naturalist.java:152: error: invalid method reference
-1226-        r.register(NaturalistEntityTypes.SNAKE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Snake::checkSnakeSpawnRules);
-1227-                                                                                                                                ^
-1228:  cannot find symbol
-1229-    symbol:   method checkSnakeSpawnRules()
-1230-    location: class Snake
-1231:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FoxMixin.java:33: error: cannot find symbol
-1232-        if (spawnType != EntitySpawnReason.NATURAL && spawnType != EntitySpawnReason.CHUNK_GENERATION && spawnType != EntitySpawnReason.SPAWN_EGG) {
-1233-                                                                                                                                       ^
-1234-  symbol:   variable SPAWN_EGG
-1235-  location: class EntitySpawnReason
-1236:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/LocalPlayerMixin.java:27: error: cannot find symbol
-1237-        if (!this.input.jumping || self.onGround() || self.getAbilities().flying || !ParrotFlight.canAscend(self)) {
-1238-                       ^
-1239-  symbol:   variable jumping
-1240-  location: variable input of type Input
-1241:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/EnchantedCountIncreaseFunctionMixin.java:24: error: cannot find symbol
-1242-        if (this.enchantment.is(Enchantments.LOOTING) && context.getParamOrNull(LootContextParams.DIRECT_ATTACKING_ENTITY) instanceof Hedgehog hedgehog) {
-1243-                                                                ^
-1244-  symbol:   method getParamOrNull(ContextKey<Entity>)
-1245-  location: variable context of type LootContext
-1246:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/platform/FabricRegistrationProvider.java:18: error: incompatible types: Optional<Reference<CAP#1>> cannot be converted to Registry<T>
-1247-        this.registry = (Registry<T>) BuiltInRegistries.REGISTRY.get(registryKey.identifier());
-1248-                                                                    ^
-1249-  where T is a type-variable:
-1250-    T extends Object declared in class FabricRegistrationProvider
-1251-  where CAP#1 is a fresh type-variable:
-1252-    CAP#1 extends Registry<?> from capture of ? extends Registry<?>
-1253:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/platform/FabricRegistryHelper.java:18: error: constructor SpawnEggItem in class SpawnEggItem cannot be applied to given types;
-1254-        return new SpawnEggItem(type.get(), primaryColor, secondaryColor, properties);
-1255-               ^
-1256-  required: Properties
-1257-  found:    CAP#1,int,int,Properties
-1258-  reason: actual and formal argument lists differ in length
-1259-  where CAP#1 is a fresh type-variable:
-1260-    CAP#1 extends EntityType<? extends Mob> from capture of ? extends EntityType<? extends Mob>
-1261:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/NaturalistFabric.java:35: error: method registerPotionMixes in class Naturalist cannot be applied to given types;
-1262-                Naturalist.registerPotionMixes(builder::registerItemRecipe));
-1263-                          ^
-1264-  required: BrewingRegistrar
-1265-  found:    builder::r[...]ecipe
-1266-  reason: argument mismatch; invalid method reference
-1267:      method registerItemRecipe in interface FabricPotionBrewingBuilder cannot be applied to given types
-1268-        required: Item,Ingredient,Item
-1269-        found:    Holder<Potion>,Item,Holder<Potion>
-1270:        reason: argument mismatch; Holder<Potion> cannot be converted to Item
-1271-Note: Some input files use or override a deprecated API.
-1272-Note: Recompile with -Xlint:deprecation for details.
-1273-Note: Some input files use unchecked or unsafe operations.
-1274-Note: Recompile with -Xlint:unchecked for details.
-1275-86 errors
+465-    method EntityType.loadEntityRecursive(EntityType<?>,ValueInput,Level,EntitySpawnReason,EntityProcessor) is not applicable
+466-      (actual and formal argument lists differ in length)
+467:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:137: error: method contains in class CompoundTag cannot be applied to given types;
+468-        if (tag.contains("CustomName", 8) && context.registries() != null) {
+469-               ^
+470-  required: String
+471-  found:    String,int
+472-  reason: actual and formal argument lists differ in length
+473:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:138: error: cannot find symbol
+474-            label = Component.Serializer.fromJson(tag.getString("CustomName"), context.registries());
+475-                             ^
+476-  symbol:   variable Serializer
+477-  location: interface Component
+478:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java:141: error: cannot find symbol
+479-            label = EntityType.byString(tag.getString("id")).map(EntityType::getDescription).orElse(null);
+480-                              ^
+481-  symbol:   method byString(Optional<String>)
+482-  location: class EntityType
+483:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/SnailItem.java:25: error: method does not override or implement a method from a supertype
+484-    @Override
+485-    ^
+486:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/BugNetItem.java:60: error: cannot find symbol
+487-        Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = player.level().getRecipeManager().getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
+488-                                                                                   ^
+489-  symbol:   method getRecipeManager()
+490-  location: class Level
+491:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:23: error: method does not override or implement a method from a supertype
+492-    @Override
+493-    ^
+494:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:29: error: cannot find symbol
+495-            tooltip.accept(Component.literal("Place up to 3").withStyle(ChatFormatting.GRAY));
+496-                   ^
+497-  symbol:   method accept(MutableComponent)
+498-  location: variable tooltip of type List<Component>
+499:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:30: error: cannot find symbol
+500-            tooltip.accept(Component.literal("in one space!").withStyle(ChatFormatting.GRAY));
+501-                   ^
+502-  symbol:   method accept(MutableComponent)
+503-  location: variable tooltip of type List<Component>
+504:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:32: error: cannot find symbol
+505-            tooltip.accept(Component.literal("Hold ").withStyle(ChatFormatting.GRAY).append(Component.literal("Shift").withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC)).append(Component.literal(" for info!").withStyle(ChatFormatting.GRAY)));
+506-                   ^
+507-  symbol:   method accept(MutableComponent)
+508-  location: variable tooltip of type List<Component>
+509:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:14: error: cannot find symbol
+510-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AntHillBlockEntity>> ANT_HILL = BLOCK_ENTITY_TYPES.register("ant_hill", () -> BlockEntityType.Builder.of(AntHillBlockEntity::new, NaturalistRegistry.ANT_HILL.get()).build(null));
+511-                                                                                                                                                                        ^
+512-  symbol:   variable Builder
+513-  location: class BlockEntityType
+514:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/registry/NaturalistBlockEntities.java:15: error: cannot find symbol
+515-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SnailShellBlockEntity>> SNAIL_SHELL = BLOCK_ENTITY_TYPES.register("snail_shell", () -> BlockEntityType.Builder.of(SnailShellBlockEntity::new, NaturalistRegistry.SNAIL_SHELL_BLOCK.get()).build(null));
+516-                                                                                                                                                                                 ^
+517-  symbol:   variable Builder
+518-  location: class BlockEntityType
+519:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/NaturalistFabric.java:35: error: method registerPotionRecipe in interface FabricPotionBrewingBuilder cannot be applied to given types;
+520-                Naturalist.registerPotionMixes((from, ingredient, to) -> builder.registerPotionRecipe(from, ingredient, to)));
+521-                                                                                ^
+522-  required: Holder<Potion>,Ingredient,Holder<Potion>
+523-  found:    Holder<Potion>,Item,Holder<Potion>
+524:  reason: argument mismatch; Item cannot be converted to Ingredient
+525-Note: Some input files use or override a deprecated API.
+526-Note: Recompile with -Xlint:deprecation for details.
+527-Note: Some input files use unchecked or unsafe operations.
+528-Note: Recompile with -Xlint:unchecked for details.
+529-29 errors
 
 === MINECRAFT 26.2 API INSPECTION ===
 === EXACT Boat ===
