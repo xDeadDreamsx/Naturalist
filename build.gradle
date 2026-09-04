@@ -64,6 +64,8 @@ processResources {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release = 25
+    // Keep the porting CI useful while many 26.2 API breaks are being migrated.
+    options.compilerArgs += ['-Xmaxerrs', '1000', '-Xdiags:verbose']
 }
 
 java {
