@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.NonNull;
 
@@ -29,7 +29,7 @@ public class CatfishModel extends NaturalistEntityModel<Catfish> {
 	private final ModelPart hat;
 
 	public CatfishModel(ModelPart root) {
-		super(root.getChild("root"), RenderType::entityCutout);
+		super(root.getChild("root"), RenderTypes::entityCutoutCull);
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 		ModelPart head = this.body.getChild("head");
