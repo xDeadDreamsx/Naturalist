@@ -48,7 +48,7 @@ public record BugNetInteractionRecipe(EntityType<?> entityType, ItemStack dropSt
         return NaturalistRecipes.BUG_NET.get();
     }
 
-    public static class Serializer implements RecipeSerializer<BugNetInteractionRecipe> {
+    public static final class Serializer {
         public static final MapCodec<BugNetInteractionRecipe> CODEC = RecordCodecBuilder.mapCodec(instance ->
                 instance.group(
                         BuiltInRegistries.ENTITY_TYPE.byNameCodec().fieldOf("entity_type").forGetter(BugNetInteractionRecipe::entityType),
@@ -67,14 +67,9 @@ public record BugNetInteractionRecipe(EntityType<?> entityType, ItemStack dropSt
                 }
         );
 
-        @Override
-        public @NotNull MapCodec<BugNetInteractionRecipe> codec() {
-            return CODEC;
-        }
+        public static final RecipeSerializer<BugNetInteractionRecipe> INSTANCE = new RecipeSerializer<>(CODEC, STREAM_CODEC);
 
-        @Override
-        public @NotNull StreamCodec<RegistryFriendlyByteBuf, BugNetInteractionRecipe> streamCodec() {
-            return STREAM_CODEC;
+        private Serializer() {
         }
     }
 }
