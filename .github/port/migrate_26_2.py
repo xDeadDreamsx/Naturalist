@@ -183,6 +183,52 @@ def migrate_persistence_hook(text: str, method_name: str, new_type: str, is_inpu
     return text, changed
 
 
+def migrate_server_level_hooks(text: str) -> tuple[str, bool]:
+    migrated = text
+    changed = False
+
+    def with_level(match: re.Match, method: str) -> str:
+        nonlocal changed
+        changed = True
+        annotation = match.group("annotation") or ""
+        type_name = match.group("type")
+        var = match.group("var")
+        return f"public boolean {method}(ServerLevel level, {annotation}{type_name} {var})"
+
+    for method, type_name in (("wantsToPickUp", "ItemStack"), ("doHurtTarget", "Entity")):
+        pattern = re.compile(
+            rf"public\s+boolean\s+{method}\s*\(\s*(?P<annotation>@[A-Za-z0-9_$.]+\s+)?(?P<type>{type_name})\s+(?P<var>[A-Za-z_$][A-Za-z0-9_$]*)\s*\)"
+        )
+        before = migrated
+        migrated = pattern.sub(lambda m, name=method: with_level(m, name), migrated)
+        if migrated != before:
+            if method == "wantsToPickUp":
+                migrated = re.sub(r"super\.wantsToPickUp\(([^,()\n]+)\)", r"super.wantsToPickUp(level, \1)", migrated)
+            else:
+                migrated = re.sub(r"super\.doHurtTarget\(([^,()\n]+)\)", r"super.doHurtTarget(level, \1)", migrated)
+
+    custom_pattern = re.compile(r"\b(?P<visibility>public|protected)\s+void\s+customServerAiStep\s*\(\s*\)")
+    if custom_pattern.search(migrated):
+        migrated = custom_pattern.sub(r"\g<visibility> void customServerAiStep(ServerLevel level)", migrated)
+        migrated = migrated.replace("super.customServerAiStep();", "super.customServerAiStep(level);")
+        changed = True
+
+    hurt_pattern = re.compile(
+        r"public\s+boolean\s+hurt\s*\(\s*(?P<annotation>@[A-Za-z0-9_$.]+\s+)?DamageSource\s+(?P<source>[A-Za-z_$][A-Za-z0-9_$]*)\s*,\s*float\s+(?P<amount>[A-Za-z_$][A-Za-z0-9_$]*)\s*\)"
+    )
+    hurt_match = hurt_pattern.search(migrated)
+    if hurt_match:
+        annotation = hurt_match.group("annotation") or ""
+        source = hurt_match.group("source")
+        amount = hurt_match.group("amount")
+        header = f"public boolean hurtServer(ServerLevel level, {annotation}DamageSource {source}, float {amount})"
+        migrated = migrated[:hurt_match.start()] + header + migrated[hurt_match.end():]
+        migrated = migrated.replace("super.hurt(", "super.hurtServer(level, ")
+        changed = True
+
+    return migrated, changed
+
+
 def migrate_text(text: str) -> str:
     migrated = text
     for old, new in DIRECT_REPLACEMENTS.items():
@@ -218,7 +264,6 @@ def migrate_text(text: str) -> str:
     if changed_input:
         migrated = add_import(migrated, "net.minecraft.world.level.storage.ValueInput")
 
-    # TagKey is no longer accepted directly by Ingredient.of; resolve it to the registry HolderSet.
     ingredient_pattern = r"Ingredient\.of\((NaturalistTags\.ItemTags\.[A-Za-z0-9_]+)\)"
     migrated, ingredient_count = re.subn(
         ingredient_pattern,
@@ -228,12 +273,25 @@ def migrate_text(text: str) -> str:
     if ingredient_count:
         migrated = add_import(migrated, "net.minecraft.core.registries.BuiltInRegistries")
 
-    # EntityType#create(Level) was removed. Offspring creation now carries an explicit spawn reason.
     migrated = re.sub(
         r"(NaturalistEntityTypes\.[A-Z0-9_]+\.get\(\)\.create)\((serverLevel|level)\)",
         r"\1(\2, EntitySpawnReason.BREEDING)",
         migrated,
     )
+
+    migrated, server_hooks_changed = migrate_server_level_hooks(migrated)
+    if server_hooks_changed:
+        migrated = add_import(migrated, "net.minecraft.server.level.ServerLevel")
+
+    # DiggerItem/SwordItem disappeared; modern tools and swords expose the TOOL component.
+    weapon_pattern_a = r"([A-Za-z_$][A-Za-z0-9_$]*)\.getItem\(\) instanceof SwordItem\s*\|\|\s*\1\.getItem\(\) instanceof DiggerItem"
+    weapon_pattern_b = r"([A-Za-z_$][A-Za-z0-9_$]*)\.getItem\(\) instanceof DiggerItem\s*\|\|\s*\1\.getItem\(\) instanceof SwordItem"
+    migrated, weapon_count_a = re.subn(weapon_pattern_a, r"\1.has(DataComponents.TOOL)", migrated)
+    migrated, weapon_count_b = re.subn(weapon_pattern_b, r"\1.has(DataComponents.TOOL)", migrated)
+    if weapon_count_a or weapon_count_b:
+        migrated = migrated.replace("import net.minecraft.world.item.DiggerItem;\n", "")
+        migrated = migrated.replace("import net.minecraft.world.item.SwordItem;\n", "")
+        migrated = add_import(migrated, "net.minecraft.core.component.DataComponents")
 
     return migrated
 
