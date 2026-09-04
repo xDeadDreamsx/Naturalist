@@ -63,7 +63,7 @@ jobs:
           status=${PIPESTATUS[0]}
           exit "$status"
 
-      - name: Inspect Minecraft 26.2 API after failed compile
+      - name: Inspect Minecraft 26.2 API after failed build
         if: steps.build.outcome == 'failure'
         shell: bash
         run: |
@@ -72,6 +72,9 @@ jobs:
           echo "=== NATURALIST 26.2 COMPILE ERRORS ==="
           if [ -f /tmp/naturalist-build.log ]; then
             grep -n -E -B2 -A5 'error:|cannot find symbol|package .* does not exist|incompatible types|cannot be converted|does not override|has private access|cannot be applied|no suitable method|constructor .* cannot be applied|cannot infer type|overridden method is final' /tmp/naturalist-build.log | head -n 2200 || true
+            echo
+            echo "=== FULL GRADLE FAILURE TAIL ==="
+            tail -n 800 /tmp/naturalist-build.log || true
           fi
           echo
           echo "=== MINECRAFT 26.2 API INSPECTION ==="
@@ -152,7 +155,7 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add port-26.2-errors.txt
           if ! git diff --cached --quiet; then
-            git commit -m "Record current Naturalist 26.2 compile errors"
+            git commit -m "Record current Naturalist 26.2 build diagnostics"
             git push origin HEAD:port/26.2-fabric || true
           fi
 
