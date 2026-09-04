@@ -1,3 +1,7 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import java.util.zip.ZipFile
+
 plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
@@ -18,6 +22,10 @@ sourceSets {
         }
         resources {
             srcDirs = ['common/src/main/resources', 'fabric/src/main/resources']
+            // Minecraft 26.2 no longer uses Naturalist's legacy template_spawn_egg models.
+            // Replaced versions are generated below and added after the normal resources.
+            exclude 'assets/naturalist/models/item/*_spawn_egg.json'
+            exclude 'assets/naturalist/textures/item/*_spawn_egg.png'
         }
     }
 }
@@ -62,7 +70,101 @@ fabricApi {
     }
 }
 
+// Minecraft 26.2 requires a client item definition under assets/<namespace>/items for every
+// custom item. It also moved spawn eggs away from the old template_spawn_egg + runtime tint
+// arrangement to ordinary generated item models backed by concrete textures.
+def generated26_2ClientResourcesDir = layout.buildDirectory.dir('generated/26.2-client-resources')
+
+tasks.register('generate26_2ClientResources') {
+    def itemModelDir = layout.projectDirectory.dir('common/src/main/resources/assets/naturalist/models/item')
+    def customEggModelDir = layout.projectDirectory.dir('common/src/main/resources/resourcepacks/custom_spawn_eggs/assets/naturalist/models/item')
+    def customEggTextureDir = layout.projectDirectory.dir('common/src/main/resources/resourcepacks/custom_spawn_eggs/assets/naturalist/textures/item')
+
+    inputs.dir(itemModelDir)
+    inputs.dir(customEggModelDir)
+    inputs.dir(customEggTextureDir)
+    outputs.dir(generated26_2ClientResourcesDir)
+
+    doLast {
+        def outputRoot = generated26_2ClientResourcesDir.get().asFile
+        delete(outputRoot)
+
+        def clientItemDir = new File(outputRoot, 'assets/naturalist/items')
+        def generatedModelDir = new File(outputRoot, 'assets/naturalist/models/item')
+        def generatedTextureDir = new File(outputRoot, 'assets/naturalist/textures/item')
+        clientItemDir.mkdirs()
+        generatedModelDir.mkdirs()
+        generatedTextureDir.mkdirs()
+
+        // Four newer Naturalist animals were never given an icon in the optional custom egg
+        // resource pack. Use a close vanilla 26.2 egg texture for those until Naturalist gains
+        // dedicated artwork; all other eggs reuse Naturalist's own bundled custom egg icons.
+        def vanillaEggFallbacks = [
+                capybara_spawn_egg: 'minecraft:item/pig_spawn_egg',
+                hedgehog_spawn_egg: 'minecraft:item/armadillo_spawn_egg',
+                turkey_spawn_egg  : 'minecraft:item/chicken_spawn_egg',
+                whale_spawn_egg   : 'minecraft:item/dolphin_spawn_egg'
+        ]
+
+        itemModelDir.asFile.eachFileMatch(~/.*\.json/) { File modelFile ->
+            def itemName = modelFile.name.substring(0, modelFile.name.length() - 5)
+
+            def clientItem = [
+                    model: [
+                            type : 'minecraft:model',
+                            model: "naturalist:item/${itemName}"
+                    ]
+            ]
+            new File(clientItemDir, "${itemName}.json").text =
+                    JsonOutput.prettyPrint(JsonOutput.toJson(clientItem)) + '\n'
+
+            if (!itemName.endsWith('_spawn_egg')) {
+                return
+            }
+
+            String textureId = null
+            def customModel = new File(customEggModelDir.asFile, modelFile.name)
+            if (customModel.isFile()) {
+                def parsed = new JsonSlurper().parse(customModel)
+                def candidate = parsed?.textures?.layer0
+                if (candidate instanceof String && candidate.startsWith('naturalist:item/')) {
+                    def textureName = candidate.substring('naturalist:item/'.length())
+                    if (new File(customEggTextureDir.asFile, "${textureName}.png").isFile()) {
+                        textureId = candidate
+                    }
+                }
+            }
+
+            if (textureId == null && new File(customEggTextureDir.asFile, "${itemName}.png").isFile()) {
+                textureId = "naturalist:item/${itemName}"
+            }
+            if (textureId == null) {
+                textureId = vanillaEggFallbacks[itemName]
+            }
+            if (textureId == null) {
+                throw new GradleException("No Minecraft 26.2 texture mapping exists for Naturalist spawn egg ${itemName}")
+            }
+
+            def spawnEggModel = [
+                    parent  : 'minecraft:item/generated',
+                    textures: [layer0: textureId]
+            ]
+            new File(generatedModelDir, "${itemName}.json").text =
+                    JsonOutput.prettyPrint(JsonOutput.toJson(spawnEggModel)) + '\n'
+        }
+
+        copy {
+            from(customEggTextureDir.asFile)
+            include '*_spawn_egg.png'
+            into generatedTextureDir
+        }
+    }
+}
+
 processResources {
+    dependsOn tasks.named('generate26_2ClientResources')
+    from(generated26_2ClientResourcesDir)
+
     def expandProps = [
         version: project.mod_version,
         minecraft_version: project.minecraft_version,
@@ -92,4 +194,47 @@ jar {
     from('LICENSE') {
         rename { "${it}_${project.mod_id}" }
     }
+}
+
+// Guard against the exact packaging regression found by the manual 26.2 tests. A green CI run
+// must now prove that the remapped user-facing JAR actually contains the new client-item files
+// and a non-legacy spawn-egg model, rather than only proving that the source compiled.
+tasks.register('verify26_2PackagedClientResources') {
+    dependsOn tasks.named('remapJar')
+
+    doLast {
+        def remapTask = tasks.named('remapJar').get()
+        def jarFile = remapTask.archiveFile.get().asFile
+        def zip = new ZipFile(jarFile)
+        try {
+            def entries = java.util.Collections.list(zip.entries())
+            def clientItemCount = entries.count { it.name.startsWith('assets/naturalist/items/') && it.name.endsWith('.json') }
+            if (clientItemCount < 100) {
+                throw new GradleException("Minecraft 26.2 client item definitions were not packaged (found ${clientItemCount})")
+            }
+
+            def required = [
+                    'assets/naturalist/items/elephant_spawn_egg.json',
+                    'assets/naturalist/models/item/elephant_spawn_egg.json',
+                    'assets/naturalist/textures/item/elephant_spawn_egg.png'
+            ]
+            required.each { path ->
+                if (zip.getEntry(path) == null) {
+                    throw new GradleException("Required Minecraft 26.2 client resource missing from final JAR: ${path}")
+                }
+            }
+
+            def modelEntry = zip.getEntry('assets/naturalist/models/item/elephant_spawn_egg.json')
+            def modelText = zip.getInputStream(modelEntry).getText('UTF-8')
+            if (modelText.contains('template_spawn_egg') || !modelText.contains('minecraft:item/generated')) {
+                throw new GradleException('Elephant spawn egg still uses the pre-26.2 item model format')
+            }
+        } finally {
+            zip.close()
+        }
+    }
+}
+
+tasks.named('build').configure {
+    dependsOn tasks.named('verify26_2PackagedClientResources')
 }
