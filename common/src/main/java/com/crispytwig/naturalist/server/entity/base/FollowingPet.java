@@ -11,6 +11,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 public interface FollowingPet {
@@ -26,6 +28,14 @@ public interface FollowingPet {
         if (tag.contains("FollowingOwner")) {
             pet.setFollowingOwner(tag.getBoolean("FollowingOwner"));
         }
+    }
+
+    static void savePet(FollowingPet pet, ValueOutput output) {
+        output.putBoolean("FollowingOwner", pet.isFollowingOwner());
+    }
+
+    static void loadPet(FollowingPet pet, ValueInput input) {
+        pet.setFollowingOwner(input.getBooleanOr("FollowingOwner", false));
     }
 
     @Nullable
