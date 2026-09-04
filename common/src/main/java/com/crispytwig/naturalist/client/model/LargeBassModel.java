@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.NonNull;
 
@@ -21,7 +21,7 @@ public class LargeBassModel extends NaturalistEntityModel<Bass> {
 	private final ModelPart root;
 
 	public LargeBassModel(ModelPart root) {
-		super(root.getChild("root"), RenderType::entityCutout);
+		super(root.getChild("root"), RenderTypes::entityCutoutCull);
 		this.root = root.getChild("root");
 	}
 public static LayerDefinition createBodyLayer() {
