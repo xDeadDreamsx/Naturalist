@@ -14,6 +14,8 @@ sourceSets {
     main {
         java {
             srcDirs = ['common/src/main/java', 'fabric/src/main/java']
+            exclude 'com/crispytwig/naturalist/compat/fieldguide/**'
+            exclude 'com/crispytwig/naturalist/client/compat/**'
         }
         resources {
             srcDirs = ['common/src/main/resources', 'fabric/src/main/resources']
