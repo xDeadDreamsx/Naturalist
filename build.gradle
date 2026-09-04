@@ -49,6 +49,19 @@ loom {
     accessWidenerPath = file('common/src/main/resources/naturalist.accesswidener')
 }
 
+// Keep the strict in-world CI check in a separate test-only mod/source set.
+// Fabric's 26.2 Client GameTest API creates a real integrated-server world and
+// waits for the client level/chunks, without shipping this harness in Naturalist.
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "naturalist-client-gametest"
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = true
+    }
+}
+
 processResources {
     def expandProps = [
         version: project.mod_version,
