@@ -1,13 +1,10 @@
 package com.crispytwig.naturalist;
 
 import com.crispytwig.naturalist.client.model.*;
-
 import com.crispytwig.naturalist.client.gui.screens.ElephantInventoryScreen;
 import com.crispytwig.naturalist.client.renderer.*;
 import com.crispytwig.naturalist.registry.NaturalistEntityTypes;
 import com.crispytwig.naturalist.registry.NaturalistMenus;
-import com.crispytwig.naturalist.registry.NaturalistRegistry;
-import com.crispytwig.naturalist.server.item.KnapsackItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -17,16 +14,11 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.Identifier;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.component.CustomData;
 
 @Environment(EnvType.CLIENT)
 public final class NaturalistClient {
@@ -181,16 +173,11 @@ public final class NaturalistClient {
         r.register(NaturalistMenus.ELEPHANT.get(), ElephantInventoryScreen::new);
     }
 
+    /**
+     * Item model predicates moved to the data-driven client item model system in 26.2.
+     * The method remains as a compatibility call-site while the models themselves are
+     * supplied by assets/naturalist/items/*.json.
+     */
     public static void registerItemProperties() {
-        ClampedItemPropertyFunction color = (stack, level, entity, seed) -> {
-            CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-            return customData != null ? customData.getUnsafe().getInt("Color") / 15.0f : 0.0f;
-        };
-        ItemProperties.register(NaturalistRegistry.SNAIL.get(), Identifier.withDefaultNamespace("color"), color);
-        ItemProperties.register(NaturalistRegistry.SNAIL_SHELL.get(), Identifier.withDefaultNamespace("color"), color);
-
-        ItemProperties.register(NaturalistRegistry.KNAPSACK.get(),
-                Naturalist.location("filled"),
-                (stack, level, entity, seed) -> KnapsackItem.isFilled(stack) ? 1.0f : 0.0f);
     }
 }
