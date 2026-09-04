@@ -55,7 +55,7 @@ public interface DyeableAnimal {
         if (color != null && animal.isDyeableBy(player) && color != animal.getDyeColor()) {
             if (!animal.level().isClientSide()) {
                 animal.setDyeColor(color);
-                animal.playSound(SoundEvents.DYE_USE.value(), 1.0F, 1.0F);
+                animal.playSound(SoundEvents.DYE_USE, 1.0F, 1.0F);
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
@@ -70,7 +70,7 @@ public interface DyeableAnimal {
         if (animal.getDyeColor() != null && stack.is(NaturalistTags.ItemTags.SHEARS) && animal.isDyeableBy(player)) {
             if (!animal.level().isClientSide()) {
                 animal.setDyeColor(null);
-                animal.playSound(SoundEvents.SHEEP_SHEAR.value(), 1.0F, 1.0F);
+                animal.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
                 stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }
             return Optional.of(InteractionResult.SUCCESS);
