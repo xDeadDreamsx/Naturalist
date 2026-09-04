@@ -186,16 +186,28 @@ jobs:
             echo "::error::The dedicated-server smoke test did not leave a world to reuse."
             exit 1
           fi
-          mkdir -p run/saves
+          mkdir -p run/saves run/quickplay
           rm -rf run/saves/world
+          rm -f run/quickplay/world.json
           cp -a run/world run/saves/world
           rm -f run/saves/world/session.lock
 
+          QUICKPLAY_LOG="$GITHUB_WORKSPACE/run/quickplay/world.json"
           echo "Singleplayer save prepared at: $(pwd)/run/saves/world"
+          echo "Quick Play log path: $QUICKPLAY_LOG"
           find run/saves/world -maxdepth 2 -type f | sort | head -n 80 || true
 
-          timeout --signal=TERM --kill-after=15s 150s xvfb-run -a ./gradlew runClient --args='--quickPlaySingleplayer world' --stacktrace --no-daemon 2>&1 | tee /tmp/naturalist-world.log
+          # Minecraft 26.2 launcher metadata supplies both quickPlayPath and the
+          # selected Quick Play variant. Mirror that launch contract here instead
+          # of only providing the world name. --info also records the Java command
+          # so the diagnostic artifact proves which game arguments Loom forwarded.
+          timeout --signal=TERM --kill-after=15s 150s xvfb-run -a ./gradlew runClient --args="--quickPlayPath $QUICKPLAY_LOG --quickPlaySingleplayer world" --info --stacktrace --no-daemon 2>&1 | tee /tmp/naturalist-world.log
           status=${PIPESTATUS[0]}
+
+          echo "=== Quick Play result log ==="
+          cat "$QUICKPLAY_LOG" 2>/dev/null || echo "Quick Play did not create its result log."
+          echo "=== Forwarded Quick Play launch arguments ==="
+          grep -nE 'Command:|Starting process|quickPlay(Path|Singleplayer)' /tmp/naturalist-world.log | tail -n 100 || true
 
           integrated=0
           login=0
@@ -243,7 +255,7 @@ jobs:
               echo "::error::Singleplayer smoke: player-login marker missing."
             fi
             echo "=== Relevant singleplayer log lines ==="
-            grep -nEi 'integrated|logged in|joined the game|quick.?play|starting|preparing|loading|world|session\.lock|already in use|error|exception|crash|failed|unable|disconnect' /tmp/naturalist-world.log | tail -n 300 || true
+            grep -nEi 'integrated|logged in|joined the game|quick.?play|starting|preparing|loading|world|session\.lock|already in use|error|exception|crash|failed|unable|disconnect|Command:|Starting process' /tmp/naturalist-world.log | tail -n 300 || true
             echo "=== Last 300 singleplayer log lines ==="
             tail -n 300 /tmp/naturalist-world.log || true
             exit 1
@@ -271,12 +283,19 @@ jobs:
           mkdir -p world-smoke-diagnostics
           cp /tmp/naturalist-world.log world-smoke-diagnostics/naturalist-world.log 2>/dev/null || true
           cp /tmp/naturalist-server.log world-smoke-diagnostics/naturalist-server.log 2>/dev/null || true
+          cp run/quickplay/world.json world-smoke-diagnostics/quickplay-world.json 2>/dev/null || true
           if [ -d run/crash-reports ]; then
             cp -a run/crash-reports world-smoke-diagnostics/crash-reports
           fi
           {
             echo "=== Save layout ==="
             find run/saves/world -maxdepth 3 -type f -print 2>/dev/null | sort || true
+            echo
+            echo "=== Quick Play result ==="
+            cat run/quickplay/world.json 2>/dev/null || echo "No Quick Play result log was created."
+            echo
+            echo "=== Forwarded launch arguments ==="
+            grep -nE 'Command:|Starting process|quickPlay(Path|Singleplayer)' /tmp/naturalist-world.log 2>/dev/null | tail -n 200 || true
             echo
             echo "=== Relevant world log lines ==="
             grep -nEi 'integrated|logged in|joined the game|quick.?play|starting|preparing|loading|world|session\.lock|already in use|error|exception|crash|failed|unable|disconnect' /tmp/naturalist-world.log 2>/dev/null | tail -n 500 || true
