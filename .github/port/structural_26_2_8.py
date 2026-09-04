@@ -43,10 +43,7 @@ def patch_knapsack(path: Path) -> bool:
     return True
 
 
-def _registration_end(text: str, start: int) -> int:
-    open_paren = text.find("(", start)
-    if open_paren < 0:
-        raise RuntimeError("Could not locate registration opening parenthesis")
+def _matching_paren(text: str, open_paren: int) -> int:
     depth = 0
     in_string = False
     escaped = False
@@ -67,8 +64,15 @@ def _registration_end(text: str, start: int) -> int:
         elif char == ")":
             depth -= 1
             if depth == 0:
-                return index + 1
-    raise RuntimeError("Unbalanced ITEMS.register call")
+                return index
+    raise RuntimeError("Unbalanced parenthesis")
+
+
+def _registration_end(text: str, start: int) -> int:
+    open_paren = text.find("(", start)
+    if open_paren < 0:
+        raise RuntimeError("Could not locate registration opening parenthesis")
+    return _matching_paren(text, open_paren) + 1
 
 
 def patch_item_ids(path: Path) -> bool:
@@ -106,6 +110,65 @@ def patch_item_ids(path: Path) -> bool:
     return True
 
 
+def _inject_block_id_into_properties(chunk: str, key_expression: str) -> str:
+    marker = "BlockBehaviour.Properties."
+    offset = 0
+    while True:
+        start = chunk.find(marker, offset)
+        if start < 0:
+            break
+
+        factory_open = chunk.find("(", start + len(marker))
+        if factory_open < 0:
+            break
+        factory_close = _matching_paren(chunk, factory_open)
+        suffix = chunk[factory_close + 1:]
+        if suffix.startswith(".setId("):
+            offset = factory_close + 1
+            continue
+
+        insertion = f".setId({key_expression})"
+        chunk = chunk[:factory_close + 1] + insertion + chunk[factory_close + 1:]
+        offset = factory_close + 1 + len(insertion)
+    return chunk
+
+
+def patch_block_ids(path: Path) -> bool:
+    text = path.read_text(encoding="utf-8")
+    original = text
+
+    # 26.2 also requires BlockBehaviour.Properties.setId(ResourceKey<Block>) before the
+    # block constructor executes. Cover both normal and block-only literal registrations.
+    matches = list(re.finditer(r'(?:registerBlock|registerBlockOnly)\("([^"\\]+)"\s*,', text))
+    for match in reversed(matches):
+        name = match.group(1)
+        end = _registration_end(text, match.start())
+        chunk = text[match.start():end]
+        if "BlockBehaviour.Properties." not in chunk:
+            continue
+        key_expression = f'ResourceKey.create(Registries.BLOCK, Naturalist.location("{name}"))'
+        patched = _inject_block_id_into_properties(chunk, key_expression)
+        text = text[:match.start()] + patched + text[end:]
+
+    # Starfish registrations are generated through a helper whose block id is the `name`
+    # parameter rather than a literal at each callsite.
+    starfish_marker = "private static DeferredHolder<Block, StarfishBlock> registerStarfishBlock(String name)"
+    helper_start = text.find(starfish_marker)
+    if helper_start >= 0:
+        helper_end = text.find("\n    }", helper_start)
+        if helper_end >= 0:
+            helper_end += len("\n    }")
+            chunk = text[helper_start:helper_end]
+            key_expression = "ResourceKey.create(Registries.BLOCK, Naturalist.location(name))"
+            patched = _inject_block_id_into_properties(chunk, key_expression)
+            text = text[:helper_start] + patched + text[helper_end:]
+
+    if text == original:
+        return False
+    path.write_text(text, encoding="utf-8")
+    return True
+
+
 def main() -> None:
     changed = []
     snake = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java")
@@ -116,6 +179,8 @@ def main() -> None:
     if patch_knapsack(knapsack):
         changed.append(str(knapsack))
     if patch_item_ids(registry):
+        changed.append(str(registry))
+    if patch_block_ids(registry):
         changed.append(str(registry))
     print(f"26.2 structural pass 8 changed {len(changed)} files")
     for path in changed:
