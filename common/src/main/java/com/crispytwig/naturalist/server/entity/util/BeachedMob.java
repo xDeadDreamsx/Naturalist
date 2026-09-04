@@ -40,7 +40,7 @@ public final class BeachedMob {
         }
         mob.setDeltaMovement(mob.getDeltaMovement().add(dx, 0.5D, dz));
         mob.setOnGround(false);
-        mob.hasImpulse = true;
+        mob.hurtMarked = true;
         if (sound != null) {
             mob.playSound(sound, 2.0F, 0.6F);
         }

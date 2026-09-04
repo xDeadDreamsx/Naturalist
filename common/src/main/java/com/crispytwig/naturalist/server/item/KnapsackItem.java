@@ -29,6 +29,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.storage.TagValueOutput;
 
 public class KnapsackItem extends Item {
     public KnapsackItem(Properties properties) {
@@ -71,8 +75,9 @@ public class KnapsackItem extends Item {
             return InteractionResult.SUCCESS;
         }
         Mob mob = (Mob) target;
-        CompoundTag entityTag = new CompoundTag();
-        mob.save(entityTag);
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, mob.registryAccess());
+        mob.save(output);
+        CompoundTag entityTag = output.buildResult();
 
         ItemStack filled = new ItemStack(NaturalistRegistry.KNAPSACK.get());
         filled.set(DataComponents.CUSTOM_DATA, CustomData.of(entityTag));
@@ -102,8 +107,8 @@ public class KnapsackItem extends Item {
         }
         if (level instanceof ServerLevel serverLevel) {
             BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
-            Entity entity = EntityType.loadEntityRecursive(tag, serverLevel, e -> {
-                e.moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, e.getYRot(), e.getXRot());
+            Entity entity = EntityType.loadEntityRecursive(tag, serverLevel, EntitySpawnReason.LOAD, e -> {
+                e.snapTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, e.getYRot(), e.getXRot());
                 return e;
             });
             if (entity != null) {
@@ -134,11 +139,11 @@ public class KnapsackItem extends Item {
             return;
         }
         Component label = null;
-        if (tag.contains("CustomName", 8) && context.registries() != null) {
-            label = Component.Serializer.fromJson(tag.getString("CustomName"), context.registries());
-        }
-        if (label == null) {
-            label = EntityType.byString(tag.getString("id")).map(EntityType::getDescription).orElse(null);
+        String entityId = tag.getStringOr("id", "");
+        Identifier parsedId = Identifier.tryParse(entityId);
+        EntityType<?> type = parsedId == null ? null : BuiltInRegistries.ENTITY_TYPE.getValue(parsedId);
+        if (type != null) {
+            label = type.getDescription();
         }
         if (label != null) {
             tooltip.accept(label.copy().withStyle(ChatFormatting.GRAY));

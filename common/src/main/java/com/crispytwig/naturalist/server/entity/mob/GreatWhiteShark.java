@@ -376,8 +376,8 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     }
 
     @Override
-    protected @NotNull AABB getAttackBoundingBox() {
-        return super.getAttackBoundingBox().inflate(0.9D, 0.5D, 0.9D);
+    protected @NotNull AABB getAttackBoundingBox(double horizontalExpansion) {
+        return super.getAttackBoundingBox(horizontalExpansion).inflate(0.9D, 0.5D, 0.9D);
     }
 
     @Override

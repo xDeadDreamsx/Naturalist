@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.LivingEntity;
 
 public class CaughtMobItem extends NaturalistBucketItem {
     private final Supplier<? extends EntityType<?>> typeSup;
@@ -41,7 +43,7 @@ public class CaughtMobItem extends NaturalistBucketItem {
     }
 
     public CaughtMobItem(Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, @Nullable String tooltipPrefix, @Nullable String[] variantNames, Properties properties) {
-        super(entitySupplier.get(), fluidSupplier.get(), soundSupplier.get(), properties, true, tooltipPrefix, variantNames);
+        super((EntityType<? extends Mob>) entitySupplier.get(), fluidSupplier.get(), soundSupplier.get(), properties, true, tooltipPrefix, variantNames);
         this.typeSup = entitySupplier;
     }
 
@@ -59,7 +61,7 @@ public class CaughtMobItem extends NaturalistBucketItem {
     }
 
     @Override
-    public void checkExtraContent(@Nullable Player player, @NotNull Level level, @NotNull ItemStack containerStack, @NotNull BlockPos pos) {
+    public void checkExtraContent(@Nullable LivingEntity player, @NotNull Level level, @NotNull ItemStack containerStack, @NotNull BlockPos pos) {
         if (level instanceof ServerLevel) {
             this.spawn((ServerLevel)level, containerStack, pos);
             level.gameEvent(player, GameEvent.ENTITY_PLACE, pos);

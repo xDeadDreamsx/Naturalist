@@ -20,6 +20,6 @@ public class NaturalistRecipes {
                 }
             });
 
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> BUG_NET_SERIALIZER = RECIPE_SERIALIZERS.register("net",
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BugNetInteractionRecipe>> BUG_NET_SERIALIZER = RECIPE_SERIALIZERS.register("net",
             () -> BugNetInteractionRecipe.Serializer.INSTANCE);
 }

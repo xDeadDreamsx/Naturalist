@@ -57,13 +57,19 @@ public class BugNetItem extends Item {
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack stack, Player player, @NotNull LivingEntity interactionTarget, @NotNull InteractionHand usedHand) {
-        Optional<RecipeHolder<BugNetInteractionRecipe>> allRecipes = player.level().getRecipeManager().getAllRecipesFor(NaturalistRecipes.BUG_NET.get())
+        if (!(player.level() instanceof ServerLevel serverLevel)) {
+            return InteractionResult.SUCCESS;
+        }
+        Optional<BugNetInteractionRecipe> allRecipes = serverLevel.recipeAccess().getRecipes()
                 .stream()
-                .filter(r -> r.value().entityType() == interactionTarget.getType())
+                .map(RecipeHolder::value)
+                .filter(BugNetInteractionRecipe.class::isInstance)
+                .map(BugNetInteractionRecipe.class::cast)
+                .filter(r -> r.entityType() == interactionTarget.getType())
                 .findFirst();
 
         if (allRecipes.isPresent()) {
-            var dropItem = allRecipes.get().value().dropStack().copy();
+            var dropItem = allRecipes.get().dropStack().copy();
             swing(player.level(), player);
             Containers.dropItemStack(player.level(), interactionTarget.getX(), interactionTarget.getY(), interactionTarget.getZ(), dropItem);
             playCaughtEffects(player.level(), interactionTarget);

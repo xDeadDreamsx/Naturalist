@@ -18,6 +18,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 
 import java.util.List;
 import java.util.function.Predicate;
+import net.minecraft.world.item.crafting.Ingredient;
 
 public class NaturalistFabric implements ModInitializer {
     @Override
@@ -32,7 +33,7 @@ public class NaturalistFabric implements ModInitializer {
         Naturalist.registerDispenserBehaviors();
 
         FabricPotionBrewingBuilder.BUILD.register(builder ->
-                Naturalist.registerPotionMixes((from, ingredient, to) -> builder.registerPotionRecipe(from, ingredient, to)));
+                Naturalist.registerPotionMixes((from, ingredient, to) -> builder.registerPotionRecipe(from, Ingredient.of(ingredient), to)));
 
         registerBiomeSpawns();
         registerBiomeFeatures();

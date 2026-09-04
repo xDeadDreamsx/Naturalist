@@ -64,7 +64,7 @@ public class GlowGoopBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state) {
+    public @NotNull ItemStack getCloneItemStack(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state, boolean includeData) {
         return NaturalistRegistry.GLOW_GOOP.get().asItem().getDefaultInstance();
     }
 

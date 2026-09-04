@@ -51,8 +51,8 @@ public class TortoiseEggBlock extends TurtleEggBlock {
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        ItemStack stack = super.getCloneItemStack(level, pos, state, true);
+    public @NotNull ItemStack getCloneItemStack(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state, boolean includeData) {
+        ItemStack stack = super.getCloneItemStack(level, pos, state, includeData);
         CompoundTag tag = new CompoundTag();
         tag.putInt(DataDrivenVariantAnimal.VARIANT_TAG, state.getValue(VARIANT));
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));

@@ -52,9 +52,7 @@ public class SnailShellBlockEntity extends BlockEntity {
 
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        this.saveAdditional(tag, registries);
-        return tag;
+        return this.saveCustomOnly(registries);
     }
 
     @Nullable

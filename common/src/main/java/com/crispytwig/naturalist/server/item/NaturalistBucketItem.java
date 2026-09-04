@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.entity.Mob;
 
 @SuppressWarnings("unused")
 public class NaturalistBucketItem extends MobBucketItem {

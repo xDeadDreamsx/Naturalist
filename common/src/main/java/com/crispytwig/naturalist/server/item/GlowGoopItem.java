@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.component.TooltipDisplay;
 
 public class GlowGoopItem extends BlockItem {
     public GlowGoopItem(Block block, @NotNull Properties properties) {
@@ -21,7 +22,7 @@ public class GlowGoopItem extends BlockItem {
 
     @SuppressWarnings("unused")
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull TooltipDisplay display, @NotNull java.util.function.Consumer<Component> tooltip, @NotNull TooltipFlag flagIn) {
         if (!NaturalistClientConfig.isGlowGoopTooltipEnabled()) {
             return;
         }

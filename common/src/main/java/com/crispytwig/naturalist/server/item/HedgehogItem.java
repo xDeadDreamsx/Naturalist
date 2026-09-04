@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.function.Supplier;
+import net.minecraft.world.entity.LivingEntity;
 
 public class HedgehogItem extends CaughtMobWithVariantsItem {
     private static final float MAX_HEALTH = 18.0F;
@@ -69,18 +70,16 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
         return Mth.hsvToRgb(Mth.clamp(getStoredHealth(stack) / MAX_HEALTH, 0.0F, 1.0F) / 3.0F, 1.0F, 1.0F);
     }
 
-    @Override
     public int getEnchantmentValue() {
         return 1;
     }
 
-    @Override
     public boolean isEnchantable(@NotNull ItemStack stack) {
         return stack.getMaxStackSize() == 1;
     }
 
     @Override
-    public void checkExtraContent(@Nullable Player player, @NotNull Level level, @NotNull ItemStack containerStack, @NotNull BlockPos pos) {
+    public void checkExtraContent(@Nullable LivingEntity player, @NotNull Level level, @NotNull ItemStack containerStack, @NotNull BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
             Entity entity = NaturalistEntityTypes.HEDGEHOG.get().spawn(serverLevel, containerStack, null, pos, EntitySpawnReason.BUCKET, true, false);
             if (entity instanceof Hedgehog hedgehog) {
