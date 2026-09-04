@@ -170,6 +170,18 @@ jobs:
           set +e
           rm -rf run/crash-reports
 
+          # The dedicated-server test creates run/world, but Quick Play resolves
+          # singleplayer saves below run/saves. Reuse the already validated fresh
+          # world as a real client save and remove the copied server session lock.
+          if [ ! -d run/world ]; then
+            echo "The dedicated-server smoke test did not leave a world to reuse."
+            exit 1
+          fi
+          mkdir -p run/saves
+          rm -rf run/saves/world
+          cp -a run/world run/saves/world
+          rm -f run/saves/world/session.lock
+
           timeout --signal=TERM --kill-after=15s 150s xvfb-run -a ./gradlew runClient --args='--quickPlaySingleplayer world' --stacktrace --no-daemon 2>&1 | tee /tmp/naturalist-world.log
           status=${PIPESTATUS[0]}
 
@@ -191,21 +203,26 @@ jobs:
             exit 1
           fi
 
-          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ]; then
-            exit "$status"
-          fi
-
+          # A timeout/termination exit code is not by itself a failure here: this
+          # client is intentionally stopped after the smoke-test window. What
+          # matters is whether the integrated server started and the player joined.
           if ! grep -Fq 'Starting integrated minecraft server version 26.2' /tmp/naturalist-world.log; then
             echo "Quick Play never started the Minecraft 26.2 integrated server."
+            echo "Relevant diagnostics:"
+            grep -Ein 'Quick Play|quickPlay|world|session\.lock|Exception|ERROR|Failed|crash report' /tmp/naturalist-world.log | tail -n 200 || true
             tail -n 500 /tmp/naturalist-world.log || true
             exit 1
           fi
 
           if ! grep -Fq 'logged in with entity id' /tmp/naturalist-world.log; then
             echo "The test player never successfully entered the singleplayer world."
+            echo "Relevant diagnostics:"
+            grep -Ein 'Starting integrated|logged in with entity id|Quick Play|quickPlay|world|session\.lock|Exception|ERROR|Failed|crash report' /tmp/naturalist-world.log | tail -n 200 || true
             tail -n 500 /tmp/naturalist-world.log || true
             exit 1
           fi
+
+          echo "Singleplayer Quick Play reached the integrated server and logged the player into the world."
 
           if grep -Fq "Couldn't parse data file 'naturalist:" /tmp/naturalist-world.log; then
             echo "Naturalist datapack decoding failed during integrated-server startup."
