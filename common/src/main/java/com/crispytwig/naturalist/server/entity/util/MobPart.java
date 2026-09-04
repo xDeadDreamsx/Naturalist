@@ -131,12 +131,12 @@ public class MobPart extends Entity {
 
     @Override
     public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
-        return !this.isInvulnerableTo(source) && this.parent.hurt(source, amount);
+        return !this.isInvulnerableTo(level, source) && this.parent.hurtServer(level, source, amount);
     }
 
     @Override
-    public @NotNull InteractionResult interact(@NotNull Player player, @NotNull InteractionHand hand) {
-        return this.parent.interact(player, hand);
+    public @NotNull InteractionResult interact(@NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 location) {
+        return this.parent.interact(player, hand, location);
     }
 
     @Override
