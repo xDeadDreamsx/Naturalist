@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "naturalist-client-gametest",
+  "version": "1.0.0",
+  "name": "Naturalist 26.2 Client GameTest",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": [
+      "com.crispytwig.naturalist.test.NaturalistClientGameTest"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "26.2",
+    "fabric-api": "*",
+    "naturalist": "*"
+  }
+}
