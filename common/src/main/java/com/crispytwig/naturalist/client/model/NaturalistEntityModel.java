@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -34,6 +35,7 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
     public static final double LARGE_SWIMMER_LIMB_SWING = 0.5D;
 
     private final Map<AnimationDefinition, KeyframeAnimation> bakedAnimations = new IdentityHashMap<>();
+    private ModelPart animationRoot;
 
     protected NaturalistEntityModel(ModelPart root) {
         super(root);
@@ -41,6 +43,28 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
 
     protected NaturalistEntityModel(ModelPart root, Function<Identifier, RenderType> renderType) {
         super(root, renderType);
+    }
+
+    /**
+     * Name used by legacy Naturalist animations for the model root itself.
+     *
+     * <p>Before 26.x, Naturalist's HierarchicalModel adapter special-cased this name in
+     * getAnyDescendantWithName(). Minecraft 26.x bakes animations directly against a ModelPart
+     * tree instead, so we recreate that single synthetic parent level when necessary.</p>
+     */
+    protected String getRootPartName() {
+        return "root";
+    }
+
+    private ModelPart animationRoot() {
+        String rootPartName = this.getRootPartName();
+        if ("root".equals(rootPartName)) {
+            return this.root();
+        }
+        if (this.animationRoot == null) {
+            this.animationRoot = new ModelPart(List.of(), Map.of(rootPartName, this.root()));
+        }
+        return this.animationRoot;
     }
 
     @Override
@@ -90,7 +114,7 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
     }
 
     private KeyframeAnimation animation(AnimationDefinition definition) {
-        return this.bakedAnimations.computeIfAbsent(definition, d -> d.bake(this.root()));
+        return this.bakedAnimations.computeIfAbsent(definition, d -> d.bake(this.animationRoot()));
     }
 
     protected void animateSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks, float partialTick) {
