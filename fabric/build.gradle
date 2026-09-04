@@ -62,6 +62,14 @@ dependencies {
 }
 
 processResources {
+    // Architectury's transformed common jar does not automatically retain the extra generated
+    // resource source directory. Pull the generated 26.2 item definitions into Fabric's own
+    // processed resources explicitly so they are guaranteed to reach the final remapped jar.
+    dependsOn project(":common").tasks.named("generateClientItemDefinitions")
+    from(project(":common").layout.buildDirectory.dir("generated/client-item-definitions")) {
+        include "assets/naturalist/items/**"
+    }
+
     def expandProps = [
             "version"                : project.mod_version,
             "mod_id"                 : project.mod_id,
