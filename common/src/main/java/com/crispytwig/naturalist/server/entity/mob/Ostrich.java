@@ -92,7 +92,9 @@ import net.minecraft.world.entity.EntityReference;
 
 public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS));
+    }
 
     private static final double EGG_DEFEND_RADIUS = 10.0D;
     private static final int MAX_TRACKED_EGGS = 16;
@@ -360,7 +362,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     //region Spawning
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -398,7 +400,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         this.goalSelector.addGoal(2, new BabyPanicGoal(this, 1.5D));
         this.goalSelector.addGoal(3, new EggLayingBreedGoal<>(this, 1.0D));
         this.goalSelector.addGoal(3, new LayEggGoal<>(this, 1.0D));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25D, foodItems(), false));
         this.goalSelector.addGoal(5, new HideGoal<>(this));
         this.goalSelector.addGoal(6, new PetFollowOwnerGoal(this, 1.2D, 10.0F, 3.0F));
         this.goalSelector.addGoal(7, new FollowParentGoal(this, 1.1D));

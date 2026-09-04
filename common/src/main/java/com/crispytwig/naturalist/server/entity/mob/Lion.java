@@ -60,7 +60,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 @SuppressWarnings("unused")
 public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.LION_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.LION_FOOD_ITEMS));
+    }
     private static final Identifier BABY_SPEED_BOOST_ID = Naturalist.location("baby_speed_boost");
     private static final AttributeModifier BABY_SPEED_BOOST = new AttributeModifier(BABY_SPEED_BOOST_ID, 0.05D, AttributeModifier.Operation.ADD_VALUE);
 
@@ -199,7 +201,7 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -228,7 +230,7 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.6D, true));
         this.goalSelector.addGoal(2, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, foodItems(), false));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new LionFollowParentGoal(this, 1.1));
         this.goalSelector.addGoal(5, new PetFollowOwnerGoal(this, 1.3D, 7.0F, 2.0F));

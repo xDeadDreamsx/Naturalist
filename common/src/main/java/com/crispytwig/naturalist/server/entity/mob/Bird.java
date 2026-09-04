@@ -76,7 +76,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 @SuppressWarnings("unused")
 public class Bird extends ShoulderRidingEntity implements DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient TAME_FOOD = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS));
+    private static Ingredient tameFood() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS));
+    }
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.INT);
     private static final Vec3 HEAD_ATTACHMENT = new Vec3(0.0D, -0.05D, 0.0D);
@@ -291,7 +293,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
             return dyeResult.get();
         }
         if (this.isTame() && this.isOwnedBy(player)) {
-            if (TAME_FOOD.test(stack) && this.getHealth() < this.getMaxHealth()) {
+            if (tameFood().test(stack) && this.getHealth() < this.getMaxHealth()) {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
@@ -606,7 +608,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
         @Override
         public boolean canContinueToUse() {
             return !this.bird.isTame() && this.targetSeeds != null && this.targetSeeds.isAlive()
-                    && TAME_FOOD.test(this.targetSeeds.getItem());
+                    && tameFood().test(this.targetSeeds.getItem());
         }
 
         @Override
@@ -660,7 +662,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
         private ItemEntity findSeeds() {
             List<ItemEntity> list = this.bird.level().getEntitiesOfClass(ItemEntity.class,
                     this.bird.getBoundingBox().inflate(8.0D, 4.0D, 8.0D),
-                    item -> item.isAlive() && TAME_FOOD.test(item.getItem()));
+                    item -> item.isAlive() && tameFood().test(item.getItem()));
             return list.isEmpty() ? null : list.getFirst();
         }
     }

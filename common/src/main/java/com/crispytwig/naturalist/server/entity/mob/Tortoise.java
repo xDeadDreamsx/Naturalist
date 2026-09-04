@@ -60,7 +60,9 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
     //region Data
     public static final String[] VARIANT_NAMES = {"brown", "green", "black"};
 
-    private static final Ingredient TEMPT_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS));
+    private static Ingredient temptItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS));
+    }
 
     private static final EntityDataAccessor<String> VARIANT_ID = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
@@ -200,7 +202,7 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return TEMPT_ITEMS.test(stack);
+        return temptItems().test(stack);
     }
 
     @Override
@@ -241,7 +243,7 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
         this.goalSelector.addGoal(1, new LayEggGoal<>(this, 1.0));
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new HideGoal<>(this));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.0, TEMPT_ITEMS, false));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.0, temptItems(), false));
         this.goalSelector.addGoal(3, new PetFollowOwnerGoal(this, 1.0, 10.0f, 5.0f));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0));
@@ -263,7 +265,7 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
         if (this.isTame()) {
             return false;
         }
-        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D), player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player) && !player.isDiscrete() && !player.isHolding(TEMPT_ITEMS));
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D), player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player) && !player.isDiscrete() && !player.isHolding(temptItems()));
         return !players.isEmpty();
     }
 

@@ -64,7 +64,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 
 public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.KOMODO_DRAGON_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.KOMODO_DRAGON_FOOD_ITEMS));
+    }
     private static final int PLAYER_TARGETING_TIME = 400;
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(KomodoDragon.class, EntityDataSerializers.STRING);
@@ -172,7 +174,7 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -194,7 +196,7 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.5D, true));
         this.goalSelector.addGoal(2, new BabyPanicGoal(this, 2.0D));
         this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25D, foodItems(), false));
         this.goalSelector.addGoal(5, new KomodoDragonBaskGoal(this));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.25D));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));

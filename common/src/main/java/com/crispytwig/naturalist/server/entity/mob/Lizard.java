@@ -51,7 +51,9 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
 
     private static final String DEFAULT_VARIANT_ID = "naturalist:green";
 
-    private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS));
+    private static Ingredient temptIngredient() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS));
+    }
     private static final EntityDataAccessor<String> VARIANT_ID = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> HAS_TAIL = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.INT);
@@ -187,7 +189,7 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(3, new LizardTemptGoal(this, 0.6, TEMPT_INGREDIENT, true));
+        this.goalSelector.addGoal(3, new LizardTemptGoal(this, 0.6, temptIngredient(), true));
         this.goalSelector.addGoal(6, new PetFollowOwnerGoal(this, 1.0, 10.0f, 2.0f));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 8.0f));
@@ -228,10 +230,10 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
             return dyeResult.get();
         }
         if (this.level().isClientSide()) {
-            return (this.isOwnedBy(player) || this.isTame() || TEMPT_INGREDIENT.test(stack) && !this.isTame()) ? InteractionResult.CONSUME : InteractionResult.PASS;
+            return (this.isOwnedBy(player) || this.isTame() || temptIngredient().test(stack) && !this.isTame()) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         if (this.isTame()) {
-            if (TEMPT_INGREDIENT.test(stack) && this.getHealth() < this.getMaxHealth()) {
+            if (temptIngredient().test(stack) && this.getHealth() < this.getMaxHealth()) {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
@@ -250,7 +252,7 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
             this.setTarget(null);
             return InteractionResult.SUCCESS;
         }
-        if (!TEMPT_INGREDIENT.test(stack)) return super.mobInteract(player, hand);
+        if (!temptIngredient().test(stack)) return super.mobInteract(player, hand);
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }

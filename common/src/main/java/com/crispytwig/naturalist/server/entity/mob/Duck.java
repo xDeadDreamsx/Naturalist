@@ -61,7 +61,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 @SuppressWarnings("unused")
 public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, Bucketable, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS));
+    }
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.INT);
@@ -211,7 +213,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -239,7 +241,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.25));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, foodItems(), false));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.1, 16.0, 8.0, 5.0));
         this.goalSelector.addGoal(4, new PetFollowOwnerGoal(this, 1.1, 10.0F, 2.0F));
         this.goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1.0, 10));

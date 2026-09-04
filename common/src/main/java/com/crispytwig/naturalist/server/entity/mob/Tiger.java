@@ -77,7 +77,9 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
     //region Data
     public static final String[] VARIANT_NAMES = {"black_panther", "leopard", "tiger", "white_tiger"};
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.TIGER_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.TIGER_FOOD_ITEMS));
+    }
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Tiger.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Tiger.class, EntityDataSerializers.BOOLEAN);
@@ -239,7 +241,7 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
     //region Spawning
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -272,7 +274,7 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.6D, true));
         this.goalSelector.addGoal(2, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(3, new SleepGoal<>(this));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, foodItems(), false));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new TigerFollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(5, new PetFollowOwnerGoal(this, 1.3D, 7.0F, 2.0F));

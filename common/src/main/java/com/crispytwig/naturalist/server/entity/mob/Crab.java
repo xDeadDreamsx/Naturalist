@@ -93,7 +93,9 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
 
     private static final ResourceKey<MobVariant> DEFAULT_VARIANT = NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("crab"), "blue");
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.CRAB_FOOD));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.CRAB_FOOD));
+    }
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
@@ -281,7 +283,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Override
@@ -316,7 +318,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         this.goalSelector.addGoal(3, new PanicGoal(this, 1.5D));
         this.goalSelector.addGoal(4, new GrabWeaponGoal(this));
         this.goalSelector.addGoal(5, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new TemptGoal(this, 1.2D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(6, new TemptGoal(this, 1.2D, foodItems(), false));
         this.goalSelector.addGoal(7, new PetFollowOwnerGoal(this, 1.5D, 5.0F, 1.0F));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -524,7 +526,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
         boolean playerNear = false;
         for (Player player : players) {
-            if (!player.isCrouching() && !FOOD_ITEMS.test(player.getMainHandItem()) && !FOOD_ITEMS.test(player.getOffhandItem())) {
+            if (!player.isCrouching() && !foodItems().test(player.getMainHandItem()) && !foodItems().test(player.getOffhandItem())) {
                 playerNear = true;
                 break;
             }

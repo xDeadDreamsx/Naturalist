@@ -51,7 +51,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 @SuppressWarnings("unused")
 public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.GIRAFFE_FOOD_ITEMS));
+    }
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Giraffe.class, EntityDataSerializers.STRING);
 
@@ -106,7 +108,7 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
     //region Spawning
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Override
@@ -137,7 +139,7 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BigPanicGoal(this, 1.4));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0, foodItems(), false));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.0, 16.0, 8.0, 5.0));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.7));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0f));

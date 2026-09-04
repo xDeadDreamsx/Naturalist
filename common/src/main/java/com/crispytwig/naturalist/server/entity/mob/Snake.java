@@ -65,8 +65,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 @SuppressWarnings("unused")
 public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS));
-    private static final Ingredient TAME_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS));
+    }
+    private static Ingredient tameItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS));
+    }
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Snake.class, EntityDataSerializers.STRING);
@@ -220,17 +224,17 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
             return whistle;
         }
         if (this.level().isClientSide()) {
-            return (this.isOwnedBy(player) || this.isTame() || (TAME_ITEMS.test(stack) && !this.isTame())) ? InteractionResult.CONSUME : InteractionResult.PASS;
+            return (this.isOwnedBy(player) || this.isTame() || (tameItems().test(stack) && !this.isTame())) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
         if (this.isTame()) {
-            if (TAME_ITEMS.test(stack) && this.getHealth() < this.getMaxHealth()) {
+            if (tameItems().test(stack) && this.getHealth() < this.getMaxHealth()) {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
                 this.heal(4.0F);
                 return InteractionResult.SUCCESS;
             }
-            if (this.isOwnedBy(player) && !TAME_ITEMS.test(stack)) {
+            if (this.isOwnedBy(player) && !tameItems().test(stack)) {
                 this.setOrderedToSit(!this.isOrderedToSit());
                 this.jumping = false;
                 this.navigation.stop();
@@ -239,7 +243,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
             }
             return super.mobInteract(player, hand);
         }
-        if (TAME_ITEMS.test(stack)) {
+        if (tameItems().test(stack)) {
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
@@ -260,7 +264,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -272,13 +276,13 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     @Override
     public boolean wantsToPickUp(@NotNull ServerLevel level, @NotNull ItemStack itemStack) {
         EquipmentSlot slot = getEquipmentSlotForItem(itemStack);
-        return slot == EquipmentSlot.MAINHAND && this.getItemBySlot(slot).isEmpty() && FOOD_ITEMS.test(itemStack);
+        return slot == EquipmentSlot.MAINHAND && this.getItemBySlot(slot).isEmpty() && foodItems().test(itemStack);
     }
 
     @Override
     protected void pickUpItem(@NotNull ServerLevel level, @NotNull ItemEntity itemEntity) {
         ItemStack stack = itemEntity.getItem();
-        if (this.getMainHandItem().isEmpty() && FOOD_ITEMS.test(stack)) {
+        if (this.getMainHandItem().isEmpty() && foodItems().test(stack)) {
             this.onItemPickup(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, stack);
             this.setGuaranteedDrop(EquipmentSlot.MAINHAND);

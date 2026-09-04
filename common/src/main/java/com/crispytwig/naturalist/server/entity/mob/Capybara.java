@@ -47,7 +47,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 @SuppressWarnings("unused")
 public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingPet, SleepingAnimal, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.CAPYBARA_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.CAPYBARA_FOOD_ITEMS));
+    }
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Capybara.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Capybara.class, EntityDataSerializers.INT);
@@ -161,7 +163,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
     //region Spawning
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -193,7 +195,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.4));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.2, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.2, foodItems(), false));
         this.goalSelector.addGoal(4, new DistancedFollowParentGoal(this, 1.1, 16.0, 8.0, 5.0));
         this.goalSelector.addGoal(4, new PetFollowOwnerGoal(this, 1.2, 10.0F, 3.0F));
         this.goalSelector.addGoal(5, new SleepGoal<>(this));

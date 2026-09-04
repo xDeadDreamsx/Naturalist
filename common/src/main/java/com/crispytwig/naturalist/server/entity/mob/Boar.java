@@ -53,7 +53,9 @@ import net.minecraft.world.entity.EntityReference;
 @SuppressWarnings("unused")
 public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS));
+    }
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private static final float DEATH_BY_HOGS_CHANCE = 0.1F;
 
@@ -141,7 +143,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -160,8 +162,8 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.2, FOOD_ITEMS, false));
-        this.goalSelector.addGoal(3, new BoarAvoidPlayerGoal(this, Player.class, 16.0f, 1.5D, 1.5D, entity -> !entity.isHolding(FOOD_ITEMS)));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.2, foodItems(), false));
+        this.goalSelector.addGoal(3, new BoarAvoidPlayerGoal(this, Player.class, 16.0f, 1.5D, 1.5D, entity -> !entity.isHolding(foodItems())));
         this.goalSelector.addGoal(4, new BoarMeleeAttackGoal(this, 1.2, false));
         this.goalSelector.addGoal(5, new BabyPanicGoal(this, 1.25));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1));

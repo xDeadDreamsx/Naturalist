@@ -54,7 +54,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 
 public class Turkey extends Animal implements DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.TURKEY_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.TURKEY_FOOD_ITEMS));
+    }
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Turkey.class, EntityDataSerializers.STRING);
 
@@ -137,7 +139,7 @@ public class Turkey extends Animal implements DataDrivenVariantAnimal {
     //region Spawning
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -166,9 +168,9 @@ public class Turkey extends Animal implements DataDrivenVariantAnimal {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.5D));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 6.0F, 1.5D, 2.0D,
-                entity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && !entity.isDiscrete() && !entity.isHolding(FOOD_ITEMS)));
+                entity -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity) && !entity.isDiscrete() && !entity.isHolding(foodItems())));
         this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.0D, foodItems(), false));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.0D, true));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));

@@ -80,7 +80,9 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 @SuppressWarnings("unused")
 public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS));
+    }
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.STRING);
@@ -296,7 +298,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -321,10 +323,10 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
         this.goalSelector.addGoal(2, new BearMeleeAttackGoal(this, 1.25D, true));
         this.goalSelector.addGoal(5, new PetFollowOwnerGoal(this, 1.25D, 10.0F, 6.0F));
         this.goalSelector.addGoal(3, new BearSleepGoal(this));
-        this.goalSelector.addGoal(4, new BearTemptGoal(this, 1.0D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(4, new BearTemptGoal(this, 1.0D, foodItems(), false));
         this.goalSelector.addGoal(4, new BabyPanicGoal(this, 1.25D));
         this.goalSelector.addGoal(5, new DistancedFollowParentGoal(this, 1.25D, 48.0D, 8.0D, 12.0D));
-        this.goalSelector.addGoal(5, new SearchForItemsGoal(this, 1.2F, FOOD_ITEMS, 8, 2));
+        this.goalSelector.addGoal(5, new SearchForItemsGoal(this, 1.2F, foodItems(), 8, 2));
         this.goalSelector.addGoal(6, new BearHarvestFoodGoal(this, 1.2F, 12, 3));
         this.goalSelector.addGoal(6, new BabyBearSniffFlowersGoal(this, 1.2F, 12, 3));
         this.goalSelector.addGoal(7, new BearPickupFoodAndSitGoal(this));
@@ -472,7 +474,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     @Override
     protected void pickUpItem(@NotNull ServerLevel level, @NotNull ItemEntity itemEntity) {
         ItemStack stack = itemEntity.getItem();
-        if (this.getMainHandItem().isEmpty() && FOOD_ITEMS.test(stack) && !this.isBaby() && !this.isSleeping()) {
+        if (this.getMainHandItem().isEmpty() && foodItems().test(stack) && !this.isBaby() && !this.isSleeping()) {
             this.onItemPickup(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, stack);
             this.setDropChance(EquipmentSlot.MAINHAND, 2.0F);
@@ -757,7 +759,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
         private void stealCampfireFood(BlockState state, @NotNull CampfireBlockEntity campfire) {
             for (int i = 0; i < campfire.getItems().size(); i++) {
-                if (FOOD_ITEMS.test(campfire.getItems().get(i))) {
+                if (foodItems().test(campfire.getItems().get(i))) {
                     Containers.dropItemStack(bear.level(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), campfire.getItems().get(i));
                     campfire.getItems().set(i, ItemStack.EMPTY);
                     bear.level().sendBlockUpdated(blockPos, state, state, 3);
@@ -769,7 +771,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
         private boolean campfireIsTempting(@NotNull CampfireBlockEntity campfire) {
             for (int i = 0; i < campfire.getItems().size(); i++) {
-                if (FOOD_ITEMS.test(campfire.getItems().get(i))) {
+                if (foodItems().test(campfire.getItems().get(i))) {
                     return true;
                 }
             }

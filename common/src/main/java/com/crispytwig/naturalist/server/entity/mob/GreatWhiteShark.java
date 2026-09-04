@@ -83,7 +83,9 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     private static final Identifier AGGRO_SPEED_BOOST_ID = Naturalist.location("shark_aggro_speed_boost");
     private static final AttributeModifier AGGRO_SPEED_BOOST = new AttributeModifier(AGGRO_SPEED_BOOST_ID, 0.4D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.GREAT_WHITE_SHARK_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.GREAT_WHITE_SHARK_FOOD_ITEMS));
+    }
 
     private int flopCooldown;
     private int huntingCooldown;
@@ -283,7 +285,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (FOOD_ITEMS.test(stack) && this.getHealth() < this.getMaxHealth()) {
+        if (foodItems().test(stack) && this.getHealth() < this.getMaxHealth()) {
             this.heal(2.0F);
             this.playSound(SoundEvents.GENERIC_EAT.value(), 1.0F, 1.0F);
             stack.consume(1, player);

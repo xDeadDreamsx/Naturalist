@@ -73,7 +73,9 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     //region Data
     public static final String[] VARIANT_NAMES = {"brown", "dark", "white"};
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.HEDGEHOG_FOOD_ITEMS));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.HEDGEHOG_FOOD_ITEMS));
+    }
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Hedgehog.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Hedgehog.class, EntityDataSerializers.INT);
@@ -253,7 +255,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     //region Spawning
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -291,7 +293,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         this.goalSelector.addGoal(1, new HedgehogPanicGoal(this));
         this.goalSelector.addGoal(2, new HideGoal<>(this));
         this.goalSelector.addGoal(3, new BreedGoal(this, 1.0));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.5, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.5, foodItems(), false));
         this.goalSelector.addGoal(5, new DistancedFollowParentGoal(this, 1.1, 16.0, 8.0, 5.0));
         this.goalSelector.addGoal(5, new PetFollowOwnerGoal(this, 1.2, 10.0F, 3.0F) {
             @Override
@@ -325,7 +327,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         }
         List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(6.0, 3.0, 6.0), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
         for (Player player : players) {
-            if (!player.isCrouching() && !FOOD_ITEMS.test(player.getMainHandItem()) && !FOOD_ITEMS.test(player.getOffhandItem())) {
+            if (!player.isCrouching() && !foodItems().test(player.getMainHandItem()) && !foodItems().test(player.getOffhandItem())) {
                 return true;
             }
         }

@@ -70,7 +70,9 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
 
     private static final ResourceKey<MobVariant> DEFAULT_VARIANT = NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("giant_isopod"), "brown");
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.GIANT_ISOPOD_FOOD));
+    private static Ingredient foodItems() {
+        return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.GIANT_ISOPOD_FOOD));
+    }
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(GiantIsopod.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(GiantIsopod.class, EntityDataSerializers.BOOLEAN);
 
@@ -194,7 +196,7 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        return FOOD_ITEMS.test(stack);
+        return foodItems().test(stack);
     }
 
     @Nullable
@@ -214,7 +216,7 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
         this.goalSelector.addGoal(0, new PanicGoal(this, 1.25D));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 5.0F, 1.25D, 1.5D));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.1D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.1D, foodItems(), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 1.0D, 30));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
