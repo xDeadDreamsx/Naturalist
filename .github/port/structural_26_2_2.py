@@ -146,3 +146,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    import structural_26_2_3
+    structural_26_2_3.main()
