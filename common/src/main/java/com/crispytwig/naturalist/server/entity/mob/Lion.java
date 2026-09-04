@@ -55,11 +55,12 @@ import java.util.List;
 import java.util.Objects;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.LION_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.LION_FOOD_ITEMS));
     private static final Identifier BABY_SPEED_BOOST_ID = Naturalist.location("baby_speed_boost");
     private static final AttributeModifier BABY_SPEED_BOOST = new AttributeModifier(BABY_SPEED_BOOST_ID, 0.05D, AttributeModifier.Operation.ADD_VALUE);
 
@@ -204,7 +205,7 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Lion baby = NaturalistEntityTypes.LION.get().create(serverLevel);
+        Lion baby = NaturalistEntityTypes.LION.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

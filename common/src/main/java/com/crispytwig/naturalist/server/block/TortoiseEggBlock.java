@@ -76,7 +76,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
             for (int i = 0; i < eggCount; i++) {
                 level.levelEvent(2001, pos, Block.getId(state));
 
-                Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level);
+                Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level, EntitySpawnReason.BREEDING);
                 if (baby != null) {
                     baby.setVariantByLegacyIndex(variant);
                     baby.setAge(-24000);
@@ -139,7 +139,7 @@ public class TortoiseEggBlock extends TurtleEggBlock {
             level.removeBlock(pos, false);
 
             for (int i = 0; i < eggCount; i++) {
-                Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level);
+                Tortoise baby = NaturalistEntityTypes.TORTOISE.get().create(level, EntitySpawnReason.BREEDING);
                 if (baby != null) {
                     baby.setVariantByLegacyIndex(variant);
                     baby.setAge(-24000);

@@ -61,6 +61,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketable {
@@ -69,7 +70,7 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
 
     private static final ResourceKey<MobVariant> DEFAULT_VARIANT = NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("giant_isopod"), "brown");
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GIANT_ISOPOD_FOOD);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.GIANT_ISOPOD_FOOD));
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(GiantIsopod.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(GiantIsopod.class, EntityDataSerializers.BOOLEAN);
 
@@ -199,7 +200,7 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
     @Nullable
     @Override
     public GiantIsopod getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        GiantIsopod baby = NaturalistEntityTypes.GIANT_ISOPOD.get().create(level);
+        GiantIsopod baby = NaturalistEntityTypes.GIANT_ISOPOD.get().create(level, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }

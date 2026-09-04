@@ -310,7 +310,7 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Snail baby = NaturalistEntityTypes.SNAIL.get().create(serverLevel);
+        Snail baby = NaturalistEntityTypes.SNAIL.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

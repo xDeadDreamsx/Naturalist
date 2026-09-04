@@ -50,10 +50,11 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jspecify.annotations.NonNull;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class Turkey extends Animal implements DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TURKEY_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.TURKEY_FOOD_ITEMS));
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Turkey.class, EntityDataSerializers.STRING);
 
@@ -142,7 +143,7 @@ public class Turkey extends Animal implements DataDrivenVariantAnimal {
     @Nullable
     @Override
     public Turkey getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        Turkey baby = NaturalistEntityTypes.TURKEY.get().create(level);
+        Turkey baby = NaturalistEntityTypes.TURKEY.get().create(level, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }

@@ -56,11 +56,12 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jspecify.annotations.NonNull;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, Bucketable, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.DUCK_FOOD_ITEMS));
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Duck.class, EntityDataSerializers.INT);
@@ -216,7 +217,7 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     @Nullable
     @Override
     public Duck getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Duck baby = NaturalistEntityTypes.DUCK.get().create(serverLevel);
+        Duck baby = NaturalistEntityTypes.DUCK.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

@@ -246,7 +246,7 @@ public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnim
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Whale baby = NaturalistEntityTypes.WHALE.get().create(serverLevel);
+        Whale baby = NaturalistEntityTypes.WHALE.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

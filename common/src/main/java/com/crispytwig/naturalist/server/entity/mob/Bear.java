@@ -74,11 +74,12 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS));
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bear.class, EntityDataSerializers.STRING);

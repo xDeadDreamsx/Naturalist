@@ -250,7 +250,7 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        Mole baby = NaturalistEntityTypes.MOLE.get().create(level);
+        Mole baby = NaturalistEntityTypes.MOLE.get().create(level, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }

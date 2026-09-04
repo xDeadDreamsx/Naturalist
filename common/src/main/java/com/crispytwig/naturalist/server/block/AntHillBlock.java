@@ -170,7 +170,7 @@ public class AntHillBlock extends Block implements EntityBlock {
 
     @Nullable
     public static Ant releaseAnt(ServerLevel level, BlockPos pos, RandomSource random, @Nullable UUID owner) {
-        Ant ant = NaturalistEntityTypes.ANT.get().create(level);
+        Ant ant = NaturalistEntityTypes.ANT.get().create(level, EntitySpawnReason.BREEDING);
         if (ant == null) {
             return null;
         }

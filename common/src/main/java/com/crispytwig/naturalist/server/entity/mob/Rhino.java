@@ -157,7 +157,7 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Rhino baby = NaturalistEntityTypes.RHINO.get().create(serverLevel);
+        Rhino baby = NaturalistEntityTypes.RHINO.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

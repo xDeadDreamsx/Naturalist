@@ -66,13 +66,14 @@ import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingPet, HidingAnimal, Catchable, DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"brown", "dark", "white"};
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.HEDGEHOG_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.HEDGEHOG_FOOD_ITEMS));
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Hedgehog.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Hedgehog.class, EntityDataSerializers.INT);
@@ -262,7 +263,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     @Nullable
     @Override
     public Hedgehog getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Hedgehog baby = NaturalistEntityTypes.HEDGEHOG.get().create(serverLevel);
+        Hedgehog baby = NaturalistEntityTypes.HEDGEHOG.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
             if (this.isTame()) {

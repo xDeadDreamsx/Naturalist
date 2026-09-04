@@ -82,7 +82,7 @@ public class SnailEggBlock extends Block {
         int i = random.nextInt(2, 6);
 
         for(int j = 1; j <= i; ++j) {
-            Snail snail = NaturalistEntityTypes.SNAIL.get().create(level);
+            Snail snail = NaturalistEntityTypes.SNAIL.get().create(level, EntitySpawnReason.BREEDING);
             if (snail != null) {
                 double d = (double)pos.getX() + this.getRandomSnailPositionOffset(random);
                 snail.moveTo(d, pos.getY(), (double)pos.getZ() + this.getRandomSnailPositionOffset(random), (float)random.nextInt(1, 361), 0.0F);

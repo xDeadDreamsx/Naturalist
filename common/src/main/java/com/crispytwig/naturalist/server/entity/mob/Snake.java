@@ -60,12 +60,13 @@ import java.util.List;
 import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Snake extends TamableClimbingAnimal implements SleepingAnimal, NeutralMob, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS);
-    private static final Ingredient TAME_ITEMS = Ingredient.of(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.SNAKE_TEMPT_ITEMS));
+    private static final Ingredient TAME_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.SNAKE_TAME_ITEMS));
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Snake.class, EntityDataSerializers.STRING);

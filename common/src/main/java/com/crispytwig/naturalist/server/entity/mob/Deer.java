@@ -108,7 +108,7 @@ public class Deer extends NaturalistAnimal implements DataDrivenVariantAnimal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Deer baby = NaturalistEntityTypes.DEER.get().create(serverLevel);
+        Deer baby = NaturalistEntityTypes.DEER.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

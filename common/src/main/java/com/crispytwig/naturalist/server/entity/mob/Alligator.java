@@ -55,11 +55,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Alligator extends NaturalistAnimal implements EggLayingAnimal, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.ALLIGATOR_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.ALLIGATOR_FOOD_ITEMS));
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Alligator.class, EntityDataSerializers.BOOLEAN);
@@ -230,7 +231,7 @@ public class Alligator extends NaturalistAnimal implements EggLayingAnimal, Hunt
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Alligator baby = NaturalistEntityTypes.ALLIGATOR.get().create(serverLevel);
+        Alligator baby = NaturalistEntityTypes.ALLIGATOR.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

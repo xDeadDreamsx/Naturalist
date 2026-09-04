@@ -42,11 +42,12 @@ import org.jspecify.annotations.NonNull;
 import java.util.Optional;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingPet, SleepingAnimal, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.CAPYBARA_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.CAPYBARA_FOOD_ITEMS));
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Capybara.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Capybara.class, EntityDataSerializers.INT);
@@ -167,7 +168,7 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
     @Nullable
     @Override
     public Capybara getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Capybara baby = NaturalistEntityTypes.CAPYBARA.get().create(serverLevel);
+        Capybara baby = NaturalistEntityTypes.CAPYBARA.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
             if (this.isTame()) {

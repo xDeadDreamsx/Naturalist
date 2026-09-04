@@ -216,7 +216,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Elephant baby = NaturalistEntityTypes.ELEPHANT.get().create(serverLevel);
+        Elephant baby = NaturalistEntityTypes.ELEPHANT.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

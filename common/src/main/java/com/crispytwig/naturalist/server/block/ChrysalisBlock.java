@@ -64,7 +64,7 @@ public class ChrysalisBlock extends HorizontalDirectionalBlock {
             level.removeBlock(pos, false);
             level.playSound(null, pos, SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 0.7F, 0.9F + random.nextFloat() * 0.2F);
             level.levelEvent(2001, pos, Block.getId(state));
-            Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.get().create(level);
+            Butterfly butterfly = NaturalistEntityTypes.BUTTERFLY.get().create(level, EntitySpawnReason.BREEDING);
             assert butterfly != null;
             MobVariantUtil.selectVariantForSpawn(level, pos, NaturalistMobVariants.BUTTERFLY_VARIANT).ifPresent(butterfly::setVariant);
             butterfly.moveTo(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 0.0F, 0.0F);

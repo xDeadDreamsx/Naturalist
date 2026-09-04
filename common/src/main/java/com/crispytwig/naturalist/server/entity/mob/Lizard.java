@@ -41,6 +41,7 @@ import java.util.Objects;
 import java.util.Optional;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
@@ -49,7 +50,7 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
 
     private static final String DEFAULT_VARIANT_ID = "naturalist:green";
 
-    private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS);
+    private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS));
     private static final EntityDataAccessor<String> VARIANT_ID = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> HAS_TAIL = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Lizard.class, EntityDataSerializers.INT);

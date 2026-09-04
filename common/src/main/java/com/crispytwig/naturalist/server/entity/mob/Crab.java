@@ -84,6 +84,7 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal {
@@ -93,7 +94,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
 
     private static final ResourceKey<MobVariant> DEFAULT_VARIANT = NaturalistMobVariants.createKey(NaturalistMobVariants.registryFor("crab"), "blue");
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.CRAB_FOOD);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.CRAB_FOOD));
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FROM_HAND = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
@@ -295,7 +296,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     @Nullable
     @Override
     public Crab getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Crab baby = NaturalistEntityTypes.CRAB.get().create(serverLevel);
+        Crab baby = NaturalistEntityTypes.CRAB.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
             if (this.isTame()) {

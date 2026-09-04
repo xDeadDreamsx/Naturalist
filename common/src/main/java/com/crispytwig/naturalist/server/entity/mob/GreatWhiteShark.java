@@ -69,6 +69,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.EnumSet;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnimal, DataDrivenVariantAnimal {
     //region Data
@@ -82,7 +83,7 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     private static final Identifier AGGRO_SPEED_BOOST_ID = Naturalist.location("shark_aggro_speed_boost");
     private static final AttributeModifier AGGRO_SPEED_BOOST = new AttributeModifier(AGGRO_SPEED_BOOST_ID, 0.4D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.GREAT_WHITE_SHARK_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.GREAT_WHITE_SHARK_FOOD_ITEMS));
 
     private int flopCooldown;
     private int huntingCooldown;

@@ -59,7 +59,7 @@ public class Mammoth extends Elephant {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Mammoth baby = NaturalistEntityTypes.MAMMOTH.get().create(serverLevel);
+        Mammoth baby = NaturalistEntityTypes.MAMMOTH.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

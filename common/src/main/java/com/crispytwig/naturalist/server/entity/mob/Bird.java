@@ -71,11 +71,12 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jspecify.annotations.NonNull;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Bird extends ShoulderRidingEntity implements DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient TAME_FOOD = Ingredient.of(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS);
+    private static final Ingredient TAME_FOOD = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.BIRD_FOOD_ITEMS));
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> DATA_DYE = SynchedEntityData.defineId(Bird.class, EntityDataSerializers.INT);
     private static final Vec3 HEAD_ATTACHMENT = new Vec3(0.0D, -0.05D, 0.0D);

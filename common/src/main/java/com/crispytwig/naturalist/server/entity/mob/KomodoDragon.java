@@ -60,10 +60,11 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.KOMODO_DRAGON_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.KOMODO_DRAGON_FOOD_ITEMS));
     private static final int PLAYER_TARGETING_TIME = 400;
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(KomodoDragon.class, EntityDataSerializers.STRING);
@@ -177,7 +178,7 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        KomodoDragon baby = NaturalistEntityTypes.KOMODO_DRAGON.get().create(level);
+        KomodoDragon baby = NaturalistEntityTypes.KOMODO_DRAGON.get().create(level, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }

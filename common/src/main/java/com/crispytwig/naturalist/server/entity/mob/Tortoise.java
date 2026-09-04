@@ -53,13 +53,14 @@ import java.util.List;
 import java.util.Objects;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAnimal, FollowingPet, DataDrivenVariantAnimal {
     //region Data
     public static final String[] VARIANT_NAMES = {"brown", "green", "black"};
 
-    private static final Ingredient TEMPT_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS);
+    private static final Ingredient TEMPT_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.TORTOISE_TEMPT_ITEMS));
 
     private static final EntityDataAccessor<String> VARIANT_ID = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> HAS_EGG = SynchedEntityData.defineId(Tortoise.class, EntityDataSerializers.BOOLEAN);
@@ -221,7 +222,7 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Tortoise tortoise = NaturalistEntityTypes.TORTOISE.get().create(serverLevel);
+        Tortoise tortoise = NaturalistEntityTypes.TORTOISE.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (ageableMob instanceof Tortoise tortoiseParent) {
             assert tortoise != null;
             tortoise.setVariantString(this.getOffspringVariantId(tortoiseParent, this.random));

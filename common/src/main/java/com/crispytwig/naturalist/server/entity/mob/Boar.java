@@ -48,11 +48,12 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 @SuppressWarnings("unused")
 public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.BOAR_FOOD_ITEMS));
     private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
     private static final float DEATH_BY_HOGS_CHANCE = 0.1F;
 
@@ -146,7 +147,7 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Boar baby = NaturalistEntityTypes.BOAR.get().create(serverLevel);
+        Boar baby = NaturalistEntityTypes.BOAR.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

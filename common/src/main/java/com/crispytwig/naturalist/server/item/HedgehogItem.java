@@ -100,7 +100,7 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
             return super.use(level, player, hand);
         }
         if (level instanceof ServerLevel serverLevel) {
-            Hedgehog hedgehog = NaturalistEntityTypes.HEDGEHOG.get().create(serverLevel);
+            Hedgehog hedgehog = NaturalistEntityTypes.HEDGEHOG.get().create(serverLevel, EntitySpawnReason.BREEDING);
             if (hedgehog == null) {
                 return InteractionResult.PASS;
             }

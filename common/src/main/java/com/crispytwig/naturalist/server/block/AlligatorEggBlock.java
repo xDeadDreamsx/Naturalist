@@ -37,7 +37,7 @@ public class AlligatorEggBlock extends TurtleEggBlock {
                 level.removeBlock(pos, false);
                 for (int j = 0; j < state.getValue(EGGS); ++j) {
                     level.levelEvent(2001, pos, Block.getId(state));
-                    Alligator alligator = NaturalistEntityTypes.ALLIGATOR.get().create(level);
+                    Alligator alligator = NaturalistEntityTypes.ALLIGATOR.get().create(level, EntitySpawnReason.BREEDING);
                     assert alligator != null;
                     alligator.setAge(-24000);
                     alligator.moveTo((double)pos.getX() + 0.3 + (double)j * 0.2, pos.getY(), (double)pos.getZ() + 0.3, 0.0f, 0.0f);

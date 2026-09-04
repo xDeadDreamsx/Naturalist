@@ -123,7 +123,7 @@ public class Zebra extends AbstractChestedHorse implements DataDrivenVariantAnim
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        AbstractHorse zebra = NaturalistEntityTypes.ZEBRA.get().create(serverLevel);
+        AbstractHorse zebra = NaturalistEntityTypes.ZEBRA.get().create(serverLevel, EntitySpawnReason.BREEDING);
         assert zebra != null;
         if (zebra instanceof Zebra baby) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));

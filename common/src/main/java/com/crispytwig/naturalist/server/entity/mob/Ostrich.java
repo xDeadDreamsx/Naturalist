@@ -88,10 +88,11 @@ import java.util.Set;
 import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
     //region Data
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.OSTRICH_FOOD_ITEMS));
 
     private static final double EGG_DEFEND_RADIUS = 10.0D;
     private static final int MAX_TRACKED_EGGS = 16;
@@ -368,7 +369,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        Ostrich baby = NaturalistEntityTypes.OSTRICH.get().create(level);
+        Ostrich baby = NaturalistEntityTypes.OSTRICH.get().create(level, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }

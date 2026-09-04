@@ -71,6 +71,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class Rat extends TamableClimbingAnimal implements SleepingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal, ContainerBoundWorker {
     //region Data
@@ -82,7 +83,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
     private BlockPos workstationPos;
     private final SimpleContainer carriedItems = new SimpleContainer(CARRY_SLOTS);
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.RAT_FOOD);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.RAT_FOOD));
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Rat.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Rat.class, EntityDataSerializers.BOOLEAN);
@@ -317,7 +318,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        Rat baby = NaturalistEntityTypes.RAT.get().create(level);
+        Rat baby = NaturalistEntityTypes.RAT.get().create(level, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(mob, this.random));
             if (this.isTame()) {

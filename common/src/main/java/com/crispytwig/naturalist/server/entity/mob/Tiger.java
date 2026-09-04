@@ -71,12 +71,13 @@ import java.util.EnumSet;
 import java.util.Objects;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet, HuntingAnimal, DataDrivenVariantAnimal, NocturnalHostile {
     //region Data
     public static final String[] VARIANT_NAMES = {"black_panther", "leopard", "tiger", "white_tiger"};
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TIGER_FOOD_ITEMS);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(NaturalistTags.ItemTags.TIGER_FOOD_ITEMS));
 
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(Tiger.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(Tiger.class, EntityDataSerializers.BOOLEAN);
@@ -244,7 +245,7 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel level, @NotNull AgeableMob mob) {
-        Tiger baby = NaturalistEntityTypes.TIGER.get().create(level);
+        Tiger baby = NaturalistEntityTypes.TIGER.get().create(level, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(mob, this.random));
         }

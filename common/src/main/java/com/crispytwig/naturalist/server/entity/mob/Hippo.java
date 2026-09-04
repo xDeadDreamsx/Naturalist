@@ -178,7 +178,7 @@ public class Hippo extends TamableAnimal implements FollowingPet, DataDrivenVari
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
-        Hippo baby = NaturalistEntityTypes.HIPPO.get().create(serverLevel);
+        Hippo baby = NaturalistEntityTypes.HIPPO.get().create(serverLevel, EntitySpawnReason.BREEDING);
         if (baby != null) {
             baby.setVariantString(this.getOffspringVariantId(ageableMob, this.random));
         }

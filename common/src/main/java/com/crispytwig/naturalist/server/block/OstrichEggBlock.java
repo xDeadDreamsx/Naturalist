@@ -45,7 +45,7 @@ public class OstrichEggBlock extends TurtleEggBlock {
             level.playSound(null, pos, NaturalistSoundEvents.OSTRICH_EGG_HATCH.get(), SoundSource.BLOCKS, 0.7f, 0.9f + random.nextFloat() * 0.2f);
             level.removeBlock(pos, false);
             level.levelEvent(2001, pos, Block.getId(state));
-            Ostrich baby = NaturalistEntityTypes.OSTRICH.get().create(level);
+            Ostrich baby = NaturalistEntityTypes.OSTRICH.get().create(level, EntitySpawnReason.BREEDING);
             if (baby != null) {
                 baby.setAge(-24000);
                 baby.moveTo(pos.getX() + 0.3, pos.getY(), pos.getZ() + 0.3, 0.0F, 0.0F);
