@@ -3,7 +3,7 @@ package com.crispytwig.naturalist.client.model;
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.client.model.animation.JellyfishAnimations;
 import com.crispytwig.naturalist.server.entity.mob.Jellyfish;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -22,7 +22,7 @@ public class JellyfishModel extends NaturalistEntityModel<Jellyfish> {
 	private final ModelPart body;
 
 	public JellyfishModel(ModelPart root) {
-		super(root.getChild("root"), RenderType::entityTranslucent);
+		super(root.getChild("root"), RenderTypes::entityTranslucent);
 		this.root = root.getChild("root");
 		this.body = this.root.getChild("body");
 	}
