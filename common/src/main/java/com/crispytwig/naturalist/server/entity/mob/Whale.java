@@ -177,11 +177,11 @@ public class Whale extends Animal implements MultipartMob, DataDrivenVariantAnim
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         if (source.getEntity() instanceof Jellyfish || source.getEntity() instanceof Pufferfish) {
             return false;
         }
-        return super.hurt(source, amount);
+        return super.hurtServer(level, source, amount);
     }
 
     @Override

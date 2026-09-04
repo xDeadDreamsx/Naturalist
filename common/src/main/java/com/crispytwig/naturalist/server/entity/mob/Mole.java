@@ -314,8 +314,8 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         if (this.attackerMemoryTicks > 0) {
             this.attackerMemoryTicks--;
         }
@@ -462,12 +462,12 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         boolean peeking = this.getState() == STATE_PEEKING;
         if (this.isRolledUp() && !peeking && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return false;
         }
-        boolean hurt = super.hurt(source, amount);
+        boolean hurt = super.hurtServer(level, source, amount);
         if (hurt && !this.level().isClientSide() && source.getEntity() instanceof LivingEntity attacker) {
             if (peeking) {
                 this.popOut(attacker);

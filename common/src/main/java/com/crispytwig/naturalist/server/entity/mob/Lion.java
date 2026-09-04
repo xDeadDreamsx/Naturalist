@@ -336,7 +336,7 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel level) {
         this.tickHuntingCooldown();
         this.updateBabySpeed();
         if (this.getMoveControl().hasWanted()) {

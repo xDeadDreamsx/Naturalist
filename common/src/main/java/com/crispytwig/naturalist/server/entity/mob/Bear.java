@@ -368,7 +368,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide()) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());
             itemEntity.setPickUpDelay(80);
@@ -381,7 +381,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
             this.setSleeping(false);
         }
         this.wakeTicks = 200;
-        return super.hurt(source, amount);
+        return super.hurtServer(level, source, amount);
     }
 
     @Override
@@ -548,8 +548,8 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         this.tickHuntingCooldown();
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.25D);

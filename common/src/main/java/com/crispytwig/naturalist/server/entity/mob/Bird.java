@@ -269,7 +269,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         if (this.isInvulnerableTo(source)) {
             return false;
         } else {
@@ -277,7 +277,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
                 this.setOrderedToSit(false);
             }
 
-            return super.hurt(source, amount);
+            return super.hurtServer(level, source, amount);
         }
     }
 

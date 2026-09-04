@@ -40,6 +40,7 @@ import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.server.level.ServerLevel;
 
 @SuppressWarnings("unused")
 public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantAnimal {
@@ -164,8 +165,8 @@ public class Piranha extends AbstractSchoolingFish implements DataDrivenVariantA
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        boolean hurt = super.hurt(source, amount);
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
+        boolean hurt = super.hurtServer(level, source, amount);
         if (hurt && !this.level().isClientSide() && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
             this.setTarget(attacker);
             if (this.schoolLeader instanceof Piranha leader && leader.isAlive()) {

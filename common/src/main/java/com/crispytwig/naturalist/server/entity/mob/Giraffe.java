@@ -328,8 +328,8 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.3D);
         } else {

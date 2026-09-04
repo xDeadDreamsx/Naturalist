@@ -388,8 +388,8 @@ public class Ant extends TamableClimbingAnimal implements NeutralMob, Catchable,
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         this.updatePersistentAnger((ServerLevel) this.level(), true);
     }
 

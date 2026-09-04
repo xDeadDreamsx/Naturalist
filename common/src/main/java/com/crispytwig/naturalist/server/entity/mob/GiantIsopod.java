@@ -271,11 +271,11 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         if (this.canHide()) {
             this.hideHoldTicks = 10;
         }
-        return super.hurt(source, this.canHide() ? amount * 0.5F : amount);
+        return super.hurtServer(level, source, this.canHide() ? amount * 0.5F : amount);
     }
 
     @Override

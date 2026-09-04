@@ -215,8 +215,8 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        boolean hurt = super.hurt(source, amount);
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
+        boolean hurt = super.hurtServer(level, source, amount);
         if (hurt && !this.level().isClientSide()) {
             this.startle(source.getSourcePosition());
         }
@@ -224,7 +224,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         boolean shouldHurt = true;
         float knockback = (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
         if (shouldHurt == target.hurt(target.damageSources().mobAttack(this), (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {

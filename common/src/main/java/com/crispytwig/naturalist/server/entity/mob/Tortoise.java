@@ -277,8 +277,8 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        return super.hurt(source, this.canHide() ? amount * 0.8F : amount);
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
+        return super.hurtServer(level, source, this.canHide() ? amount * 0.8F : amount);
     }
 
     @Override

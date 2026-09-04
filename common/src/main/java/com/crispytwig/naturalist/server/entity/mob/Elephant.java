@@ -297,7 +297,7 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     }
 
     @Override
-    public boolean doHurtTarget(Entity target) {
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
         boolean shouldHurt = target.hurt(target.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         if (shouldHurt && target instanceof LivingEntity livingEntity) {
             Vec3 knockbackDirection = new Vec3(this.blockPosition().getX() - target.getX(), 0.0, this.blockPosition().getZ() - target.getZ()).normalize();
@@ -554,8 +554,8 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         this.setSaddled(!this.inventory.getItem(ElephantInventoryMenu.SADDLE_SLOT).isEmpty());
         ItemStack banner = this.inventory.getItem(ElephantInventoryMenu.BANNER_SLOT);
         if (!ItemStack.isSameItemSameComponents(banner, this.getBanner())) {

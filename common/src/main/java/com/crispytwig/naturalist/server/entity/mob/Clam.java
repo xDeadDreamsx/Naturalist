@@ -201,8 +201,8 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         if (this.snapCooldown > 0) {
             this.snapCooldown--;
         }
@@ -271,7 +271,7 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         if (!this.isOpen()
                 && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
                 && !source.is(DamageTypes.DROWN)
@@ -279,7 +279,7 @@ public class Clam extends WaterAnimal implements DataDrivenVariantAnimal {
                 && !source.is(DamageTypes.LAVA)) {
             return false;
         }
-        return super.hurt(source, amount);
+        return super.hurtServer(level, source, amount);
     }
 
     @Override

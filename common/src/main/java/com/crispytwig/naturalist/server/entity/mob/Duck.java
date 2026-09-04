@@ -331,8 +331,8 @@ public class Duck extends TamableAnimal implements DyeableAnimal, FollowingPet, 
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.2D);
         } else {

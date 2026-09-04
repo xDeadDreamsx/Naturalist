@@ -194,7 +194,7 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         if (this.hasTail() && this.getHealth() <= this.getMaxHealth() / 2) {
             this.setHasTail(false);
             this.playSound(SoundEvents.SLIME_SQUISH, 1.0f, 1.0f);
@@ -209,7 +209,7 @@ public class Lizard extends TamableAnimal implements DyeableAnimal, FollowingPet
             }
             this.tailRegrowCooldown = 12000;
         }
-        return super.hurt(source, amount);
+        return super.hurtServer(level, source, amount);
     }
 
     @Override

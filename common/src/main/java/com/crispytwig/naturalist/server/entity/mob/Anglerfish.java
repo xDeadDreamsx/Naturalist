@@ -258,8 +258,8 @@ public class Anglerfish extends AbstractFish implements HuntingAnimal, DataDrive
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        boolean hurt = super.hurt(source, amount);
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
+        boolean hurt = super.hurtServer(level, source, amount);
         if (hurt && !this.level().isClientSide() && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
             this.setTarget(attacker);
         }

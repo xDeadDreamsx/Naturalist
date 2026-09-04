@@ -383,8 +383,8 @@ public class GreatWhiteShark extends Animal implements MultipartMob, HuntingAnim
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         boolean aggressive = this.getTarget() != null;
         this.setAggressive(aggressive);
         AttributeInstance speed = this.getAttribute(Attributes.MOVEMENT_SPEED);

@@ -62,9 +62,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
@@ -404,17 +402,17 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     }
 
     @Override
-    public boolean wantsToPickUp(@NotNull ItemStack stack) {
+    public boolean wantsToPickUp(ServerLevel level, @NotNull ItemStack stack) {
         return this.getMainHandItem().isEmpty() && isWeapon(stack);
     }
 
     private static boolean isWeapon(ItemStack stack) {
-        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem;
+        return stack.has(DataComponents.TOOL);
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity target) {
-        boolean hurt = super.doHurtTarget(target);
+    public boolean doHurtTarget(ServerLevel level, @NotNull Entity target) {
+        boolean hurt = super.doHurtTarget(level, target);
         if (hurt) {
             this.swing(InteractionHand.MAIN_HAND);
             this.playSound(NaturalistSoundEvents.CRAB_PINCER.get(), 1.0F, 1.0F);
@@ -550,8 +548,8 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        return super.hurt(source, this.canHide() ? amount * 0.8F : amount);
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
+        return super.hurtServer(level, source, this.canHide() ? amount * 0.8F : amount);
     }
 
     private boolean isImmobilized() {

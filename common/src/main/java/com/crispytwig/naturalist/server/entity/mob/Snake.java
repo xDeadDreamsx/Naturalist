@@ -303,7 +303,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide()) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());
             itemEntity.setPickUpDelay(80);
@@ -312,15 +312,15 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
             this.level().addFreshEntity(itemEntity);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
-        return super.hurt(source, amount);
+        return super.hurtServer(level, source, amount);
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity entity) {
+    public boolean doHurtTarget(ServerLevel level, @NotNull Entity entity) {
         if (this.isVenomous() && entity instanceof LivingEntity living) {
             living.addEffect(new MobEffectInstance(MobEffects.POISON, 40));
         }
-        return super.doHurtTarget(entity);
+        return super.doHurtTarget(level, entity);
     }
 
     @Override

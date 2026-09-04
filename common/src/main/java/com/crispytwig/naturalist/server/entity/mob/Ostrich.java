@@ -682,7 +682,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel level) {
         this.setAggressive(this.getTarget() != null);
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.4D && this.onGround());

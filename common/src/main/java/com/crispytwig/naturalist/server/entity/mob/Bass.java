@@ -254,7 +254,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity target) {
+    public boolean doHurtTarget(ServerLevel level, @NotNull Entity target) {
         if (!this.level().isClientSide() && target instanceof Bass prey && this.canEatTarget(prey)) {
             boolean wasMediumEatingSmall = this.getSizeTier() == 1 && prey.getSizeTier() == 0;
             boolean grew = wasMediumEatingSmall && this.getRandom().nextFloat() < GROW_CHANCE;
@@ -266,7 +266,7 @@ public class Bass extends AbstractSchoolingFish implements DataDrivenVariantAnim
             }
             return true;
         }
-        return super.doHurtTarget(target);
+        return super.doHurtTarget(level, target);
     }
 
     public static void devour(Mob predator, Bass prey, boolean dropBoneMeal) {

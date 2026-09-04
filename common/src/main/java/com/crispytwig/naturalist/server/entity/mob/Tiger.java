@@ -380,7 +380,7 @@ public class Tiger extends TamableAnimal implements SleepingAnimal, FollowingPet
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel level) {
         this.tickHuntingCooldown();
         this.setPose(this.isStalking() ? Pose.CROUCHING : Pose.STANDING);
         if (this.getMoveControl().hasWanted()) {

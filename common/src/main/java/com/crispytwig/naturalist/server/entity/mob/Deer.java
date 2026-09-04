@@ -141,8 +141,8 @@ public class Deer extends NaturalistAnimal implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        boolean lastHurt = super.hurt(source, amount);
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
+        boolean lastHurt = super.hurtServer(level, source, amount);
         if (lastHurt) {
             int ticks = 100 + this.random.nextInt(100);
             this.panicTicks = ticks;
@@ -185,8 +185,8 @@ public class Deer extends NaturalistAnimal implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         this.setSprinting(this.getMoveControl().hasWanted() &&
                 this.getMoveControl().getSpeedModifier() >= 1.5D);
     }

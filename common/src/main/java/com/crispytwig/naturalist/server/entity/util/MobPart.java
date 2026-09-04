@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.server.level.ServerLevel;
 
 @SuppressWarnings("unused")
 public class MobPart extends Entity {
@@ -129,7 +130,7 @@ public class MobPart extends Entity {
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         return !this.isInvulnerableTo(source) && this.parent.hurt(source, amount);
     }
 

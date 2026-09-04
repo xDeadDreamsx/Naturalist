@@ -42,6 +42,7 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.server.level.ServerLevel;
 
 @SuppressWarnings("unused")
 public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal {
@@ -210,8 +211,8 @@ public class Dragonfly extends PathfinderMob implements DataDrivenVariantAnimal 
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         if (!(this.targetPosition == null || this.level().isEmptyBlock(this.targetPosition) && this.targetPosition.getY() > this.level().getMinBuildHeight())) {
             this.targetPosition = null;
         }

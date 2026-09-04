@@ -47,6 +47,7 @@ import com.crispytwig.naturalist.server.entity.util.FishSwimTilt;
 import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.server.level.ServerLevel;
 
 @SuppressWarnings("unused")
 public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
@@ -197,8 +198,8 @@ public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        boolean hurt = super.hurt(source, amount);
+    public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
+        boolean hurt = super.hurtServer(level, source, amount);
         if (hurt && !this.level().isClientSide() && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
             this.setTarget(attacker);
         }
@@ -214,8 +215,8 @@ public class Ray extends AbstractFish implements DataDrivenVariantAnimal {
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity target) {
-        boolean result = super.doHurtTarget(target);
+    public boolean doHurtTarget(ServerLevel level, @NotNull Entity target) {
+        boolean result = super.doHurtTarget(level, target);
         if (result && !this.level().isClientSide() && target instanceof LivingEntity living) {
             living.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 0), this);
         }

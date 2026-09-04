@@ -123,8 +123,8 @@ public abstract class Scorpion extends Animal implements NocturnalHostile {
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity entity) {
-        boolean result = super.doHurtTarget(entity);
+    public boolean doHurtTarget(ServerLevel level, @NotNull Entity entity) {
+        boolean result = super.doHurtTarget(level, entity);
         if (result && entity instanceof LivingEntity living) {
             living.addEffect(new MobEffectInstance(MobEffects.POISON, 120), this);
         }
@@ -144,8 +144,8 @@ public abstract class Scorpion extends Animal implements NocturnalHostile {
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         this.setAggressive(this.getTarget() != null);
     }
 

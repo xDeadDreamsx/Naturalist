@@ -161,7 +161,7 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity target) {
+    public boolean doHurtTarget(ServerLevel level, @NotNull Entity target) {
         if (!this.level().isClientSide() && target instanceof Bass prey && prey.isAlive() && this.pendingPrey == null) {
             this.pendingPrey = prey;
             this.eatTimer = EAT_DELAY_TICKS;
@@ -169,7 +169,7 @@ public class Catfish extends AbstractFish implements HuntingAnimal, DataDrivenVa
             this.setTarget(null);
             return true;
         }
-        return super.doHurtTarget(target);
+        return super.doHurtTarget(level, target);
     }
 
     private void tickPendingEat() {

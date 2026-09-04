@@ -213,8 +213,8 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity entity) {
-        boolean result = super.doHurtTarget(entity);
+    public boolean doHurtTarget(ServerLevel level, @NotNull Entity entity) {
+        boolean result = super.doHurtTarget(level, entity);
         if (result && entity instanceof LivingEntity living) {
             living.addEffect(new MobEffectInstance(MobEffects.POISON, 100), this);
         }
@@ -245,7 +245,7 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
     }
 
     @Override
-    public void customServerAiStep() {
+    public void customServerAiStep(ServerLevel level) {
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.05D && this.onGround());
         } else {

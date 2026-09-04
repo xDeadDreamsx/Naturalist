@@ -213,8 +213,8 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity target) {
-        boolean hurt = super.doHurtTarget(target);
+    public boolean doHurtTarget(ServerLevel level, @NotNull Entity target) {
+        boolean hurt = super.doHurtTarget(level, target);
         if (hurt && !this.level().isClientSide() && target instanceof Player player && player.isDeadOrDying()
                 && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)
                 && this.random.nextFloat() < DEATH_BY_HOGS_CHANCE) {
@@ -224,8 +224,8 @@ public class Boar extends NaturalistAnimal implements NeutralMob, DataDrivenVari
     }
 
     @Override
-    public void customServerAiStep() {
-        super.customServerAiStep();
+    public void customServerAiStep(ServerLevel level) {
+        super.customServerAiStep(level);
         if (this.getMoveControl().hasWanted()) {
             this.setSprinting(this.getMoveControl().getSpeedModifier() >= 1.2D);
         } else {
