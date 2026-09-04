@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Migrate Naturalist data-pack JSON to Minecraft 26.2 formats.
+"""Migrate Naturalist data-pack and sound JSON to Minecraft 26.2 formats.
 
 This pass is intentionally conservative and idempotent:
 - recipe ingredients: {"item": "id"} -> "id", {"tag": "id"} -> "#id"
-- entity predicates reached through entity_properties / damage-source entity fields:
-  "type" -> "entity_type" (the 26.2 rename)
+- entity predicates: "type" -> "entity_type" where 26.2 expects an entity predicate
+- old raw vanilla sound-file references -> stable vanilla sound-event references
 """
 
 from __future__ import annotations
@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path("common/src/main/resources/data")
+SOUNDS = Path("common/src/main/resources/assets/naturalist/sounds.json")
 changed: list[Path] = []
 
 
@@ -63,7 +64,7 @@ def migrate_entity_predicate(predicate: Any) -> Any:
     if "type" in predicate and "entity_type" not in predicate and isinstance(predicate["type"], str):
         predicate["entity_type"] = predicate.pop("type")
 
-    for field in ("vehicle", "passenger", "targeted_entity", "source_entity", "direct_entity"):
+    for field in ("entity", "vehicle", "passenger", "targeted_entity", "source_entity", "direct_entity"):
         if field in predicate:
             predicate[field] = migrate_entity_predicate(predicate[field])
 
@@ -88,13 +89,42 @@ def migrate_predicates(node: Any) -> Any:
     trigger = node.get("trigger")
     if isinstance(trigger, str) and isinstance(node.get("conditions"), dict):
         conditions = node["conditions"]
-        for field in ("vehicle", "passenger", "targeted_entity"):
-            if field in conditions and isinstance(conditions[field], dict):
+        for field in ("entity", "vehicle", "passenger", "targeted_entity"):
+            if field in conditions:
                 conditions[field] = migrate_entity_predicate(conditions[field])
 
     for key, value in list(node.items()):
         node[key] = migrate_predicates(value)
     return node
+
+
+def migrate_sounds(data: Any) -> Any:
+    if not isinstance(data, dict):
+        return data
+
+    # These Naturalist events used raw internal vanilla OGG paths that no longer resolve in
+    # Minecraft 26.2. Referencing the registered vanilla events is both stable and equivalent.
+    for event in ("entity.blobfish.flop", "entity.piranha.flop", "entity.catfish.flop"):
+        entry = data.get(event)
+        if isinstance(entry, dict):
+            entry["sounds"] = [
+                {
+                    "name": "minecraft:entity.puffer_fish.flop",
+                    "type": "event",
+                    "volume": 0.3,
+                }
+            ]
+
+    zebra = data.get("entity.zebra.eat")
+    if isinstance(zebra, dict):
+        zebra["sounds"] = [
+            {
+                "name": "minecraft:entity.horse.eat",
+                "type": "event",
+            }
+        ]
+
+    return data
 
 
 def write_if_changed(path: Path, transform) -> None:
@@ -119,6 +149,9 @@ if ROOT.exists():
         elif "advancement" in parts or "advancements" in parts or "loot_table" in parts or "loot_tables" in parts:
             write_if_changed(path, migrate_predicates)
 
-print(f"26.2 data-pack migration changed {len(changed)} files")
+if SOUNDS.exists():
+    write_if_changed(SOUNDS, migrate_sounds)
+
+print(f"26.2 data/resource migration changed {len(changed)} files")
 for path in changed:
     print(path)
