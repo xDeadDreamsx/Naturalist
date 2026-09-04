@@ -105,6 +105,42 @@ jobs:
             exit "$status"
           fi
 
+      - name: Smoke-test Naturalist dedicated server and world data
+        id: server_smoke
+        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          mkdir -p run
+          printf 'eula=true\n' > run/eula.txt
+          rm -rf run/world run/crash-reports
+
+          timeout --signal=TERM --kill-after=15s 150s ./gradlew runServer --stacktrace --no-daemon 2>&1 | tee /tmp/naturalist-server.log
+          status=${PIPESTATUS[0]}
+
+          echo "Server smoke-test exit status: $status"
+          if [ -d run/crash-reports ] && find run/crash-reports -maxdepth 1 -type f -print -quit | grep -q .; then
+            echo "Minecraft produced a crash report during dedicated-server startup."
+            find run/crash-reports -maxdepth 1 -type f -print
+            for report in run/crash-reports/*; do
+              [ -f "$report" ] || continue
+              echo "===== $report ====="
+              cat "$report"
+            done
+            exit 1
+          fi
+
+          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ]; then
+            exit "$status"
+          fi
+
+          if ! grep -Fq 'Done (' /tmp/naturalist-server.log; then
+            echo "Dedicated server never reached the ready state."
+            tail -n 500 /tmp/naturalist-server.log || true
+            exit 1
+          fi
+
       - name: Inspect Minecraft 26.2 API after failed build
         if: steps.build.outcome == 'failure'
         shell: bash
@@ -214,8 +250,17 @@ jobs:
           fi
           exit 1
 
+      - name: Fail workflow if dedicated-server smoke test failed
+        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success' && steps.server_smoke.outcome == 'failure'
+        run: |
+          if [ -f /tmp/naturalist-server.log ]; then
+            echo "===== SERVER STARTUP LOG TAIL ====="
+            tail -n 500 /tmp/naturalist-server.log
+          fi
+          exit 1
+
       - name: Upload built jars
-        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success'
+        if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success' && steps.server_smoke.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: naturalist-fabric-26.2
