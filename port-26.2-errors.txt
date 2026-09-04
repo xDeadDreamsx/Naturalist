@@ -11,11 +11,11 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.17.20
 
 > Task :compileJava
-/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/NaturalistFabric.java:33: error: cannot find symbol
-            if (!builder.hasAttribute(Attributes.TEMPT_RANGE)) {
-                        ^
-  symbol:   method hasAttribute(Holder<Attribute>)
-  location: variable builder of type Builder
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/NaturalistEntityModel.java:77: error: cannot find symbol
+        return this.root().getAllParts().anyMatch(part -> part.hasChild(name));
+                                        ^
+  symbol:   method anyMatch((part)->pa[...]name))
+  location: interface List<ModelPart>
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
@@ -35,11 +35,11 @@ Execution failed for task ':compileJava' (registered by plugin class 'org.gradle
   Note: Recompile with -Xlint:unchecked for details.
   Note: Some input files use or override a deprecated API.
   Note: Some input files use unchecked or unsafe operations.
-  /home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/NaturalistFabric.java:33: error: cannot find symbol
-              if (!builder.hasAttribute(Attributes.TEMPT_RANGE)) {
-                          ^
-    symbol:   method hasAttribute(Holder<Attribute>)
-    location: variable builder of type Builder
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/NaturalistEntityModel.java:77: error: cannot find symbol
+          return this.root().getAllParts().anyMatch(part -> part.hasChild(name));
+                                          ^
+    symbol:   method anyMatch((part)->pa[...]name))
+    location: interface List<ModelPart>
   1 error
 
 * Try:
@@ -82,11 +82,11 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/NaturalistFabric.java:33: error: cannot find symbol
-            if (!builder.hasAttribute(Attributes.TEMPT_RANGE)) {
-                        ^
-  symbol:   method hasAttribute(Holder<Attribute>)
-  location: variable builder of type Builder
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/model/NaturalistEntityModel.java:77: error: cannot find symbol
+        return this.root().getAllParts().anyMatch(part -> part.hasChild(name));
+                                        ^
+  symbol:   method anyMatch((part)->pa[...]name))
+  location: interface List<ModelPart>
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
@@ -226,5 +226,5 @@ Note: Recompile with -Xlint:unchecked for details.
 	... 30 more
 
 
-BUILD FAILED in 39s
+BUILD FAILED in 36s
 1 actionable task: 1 executed
