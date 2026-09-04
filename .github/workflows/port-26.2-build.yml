@@ -37,7 +37,7 @@ jobs:
           if ! git diff --quiet; then
             git config user.name "Naturalist 26.2 Port CI"
             git config user.email "actions@users.noreply.github.com"
-            git add common/src/main/java fabric/src/main/java
+            git add common/src/main/java fabric/src/main/java common/src/main/resources
             git commit -m "Apply Minecraft 26.2 API migration pass"
             git push origin HEAD:port/26.2-fabric
           fi
@@ -98,9 +98,6 @@ jobs:
             exit 1
           fi
 
-          # A healthy Minecraft client normally remains open at the title screen, so GNU timeout
-          # returns 124 after two minutes. A clean early exit (0) is also accepted; any other
-          # status means the client failed before the smoke-test window completed.
           if [ "$status" -ne 0 ] && [ "$status" -ne 124 ]; then
             exit "$status"
           fi
@@ -165,11 +162,12 @@ jobs:
               'ClampedItemPropertyFunction', 'ItemProperties', 'Input', 'GuiGraphics',
               'GuiGraphicsExtractor', 'SimpleCriterionTrigger', 'ContextAwarePredicate', 'ItemPredicate',
               'ChunkSectionLayerMap', 'RecipeSerializer', 'NeutralMob', 'LivingEntity', 'EntityType',
-              'ContainerHelper', 'ResourceKey', 'InteractionResult', 'ValueInput', 'ValueOutput'
+              'ContainerHelper', 'ResourceKey', 'InteractionResult', 'ValueInput', 'ValueOutput', 'Criterion',
+              'Advancement', 'AdvancementRequirements', 'FilledBucketTrigger'
           }
           patterns = ('TextureSheet', 'SingleQuad', 'Saddle', 'Boat', 'InteractionResult', 'ItemPropert',
                       'Criterion', 'Predicate', 'ChunkSectionLayer', 'GuiGraphics', 'Digger', 'SwordItem',
-                      'ThrowableItem', 'Instantaneous', 'Input', 'ValueInput', 'ValueOutput')
+                      'ThrowableItem', 'Instantaneous', 'Input', 'ValueInput', 'ValueOutput', 'Advancement')
           hits = {t: [] for t in targets}
           nearby = []
           jars = list(pathlib.Path.home().joinpath('.gradle').rglob('*.jar'))
@@ -219,7 +217,11 @@ jobs:
               net.minecraft.resources.ResourceKey \
               net.minecraft.world.level.storage.ValueInput \
               net.minecraft.world.level.storage.ValueOutput \
-              net.minecraft.world.item.crafting.RecipeSerializer; do
+              net.minecraft.world.item.crafting.RecipeSerializer \
+              net.minecraft.advancements.Advancement \
+              net.minecraft.advancements.AdvancementRequirements \
+              net.minecraft.advancements.triggers.Criterion \
+              net.minecraft.advancements.triggers.FilledBucketTrigger; do
               echo "=== JAVAP $C ==="
               javap -classpath "$MCJAR" -public "$C" || true
             done
