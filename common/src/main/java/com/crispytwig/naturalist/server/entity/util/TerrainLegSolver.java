@@ -93,7 +93,7 @@ public class TerrainLegSolver {
         }
 
         private float getDistance(Level level, BlockPos pos, Vec3 position) {
-            if (pos.getY() < level.getMinBuildHeight()) {
+            if (pos.getY() < level.getMinY()) {
                 return 0.0F;
             }
             BlockState state = level.getBlockState(pos);
