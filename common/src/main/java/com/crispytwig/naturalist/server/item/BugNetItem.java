@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -69,7 +68,7 @@ public class BugNetItem extends Item {
                 .findFirst();
 
         if (allRecipes.isPresent()) {
-            var dropItem = allRecipes.get().dropStack().copy();
+            var dropItem = allRecipes.get().dropStack().create();
             swing(player.level(), player);
             Containers.dropItemStack(player.level(), interactionTarget.getX(), interactionTarget.getY(), interactionTarget.getZ(), dropItem);
             playCaughtEffects(player.level(), interactionTarget);
