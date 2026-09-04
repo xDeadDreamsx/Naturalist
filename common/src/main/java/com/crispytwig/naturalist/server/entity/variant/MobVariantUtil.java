@@ -12,6 +12,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.ValueInput;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,19 @@ public final class MobVariantUtil {
         }
         if (legacyNames != null && legacyNames.length > 0 && tag.contains(DataDrivenVariantAnimal.VARIANT_TAG, Tag.TAG_ANY_NUMERIC)) {
             String name = legacyNames[Math.floorMod(tag.getInt(DataDrivenVariantAnimal.VARIANT_TAG), legacyNames.length)];
+            return Optional.of(Naturalist.location(name));
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<Identifier> readVariantId(ValueInput input, String[] legacyNames) {
+        Optional<String> variantId = input.getString(DataDrivenVariantAnimal.VARIANT_TAG);
+        if (variantId.isPresent()) {
+            return Optional.ofNullable(Identifier.tryParse(variantId.get()));
+        }
+        Optional<Integer> legacyIndex = input.getInt(DataDrivenVariantAnimal.VARIANT_TAG);
+        if (legacyIndex.isPresent() && legacyNames != null && legacyNames.length > 0) {
+            String name = legacyNames[Math.floorMod(legacyIndex.get(), legacyNames.length)];
             return Optional.of(Naturalist.location(name));
         }
         return Optional.empty();
