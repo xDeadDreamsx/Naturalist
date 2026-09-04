@@ -10,7 +10,6 @@ This pass is intentionally conservative and idempotent:
 from __future__ import annotations
 
 import json
-import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -64,7 +63,6 @@ def migrate_entity_predicate(predicate: Any) -> Any:
     if "type" in predicate and "entity_type" not in predicate and isinstance(predicate["type"], str):
         predicate["entity_type"] = predicate.pop("type")
 
-    # These fields recursively contain entity predicates in 26.2.
     for field in ("vehicle", "passenger", "targeted_entity", "source_entity", "direct_entity"):
         if field in predicate:
             predicate[field] = migrate_entity_predicate(predicate[field])
@@ -87,7 +85,6 @@ def migrate_predicates(node: Any) -> Any:
             if field in damage:
                 damage[field] = migrate_entity_predicate(damage[field])
 
-    # Advancement criteria can also contain direct entity predicates in a few triggers.
     trigger = node.get("trigger")
     if isinstance(trigger, str) and isinstance(node.get("conditions"), dict):
         conditions = node["conditions"]
@@ -132,9 +129,3 @@ if ROOT.exists():
 print(f"26.2 data-pack migration changed {len(changed)} files")
 for path in changed:
     print(path)
-
-# The existing CI migration commit stages Java sources itself. Stage migrated data files here as
-# well so the validated resource changes are persisted on the port branch instead of existing
-# only in the workflow checkout used to build the artifact.
-if changed:
-    subprocess.run(["git", "add", *[str(path) for path in changed]], check=True)
