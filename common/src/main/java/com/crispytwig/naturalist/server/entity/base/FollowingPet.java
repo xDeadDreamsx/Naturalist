@@ -26,7 +26,7 @@ public interface FollowingPet {
 
     static void loadPet(FollowingPet pet, CompoundTag tag) {
         if (tag.contains("FollowingOwner")) {
-            pet.setFollowingOwner(tag.getBoolean("FollowingOwner"));
+            pet.setFollowingOwner(tag.getBooleanOr("FollowingOwner", false));
         }
     }
 
