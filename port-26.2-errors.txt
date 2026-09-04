@@ -1,1805 +1,30 @@
 === NATURALIST 26.2 COMPILE ERRORS ===
 11-
 12-> Task :compileJava
-13:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:8: error: cannot find symbol
-14-import net.minecraft.client.gui.GuiGraphics;
-15-                               ^
-16-  symbol:   class GuiGraphics
-17-  location: package net.minecraft.client.gui
-18:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:29: error: cannot find symbol
-19-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-20-                            ^
-21-  symbol:   class GuiGraphics
-22-  location: class ElephantInventoryScreen
-23:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:43: error: cannot find symbol
-24-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-25-                       ^
-26-  symbol:   class GuiGraphics
-27-  location: class ElephantInventoryScreen
-28:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:8: error: cannot find symbol
-29-import net.minecraft.client.particle.TextureSheetParticle;
-30-                                    ^
-31-  symbol:   class TextureSheetParticle
-32-  location: package net.minecraft.client.particle
-33:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:12: error: cannot find symbol
-34-public class CaptureNetSwingParticle extends TextureSheetParticle {
-35-                                             ^
-36-  symbol: class TextureSheetParticle
-37:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:65: error: cannot find symbol
-38-import net.minecraft.world.item.DiggerItem;
-39-                               ^
-40-  symbol:   class DiggerItem
-41-  location: package net.minecraft.world.item
-42:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java:67: error: cannot find symbol
-43-import net.minecraft.world.item.SwordItem;
-44-                               ^
-45-  symbol:   class SwordItem
-46-  location: package net.minecraft.world.item
-47:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ostrich.java:54: error: cannot find symbol
-48-import net.minecraft.world.entity.Saddleable;
-49-                                 ^
-50-  symbol:   class Saddleable
-51-  location: package net.minecraft.world.entity
-52:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ostrich.java:90: error: cannot find symbol
-53-public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAnimal, FollowingPet, DyeableAnimal, Saddleable, PlayerRideableJumping, IKMount, NeutralMob, DataDrivenVariantAnimal {
-54-                                                                                                                  ^
-55-  symbol: class Saddleable
-56:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hippo.java:44: error: cannot find symbol
-57-import net.minecraft.world.entity.vehicle.Boat;
-58-                                         ^
-59-  symbol:   class Boat
-60-  location: package net.minecraft.world.entity.vehicle
-61:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hippo.java:359: error: cannot find symbol
-62-        private Boat target;
-63-                ^
-64-  symbol:   class Boat
-65-  location: class HippoAttackBoatsGoal
-66:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:10: error: cannot find symbol
-67-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-68-                                            ^
-69-  symbol:   class ThrowableItemProjectile
-70-  location: package net.minecraft.world.entity.projectile
-71:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/misc/ThrownDuckEgg.java:17: error: cannot find symbol
-72-public class ThrownDuckEgg extends ThrowableItemProjectile {
-73-                                   ^
-74-  symbol: class ThrowableItemProjectile
-75:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java:51: error: interface expected here
-76-    public static class Serializer implements RecipeSerializer<BugNetInteractionRecipe> {
-77-                                              ^
-78:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/effect/AntivenomMobEffect.java:3: error: cannot find symbol
-79-import net.minecraft.world.effect.InstantenousMobEffect;
-80-                                 ^
-81-  symbol:   class InstantenousMobEffect
-82-  location: package net.minecraft.world.effect
-83:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/effect/AntivenomMobEffect.java:11: error: cannot find symbol
-84-public class AntivenomMobEffect extends InstantenousMobEffect {
-85-                                        ^
-86-  symbol: class InstantenousMobEffect
-87:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/SnailShellBlock.java:14: error: cannot find symbol
-88-import net.minecraft.world.ItemInteractionResult;
-89-                          ^
-90-  symbol:   class ItemInteractionResult
-91-  location: package net.minecraft.world
-92:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/block/SnailShellBlock.java:97: error: cannot find symbol
-93-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-94-                       ^
-95-  symbol:   class ItemInteractionResult
-96-  location: class SnailShellBlock
-97:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/advancements/criterion/CaughtEntityTrigger.java:12: error: cannot find symbol
-98-public class CaughtEntityTrigger extends SimpleCriterionTrigger<CaughtEntityTrigger.TriggerInstance> {
-99-                                         ^
-100-  symbol: class SimpleCriterionTrigger
-101:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/advancements/criterion/CaughtEntityTrigger.java:25: error: cannot find symbol
-102-    public record TriggerInstance(Optional<ContextAwarePredicate> player, Optional<ItemPredicate> item) implements SimpleInstance {
-103-                                                                                                                   ^
-104-  symbol:   class SimpleInstance
-105-  location: class CaughtEntityTrigger
-106:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/advancements/criterion/CaughtEntityTrigger.java:25: error: cannot find symbol
-107-    public record TriggerInstance(Optional<ContextAwarePredicate> player, Optional<ItemPredicate> item) implements SimpleInstance {
-108-                                           ^
-109-  symbol:   class ContextAwarePredicate
-110-  location: class TriggerInstance
-111:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/advancements/criterion/CaughtEntityTrigger.java:25: error: cannot find symbol
-112-    public record TriggerInstance(Optional<ContextAwarePredicate> player, Optional<ItemPredicate> item) implements SimpleInstance {
-113-                                                                                   ^
-114-  symbol:   class ItemPredicate
-115-  location: class TriggerInstance
-116:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/advancements/criterion/CaughtEntityTrigger.java:5: error: package net.minecraft.advancements.critereon does not exist
-117-import net.minecraft.advancements.critereon.*;
-118-                                 ^
-119:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/DuckEggItem.java:11: error: cannot find symbol
-120-import net.minecraft.world.InteractionResultHolder;
-121-                          ^
-122-  symbol:   class InteractionResultHolder
-123-  location: package net.minecraft.world
-124:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/DuckEggItem.java:25: error: cannot find symbol
-125-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand usedHand) {
-126-                    ^
-127-  symbol:   class InteractionResultHolder
-128-  location: class DuckEggItem
-129:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:16: error: cannot find symbol
-130-import net.minecraft.world.InteractionResultHolder;
-131-                          ^
-132-  symbol:   class InteractionResultHolder
-133-  location: package net.minecraft.world
-134:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/CaughtMobItem.java:13: error: cannot find symbol
-135-import net.minecraft.world.InteractionResultHolder;
-136-                          ^
-137-  symbol:   class InteractionResultHolder
-138-  location: package net.minecraft.world
-139:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:18: error: cannot find symbol
-140-import net.minecraft.world.InteractionResultHolder;
-141-                          ^
-142-  symbol:   class InteractionResultHolder
-143-  location: package net.minecraft.world
-144:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/HedgehogItem.java:97: error: cannot find symbol
-145-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
-146-                    ^
-147-  symbol:   class InteractionResultHolder
-148-  location: class HedgehogItem
-149:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/CaughtMobItem.java:71: error: cannot find symbol
-150-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
-151-                    ^
-152-  symbol:   class InteractionResultHolder
-153-  location: class CaughtMobItem
-154:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:69: error: cannot find symbol
-155-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
-156-                    ^
-157-  symbol:   class InteractionResultHolder
-158-  location: class NaturalistBucketItem
-159:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/NaturalistBucketItem.java:110: error: cannot find symbol
-160-    private InteractionResultHolder<ItemStack> release(Level level, Player player, ItemStack stack, BlockPos pos) {
-161-            ^
-162-  symbol:   class InteractionResultHolder
-163-  location: class NaturalistBucketItem
-164:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/BugNetItem.java:13: error: cannot find symbol
-165-import net.minecraft.world.InteractionResultHolder;
-166-                          ^
-167-  symbol:   class InteractionResultHolder
-168-  location: package net.minecraft.world
-169:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/BugNetItem.java:51: error: cannot find symbol
-170-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand usedHand) {
-171-                    ^
-172-  symbol:   class InteractionResultHolder
-173-  location: class BugNetItem
-174:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:8: error: cannot find symbol
-175-import net.minecraft.world.item.ItemNameBlockItem;
-176-                               ^
-177-  symbol:   class ItemNameBlockItem
-178-  location: package net.minecraft.world.item
-179:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:16: error: cannot find symbol
-180-public class GlowGoopItem extends ItemNameBlockItem {
-181-                                  ^
-182-  symbol: class ItemNameBlockItem
-183:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/item/GlowGoopItem.java:17: error: cannot find symbol
-184-    public GlowGoopItem(Block block, @NotNull Properties properties) {
-185-                                              ^
-186-  symbol:   class Properties
-187-  location: class GlowGoopItem
-188:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/NaturalistClient.java:20: error: cannot find symbol
-189-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
-190-                                         ^
-191-  symbol:   class ClampedItemPropertyFunction
-192-  location: package net.minecraft.client.renderer.item
-193:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/NaturalistClient.java:21: error: cannot find symbol
-194-import net.minecraft.client.renderer.item.ItemProperties;
-195-                                         ^
-196-  symbol:   class ItemProperties
-197-  location: package net.minecraft.client.renderer.item
-198:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/BottleItemMixin.java:8: error: cannot find symbol
-199-import net.minecraft.world.InteractionResultHolder;
-200-                          ^
-201-  symbol:   class InteractionResultHolder
-202-  location: package net.minecraft.world
-203:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/BottleItemMixin.java:30: error: cannot find symbol
-204-    private void onUse(Level level, @NotNull Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
-205-                                                                                                             ^
-206-  symbol:   class InteractionResultHolder
-207-  location: class BottleItemMixin
-208:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/LocalPlayerMixin.java:4: error: cannot find symbol
-209-import net.minecraft.client.player.Input;
-210-                                  ^
-211-  symbol:   class Input
-212-  location: package net.minecraft.client.player
-213:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/LocalPlayerMixin.java:22: error: cannot find symbol
-214-    public Input input;
-215-           ^
-216-  symbol:   class Input
-217-  location: class LocalPlayerMixin
-218:/home/runner/work/Naturalist/Naturalist/fabric/src/main/java/com/crispytwig/naturalist/fabric/client/NaturalistFabricClient.java:11: error: cannot find symbol
-219-import net.fabricmc.fabric.api.client.rendering.v1.ChunkSectionLayerMap;
-220-                                                  ^
-221-  symbol:   class ChunkSectionLayerMap
-222-  location: package net.fabricmc.fabric.api.client.rendering.v1
-223:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:23: error: cannot assign a value to final variable imageWidth
-224-        this.imageWidth = 176;
-225-            ^
-226:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:24: error: cannot assign a value to final variable imageHeight
-227-        this.imageHeight = 204;
-228-            ^
-229:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:28: error: method does not override or implement a method from a supertype
-230-    @Override
-231-    ^
-232:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/gui/screens/ElephantInventoryScreen.java:42: error: method does not override or implement a method from a supertype
-233-    @Override
-234-    ^
-235:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:65: error: Elephant is not abstract and does not override abstract method setPersistentAngerTarget(@org.jspecify.annotations.Nullable EntityReference<LivingEntity>) in NeutralMob
-236-public class Elephant extends TamableAnimal implements NeutralMob, IKMount, DataDrivenVariantAnimal {
-237-       ^
-238:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:338: error: getPersistentAngerTarget() in Elephant cannot implement getPersistentAngerTarget() in NeutralMob
-239-    public UUID getPersistentAngerTarget() {
-240-                ^
-241-  return type UUID is not compatible with EntityReference<LivingEntity>
-242:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:115: error: cannot find symbol
-243-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
-244-                                                             ^
-245-  symbol:   method location()
-246-  location: class ResourceKey<MobVariant>
-247:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:161: error: method does not override or implement a method from a supertype
-248-    @Override
-249-    ^
-250:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:163: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-251-        super.addAdditionalSaveData(compound);
-252-             ^
-253-  required: ValueOutput
-254-  found:    CompoundTag
-255:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-256:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:165: error: method addPersistentAngerSaveData in interface NeutralMob cannot be applied to given types;
-257-        this.addPersistentAngerSaveData(compound);
-258-            ^
-259-  required: ValueOutput
-260-  found:    CompoundTag
-261:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-262:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:173: error: no suitable method found for saveAllItems(CompoundTag,NonNullList<ItemStack>,RegistryAccess)
-263-        ContainerHelper.saveAllItems(compound, items, this.registryAccess());
-264-                       ^
-265-    method ContainerHelper.saveAllItems(ValueOutput,NonNullList<ItemStack>) is not applicable
-266-      (actual and formal argument lists differ in length)
-267-    method ContainerHelper.saveAllItems(ValueOutput,NonNullList<ItemStack>,boolean) is not applicable
-268:      (argument mismatch; CompoundTag cannot be converted to ValueOutput)
-269:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:176: error: method does not override or implement a method from a supertype
-270-    @Override
-271-    ^
-272:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:178: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-273-        super.readAdditionalSaveData(compound);
-274-             ^
-275-  required: ValueInput
-276-  found:    CompoundTag
-277:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-278:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:180: error: method readPersistentAngerSaveData in interface NeutralMob cannot be applied to given types;
-279-        this.readPersistentAngerSaveData(this.level(), compound);
-280-            ^
-281-  required: Level,ValueInput
-282-  found:    Level,CompoundTag
-283:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-284:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:181: error: method setSaddled in class Elephant cannot be applied to given types;
-285-        this.setSaddled(compound.getBoolean("Saddled"));
-286-            ^
-287-  required: boolean
-288-  found:    Optional<Boolean>
-289:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-290:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:182: error: method setChested in class Elephant cannot be applied to given types;
-291-        this.setChested(compound.getBoolean("Chested"));
-292-            ^
-293-  required: boolean
-294-  found:    Optional<Boolean>
-295:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-296:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:183: error: incompatible types: Optional<Integer> cannot be converted to int
-297-        this.tamingFood = compound.getInt("TamingFood");
-298-                                         ^
-299:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:185: error: method loadAllItems in class ContainerHelper cannot be applied to given types;
-300-        ContainerHelper.loadAllItems(compound, items, this.registryAccess());
-301-                       ^
-302-  required: ValueInput,NonNullList<ItemStack>
-303-  found:    CompoundTag,NonNullList<ItemStack>,RegistryAccess
-304-  reason: actual and formal argument lists differ in length
-305:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:217: error: no suitable method found for create(ServerLevel)
-306-        Elephant baby = NaturalistEntityTypes.ELEPHANT.get().create(serverLevel);
-307-                                                            ^
-308-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Elephant>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
-309-      (actual and formal argument lists differ in length)
-310-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+13:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/BottleItemMixin.java:30: error: > or ',' expected
+14-    private void onUse(Level level, @NotNull Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResult cir) {
+15-                                                                                                                               ^
+16-1 error
+17-
+18-> Task :compileJava FAILED
 --
-316-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
-317-      (actual and formal argument lists differ in length)
-318:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:262: error: cannot find symbol
-319-        if (this.isControlledByLocalInstance()) {
-320-                ^
-321-  symbol: method isControlledByLocalInstance()
-322:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:269: error: cannot find symbol
-323-        this.tryCheckInsideBlocks();
-324-            ^
-325-  symbol: method tryCheckInsideBlocks()
-326:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:282: error: method does not override or implement a method from a supertype
-327-    @Override
-328-    ^
-329:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:286: error: no suitable method found for knockback(double,double,double)
-330-            super.knockback(strength / Math.max(1.0 - knockbackResistance, 0.01), x, z);
-331-                 ^
-332-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
-333-      (actual and formal argument lists differ in length)
-334-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
-335-      (actual and formal argument lists differ in length)
-336:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:288: error: no suitable method found for knockback(double,double,double)
-337-            super.knockback(strength, x, z);
-338-                 ^
-339-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
-340-      (actual and formal argument lists differ in length)
-341-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
-342-      (actual and formal argument lists differ in length)
-343:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:297: error: method does not override or implement a method from a supertype
-344-    @Override
-345-    ^
-346:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:299: error: incompatible types: void cannot be converted to boolean
-347-        boolean shouldHurt = target.hurt(target.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
-348-                                        ^
-349:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:302: error: cannot find symbol
-350-            float shieldBlockModifier = livingEntity.isDamageSourceBlocked(target.damageSources().mobAttack(this)) ? 0.5f : 1.0f;
-351-                                                    ^
-352-  symbol:   method isDamageSourceBlocked(DamageSource)
-353-  location: variable livingEntity of type LivingEntity
-354:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:303: error: no suitable method found for knockback(double,double,double)
-355-            livingEntity.knockback(shieldBlockModifier * 3.0D, knockbackDirection.x(), knockbackDirection.z());
-356-                        ^
-357-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
-358-      (actual and formal argument lists differ in length)
-359-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
-360-      (actual and formal argument lists differ in length)
-361:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:321: error: method does not override or implement a method from a supertype
-362-    @Override
-363-    ^
-364:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:326: error: method does not override or implement a method from a supertype
-365-    @Override
-366-    ^
-367:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:331: error: method does not override or implement a method from a supertype
-368-    @Override
-369-    ^
-370:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:337: error: method does not override or implement a method from a supertype
-371-    @Override
-372-    ^
-373:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:350: error: isClientSide has private access in Level
-374-                if (!this.level().isClientSide) {
-375-                                 ^
-376:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:361: error: isClientSide has private access in Level
-377-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-378-                                                                  ^
-379:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:361: error: cannot find symbol
-380-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-381-                                        ^
-382-  symbol:   method sidedSuccess(boolean)
-383-  location: interface InteractionResult
-384:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:371: error: isClientSide has private access in Level
-385-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-386-                                                                  ^
-387:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:371: error: cannot find symbol
-388-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-389-                                        ^
-390-  symbol:   method sidedSuccess(boolean)
-391-  location: interface InteractionResult
-392:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:375: error: isClientSide has private access in Level
-393-                    if (!this.level().isClientSide) {
-394-                                     ^
-395:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:386: error: isClientSide has private access in Level
-396-                    return InteractionResult.sidedSuccess(this.level().isClientSide);
-397-                                                                      ^
-398:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:386: error: cannot find symbol
-399-                    return InteractionResult.sidedSuccess(this.level().isClientSide);
-400-                                            ^
-401-  symbol:   method sidedSuccess(boolean)
-402-  location: interface InteractionResult
-403:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:389: error: isClientSide has private access in Level
-404-                    if (!this.level().isClientSide) {
-405-                                     ^
-406:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:398: error: isClientSide has private access in Level
-407-                    return InteractionResult.sidedSuccess(this.level().isClientSide);
-408-                                                                      ^
-409:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:398: error: cannot find symbol
-410-                    return InteractionResult.sidedSuccess(this.level().isClientSide);
-411-                                            ^
-412-  symbol:   method sidedSuccess(boolean)
-413-  location: interface InteractionResult
-414:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:402: error: isClientSide has private access in Level
-415-                if (!this.level().isClientSide) {
-416-                                 ^
-417:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:409: error: isClientSide has private access in Level
-418-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-419-                                                                  ^
-420:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:409: error: cannot find symbol
-421-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-422-                                        ^
-423-  symbol:   method sidedSuccess(boolean)
-424-  location: interface InteractionResult
-425:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:412: error: isClientSide has private access in Level
-426-                if (!this.level().isClientSide) {
-427-                                 ^
-428:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:418: error: no suitable method found for playSound(Reference<SoundEvent>,float,float)
-429-                    this.playSound(SoundEvents.HORSE_SADDLE, 1.0F, 1.0F);
-430-                        ^
-431-    method Entity.playSound(SoundEvent,float,float) is not applicable
-432:      (argument mismatch; Reference<SoundEvent> cannot be converted to SoundEvent)
-433-    method Entity.playSound(SoundEvent) is not applicable
-434-      (actual and formal argument lists differ in length)
-435:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:420: error: isClientSide has private access in Level
-436-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-437-                                                                  ^
-438:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:420: error: cannot find symbol
-439-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-440-                                        ^
-441-  symbol:   method sidedSuccess(boolean)
-442-  location: interface InteractionResult
-443:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:424: error: isClientSide has private access in Level
-444-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-445-                                                                  ^
-446:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:424: error: cannot find symbol
-447-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-448-                                        ^
-449-  symbol:   method sidedSuccess(boolean)
-450-  location: interface InteractionResult
-451:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:428: error: isClientSide has private access in Level
-452-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-453-                                                                  ^
-454:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:428: error: cannot find symbol
-455-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-456-                                        ^
-457-  symbol:   method sidedSuccess(boolean)
-458-  location: interface InteractionResult
-459:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:435: error: isClientSide has private access in Level
-460-        if (!this.level().isClientSide) {
-461-                         ^
-462:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:499: error: isClientSide has private access in Level
-463-        if (this.level().isClientSide) {
-464-                        ^
-465:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:508: error: method does not override or implement a method from a supertype
-466-    @Override
-467-    ^
-468:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:510: error: method dropEquipment in class LivingEntity cannot be applied to given types;
-469-        super.dropEquipment();
-470-             ^
-471-  required: ServerLevel
-472-  found:    no arguments
-473-  reason: actual and formal argument lists differ in length
-474:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:511: error: isClientSide has private access in Level
-475-        if (!this.level().isClientSide) {
-476-                         ^
-477:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:529: error: no suitable method found for spawnAtLocation(ItemStack,float)
-478-        ItemEntity item = this.spawnAtLocation(stack, this.getBbHeight());
-479-                              ^
-480-    method Entity.spawnAtLocation(ServerLevel,ItemLike) is not applicable
-481:      (argument mismatch; ItemStack cannot be converted to ServerLevel)
-482-    method Entity.spawnAtLocation(ServerLevel,ItemStack) is not applicable
-483:      (argument mismatch; ItemStack cannot be converted to ServerLevel)
-484-    method Entity.spawnAtLocation(ServerLevel,ItemStack,Vec3) is not applicable
-485-      (actual and formal argument lists differ in length)
-486-    method Entity.spawnAtLocation(ServerLevel,ItemStack,float) is not applicable
-487-      (actual and formal argument lists differ in length)
-488:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:538: error: isClientSide has private access in Level
-489-        if (this.level().isClientSide) {
-490-                        ^
-491:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:548: error: isClientSide has private access in Level
-492-        if (!this.level().isClientSide) {
-493-                         ^
-494:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:554: error: method does not override or implement a method from a supertype
-495-    @Override
-496-    ^
-497:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:556: error: method customServerAiStep in class Animal cannot be applied to given types;
-498-        super.customServerAiStep();
-499-             ^
-500-  required: ServerLevel
-501-  found:    no arguments
-502-  reason: actual and formal argument lists differ in length
-503:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Elephant.java:604: error: method doHurtTarget in class Mob cannot be applied to given types;
-504-                this.mob.doHurtTarget(target);
-505-                        ^
-506-  required: ServerLevel,Entity
-507-  found:    LivingEntity
-508-  reason: actual and formal argument lists differ in length
-509:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/DataDrivenVariantAnimal.java:29: error: cannot find symbol
-510-        return new String[]{this.getDefaultVariant().location().getPath()};
-511-                                                    ^
-512-  symbol:   method location()
-513-  location: class ResourceKey<MobVariant>
-514:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/DataDrivenVariantAnimal.java:40: error: cannot find symbol
-515-        return location != null ? location : this.getDefaultVariant().location();
-516-                                                                     ^
-517-  symbol:   method location()
-518-  location: class ResourceKey<MobVariant>
-519:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/DataDrivenVariantAnimal.java:44: error: cannot find symbol
-520-        variant.unwrapKey().ifPresent(key -> this.setVariantString(key.location().toString()));
-521-                                                                      ^
-522-  symbol:   method location()
-523-  location: variable key of type ResourceKey<MobVariant>
-524:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/variant/DataDrivenVariantAnimal.java:52: error: cannot find symbol
-525-        return !this.getVariantLocation().equals(this.getDefaultVariant().location());
-526-                                                                         ^
-527-  symbol:   method location()
-528-  location: class ResourceKey<MobVariant>
-529:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/TerrainLegSolver.java:96: error: cannot find symbol
-530-            if (pos.getY() < level.getMinBuildHeight()) {
-531-                                  ^
-532-  symbol:   method getMinBuildHeight()
-533-  location: variable level of type Level
-534:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:18: error: cannot find symbol
-535-        this.lifetime = 4;
-536-            ^
-537-  symbol: variable lifetime
-538:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:19: error: cannot find symbol
-539-        this.quadSize = 0.8F;
-540-            ^
-541-  symbol: variable quadSize
-542:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:20: error: cannot find symbol
-543-        this.hasPhysics = false;
-544-            ^
-545-  symbol: variable hasPhysics
-546:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:21: error: cannot find symbol
-547-        this.gravity = 0.0F;
-548-            ^
-549-  symbol: variable gravity
-550:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:22: error: cannot find symbol
-551-        this.friction = 1.0F;
-552-            ^
-553-  symbol: variable friction
-554:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:23: error: cannot find symbol
-555-        this.xd = 0.0;
-556-            ^
-557-  symbol: variable xd
-558:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:24: error: cannot find symbol
-559-        this.yd = 0.0;
-560-            ^
-561-  symbol: variable yd
-562:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:25: error: cannot find symbol
-563-        this.zd = 0.0;
-564-            ^
-565-  symbol: variable zd
-566:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:26: error: cannot find symbol
-567-        this.setSpriteFromAge(sprites);
-568-            ^
-569-  symbol: method setSpriteFromAge(SpriteSet)
-570:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:29: error: method does not override or implement a method from a supertype
-571-    @Override
-572-    ^
-573:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:31: error: cannot find symbol
-574-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
-575-                                 ^
-576-  symbol:   variable PARTICLE_SHEET_TRANSLUCENT
-577-  location: class ParticleRenderType
-578:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:34: error: method does not override or implement a method from a supertype
-579-    @Override
-580-    ^
-581:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:39: error: method does not override or implement a method from a supertype
-582-    @Override
-583-    ^
-584:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:41: error: cannot find symbol
-585-        super.tick();
-586-        ^
-587-  symbol:   variable super
-588-  location: class CaptureNetSwingParticle
-589:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:42: error: cannot find symbol
-590-        this.setSpriteFromAge(this.sprites);
-591-            ^
-592-  symbol: method setSpriteFromAge(SpriteSet)
-593:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:45: error: Provider is not abstract and does not override abstract method createParticle(SimpleParticleType,ClientLevel,double,double,double,double,double,double,RandomSource) in ParticleProvider
-594-    public static class Provider implements ParticleProvider<SimpleParticleType> {
-595-                  ^
-596:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:52: error: method does not override or implement a method from a supertype
-597-        @Override
-598-        ^
-599:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/particle/CaptureNetSwingParticle.java:54: error: incompatible types: CaptureNetSwingParticle cannot be converted to Particle
-600-            return new CaptureNetSwingParticle(level, x, y, z, this.sprites);
-601-                   ^
-602:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:50: error: no suitable method found for of(TagKey<Item>)
-603-    private static final Ingredient TEMPT_INGREDIENT = Ingredient.of(NaturalistTags.ItemTags.LIZARD_TEMPT_ITEMS);
-604-                                                                 ^
-605-    method Ingredient.of(ItemLike) is not applicable
-606:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
-607-    method Ingredient.of(ItemLike...) is not applicable
-608:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
-609-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
-610:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
-611-    method Ingredient.of(HolderSet<Item>) is not applicable
-612:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
-613:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:144: error: method does not override or implement a method from a supertype
-614-    @Override
-615-    ^
-616:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:146: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-617-        super.addAdditionalSaveData(compound);
-618-             ^
-619-  required: ValueOutput
-620-  found:    CompoundTag
-621:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-622:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:153: error: method does not override or implement a method from a supertype
-623-    @Override
-624-    ^
-625:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:155: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-626-        super.readAdditionalSaveData(compound);
-627-             ^
-628-  required: ValueInput
-629-  found:    CompoundTag
-630:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-631:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:157: error: method setHasTail in class Lizard cannot be applied to given types;
-632-        this.setHasTail(compound.getBoolean("HasTail"));
-633-            ^
-634-  required: boolean
-635-  found:    Optional<Boolean>
-636:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-637:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:194: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Lizard cannot override hurt(DamageSource,float) in Entity
-638-    public boolean hurt(@NotNull DamageSource source, float amount) {
-639-                   ^
-640-  overridden method is final
-641:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:193: error: method does not override or implement a method from a supertype
-642-    @Override
-643-    ^
-644:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:198: error: no suitable method found for create(Level)
-645-            LizardTail lizardTail = NaturalistEntityTypes.LIZARD_TAIL.get().create(this.level());
-646-                                                                           ^
-647-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<LizardTail>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
-648-      (actual and formal argument lists differ in length)
-649-    method EntityType.create(Level,EntitySpawnReason) is not applicable
+25-Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
+26-> Compilation failed; see the compiler output below.
+27:  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/BottleItemMixin.java:30: error: > or ',' expected
+28-      private void onUse(Level level, @NotNull Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResult cir) {
+29-                                                                                                                                 ^
+30-  1 error
+31-
+32-* Try:
 --
-655-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
-656-      (actual and formal argument lists differ in length)
-657:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:209: error: incompatible types: void cannot be converted to boolean
-658-        return super.hurt(source, amount);
-659-                         ^
-660:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:226: error: isClientSide has private access in Level
-661-        if (this.level().isClientSide) {
-662-                        ^
-663:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lizard.java:336: error: isClientSide has private access in Level
-664-        if (this.level().isClientSide) {
-665-                        ^
-666:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:35: error: incompatible types: Optional<Integer> cannot be converted to int
-667-            int id = tag.getInt("DyeColor");
-668-                               ^
-669:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:43: error: cannot find symbol
-670-            DyeColor color = dyeItem.getDyeColor();
-671-                                    ^
-672-  symbol:   method getDyeColor()
-673-  location: variable dyeItem of type DyeItem
-674:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:45: error: isClientSide has private access in Level
-675-                if (!animal.level().isClientSide) {
-676-                                   ^
-677:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:52: error: isClientSide has private access in Level
-678-                return Optional.of(InteractionResult.sidedSuccess(animal.level().isClientSide));
-679-                                                                                ^
-680:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:52: error: cannot find symbol
-681-                return Optional.of(InteractionResult.sidedSuccess(animal.level().isClientSide));
-682-                                                    ^
-683-  symbol:   method sidedSuccess(boolean)
-684-  location: interface InteractionResult
-685:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:61: error: isClientSide has private access in Level
-686-            if (!animal.level().isClientSide) {
-687-                               ^
-688:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:66: error: isClientSide has private access in Level
-689-            return Optional.of(InteractionResult.sidedSuccess(animal.level().isClientSide));
-690-                                                                            ^
-691:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java:66: error: cannot find symbol
-692-            return Optional.of(InteractionResult.sidedSuccess(animal.level().isClientSide));
-693-                                                ^
-694-  symbol:   method sidedSuccess(boolean)
-695-  location: interface InteractionResult
-696:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/FollowingPet.java:27: error: method setFollowingOwner in interface FollowingPet cannot be applied to given types;
-697-            pet.setFollowingOwner(tag.getBoolean("FollowingOwner"));
-698-               ^
-699-  required: boolean
-700-  found:    Optional<Boolean>
-701:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-702:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/FollowingPet.java:35: error: method isOnCooldown in class ItemCooldowns cannot be applied to given types;
-703-                || player.isSecondaryUseActive() || player.getCooldowns().isOnCooldown(stack.getItem())) {
-704-                                                                         ^
-705-  required: ItemStack
-706-  found:    Item
-707:  reason: argument mismatch; Item cannot be converted to ItemStack
-708:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/FollowingPet.java:38: error: isClientSide has private access in Level
-709-        if (!mob.level().isClientSide) {
-710-                        ^
-711:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/FollowingPet.java:49: error: cannot find symbol
-712-            player.displayClientMessage(Component.translatable("naturalist.whistle.message", name, state)
-713-                  ^
-714-  symbol:   method displayClientMessage(MutableComponent,boolean)
-715-  location: variable player of type Player
-716:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/FollowingPet.java:52: error: no suitable method found for addCooldown(Item,int)
-717-        player.getCooldowns().addCooldown(stack.getItem(), 20);
-718-                             ^
-719-    method ItemCooldowns.addCooldown(ItemStack,int) is not applicable
-720:      (argument mismatch; Item cannot be converted to ItemStack)
-721-    method ItemCooldowns.addCooldown(Identifier,int) is not applicable
-722:      (argument mismatch; Item cannot be converted to Identifier)
-723:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/FollowingPet.java:53: error: isClientSide has private access in Level
-724-        return InteractionResult.sidedSuccess(mob.level().isClientSide);
-725-                                                         ^
-726:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/FollowingPet.java:53: error: cannot find symbol
-727-        return InteractionResult.sidedSuccess(mob.level().isClientSide);
-728-                                ^
-729-  symbol:   method sidedSuccess(boolean)
-730-  location: interface InteractionResult
-731:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:23: error: MobPart is not abstract and does not override abstract method addAdditionalSaveData(ValueOutput) in Entity
-732-public class MobPart extends Entity {
-733-       ^
-734:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:106: error: method does not override or implement a method from a supertype
-735-    @Override
-736-    ^
-737:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:110: error: method does not override or implement a method from a supertype
-738-    @Override
-739-    ^
-740:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:130: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in MobPart cannot override hurt(DamageSource,float) in Entity
-741-    public boolean hurt(@NotNull DamageSource source, float amount) {
-742-                   ^
-743-  overridden method is final
-744:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:129: error: method does not override or implement a method from a supertype
-745-    @Override
-746-    ^
-747:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:131: error: cannot find symbol
-748-        return !this.isInvulnerableTo(source) && this.parent.hurt(source, amount);
-749-                    ^
-750-  symbol: method isInvulnerableTo(DamageSource)
-751:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:131: error: 'void' type not allowed here
-752-        return !this.isInvulnerableTo(source) && this.parent.hurt(source, amount);
-753-                                                                 ^
-754:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:134: error: method does not override or implement a method from a supertype
-755-    @Override
-756-    ^
-757:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/MobPart.java:136: error: method interact in class Mob cannot be applied to given types;
-758-        return this.parent.interact(player, hand);
-759-                          ^
-760-  required: Player,InteractionHand,Vec3
-761-  found:    Player,InteractionHand
-762-  reason: actual and formal argument lists differ in length
-763:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:77: error: Bear is not abstract and does not override abstract method setPersistentAngerTarget(@org.jspecify.annotations.Nullable EntityReference<LivingEntity>) in NeutralMob
-764-public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
-765-       ^
-766:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:233: error: getPersistentAngerTarget() in Bear cannot implement getPersistentAngerTarget() in NeutralMob
-767-    public UUID getPersistentAngerTarget() {
-768-                ^
-769-  return type UUID is not compatible with EntityReference<LivingEntity>
-770:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:79: error: no suitable method found for of(TagKey<Item>)
-771-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.BEAR_TEMPT_ITEMS);
-772-                                                           ^
-773-    method Ingredient.of(ItemLike) is not applicable
-774:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
-775-    method Ingredient.of(ItemLike...) is not applicable
-776:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
-777-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
-778:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
-779-    method Ingredient.of(HolderSet<Item>) is not applicable
-780:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
-781:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:123: error: cannot find symbol
-782-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
-783-                                                             ^
-784-  symbol:   method location()
-785-  location: class ResourceKey<MobVariant>
-786:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:167: error: cannot find symbol
-787-        long dayTime = this.level().getDayTime();
-788-                                   ^
-789-  symbol:   method getDayTime()
-790-  location: class Level
-791:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:216: error: method does not override or implement a method from a supertype
-792-    @Override
-793-    ^
-794:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:221: error: method does not override or implement a method from a supertype
-795-    @Override
-796-    ^
-797:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:226: error: method does not override or implement a method from a supertype
-798-    @Override
-799-    ^
-800:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:232: error: method does not override or implement a method from a supertype
-801-    @Override
-802-    ^
-803:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:257: error: method does not override or implement a method from a supertype
-804-    @Override
-805-    ^
-806:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:259: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-807-        super.addAdditionalSaveData(compound);
-808-             ^
-809-  required: ValueOutput
-810-  found:    CompoundTag
-811:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-812:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:261: error: method addPersistentAngerSaveData in interface NeutralMob cannot be applied to given types;
-813-        this.addPersistentAngerSaveData(compound);
-814-            ^
-815-  required: ValueOutput
-816-  found:    CompoundTag
-817:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-818:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:268: error: method does not override or implement a method from a supertype
-819-    @Override
-820-    ^
-821:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:270: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-822-        super.readAdditionalSaveData(compound);
-823-             ^
-824-  required: ValueInput
-825-  found:    CompoundTag
-826:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-827:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:272: error: method readPersistentAngerSaveData in interface NeutralMob cannot be applied to given types;
-828-        this.readPersistentAngerSaveData(this.level(), compound);
-829-            ^
-830-  required: Level,ValueInput
-831-  found:    Level,CompoundTag
-832:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-833:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:274: error: method setSheared in class Bear cannot be applied to given types;
-834-            this.setSheared(compound.getBoolean("Sheared"));
-835-                ^
-836-  required: boolean
-837-  found:    Optional<Boolean>
-838:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-839:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:303: error: no suitable method found for create(ServerLevel)
-840-        AgeableMob baby = (AgeableMob) this.getType().create(serverLevel);
-841-                                                     ^
-842-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<CAP#1>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
-843-      (actual and formal argument lists differ in length)
-844-    method EntityType.create(Level,EntitySpawnReason) is not applicable
---
-852-  where CAP#1 is a fresh type-variable:
-853-    CAP#1 extends Entity from capture of ?
-854:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:338: error: cannot infer type arguments for NearestAttackableTargetGoal<>
-855-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 20, true, false, this::isHostileWhenDark));
-856-                                       ^
-857:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:339: error: cannot infer type arguments for NearestAttackableTargetGoal<>
-858-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, PathfinderMob.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.BEAR_HOSTILES) && !this.isSleeping() && !this.isBaby() && this.canHunt()));
-859-                                       ^
-860:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:358: error: method does not override or implement a method from a supertype
-861-    @Override
-862-    ^
-863:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:361: error: no suitable method found for knockback(double,double,double)
-864-            super.knockback(strength / Math.max(1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.01), x, z);
-865-                 ^
-866-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
-867-      (actual and formal argument lists differ in length)
-868-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
-869-      (actual and formal argument lists differ in length)
-870:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:363: error: no suitable method found for knockback(double,double,double)
-871-            super.knockback(strength, x, z);
-872-                 ^
-873-    method LivingEntity.knockback(double,double,double,DamageSource,float,boolean) is not applicable
-874-      (actual and formal argument lists differ in length)
-875-    method LivingEntity.knockback(double,double,double,DamageSource,float) is not applicable
-876-      (actual and formal argument lists differ in length)
-877:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:368: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Bear cannot override hurt(DamageSource,float) in Entity
-878-    public boolean hurt(@NotNull DamageSource source, float amount) {
-879-                   ^
-880-  overridden method is final
-881:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:367: error: method does not override or implement a method from a supertype
-882-    @Override
-883-    ^
-884:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:369: error: isClientSide has private access in Level
-885-        if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide) {
-886-                                                              ^
-887:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:381: error: incompatible types: void cannot be converted to boolean
-888-        return super.hurt(source, amount);
-889-                         ^
-890:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:389: error: method does not override or implement a method from a supertype
-891-    @Override
-892-    ^
-893:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:391: error: method isInvulnerableTo in class LivingEntity cannot be applied to given types;
-894-        return source.equals(this.damageSources().sweetBerryBush()) || super.isInvulnerableTo(source);
-895-                                                                            ^
-896-  required: ServerLevel,DamageSource
-897-  found:    DamageSource
-898-  reason: actual and formal argument lists differ in length
-899:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:399: error: method does not override or implement a method from a supertype
-900-    @Override
-901-    ^
-902:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:401: error: method killedEntity in class Entity cannot be applied to given types;
-903-        boolean result = super.killedEntity(level, killed);
-904-                              ^
-905-  required: ServerLevel,LivingEntity,DamageSource
-906-  found:    ServerLevel,LivingEntity
-907-  reason: actual and formal argument lists differ in length
-908:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:424: error: isClientSide has private access in Level
-909-            if (!this.level().isClientSide) {
-910-                             ^
-911:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:431: error: isClientSide has private access in Level
-912-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-913-                                                              ^
-914:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:431: error: cannot find symbol
-915-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-916-                                    ^
-917-  symbol:   method sidedSuccess(boolean)
-918-  location: interface InteractionResult
-919:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:438: error: isClientSide has private access in Level
-920-            if (!this.level().isClientSide) {
-921-                             ^
-922:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:449: error: isClientSide has private access in Level
-923-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-924-                                                              ^
-925:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:449: error: cannot find symbol
-926-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-927-                                    ^
-928-  symbol:   method sidedSuccess(boolean)
-929-  location: interface InteractionResult
-930:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:457: error: isClientSide has private access in Level
-931-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-932-                                                                  ^
-933:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:457: error: cannot find symbol
-934-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-935-                                        ^
-936-  symbol:   method sidedSuccess(boolean)
-937-  location: interface InteractionResult
-938:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:463: error: isClientSide has private access in Level
-939-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-940-                                                                  ^
-941:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:463: error: cannot find symbol
-942-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-943-                                        ^
-944-  symbol:   method sidedSuccess(boolean)
-945-  location: interface InteractionResult
-946:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:469: error: method does not override or implement a method from a supertype
-947-    @Override
-948-    ^
-949:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:475: error: cannot find symbol
-950-            return slot == EquipmentSlot.MAINHAND && super.canTakeItem(itemStack);
-951-                                                          ^
-952-  symbol: method canTakeItem(ItemStack)
-953:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:479: error: method does not override or implement a method from a supertype
-954-    @Override
-955-    ^
-956:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:485: error: cannot find symbol
-957-            this.handDropChances[EquipmentSlot.MAINHAND.getIndex()] = 2.0F;
-958-                ^
-959-  symbol: variable handDropChances
-960:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:518: error: isClientSide has private access in Level
-961-        if (!this.level().isClientSide) {
-962-                         ^
-963:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:536: error: cannot find symbol
-964-        this.level().getProfiler().push("looting");
-965-                    ^
-966-  symbol:   method getProfiler()
-967-  location: class Level
-968:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:537: error: isClientSide has private access in Level
-969-        if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-970-                         ^
-971:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:537: error: cannot find symbol
-972-        if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-973-                                                                                                                                                  ^
-974-  symbol:   variable RULE_MOBGRIEFING
-975-  location: class GameRules
-976:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:537: error: cannot find symbol
-977-        if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-978-                                                                                                              ^
-979-  symbol:   method getGameRules()
-980-  location: class Level
-981:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:539: error: method wantsToPickUp in class Mob cannot be applied to given types;
-982-                if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(itementity.getItem())) {
-983-                                                                                      ^
-984-  required: ServerLevel,ItemStack
-985-  found:    ItemStack
-986-  reason: actual and formal argument lists differ in length
-987:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:539: error: method wantsToPickUp in class Mob cannot be applied to given types;
-988-                if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && this.wantsToPickUp(itementity.getItem())) {
-989-                                                                                                    ^
-990-  required: ServerLevel,ItemStack
-991-  found:    ItemStack,<any>
-992:  reason: argument mismatch; ItemStack cannot be converted to ServerLevel
-993:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:544: error: cannot find symbol
-994-        this.level().getProfiler().pop();
-995-                    ^
-996-  symbol:   method getProfiler()
-997-  location: class Level
-998:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:547: error: method does not override or implement a method from a supertype
-999-    @Override
-1000-    ^
-1001:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:549: error: method customServerAiStep in class Animal cannot be applied to given types;
-1002-        super.customServerAiStep();
-1003-             ^
-1004-  required: ServerLevel
-1005-  found:    no arguments
-1006-  reason: actual and formal argument lists differ in length
-1007:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:559: error: isClientSide has private access in Level
-1008-        if (!this.level().isClientSide) {
-1009-                         ^
-1010:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:609: error: no suitable constructor found for ItemParticleOption(ParticleType<ItemParticleOption>,ItemStack)
-1011-                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, eatingStack), posVec.x, posVec.y, posVec.z, speedVec .x, speedVec .y + 0.05D, speedVec .z);
-1012-                                         ^
-1013-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,Item) is not applicable
-1014:      (argument mismatch; ItemStack cannot be converted to Item)
-1015-    constructor ItemParticleOption.ItemParticleOption(ParticleType<ItemParticleOption>,ItemStackTemplate) is not applicable
-1016:      (argument mismatch; ItemStack cannot be converted to ItemStackTemplate)
-1017:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:676: error: no suitable constructor found for NearestAttackableTargetGoal(Bear,Class<Player>,int,boolean,boolean,Predicate<LivingEntity>)
-1018-            super(mob, targetType, randomInterval, mustSee, mustReach, targetPredicate);
-1019-            ^
-1020-    constructor NearestAttackableTargetGoal.NearestAttackableTargetGoal(Mob,Class<Player>,boolean) is not applicable
-1021-      (actual and formal argument lists differ in length)
-1022-    constructor NearestAttackableTargetGoal.NearestAttackableTargetGoal(Mob,Class<Player>,boolean,Selector) is not applicable
---
-1025-      (actual and formal argument lists differ in length)
-1026-    constructor NearestAttackableTargetGoal.NearestAttackableTargetGoal(Mob,Class<Player>,int,boolean,boolean,@org.jspecify.annotations.Nullable Selector) is not applicable
-1027:      (argument mismatch; Predicate<LivingEntity> cannot be converted to Selector)
-1028:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:761: error: cannot find symbol
-1029-            if (bear.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-1030-                                                                ^
-1031-  symbol:   variable RULE_MOBGRIEFING
-1032-  location: class GameRules
-1033:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:761: error: cannot find symbol
-1034-            if (bear.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-1035-                            ^
-1036-  symbol:   method getGameRules()
-1037-  location: class Level
-1038:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:797: error: method dropHoneycomb in class BeehiveBlock cannot be applied to given types;
-1039-            BeehiveBlock.dropHoneycomb(bear.level(), blockPos);
-1040-                        ^
-1041-  required: ServerLevel,ItemStack,BlockState,BlockEntity,Entity,BlockPos
-1042-  found:    Level,BlockPos
-1043-  reason: actual and formal argument lists differ in length
-1044:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:797: error: method dropHoneycomb in class BeehiveBlock cannot be applied to given types;
-1045-            BeehiveBlock.dropHoneycomb(bear.level(), blockPos);
-1046-                                      ^
-1047-  required: ServerLevel,ItemStack,BlockState,BlockEntity,Entity,BlockPos
-1048-  found:    Level,BlockPos,<any>,<any>,<any>,<any>
-1049:  reason: argument mismatch; Level cannot be converted to ServerLevel
-1050:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:805: error: random has protected access in Level
-1051-            int berryAmount = 1 + bear.level().random.nextInt(2) + (state.getValue(SweetBerryBushBlock.AGE) == 3 ? 1 : 0);
-1052-                                              ^
-1053:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/ai/goal/BabySniffFlowersGoal.java:60: error: cannot find symbol
-1054-                    if (this.mob.isWithinRestriction(mutable) && this.isValidTarget(this.mob.level(), mutable)) {
-1055-                                ^
-1056-  symbol:   method isWithinRestriction(MutableBlockPos)
-1057-  location: variable mob of type PathfinderMob
-1058:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:959: error: no suitable method found for spawnAtLocation(ItemStack)
-1059-                bear.spawnAtLocation(stack);
-1060-                    ^
-1061-    method Entity.spawnAtLocation(ServerLevel,ItemLike) is not applicable
-1062-      (actual and formal argument lists differ in length)
-1063-    method Entity.spawnAtLocation(ServerLevel,ItemStack) is not applicable
---
-1067-    method Entity.spawnAtLocation(ServerLevel,ItemStack,float) is not applicable
-1068-      (actual and formal argument lists differ in length)
-1069:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:989: error: isClientSide has private access in Level
-1070-        if (this.level().isClientSide) {
-1071-                        ^
-1072:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bear.java:1015: error: isClientSide has private access in Level
-1073-        if (!this.level().isClientSide) {
-1074-                         ^
-1075:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/HuntingAnimal.java:33: error: method setHuntingCooldown in interface HuntingAnimal cannot be applied to given types;
-1076-        this.setHuntingCooldown(compound.getInt(HUNTING_COOLDOWN_TAG));
-1077-            ^
-1078-  required: int
-1079-  found:    Optional<Integer>
-1080:  reason: argument mismatch; Optional<Integer> cannot be converted to int
-1081:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/NocturnalHostile.java:14: error: cannot find symbol
-1082-        return ((LivingEntity) this).level().isNight();
-1083-                                            ^
-1084-  symbol:   method isNight()
-1085-  location: class Level
-1086:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:77: error: no suitable method found for of(TagKey<Item>)
-1087-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.TIGER_FOOD_ITEMS);
-1088-                                                           ^
-1089-    method Ingredient.of(ItemLike) is not applicable
-1090:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
-1091-    method Ingredient.of(ItemLike...) is not applicable
-1092:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
-1093-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
-1094:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
-1095-    method Ingredient.of(HolderSet<Item>) is not applicable
-1096:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
-1097:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:148: error: cannot find symbol
-1098-        builder.define(DATA_VARIANT, NaturalistMobVariants.TIGER_BLACK_PANTHER.location().toString());
-1099-                                                                              ^
-1100-  symbol:   method location()
-1101-  location: variable TIGER_BLACK_PANTHER of type ResourceKey<MobVariant>
-1102:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:219: error: method does not override or implement a method from a supertype
-1103-    @Override
-1104-    ^
-1105:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:221: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-1106-        super.addAdditionalSaveData(compound);
-1107-             ^
-1108-  required: ValueOutput
-1109-  found:    CompoundTag
-1110:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1111:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:227: error: method does not override or implement a method from a supertype
-1112-    @Override
-1113-    ^
-1114:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:229: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-1115-        super.readAdditionalSaveData(compound);
-1116-             ^
-1117-  required: ValueInput
-1118-  found:    CompoundTag
-1119:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-1120:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:245: error: no suitable method found for create(ServerLevel)
-1121-        Tiger baby = NaturalistEntityTypes.TIGER.get().create(level);
-1122-                                                      ^
-1123-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Tiger>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
-1124-      (actual and formal argument lists differ in length)
-1125-    method EntityType.create(Level,EntitySpawnReason) is not applicable
---
-1131-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
-1132-      (actual and formal argument lists differ in length)
-1133:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:283: error: cannot infer type arguments for NearestAttackableTargetGoal<>
-1134-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, true,
-1135-                                       ^
-1136:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:303: error: method does not override or implement a method from a supertype
-1137-    @Override
-1138-    ^
-1139:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:305: error: method killedEntity in class Entity cannot be applied to given types;
-1140-        boolean result = super.killedEntity(level, killed);
-1141-                              ^
-1142-  required: ServerLevel,LivingEntity,DamageSource
-1143-  found:    ServerLevel,LivingEntity
-1144-  reason: actual and formal argument lists differ in length
-1145:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:324: error: isClientSide has private access in Level
-1146-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-1147-                                                              ^
-1148:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:324: error: cannot find symbol
-1149-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-1150-                                    ^
-1151-  symbol:   method sidedSuccess(boolean)
-1152-  location: interface InteractionResult
-1153:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:326: error: isClientSide has private access in Level
-1154-        if (this.level().isClientSide) {
-1155-                        ^
-1156:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:379: error: method does not override or implement a method from a supertype
-1157-    @Override
-1158-    ^
-1159:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:392: error: cannot find symbol
-1160-        long dayTime = this.level().getDayTime();
-1161-                                   ^
-1162-  symbol:   method getDayTime()
-1163-  location: class Level
-1164:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tiger.java:494: error: isClientSide has private access in Level
-1165-        if (this.level().isClientSide) {
-1166-                        ^
-1167:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/util/AnimationSoundPlayer.java:42: error: cannot find symbol
-1168-            float now = this.state.getAccumulatedTime() / 1000.0F;
-1169-                                  ^
-1170-  symbol:   method getAccumulatedTime()
-1171-  location: variable state of type AnimationState
-1172:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/NaturalistAnimal.java:37: error: isClientSide has private access in Level
-1173-        if (!mob.level().isClientSide && mob.getNavigation().isInProgress() && mob.isInWaterOrBubble() && path != null) {
-1174-                        ^
-1175:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/NaturalistAnimal.java:37: error: cannot find symbol
-1176-        if (!mob.level().isClientSide && mob.getNavigation().isInProgress() && mob.isInWaterOrBubble() && path != null) {
-1177-                                                                                  ^
-1178-  symbol:   method isInWaterOrBubble()
-1179-  location: variable mob of type Mob
-1180:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:60: error: cannot find symbol
-1181-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
-1182-                                         ^
-1183-  symbol:   variable DANGER_FIRE
-1184-  location: class PathType
-1185:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:74: error: cannot find symbol
-1186-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
-1187-                                                             ^
-1188-  symbol:   method location()
-1189-  location: class ResourceKey<MobVariant>
-1190:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:95: error: method does not override or implement a method from a supertype
-1191-    @Override
-1192-    ^
-1193:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:97: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
-1194-        super.addAdditionalSaveData(compound);
-1195-             ^
-1196-  required: ValueOutput
-1197-  found:    CompoundTag
-1198:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1199:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:101: error: method does not override or implement a method from a supertype
-1200-    @Override
-1201-    ^
-1202:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:103: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
-1203-        super.readAdditionalSaveData(compound);
-1204-             ^
-1205-  required: ValueInput
-1206-  found:    CompoundTag
-1207:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-1208:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:185: error: cannot find symbol
-1209-        navigation.setCanPassDoors(true);
-1210-                  ^
-1211-  symbol:   method setCanPassDoors(boolean)
-1212-  location: variable navigation of type FlyingPathNavigation
-1213:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:189: error: method does not override or implement a method from a supertype
-1214-    @Override
-1215-    ^
-1216:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:229: error: isClientSide has private access in Level
-1217-                if (!level().isClientSide) {
-1218-                            ^
-1219:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:237: error: random has protected access in Level
-1220-                level().playSound(null, this.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level().random.nextFloat() * 0.2F);
-1221-                                                                                                                                                 ^
-1222:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:244: error: isClientSide has private access in Level
-1223-        if (!this.level().isClientSide) {
-1224-                         ^
-1225:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:245: error: cannot find symbol
-1226-            return this.level().isNight() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;
-1227-                               ^
-1228-  symbol:   method isNight()
-1229-  location: class Level
-1230:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:250: error: method does not override or implement a method from a supertype
-1231-    @Override
-1232-    ^
-1233:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:252: error: cannot find symbol
-1234-        if (this.level().isDay() && !this.hasCustomName() && !this.level().isClientSide) {
-1235-                        ^
-1236-  symbol:   method isDay()
-1237-  location: class Level
-1238:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:252: error: isClientSide has private access in Level
-1239-        if (this.level().isDay() && !this.hasCustomName() && !this.level().isClientSide) {
-1240-                                                                          ^
-1241:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:301: error: isClientSide has private access in Level
-1242-                if (!level.isClientSide) {
-1243-                          ^
-1244:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:304: error: random has protected access in Level
-1245-                level.playSound(null, firefly.blockPosition(), NaturalistSoundEvents.FIREFLY_HIDE.get(), SoundSource.NEUTRAL, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
-1246-                                                                                                                                                ^
-1247:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Firefly.java:320: error: isClientSide has private access in Level
-1248-        if (this.level().isClientSide) {
-1249-                        ^
-1250:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:80: error: cannot find symbol
-1251-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
-1252-                                                             ^
-1253-  symbol:   method location()
-1254-  location: class ResourceKey<MobVariant>
-1255:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:98: error: method does not override or implement a method from a supertype
-1256-    @Override
-1257-    ^
-1258:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:100: error: method addAdditionalSaveData in class AbstractFish cannot be applied to given types;
-1259-        super.addAdditionalSaveData(compound);
-1260-             ^
-1261-  required: ValueOutput
-1262-  found:    CompoundTag
-1263:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1264:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:104: error: method does not override or implement a method from a supertype
-1265-    @Override
-1266-    ^
-1267:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:106: error: method readAdditionalSaveData in class AbstractFish cannot be applied to given types;
-1268-        super.readAdditionalSaveData(compound);
-1269-             ^
-1270-  required: ValueInput
-1271-  found:    CompoundTag
-1272:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-1273:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:133: error: cannot infer type arguments for NearestAttackableTargetGoal<>
-1274-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, LivingEntity::isInWater) {
-1275-                                       ^
-1276:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:134: error: method does not override or implement a method from a supertype
-1277-            @Override
-1278-            ^
-1279:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:136: error: cannot find symbol
-1280-                return !Piranha.this.isFollower() && super.canUse();
-1281-                                                          ^
-1282-  symbol: method canUse()
-1283:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:139: error: cannot infer type arguments for NearestAttackableTargetGoal<>
-1284-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> entity.getType().is(NaturalistTags.EntityTypes.PIRANHA_HOSTILES)) {
-1285-                                       ^
-1286:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:140: error: method does not override or implement a method from a supertype
-1287-            @Override
-1288-            ^
-1289:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:142: error: cannot find symbol
-1290-                return !Piranha.this.isFollower() && super.canUse();
-1291-                                                          ^
-1292-  symbol: method canUse()
-1293:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:165: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Piranha cannot override hurt(DamageSource,float) in Entity
-1294-    public boolean hurt(@NotNull DamageSource source, float amount) {
-1295-                   ^
-1296-  overridden method is final
-1297:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:164: error: method does not override or implement a method from a supertype
-1298-    @Override
-1299-    ^
-1300:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:166: error: incompatible types: void cannot be converted to boolean
-1301-        boolean hurt = super.hurt(source, amount);
-1302-                                 ^
-1303:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:167: error: isClientSide has private access in Level
-1304-        if (hurt && !this.level().isClientSide && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
-1305-                                 ^
-1306:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:187: error: isClientSide has private access in Level
-1307-        if (!this.level().isClientSide) {
-1308-                         ^
-1309:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Piranha.java:222: error: isClientSide has private access in Level
-1310-        if (this.level().isClientSide) {
-1311-                        ^
-1312:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:129: error: cannot find symbol
-1313-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
-1314-                                                             ^
-1315-  symbol:   method location()
-1316-  location: class ResourceKey<MobVariant>
-1317:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:147: error: method does not override or implement a method from a supertype
-1318-    @Override
-1319-    ^
-1320:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:149: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
-1321-        super.addAdditionalSaveData(compound);
-1322-             ^
-1323-  required: ValueOutput
-1324-  found:    CompoundTag
-1325:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1326:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:153: error: method does not override or implement a method from a supertype
-1327-    @Override
-1328-    ^
-1329:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:155: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
-1330-        super.readAdditionalSaveData(compound);
-1331-             ^
-1332-  required: ValueInput
-1333-  found:    CompoundTag
-1334:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-1335:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:162: error: isClientSide has private access in Level
-1336-        if (!this.level().isClientSide && this.isAlive() && this.isInWater()) {
-1337-                         ^
-1338:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:178: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Whale cannot override hurt(DamageSource,float) in Entity
-1339-    public boolean hurt(@NotNull DamageSource source, float amount) {
-1340-                   ^
-1341-  overridden method is final
-1342:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:177: error: method does not override or implement a method from a supertype
-1343-    @Override
-1344-    ^
-1345:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:182: error: incompatible types: void cannot be converted to boolean
-1346-        return super.hurt(source, amount);
-1347-                         ^
-1348:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:247: error: no suitable method found for create(ServerLevel)
-1349-        Whale baby = NaturalistEntityTypes.WHALE.get().create(serverLevel);
-1350-                                                      ^
-1351-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Whale>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
-1352-      (actual and formal argument lists differ in length)
-1353-    method EntityType.create(Level,EntitySpawnReason) is not applicable
---
-1359-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
-1360-      (actual and formal argument lists differ in length)
-1361:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:288: error: isClientSide has private access in Level
-1362-            if (!this.level().isClientSide) {
-1363-                             ^
-1364:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:291: error: cannot find symbol
-1365-                this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
-1366-                                   ^
-1367-  symbol: method getEatingSound(ItemStack)
-1368:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:293: error: isClientSide has private access in Level
-1369-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-1370-                                                              ^
-1371:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:293: error: cannot find symbol
-1372-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-1373-                                    ^
-1374-  symbol:   method sidedSuccess(boolean)
-1375-  location: interface InteractionResult
-1376:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:315: error: isClientSide has private access in Level
-1377-        if (!this.level().isClientSide) {
-1378-                         ^
-1379:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Whale.java:397: error: isClientSide has private access in Level
-1380-        if (!this.level().isClientSide) {
-1381-                         ^
-1382:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/ClimbingAnimal.java:35: error: isClientSide has private access in Level
-1383-        if (!this.level().isClientSide) {
-1384-                         ^
-1385:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:65: error: cannot find symbol
-1386-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
-1387-                                                             ^
-1388-  symbol:   method location()
-1389-  location: class ResourceKey<MobVariant>
-1390:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:101: error: method addAdditionalSaveData in class Animal cannot be applied to given types;
-1391-        super.addAdditionalSaveData(compound);
-1392-             ^
-1393-  required: ValueOutput
-1394-  found:    CompoundTag
-1395:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1396:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:107: error: method readAdditionalSaveData in class Animal cannot be applied to given types;
-1397-        super.readAdditionalSaveData(compound);
-1398-             ^
-1399-  required: ValueInput
-1400-  found:    CompoundTag
-1401:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-1402:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:109: error: method setFromHand in class Caterpillar cannot be applied to given types;
-1403-        this.setFromHand(compound.getBoolean("FromHand"));
-1404-            ^
-1405-  required: boolean
-1406-  found:    Optional<Boolean>
-1407:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-1408:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:125: error: method setAge in class AgeableMob cannot be applied to given types;
-1409-            this.setAge(tag.getInt("Age"));
-1410-                ^
-1411-  required: int
-1412-  found:    Optional<Integer>
-1413:  reason: argument mismatch; Optional<Integer> cannot be converted to int
-1414:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:149: error: cannot find symbol
-1415-        return this.isBaby() && stack.is(ItemTags.FLOWERS);
-1416-                                                 ^
-1417-  symbol:   variable FLOWERS
-1418-  location: class ItemTags
-1419:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:174: error: getScale() in Caterpillar cannot override getScale() in LivingEntity
-1420-    public float getScale() {
-1421-                 ^
-1422-  overridden method is final
-1423:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:178: error: method does not override or implement a method from a supertype
-1424-    @Override
-1425-    ^
-1426:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:235: error: isClientSide has private access in Level
-1427-                if (!level.isClientSide) {
-1428-                          ^
-1429:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:240: error: random has protected access in Level
-1430-                level.playSound(null, caterpillar.blockPosition(), SoundEvents.GRASS_PLACE, SoundSource.BLOCKS, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
-1431-                                                                                                                                  ^
-1432:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:260: error: isClientSide has private access in Level
-1433-        if (this.level().isClientSide) {
-1434-                        ^
-1435:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:73: error: method setNoAi in class Mob cannot be applied to given types;
-1436-            mob.setNoAi(tag.getBoolean("NoAI"));
-1437-               ^
-1438-  required: boolean
-1439-  found:    Optional<Boolean>
-1440:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-1441:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:77: error: method setSilent in class Entity cannot be applied to given types;
-1442-            mob.setSilent(tag.getBoolean("Silent"));
-1443-               ^
-1444-  required: boolean
-1445-  found:    Optional<Boolean>
-1446:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-1447:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:81: error: method setNoGravity in class Entity cannot be applied to given types;
-1448-            mob.setNoGravity(tag.getBoolean("NoGravity"));
-1449-               ^
-1450-  required: boolean
-1451-  found:    Optional<Boolean>
-1452:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-1453:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:85: error: method setGlowingTag in class Entity cannot be applied to given types;
-1454-            mob.setGlowingTag(tag.getBoolean("Glowing"));
-1455-               ^
-1456-  required: boolean
-1457-  found:    Optional<Boolean>
-1458:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-1459:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:89: error: method setInvulnerable in class Entity cannot be applied to given types;
-1460-            mob.setInvulnerable(tag.getBoolean("Invulnerable"));
-1461-               ^
-1462-  required: boolean
-1463-  found:    Optional<Boolean>
-1464:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-1465:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:92: error: method contains in class CompoundTag cannot be applied to given types;
-1466-        if (tag.contains("Health", 99)) {
-1467-               ^
-1468-  required: String
-1469-  found:    String,int
-1470-  reason: actual and formal argument lists differ in length
-1471:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:93: error: method setHealth in class LivingEntity cannot be applied to given types;
-1472-            mob.setHealth(tag.getFloat("Health"));
-1473-               ^
-1474-  required: float
-1475-  found:    Optional<Float>
-1476:  reason: argument mismatch; Optional<Float> cannot be converted to float
-1477:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:99: error: cannot find symbol
-1478-        if (entity.isTame() && entity.getOwnerUUID() != null) {
-1479-                                     ^
-1480-  symbol:   method getOwnerUUID()
-1481-  location: variable entity of type T
-1482-  where T is a type-variable:
-1483-    T extends TamableAnimal,FollowingPet declared in method <T>saveTamableDataToHandTag( T,@org.jetbrains.annotations.NotNull CompoundTag)
-1484:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:101: error: cannot find symbol
-1485-            tag.putUUID("Owner", entity.getOwnerUUID());
-1486-                                       ^
-1487-  symbol:   method getOwnerUUID()
-1488-  location: variable entity of type T
-1489-  where T is a type-variable:
-1490-    T extends TamableAnimal,FollowingPet declared in method <T>saveTamableDataToHandTag( T,@org.jetbrains.annotations.NotNull CompoundTag)
-1491:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:108: error: cannot find symbol
-1492-        if (tag.getBoolean("Tame") && tag.hasUUID("Owner")) {
-1493-                                         ^
-1494-  symbol:   method hasUUID(String)
-1495-  location: variable tag of type CompoundTag
-1496:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:109: error: cannot find symbol
-1497-            entity.setOwnerUUID(tag.getUUID("Owner"));
-1498-                                   ^
-1499-  symbol:   method getUUID(String)
-1500-  location: variable tag of type CompoundTag
-1501:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:111: error: method setFollowingOwner in interface FollowingPet cannot be applied to given types;
-1502-            entity.setFollowingOwner(tag.getBoolean("FollowingOwner"));
-1503-                  ^
-1504-  required: boolean
-1505-  found:    Optional<Boolean>
-1506:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-1507:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:112: error: method setOrderedToSit in class TamableAnimal cannot be applied to given types;
-1508-            entity.setOrderedToSit(tag.getBoolean("Sitting"));
-1509-                  ^
-1510-  required: boolean
-1511-  found:    Optional<Boolean>
-1512:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-1513:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/Catchable.java:136: error: isClientSide has private access in Level
-1514-            if (!entity.level().isClientSide) {
-1515-                               ^
-1516:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/base/TamableClimbingAnimal.java:35: error: isClientSide has private access in Level
-1517-        if (!this.level().isClientSide) {
-1518-                         ^
-1519:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:83: error: no suitable method found for of(TagKey<Item>)
-1520-    private static final Ingredient FOOD_ITEMS = Ingredient.of(NaturalistTags.ItemTags.RAT_FOOD);
-1521-                                                           ^
-1522-    method Ingredient.of(ItemLike) is not applicable
-1523:      (argument mismatch; TagKey<Item> cannot be converted to ItemLike)
-1524-    method Ingredient.of(ItemLike...) is not applicable
-1525:      (varargs mismatch; TagKey<Item> cannot be converted to ItemLike)
-1526-    method Ingredient.of(Stream<? extends ItemLike>) is not applicable
-1527:      (argument mismatch; TagKey<Item> cannot be converted to Stream<? extends ItemLike>)
-1528-    method Ingredient.of(HolderSet<Item>) is not applicable
-1529:      (argument mismatch; TagKey<Item> cannot be converted to HolderSet<Item>)
-1530:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:128: error: cannot find symbol
-1531-        builder.define(DATA_VARIANT, NaturalistMobVariants.RAT_BLACK.location().toString());
-1532-                                                                    ^
-1533-  symbol:   method location()
-1534-  location: variable RAT_BLACK of type ResourceKey<MobVariant>
-1535:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:195: error: cannot find symbol
-1536-            this.restrictTo(this.workstationPos, WORK_RADIUS);
-1537-                ^
-1538-  symbol: method restrictTo(BlockPos,int)
-1539:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:197: error: cannot find symbol
-1540-            this.clearRestriction();
-1541-                ^
-1542-  symbol: method clearRestriction()
-1543:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:230: error: isClientSide has private access in Level
-1544-        if (!this.level().isClientSide) {
-1545-                         ^
-1546:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:251: error: method does not override or implement a method from a supertype
-1547-    @Override
-1548-    ^
-1549:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:253: error: method addAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-1550-        super.addAdditionalSaveData(compound);
-1551-             ^
-1552-  required: ValueOutput
-1553-  found:    CompoundTag
-1554:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1555:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:259: error: cannot find symbol
-1556-        compound.put("CarriedItems", this.carriedItems.createTag(this.registryAccess()));
-1557-                                                      ^
-1558-  symbol:   method createTag(RegistryAccess)
-1559-  location: variable carriedItems of type SimpleContainer
-1560:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:263: error: method does not override or implement a method from a supertype
-1561-    @Override
-1562-    ^
-1563:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:265: error: method readAdditionalSaveData in class TamableAnimal cannot be applied to given types;
-1564-        super.readAdditionalSaveData(compound);
-1565-             ^
-1566-  required: ValueInput
-1567-  found:    CompoundTag
-1568:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-1569:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:267: error: method setFromHand in class Rat cannot be applied to given types;
-1570-        this.setFromHand(compound.getBoolean("FromHand"));
-1571-            ^
-1572-  required: boolean
-1573-  found:    Optional<Boolean>
-1574:  reason: argument mismatch; Optional<Boolean> cannot be converted to boolean
-1575:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:269: error: method of in class BlockPos cannot be applied to given types;
-1576-            this.setWorkstation(BlockPos.of(compound.getLong("Workstation")));
-1577-                                        ^
-1578-  required: long
-1579-  found:    Optional<Long>
-1580:  reason: argument mismatch; Optional<Long> cannot be converted to long
-1581:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:273: error: method contains in class CompoundTag cannot be applied to given types;
-1582-        if (compound.contains("CarriedItems", 9)) {
-1583-                    ^
-1584-  required: String
-1585-  found:    String,int
-1586-  reason: actual and formal argument lists differ in length
-1587:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:274: error: method getList in class CompoundTag cannot be applied to given types;
-1588-            this.carriedItems.fromTag(compound.getList("CarriedItems", 10), this.registryAccess());
-1589-                                              ^
-1590-  required: String
-1591-  found:    String,int
-1592-  reason: actual and formal argument lists differ in length
-1593:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:293: error: method setAge in class AgeableMob cannot be applied to given types;
-1594-        this.setAge(tag.getInt("Age"));
-1595-            ^
-1596-  required: int
-1597-  found:    Optional<Integer>
-1598:  reason: argument mismatch; Optional<Integer> cannot be converted to int
-1599:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:318: error: no suitable method found for create(ServerLevel)
-1600-        Rat baby = NaturalistEntityTypes.RAT.get().create(level);
-1601-                                                  ^
-1602-    method EntityType.create(ServerLevel,@org.jspecify.annotations.Nullable PostSpawnProcessor<Rat>,BlockPos,EntitySpawnReason,boolean,boolean) is not applicable
-1603-      (actual and formal argument lists differ in length)
-1604-    method EntityType.create(Level,EntitySpawnReason) is not applicable
---
-1610-    method EntityType.create(EntityType<?>,ValueInput,Level,EntitySpawnReason) is not applicable
-1611-      (actual and formal argument lists differ in length)
-1612:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:322: error: cannot find symbol
-1613-                baby.setOwnerUUID(this.getOwnerUUID());
-1614-                                      ^
-1615-  symbol: method getOwnerUUID()
-1616:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:373: error: cannot find symbol
-1617-        if (this.level().isDay() || this.level().isThundering() || this.isInWater() || this.isOnFire()
-1618-                        ^
-1619-  symbol:   method isDay()
-1620-  location: class Level
-1621:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:399: error: isClientSide has private access in Level
-1622-                if (!this.level().isClientSide) {
-1623-                                 ^
-1624:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:409: error: isClientSide has private access in Level
-1625-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-1626-                                                                  ^
-1627:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:409: error: cannot find symbol
-1628-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-1629-                                        ^
-1630-  symbol:   method sidedSuccess(boolean)
-1631-  location: interface InteractionResult
-1632:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:412: error: isClientSide has private access in Level
-1633-                if (!this.level().isClientSide) {
-1634-                                 ^
-1635:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:415: error: cannot find symbol
-1636-                    this.playSound(this.getEatingSound(stack), 1.0F, 1.0F);
-1637-                                       ^
-1638-  symbol: method getEatingSound(ItemStack)
-1639:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:417: error: isClientSide has private access in Level
-1640-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-1641-                                                                  ^
-1642:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:417: error: cannot find symbol
-1643-                return InteractionResult.sidedSuccess(this.level().isClientSide);
-1644-                                        ^
-1645-  symbol:   method sidedSuccess(boolean)
-1646-  location: interface InteractionResult
-1647:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:470: error: no suitable method found for getNearestPlayer(TargetingConditions,Rat)
-1648-            this.player = this.rat.level().getNearestPlayer(this.begTargeting, this.rat);
-1649-                                          ^
-1650-    method EntityGetter.getNearestPlayer(double,double,double,double,@org.jspecify.annotations.Nullable Predicate<Entity>) is not applicable
-1651-      (actual and formal argument lists differ in length)
-1652-    method EntityGetter.getNearestPlayer(Entity,double) is not applicable
-1653:      (argument mismatch; TargetingConditions cannot be converted to Entity)
-1654-    method EntityGetter.getNearestPlayer(double,double,double,double,boolean) is not applicable
-1655-      (actual and formal argument lists differ in length)
-1656:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rat.java:516: error: isClientSide has private access in Level
-1657-        if (this.level().isClientSide) {
-1658-                        ^
-1659:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:99: error: cannot find symbol
-1660-        builder.define(DATA_VARIANT, DEFAULT_VARIANT.location().toString());
-1661-                                                    ^
-1662-  symbol:   method location()
-1663-  location: variable DEFAULT_VARIANT of type ResourceKey<MobVariant>
-1664:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:127: error: method does not override or implement a method from a supertype
-1665-    @Override
-1666-    ^
-1667:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:129: error: method addAdditionalSaveData in class AbstractFish cannot be applied to given types;
-1668-        super.addAdditionalSaveData(compound);
-1669-             ^
-1670-  required: ValueOutput
-1671-  found:    CompoundTag
-1672:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1673:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:133: error: method does not override or implement a method from a supertype
-1674-    @Override
-1675-    ^
-1676:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:135: error: method readAdditionalSaveData in class AbstractFish cannot be applied to given types;
-1677-        super.readAdditionalSaveData(compound);
-1678-             ^
-1679-  required: ValueInput
-1680-  found:    CompoundTag
-1681:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-1682:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:198: error: hurt(@org.jetbrains.annotations.NotNull DamageSource,float) in Ray cannot override hurt(DamageSource,float) in Entity
-1683-    public boolean hurt(@NotNull DamageSource source, float amount) {
-1684-                   ^
-1685-  overridden method is final
-1686:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:197: error: method does not override or implement a method from a supertype
-1687-    @Override
-1688-    ^
-1689:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:199: error: incompatible types: void cannot be converted to boolean
-1690-        boolean hurt = super.hurt(source, amount);
-1691-                                 ^
-1692:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:200: error: isClientSide has private access in Level
-1693-        if (hurt && !this.level().isClientSide && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
-1694-                                 ^
-1695:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:214: error: method does not override or implement a method from a supertype
-1696-    @Override
-1697-    ^
-1698:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:216: error: method doHurtTarget in class Mob cannot be applied to given types;
-1699-        boolean result = super.doHurtTarget(target);
-1700-                              ^
-1701-  required: ServerLevel,Entity
-1702-  found:    Entity
-1703-  reason: actual and formal argument lists differ in length
-1704:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:217: error: isClientSide has private access in Level
-1705-        if (result && !this.level().isClientSide && target instanceof LivingEntity living) {
-1706-                                   ^
-1707:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ray.java:236: error: isClientSide has private access in Level
-1708-        if (this.level().isClientSide) {
-1709-                        ^
-1710:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:108: error: method does not override or implement a method from a supertype
-1711-    @Override
-1712-    ^
-1713:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:110: error: method addAdditionalSaveData in class Mob cannot be applied to given types;
-1714-        super.addAdditionalSaveData(compound);
-1715-             ^
-1716-  required: ValueOutput
-1717-  found:    CompoundTag
-1718:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1719:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:114: error: method does not override or implement a method from a supertype
-1720-    @Override
-1721-    ^
-1722:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:116: error: method readAdditionalSaveData in class Mob cannot be applied to given types;
-1723-        super.readAdditionalSaveData(compound);
-1724-             ^
-1725-  required: ValueInput
-1726-  found:    CompoundTag
-1727:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-1728:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:182: error: no suitable method found for playSound(Reference<SoundEvent>)
-1729-            this.playSound(SoundEvents.GENERIC_EAT);
-1730-                ^
-1731-    method Entity.playSound(SoundEvent,float,float) is not applicable
-1732-      (actual and formal argument lists differ in length)
-1733-    method Entity.playSound(SoundEvent) is not applicable
-1734:      (argument mismatch; Reference<SoundEvent> cannot be converted to SoundEvent)
-1735:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:186: error: isClientSide has private access in Level
-1736-            if (!this.level().isClientSide) {
-1737-                             ^
-1738:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:189: error: cannot find symbol
-1739-                areaEffectCloud.setParticle(ParticleTypes.DRAGON_BREATH);
-1740-                               ^
-1741-  symbol:   method setParticle(ParticleType<PowerParticleOption>)
-1742-  location: variable areaEffectCloud of type AreaEffectCloud
-1743:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:192: error: cannot find symbol
-1744-                areaEffectCloud.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
-1745-                                                                          ^
-1746-  symbol:   variable HARM
-1747-  location: class MobEffects
-1748:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:196: error: isClientSide has private access in Level
-1749-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-1750-                                                              ^
-1751:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:196: error: cannot find symbol
-1752-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-1753-                                    ^
-1754-  symbol:   method sidedSuccess(boolean)
-1755-  location: interface InteractionResult
-1756:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:205: error: isClientSide has private access in Level
-1757-        if (this.level().isClientSide) {
-1758-                        ^
-1759:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:210: error: method does not override or implement a method from a supertype
-1760-    @Override
-1761-    ^
-1762:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:212: error: method customServerAiStep in class Mob cannot be applied to given types;
-1763-        super.customServerAiStep();
-1764-             ^
-1765-  required: ServerLevel
-1766-  found:    no arguments
-1767-  reason: actual and formal argument lists differ in length
-1768:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Dragonfly.java:213: error: cannot find symbol
-1769-        if (!(this.targetPosition == null || this.level().isEmptyBlock(this.targetPosition) && this.targetPosition.getY() > this.level().getMinBuildHeight())) {
-1770-                                                                                                                                        ^
-1771-  symbol:   method getMinBuildHeight()
-1772-  location: class Level
-1773:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:79: error: cannot find symbol
-1774-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
-1775-                                                             ^
-1776-  symbol:   method location()
-1777-  location: class ResourceKey<MobVariant>
-1778:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:107: error: method does not override or implement a method from a supertype
-1779-    @Override
-1780-    ^
-1781:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:109: error: method addAdditionalSaveData in class AbstractFish cannot be applied to given types;
-1782-        super.addAdditionalSaveData(compound);
-1783-             ^
-1784-  required: ValueOutput
-1785-  found:    CompoundTag
-1786:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-1787:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:114: error: method does not override or implement a method from a supertype
-1788-    @Override
-1789-    ^
-1790:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:116: error: method readAdditionalSaveData in class AbstractFish cannot be applied to given types;
-1791-        super.readAdditionalSaveData(compound);
-1792-             ^
-1793-  required: ValueInput
-1794-  found:    CompoundTag
-1795:  reason: argument mismatch; CompoundTag cannot be converted to ValueInput
-1796:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:149: error: cannot infer type arguments for NearestAttackableTargetGoal<>
-1797-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, WaterAnimal.class, 10, true, false, (entity) -> this.canHunt() && entity.getType().is(NaturalistTags.EntityTypes.CATFISH_HOSTILES)));
-1798-                                       ^
-1799:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:152: error: method does not override or implement a method from a supertype
-1800-    @Override
-1801-    ^
-1802:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:154: error: method killedEntity in class Entity cannot be applied to given types;
-1803-        boolean result = super.killedEntity(level, killed);
-1804-                              ^
-1805-  required: ServerLevel,LivingEntity,DamageSource
-1806-  found:    ServerLevel,LivingEntity
-1807-  reason: actual and formal argument lists differ in length
-1808:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:161: error: method does not override or implement a method from a supertype
-1809-    @Override
-1810-    ^
-1811:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:163: error: isClientSide has private access in Level
-1812-        if (!this.level().isClientSide && target instanceof Bass prey && prey.isAlive() && this.pendingPrey == null) {
-1813-                         ^
-1814:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:170: error: method doHurtTarget in class Mob cannot be applied to given types;
-1815-        return super.doHurtTarget(target);
-1816-                    ^
-1817-  required: ServerLevel,Entity
-1818-  found:    Entity
-1819-  reason: actual and formal argument lists differ in length
-1820:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:190: error: isClientSide has private access in Level
-1821-        if (!this.level().isClientSide) {
-1822-                         ^
-1823:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Catfish.java:221: error: isClientSide has private access in Level
-1824-        if (this.level().isClientSide) {
-1825-                        ^
-1826:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:84: error: cannot find symbol
-1827-        builder.define(DATA_VARIANT, this.getDefaultVariant().location().toString());
-1828-                                                             ^
-1829-  symbol:   method location()
-1830-  location: class ResourceKey<MobVariant>
-1831:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:108: error: method does not override or implement a method from a supertype
-1832-    @Override
-1833-    ^
-1834:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bass.java:110: error: method addAdditionalSaveData in class AbstractFish cannot be applied to given types;
-1835-        super.addAdditionalSaveData(compound);
-1836-             ^
-1837-  required: ValueOutput
-1838-  found:    CompoundTag
-1839:  reason: argument mismatch; CompoundTag cannot be converted to ValueOutput
-grep: write error: Broken pipe
+70-	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+71-Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
+72:/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/BottleItemMixin.java:30: error: > or ',' expected
+73-    private void onUse(Level level, @NotNull Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResult cir) {
+74-                                                                                                                               ^
+75-1 error
+76-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
+77-	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
 
 === MINECRAFT 26.2 API INSPECTION ===
 === EXACT Boat ===
@@ -1826,6 +51,10 @@ net/minecraft/world/entity/EntityType.class @ /home/runner/.gradle/caches/fabric
 net/minecraft/world/entity/EntityType.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
 net/minecraft/world/entity/EntityType.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT GuiGraphics ===
+=== EXACT GuiGraphicsExtractor ===
+net/minecraft/client/gui/GuiGraphicsExtractor.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
+net/minecraft/client/gui/GuiGraphicsExtractor.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
+net/minecraft/client/gui/GuiGraphicsExtractor.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT Input ===
 org/apache/tools/ant/taskdefs/Input.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/ant-1.10.15.jar
 org/gradle/api/tasks/Input.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-core-api-9.5.1.jar
@@ -1842,7 +71,6 @@ net/minecraft/world/effect/InstantaneousMobEffect.class @ /home/runner/.gradle/c
 net/minecraft/world/effect/InstantaneousMobEffect.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
 net/minecraft/world/effect/InstantaneousMobEffect.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
 net/minecraft/world/effect/InstantaneousMobEffect.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
-=== EXACT InstantenousMobEffect ===
 === EXACT InteractionResult ===
 net/minecraft/world/InteractionResult.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
 net/minecraft/world/InteractionResult.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
@@ -1884,6 +112,10 @@ net/minecraft/advancements/triggers/SimpleCriterionTrigger.class @ /home/runner/
 net/minecraft/advancements/triggers/SimpleCriterionTrigger.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
 net/minecraft/advancements/triggers/SimpleCriterionTrigger.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
 net/minecraft/advancements/triggers/SimpleCriterionTrigger.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
+=== EXACT SingleQuadParticle ===
+net/minecraft/client/particle/SingleQuadParticle.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
+net/minecraft/client/particle/SingleQuadParticle.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
+net/minecraft/client/particle/SingleQuadParticle.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === EXACT SwordItem ===
 === EXACT TextureSheetParticle ===
 === EXACT ThrowableItemProjectile ===
@@ -1891,6 +123,16 @@ net/minecraft/world/entity/projectile/throwableitemprojectile/ThrowableItemProje
 net/minecraft/world/entity/projectile/throwableitemprojectile/ThrowableItemProjectile.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
 net/minecraft/world/entity/projectile/throwableitemprojectile/ThrowableItemProjectile.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
 net/minecraft/world/entity/projectile/throwableitemprojectile/ThrowableItemProjectile.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
+=== EXACT ValueInput ===
+net/minecraft/world/level/storage/ValueInput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
+net/minecraft/world/level/storage/ValueInput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
+net/minecraft/world/level/storage/ValueInput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
+net/minecraft/world/level/storage/ValueInput.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
+=== EXACT ValueOutput ===
+net/minecraft/world/level/storage/ValueOutput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
+net/minecraft/world/level/storage/ValueOutput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
+net/minecraft/world/level/storage/ValueOutput.class @ /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-merged.jar
+net/minecraft/world/level/storage/ValueOutput.class @ /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.2/minecraft-merged-deobf-26.2.jar
 === RELATED CLASS NAMES ===
 jcifs/netbios/SocketInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/jcifs-1.3.17.jar
 jcifs/smb/SmbFileInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/jcifs-1.3.17.jar
@@ -2242,6 +484,156 @@ org/apache/commons/compress/compressors/lz77support/AbstractLZ77CompressorInputS
 org/apache/commons/compress/compressors/lzma/LZMACompressorInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
 org/apache/commons/compress/compressors/lzw/LZWInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
 org/apache/commons/compress/compressors/pack200/Pack200CompressorInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/compressors/snappy/FramedSnappyCompressorInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/compressors/snappy/SnappyCompressorInputStream$State.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/compressors/snappy/SnappyCompressorInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/compressors/xz/XZCompressorInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/compressors/z/ZCompressorInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/compressors/zstandard/ZstdCompressorInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/parallel/InputStreamSupplier.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/BitInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/BoundedArchiveInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/BoundedInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/BoundedSeekableByteChannelInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/ByteUtils$InputStreamByteSupplier.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/CRC32VerifyingInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/ChecksumCalculatingInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/ChecksumVerifyingInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/CloseShieldFilterInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/CountingInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/InputStreamStatistics.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/apache/commons/compress/utils/SkipShieldingInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-compress-1.26.1.jar
+org/fusesource/jansi/internal/Kernel32$INPUT_RECORD.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/jansi-2.4.2.jar
+org/gradle/internal/configuration/problems/PropertyKind$InputProperty.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-configuration-problems-base-9.5.1.jar
+org/gradle/internal/problems/failure/StackFramePredicate$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-problems-api-9.5.1.jar
+org/gradle/internal/problems/failure/StackFramePredicate.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-problems-api-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/AbstractUserInputHandler$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/AbstractUserInputHandler$UserInteraction.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/AbstractUserInputHandler.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/BuildScanUserInputHandler.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/DefaultBuildScanUserInputHandler.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/DefaultUserInputHandler$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/DefaultUserInputHandler$InteractiveChoiceBuilder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/DefaultUserInputHandler$InteractiveUserQuestions.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/DefaultUserInputHandler.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/DefaultUserInputReader.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/NonInteractiveUserInputHandler$NonInteractiveChoiceBuilder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/NonInteractiveUserInputHandler.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/UserInputHandler.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/UserInputReader$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/UserInputReader$TextResponse.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/UserInputReader$UserInput.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/api/internal/tasks/userinput/UserInputReader.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/internal/daemon/clientinput/ClientInputForwarder$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/internal/daemon/clientinput/ClientInputForwarder$2.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/gradle/internal/daemon/clientinput/ClientInputForwarder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-daemon-services-9.5.1.jar
+org/jetbrains/kotlin/daemon/RemoteInputStreamClient.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kotlin-daemon-embeddable-2.3.20.jar
+org/jetbrains/kotlin/daemon/common/RemoteInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kotlin-daemon-embeddable-2.3.20.jar
+groovyjarjarantlr4/runtime/ANTLRInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/runtime/FailedPredicateException.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/ANTLRInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/FailedPredicateException.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/InputMismatchException.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/atn/AbstractPredicateTransition.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/atn/PrecedencePredicateTransition.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/atn/PredicateEvalInfo.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/atn/PredicateTransition.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/atn/SemanticContext$PrecedencePredicate.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/atn/SemanticContext$Predicate.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarantlr4/v4/runtime/misc/Predicate.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarpicocli/AutoComplete$Predicate.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+groovyjarjarpicocli/CommandLine$Model$Predicate.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+org/apache/groovy/parser/antlr4/GroovyLangParser$LightWeightFailedPredicateException.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+org/apache/groovy/parser/antlr4/SemanticPredicates.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+org/codehaus/groovy/control/io/InputStreamReaderSource.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+org/codehaus/groovy/runtime/callsite/BooleanClosureForMapPredicate.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+org/codehaus/groovy/runtime/callsite/BooleanClosurePredicate.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/groovy-4.0.29.jar
+org/gradle/jvm/toolchain/internal/JavaToolchainInput.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-toolchains-jvm-shared-9.5.1.jar
+com/esotericsoftware/kryo/io/ByteBufferInput.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
+com/esotericsoftware/kryo/io/ByteBufferInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
+com/esotericsoftware/kryo/io/FastInput.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
+com/esotericsoftware/kryo/io/Input.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
+com/esotericsoftware/kryo/io/InputChunked.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
+com/esotericsoftware/kryo/io/KryoDataInput.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
+com/esotericsoftware/kryo/io/KryoObjectInput.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
+com/esotericsoftware/kryo/io/UnsafeInput.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
+com/esotericsoftware/kryo/io/UnsafeMemoryInput.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/kryo-2.24.0.jar
+org/gradle/util/internal/BulkReadInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-process-services-9.5.1.jar
+org/gradle/util/internal/DisconnectableInputStream$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-process-services-9.5.1.jar
+org/gradle/util/internal/DisconnectableInputStream$ThreadExecuter.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-process-services-9.5.1.jar
+org/gradle/util/internal/DisconnectableInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-process-services-9.5.1.jar
+org/gradle/kotlin/dsl/accessors/AbstractStage1BlockAccessorsUnitOfWork$visitImmutableInputs$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/accessors/GenerateProjectAccessors$visitImmutableInputs$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/accessors/GenerateProjectAccessors$visitImmutableInputs$2.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/accessors/GenerateProjectAccessors$visitImmutableInputs$3.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/provider/StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation$visitImmutableInputs$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/provider/StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation$visitImmutableInputs$2.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/provider/StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation$visitImmutableInputs$3.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/provider/StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation$visitImmutableInputs$4.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/provider/StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation$visitImmutableInputs$5.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/provider/StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation$visitImmutableInputs$6.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/provider/StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation$visitImmutableInputs$7.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/provider/StandardKotlinScriptEvaluator$KotlinScriptCompilationAndInstrumentation$visitImmutableInputs$8.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/internal/relocated/kotlin/metadata/Attributes$isNullCheckPredicate$2.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/internal/relocated/kotlin/metadata/internal/protobuf/AbstractMessageLite$Builder$LimitedInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/internal/relocated/kotlin/metadata/internal/protobuf/CodedInputStream$RefillCallback.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/internal/relocated/kotlin/metadata/internal/protobuf/CodedInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/gradle/kotlin/dsl/internal/relocated/kotlin/metadata/internal/protobuf/RopeByteString$RopeInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/gradle-kotlin-dsl-9.5.1.jar
+org/intellij/lang/annotations/JdkConstants$InputEventMask.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/annotations-24.0.1.jar
+org/apache/commons/io/build/AbstractOrigin$InputStreamOrigin.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/function/IOPredicate.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/AutoCloseInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/AutoCloseInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/BOMInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/BOMInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/BoundedInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/BrokenInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/BufferedFileChannelInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/BufferedFileChannelInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/CharSequenceInputStream$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/CharSequenceInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/CharSequenceInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/CircularInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ClassLoaderObjectInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/CloseShieldInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ClosedInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/CountingInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/DemuxInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/InfiniteCircularInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MarkShieldInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MemoryMappedFileInputStream$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MemoryMappedFileInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MemoryMappedFileInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MessageDigestCalculatingInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MessageDigestCalculatingInputStream$MessageDigestMaintainingObserver.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MessageDigestCalculatingInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MessageDigestInputStream$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MessageDigestInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MessageDigestInputStream$MessageDigestMaintainingObserver.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/MessageDigestInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/NullInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ObservableInputStream$Observer.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ObservableInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ProxyInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/QueueInputStream$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/QueueInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/QueueInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/RandomAccessFileInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/RandomAccessFileInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ReadAheadInputStream$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ReadAheadInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ReadAheadInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ReaderInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/ReaderInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/SwappedDataInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/TaggedInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/TeeInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/UncheckedFilterInputStream$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/UncheckedFilterInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/UncheckedFilterInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/UnixLineEndingInputStream.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/UnsynchronizedBufferedInputStream$1.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
+org/apache/commons/io/input/UnsynchronizedBufferedInputStream$Builder.class @ /home/runner/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/commons-io-2.15.1.jar
 === MINECRAFT JARS ===
 /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-extracted_server.jar
 /home/runner/.gradle/caches/fabric-loom/26.2/minecraft-client.jar
@@ -2578,6 +970,123 @@ public abstract class net.minecraft.world.entity.LivingEntity extends net.minecr
   public net.minecraft.world.waypoints.Waypoint$Icon waypointIcon();
   public net.minecraft.world.damagesource.DamageSource createDamageSource();
 }
+=== JAVAP net.minecraft.world.entity.Mob ===
+Compiled from "Mob.java"
+public abstract class net.minecraft.world.entity.Mob extends net.minecraft.world.entity.LivingEntity implements net.minecraft.world.entity.Targeting,net.minecraft.world.entity.EquipmentUser,net.minecraft.world.entity.Leashable {
+  public static final float MAX_WEARING_ARMOR_CHANCE;
+  public static final float WEARING_ARMOR_UPGRADE_MATERIAL_CHANCE;
+  public static final float WEARING_ARMOR_UPGRADE_MATERIAL_ATTEMPTS;
+  public static final float MAX_PICKUP_LOOT_CHANCE;
+  public static final float MAX_ENCHANTED_ARMOR_CHANCE;
+  public static final float MAX_ENCHANTED_WEAPON_CHANCE;
+  public static final int UPDATE_GOAL_SELECTOR_EVERY_N_TICKS;
+  public static final java.lang.String TAG_DROP_CHANCES;
+  public static final java.lang.String TAG_LEFT_HANDED;
+  public static final java.lang.String TAG_CAN_PICK_UP_LOOT;
+  public static final java.lang.String TAG_NO_AI;
+  public static final java.lang.String TAG_PERSISTENCE_REQUIRED;
+  public int ambientSoundTime;
+  public static net.minecraft.world.entity.ai.attributes.AttributeSupplier$Builder createMobAttributes();
+  public float getPathfindingMalus(net.minecraft.world.level.pathfinder.PathType);
+  public void setPathfindingMalus(net.minecraft.world.level.pathfinder.PathType, float);
+  public void onPathfindingStart();
+  public void onPathfindingDone();
+  public net.minecraft.world.entity.ai.control.LookControl getLookControl();
+  public net.minecraft.world.entity.ai.control.MoveControl getMoveControl();
+  public net.minecraft.world.entity.ai.control.JumpControl getJumpControl();
+  public net.minecraft.world.entity.ai.navigation.PathNavigation getNavigation();
+  public net.minecraft.world.entity.LivingEntity getControllingPassenger();
+  public net.minecraft.world.entity.ai.sensing.Sensing getSensing();
+  public net.minecraft.world.entity.LivingEntity getTarget();
+  public net.minecraft.world.entity.LivingEntity getTargetUnchecked();
+  public void setTarget(net.minecraft.world.entity.LivingEntity);
+  public boolean canAttack(net.minecraft.world.entity.LivingEntity);
+  public boolean canUseNonMeleeWeapon(net.minecraft.world.item.ItemStack);
+  public void ate();
+  public int getAmbientSoundInterval();
+  public void playAmbientSound();
+  public void baseTick();
+  public void spawnAnim();
+  public void handleEntityEvent(byte);
+  public void tick();
+  public final java.util.Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>> getLootTable();
+  public long getLootTableSeed();
+  public void setZza(float);
+  public void setYya(float);
+  public void setXxa(float);
+  public void setSpeed(float);
+  public void stopInPlace();
+  public void aiStep();
+  public net.minecraft.world.item.ItemStack equipItemIfPossible(net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack);
+  public void setGuaranteedDrop(net.minecraft.world.entity.EquipmentSlot);
+  public boolean canReplaceEqualItem(net.minecraft.world.item.ItemStack, net.minecraft.world.item.ItemStack);
+  public boolean canHoldItem(net.minecraft.world.item.ItemStack);
+  public boolean wantsToPickUp(net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack);
+  public net.minecraft.tags.TagKey<net.minecraft.world.item.Item> getPreferredWeaponType();
+  public boolean removeWhenFarAway(double);
+  public boolean requiresCustomPersistence();
+  public void checkDespawn();
+  public int getMaxHeadXRot();
+  public int getMaxHeadYRot();
+  public int getHeadRotSpeed();
+  public void lookAt(net.minecraft.world.entity.Entity, float, float);
+  public static boolean checkMobSpawnRules(net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.Mob>, net.minecraft.world.level.LevelAccessor, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.core.BlockPos, net.minecraft.util.RandomSource);
+  public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor, net.minecraft.world.entity.EntitySpawnReason);
+  public boolean checkSpawnObstruction(net.minecraft.world.level.LevelReader);
+  public int getMaxSpawnClusterSize();
+  public boolean isMaxGroupSizeReached(int);
+  public int getMaxFallDistance();
+  public net.minecraft.world.item.ItemStack getBodyArmorItem();
+  public boolean isSaddled();
+  public boolean isWearingBodyArmor();
+  public net.minecraft.world.Container createEquipmentSlotContainer(net.minecraft.world.entity.EquipmentSlot);
+  public net.minecraft.world.entity.DropChances getDropChances();
+  public void dropPreservedEquipment(net.minecraft.server.level.ServerLevel);
+  public java.util.Set<net.minecraft.world.entity.EquipmentSlot> dropPreservedEquipment(net.minecraft.server.level.ServerLevel, java.util.function.Predicate<net.minecraft.world.item.ItemStack>);
+  public void equip(net.minecraft.world.entity.EquipmentTable);
+  public void equip(net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable>, java.util.Map<net.minecraft.world.entity.EquipmentSlot, java.lang.Float>);
+  public static net.minecraft.world.item.Item getEquipmentForSlot(net.minecraft.world.entity.EquipmentSlot, int);
+  public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor, net.minecraft.world.DifficultyInstance, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.world.entity.SpawnGroupData);
+  public void setPersistenceRequired();
+  public void setDropChance(net.minecraft.world.entity.EquipmentSlot, float);
+  public boolean canPickUpLoot();
+  public void setCanPickUpLoot(boolean);
+  public boolean isPersistenceRequired();
+  public net.minecraft.world.InteractionResult interact(net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand, net.minecraft.world.phys.Vec3);
+  public boolean isWithinHome();
+  public boolean isWithinHome(net.minecraft.core.BlockPos);
+  public boolean isWithinHome(net.minecraft.world.phys.Vec3);
+  public void setHomeTo(net.minecraft.core.BlockPos, int);
+  public net.minecraft.core.BlockPos getHomePosition();
+  public int getHomeRadius();
+  public void clearHome();
+  public boolean hasHome();
+  public <T extends net.minecraft.world.entity.Mob> T convertTo(net.minecraft.world.entity.EntityType<T>, net.minecraft.world.entity.ConversionParams, net.minecraft.world.entity.EntitySpawnReason, net.minecraft.world.entity.ConversionParams$AfterConversion<T>);
+  public <T extends net.minecraft.world.entity.Mob> T convertTo(net.minecraft.world.entity.EntityType<T>, net.minecraft.world.entity.ConversionParams, net.minecraft.world.entity.ConversionParams$AfterConversion<T>);
+  public net.minecraft.world.entity.Leashable$LeashData getLeashData();
+  public void setLeashData(net.minecraft.world.entity.Leashable$LeashData);
+  public void onLeashRemoved();
+  public void leashTooFarBehaviour();
+  public boolean canBeLeashed();
+  public boolean startRiding(net.minecraft.world.entity.Entity, boolean, boolean);
+  public boolean isEffectiveAi();
+  public void setNoAi(boolean);
+  public void setLeftHanded(boolean);
+  public void setAggressive(boolean);
+  public boolean isNoAi();
+  public boolean isLeftHanded();
+  public boolean isAggressive();
+  public void setBaby(boolean);
+  public net.minecraft.world.entity.HumanoidArm getMainArm();
+  public boolean isWithinMeleeAttackRange(net.minecraft.world.entity.LivingEntity);
+  public boolean doHurtTarget(net.minecraft.server.level.ServerLevel, net.minecraft.world.entity.Entity);
+  public void removeFreeWill();
+  public net.minecraft.world.entity.ai.goal.GoalSelector getGoalSelector();
+  public void removeAllGoals(java.util.function.Predicate<net.minecraft.world.entity.ai.goal.Goal>);
+  public net.minecraft.world.item.ItemStack getPickResult();
+  public void registerDebugValues(net.minecraft.server.level.ServerLevel, net.minecraft.util.debug.DebugValueSource$Registration);
+  public float chargeSpeedModifier();
+}
 === JAVAP net.minecraft.world.entity.EntityType ===
 Compiled from "EntityType.java"
 public class net.minecraft.world.entity.EntityType<T extends net.minecraft.world.entity.Entity> implements net.minecraft.world.level.entity.EntityTypeTest<net.minecraft.world.entity.Entity, T>, net.minecraft.world.flag.FeatureElement {
@@ -2660,6 +1169,52 @@ public class net.minecraft.resources.ResourceKey<T> {
   public net.minecraft.resources.Identifier identifier();
   public net.minecraft.resources.Identifier registry();
   public net.minecraft.resources.ResourceKey<net.minecraft.core.Registry<T>> registryKey();
+}
+=== JAVAP net.minecraft.world.level.storage.ValueInput ===
+Compiled from "ValueInput.java"
+public interface net.minecraft.world.level.storage.ValueInput {
+  public abstract <T> java.util.Optional<T> read(java.lang.String, com.mojang.serialization.Codec<T>);
+  public abstract <T> java.util.Optional<T> read(com.mojang.serialization.MapCodec<T>);
+  public abstract java.util.Optional<net.minecraft.world.level.storage.ValueInput> child(java.lang.String);
+  public abstract net.minecraft.world.level.storage.ValueInput childOrEmpty(java.lang.String);
+  public abstract java.util.Optional<net.minecraft.world.level.storage.ValueInput$ValueInputList> childrenList(java.lang.String);
+  public abstract net.minecraft.world.level.storage.ValueInput$ValueInputList childrenListOrEmpty(java.lang.String);
+  public abstract <T> java.util.Optional<net.minecraft.world.level.storage.ValueInput$TypedInputList<T>> list(java.lang.String, com.mojang.serialization.Codec<T>);
+  public abstract <T> net.minecraft.world.level.storage.ValueInput$TypedInputList<T> listOrEmpty(java.lang.String, com.mojang.serialization.Codec<T>);
+  public abstract boolean getBooleanOr(java.lang.String, boolean);
+  public abstract byte getByteOr(java.lang.String, byte);
+  public abstract int getShortOr(java.lang.String, short);
+  public abstract java.util.Optional<java.lang.Integer> getInt(java.lang.String);
+  public abstract int getIntOr(java.lang.String, int);
+  public abstract long getLongOr(java.lang.String, long);
+  public abstract java.util.Optional<java.lang.Long> getLong(java.lang.String);
+  public abstract float getFloatOr(java.lang.String, float);
+  public abstract double getDoubleOr(java.lang.String, double);
+  public abstract java.util.Optional<java.lang.String> getString(java.lang.String);
+  public abstract java.lang.String getStringOr(java.lang.String, java.lang.String);
+  public abstract java.util.Optional<int[]> getIntArray(java.lang.String);
+  public abstract net.minecraft.core.HolderLookup$Provider lookup();
+}
+=== JAVAP net.minecraft.world.level.storage.ValueOutput ===
+Compiled from "ValueOutput.java"
+public interface net.minecraft.world.level.storage.ValueOutput {
+  public abstract <T> void store(java.lang.String, com.mojang.serialization.Codec<T>, T);
+  public abstract <T> void storeNullable(java.lang.String, com.mojang.serialization.Codec<T>, T);
+  public abstract <T> void store(com.mojang.serialization.MapCodec<T>, T);
+  public abstract void putBoolean(java.lang.String, boolean);
+  public abstract void putByte(java.lang.String, byte);
+  public abstract void putShort(java.lang.String, short);
+  public abstract void putInt(java.lang.String, int);
+  public abstract void putLong(java.lang.String, long);
+  public abstract void putFloat(java.lang.String, float);
+  public abstract void putDouble(java.lang.String, double);
+  public abstract void putString(java.lang.String, java.lang.String);
+  public abstract void putIntArray(java.lang.String, int[]);
+  public abstract net.minecraft.world.level.storage.ValueOutput child(java.lang.String);
+  public abstract net.minecraft.world.level.storage.ValueOutput$ValueOutputList childrenList(java.lang.String);
+  public abstract <T> net.minecraft.world.level.storage.ValueOutput$TypedOutputList<T> list(java.lang.String, com.mojang.serialization.Codec<T>);
+  public abstract void discard(java.lang.String);
+  public abstract boolean isEmpty();
 }
 === JAVAP net.minecraft.world.item.crafting.RecipeSerializer ===
 Compiled from "RecipeSerializer.java"
