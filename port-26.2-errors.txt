@@ -11,16 +11,21 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.17.20
 
 > Task :compileJava
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/HippoRenderer.java:42: error: cannot find symbol
-            collector.submitBlock(poseStack, blockItem.getBlock().defaultBlockState(), lightCoords,
-                     ^
-  symbol:   method submitBlock(PoseStack,BlockState,int,int,int)
-  location: variable collector of type SubmitNodeCollector
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FieldGuideEntryScreenCompatMixin.java:12: error: cannot find symbol
+import net.minecraft.world.entity.animal.Bucketable;
+                                        ^
+  symbol:   class Bucketable
+  location: package net.minecraft.world.entity.animal
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FieldGuideEntryScreenCompatMixin.java:60: error: cannot find symbol
+        } else if (entity instanceof Bucketable bucketable) {
+                                     ^
+  symbol:   class Bucketable
+  location: class FieldGuideEntryScreenCompatMixin
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-1 error
+2 errors
 
 > Task :compileJava FAILED
 
@@ -32,15 +37,20 @@ FAILURE: Build failed with an exception.
 Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
   Note: Recompile with -Xlint:deprecation for details.
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FieldGuideEntryScreenCompatMixin.java:12: error: cannot find symbol
+  import net.minecraft.world.entity.animal.Bucketable;
+                                          ^
+    symbol:   class Bucketable
+    location: package net.minecraft.world.entity.animal
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FieldGuideEntryScreenCompatMixin.java:60: error: cannot find symbol
+          } else if (entity instanceof Bucketable bucketable) {
+                                       ^
+    symbol:   class Bucketable
+    location: class FieldGuideEntryScreenCompatMixin
   Note: Recompile with -Xlint:unchecked for details.
   Note: Some input files use or override a deprecated API.
   Note: Some input files use unchecked or unsafe operations.
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/HippoRenderer.java:42: error: cannot find symbol
-              collector.submitBlock(poseStack, blockItem.getBlock().defaultBlockState(), lightCoords,
-                       ^
-    symbol:   method submitBlock(PoseStack,BlockState,int,int,int)
-    location: variable collector of type SubmitNodeCollector
-  1 error
+  2 errors
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
@@ -82,16 +92,21 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/HippoRenderer.java:42: error: cannot find symbol
-            collector.submitBlock(poseStack, blockItem.getBlock().defaultBlockState(), lightCoords,
-                     ^
-  symbol:   method submitBlock(PoseStack,BlockState,int,int,int)
-  location: variable collector of type SubmitNodeCollector
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FieldGuideEntryScreenCompatMixin.java:12: error: cannot find symbol
+import net.minecraft.world.entity.animal.Bucketable;
+                                        ^
+  symbol:   class Bucketable
+  location: package net.minecraft.world.entity.animal
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FieldGuideEntryScreenCompatMixin.java:60: error: cannot find symbol
+        } else if (entity instanceof Bucketable bucketable) {
+                                     ^
+  symbol:   class Bucketable
+  location: class FieldGuideEntryScreenCompatMixin
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-1 error
+2 errors
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
 	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
@@ -226,5 +241,5 @@ Note: Recompile with -Xlint:unchecked for details.
 	... 30 more
 
 
-BUILD FAILED in 36s
+BUILD FAILED in 44s
 1 actionable task: 1 executed
