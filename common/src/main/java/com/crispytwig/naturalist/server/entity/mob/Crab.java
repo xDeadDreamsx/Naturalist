@@ -568,6 +568,8 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
 
 
 
+
+
     @Nullable
     private ItemEntity findNearbyWeapon() {
         List<ItemEntity> items = this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(8.0D),
