@@ -18,31 +18,68 @@ import net.minecraft.world.item.ItemStack;
 /** Regression coverage for Naturalist predator target acquisition on Minecraft 26.2. */
 @SuppressWarnings("UnstableApiUsage")
 final class NaturalistPredatorBehaviorTest {
-    private static final double PREDATOR_X = 11.0D;
-    private static final double PREY_X = 13.0D;
-    private static final double TEST_Y = 100.0D;
-    private static final double TEST_Z = -11.0D;
+    private static final double LAND_PREDATOR_X = 11.0D;
+    private static final double LAND_PREY_X = 13.0D;
+    private static final double LAND_Y = 100.0D;
+    private static final double LAND_Z = -11.0D;
+
+    private static final double WATER_PREDATOR_X = 22.0D;
+    private static final double WATER_PREY_X = 34.0D;
+    private static final double WATER_Y = 101.0D;
+    private static final double WATER_Z = -9.0D;
 
     private NaturalistPredatorBehaviorTest() {
     }
 
     static void verifyLandPredatorsHunt(ClientGameTestContext context, TestSingleplayerContext world) {
+        // A predator that finishes its prey early may otherwise acquire the GameTest player before
+        // the fixed observation window ends. That killed Player0 in run #269 and shut down the
+        // singleplayer server before the next predator could be checked. Creative mode keeps the
+        // observer out of target selection without changing animal-to-animal target acquisition.
+        world.getServer().runCommand("/gamemode creative @a");
         world.getServer().runCommand("/time set 1000");
-        verifyHunt(context, world, "naturalist:snake", "minecraft:chicken", 100);
-        verifyHunt(context, world, "naturalist:komodo_dragon", "minecraft:chicken", 100);
-        verifyHunt(context, world, "naturalist:alligator", "naturalist:duck", 120);
-        verifyHunt(context, world, "naturalist:bear", "naturalist:deer", 140);
+        verifyHunt(context, world, "naturalist:snake", "minecraft:chicken", 100,
+                LAND_PREDATOR_X, LAND_PREY_X, LAND_Y, LAND_Z);
+        verifyHunt(context, world, "naturalist:komodo_dragon", "minecraft:chicken", 100,
+                LAND_PREDATOR_X, LAND_PREY_X, LAND_Y, LAND_Z);
+        verifyHunt(context, world, "naturalist:alligator", "naturalist:duck", 120,
+                LAND_PREDATOR_X, LAND_PREY_X, LAND_Y, LAND_Z);
+        verifyHunt(context, world, "naturalist:bear", "naturalist:deer", 140,
+                LAND_PREDATOR_X, LAND_PREY_X, LAND_Y, LAND_Z);
 
         // Lions intentionally hunt at night in the original Naturalist behaviour.
         world.getServer().runCommand("/time set 14000");
-        verifyHunt(context, world, "naturalist:lion", "minecraft:horse", 160);
+        verifyHunt(context, world, "naturalist:lion", "minecraft:horse", 160,
+                LAND_PREDATOR_X, LAND_PREY_X, LAND_Y, LAND_Z);
         world.getServer().runCommand("/time set 1000");
 
         System.out.println("NATURALIST_PREDATOR_BEHAVIOR: land predator hunting verified");
     }
 
+    static void verifyWaterPredatorsHunt(ClientGameTestContext context, TestSingleplayerContext world) {
+        // Sealed pool: stone shell from y=99..105, water-filled interior y=100..104. This keeps
+        // vanilla fish and Naturalist swimmers inside a deterministic navigation volume.
+        world.getServer().runCommand("/fill 20 99 -16 38 105 -2 minecraft:stone");
+        world.getServer().runCommand("/fill 21 100 -15 37 104 -3 minecraft:water");
+
+        verifyHunt(context, world, "naturalist:anglerfish", "minecraft:cod", 160,
+                WATER_PREDATOR_X, WATER_PREY_X, WATER_Y, WATER_Z);
+        verifyHunt(context, world, "naturalist:piranha", "minecraft:cod", 160,
+                WATER_PREDATOR_X, WATER_PREY_X, WATER_Y, WATER_Z);
+        // Catfish use the original delayed-swallow path: after the bite, the bass is devoured a few
+        // ticks later instead of taking ordinary melee damage. A discarded prey counts as success.
+        verifyHunt(context, world, "naturalist:catfish", "naturalist:bass", 180,
+                WATER_PREDATOR_X, WATER_PREY_X, WATER_Y, WATER_Z);
+        // The shark's custom attack behaviour is best exercised with room to approach its target.
+        verifyHunt(context, world, "naturalist:great_white_shark", "minecraft:cod", 240,
+                WATER_PREDATOR_X, WATER_PREY_X, WATER_Y, WATER_Z);
+
+        System.out.println("NATURALIST_PREDATOR_BEHAVIOR: water predator hunting verified");
+    }
+
     private static void verifyHunt(ClientGameTestContext context, TestSingleplayerContext world,
-                                   String predatorId, String preyId, int timeoutTicks) {
+                                   String predatorId, String preyId, int timeoutTicks,
+                                   double predatorX, double preyX, double y, double z) {
         int[] ids = world.getServer().computeOnServer(server -> {
             var level = server.overworld();
             EntityType<?> predatorType = getEntityType(predatorId);
@@ -66,7 +103,7 @@ final class NaturalistPredatorBehaviorTest {
             }
             predator.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
             predator.setPersistenceRequired();
-            predator.snapTo(PREDATOR_X, TEST_Y, TEST_Z, -90.0F, 0.0F);
+            predator.snapTo(predatorX, y, z, -90.0F, 0.0F);
 
             if (prey instanceof AgeableMob ageablePrey) {
                 ageablePrey.setAge(0);
@@ -75,7 +112,7 @@ final class NaturalistPredatorBehaviorTest {
                 preyMob.setNoAi(true);
                 preyMob.setPersistenceRequired();
             }
-            prey.snapTo(PREY_X, TEST_Y, TEST_Z, 90.0F, 0.0F);
+            prey.snapTo(preyX, y, z, 90.0F, 0.0F);
 
             require(level.addFreshEntity(prey), "Could not add prey " + preyId);
             require(level.addFreshEntity(predator), "Could not add predator " + predatorId);
@@ -90,7 +127,7 @@ final class NaturalistPredatorBehaviorTest {
             require(predatorEntity instanceof Mob, predatorId + " disappeared before hunting check");
 
             // Persistence prevents natural despawning during this short test, so a missing prey
-            // entity means the predator killed it. Otherwise it must have taken real damage.
+            // entity means the predator killed/devoured it. Otherwise it must have taken damage.
             if (preyEntity instanceof LivingEntity prey) {
                 require(prey.getHealth() < prey.getMaxHealth(),
                         predatorId + " never attacked nearby prey " + preyId + " within " + timeoutTicks + " ticks");
