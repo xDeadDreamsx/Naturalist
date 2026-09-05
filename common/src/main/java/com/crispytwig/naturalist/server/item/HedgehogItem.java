@@ -42,7 +42,7 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
             "enchantment.minecraft.flame", "enchantment.minecraft.looting", "enchantment.minecraft.loyalty");
 
     public HedgehogItem(Supplier<? extends EntityType<?>> entitySupplier, Supplier<? extends Fluid> fluidSupplier, Supplier<? extends SoundEvent> soundSupplier, String tooltipPrefix, String[] variantNames, Properties properties) {
-        super(entitySupplier, fluidSupplier, soundSupplier, tooltipPrefix, variantNames, properties);
+        super(entitySupplier, fluidSupplier, soundSupplier, tooltipPrefix, variantNames, properties.enchantable(1));
     }
 
     public static boolean isThrowEnchantment(Enchantment enchantment) {
@@ -70,14 +70,6 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
         return Mth.hsvToRgb(Mth.clamp(getStoredHealth(stack) / MAX_HEALTH, 0.0F, 1.0F) / 3.0F, 1.0F, 1.0F);
     }
 
-    public int getEnchantmentValue() {
-        return 1;
-    }
-
-    public boolean isEnchantable(@NotNull ItemStack stack) {
-        return stack.getMaxStackSize() == 1;
-    }
-
     @Override
     public void checkExtraContent(@Nullable LivingEntity player, @NotNull Level level, @NotNull ItemStack containerStack, @NotNull BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
@@ -99,7 +91,7 @@ public class HedgehogItem extends CaughtMobWithVariantsItem {
             return super.use(level, player, hand);
         }
         if (level instanceof ServerLevel serverLevel) {
-            Hedgehog hedgehog = NaturalistEntityTypes.HEDGEHOG.get().create(serverLevel, EntitySpawnReason.BREEDING);
+            Hedgehog hedgehog = NaturalistEntityTypes.HEDGEHOG.get().create(serverLevel, EntitySpawnReason.SPAWN_ITEM_USE);
             if (hedgehog == null) {
                 return InteractionResult.PASS;
             }
