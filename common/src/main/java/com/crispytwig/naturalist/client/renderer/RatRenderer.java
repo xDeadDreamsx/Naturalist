@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -16,11 +15,17 @@ public class RatRenderer extends NaturalistSingleMobRenderer<Rat> {
     public RatRenderer(EntityRendererProvider.Context context) {
         super(context, new RatModel(context.bakeLayer(RatModel.LAYER_LOCATION)), 0.3F);
     }
-@Override
+
+    @Override
     protected void scale(@NotNull NaturalistRenderState<Rat> state, @NotNull PoseStack poseStack) {
         Rat entity = state.entity;
-        if (entity.isBaby()) {
+        if (entity != null && entity.isBaby()) {
             poseStack.scale(0.75F, 0.75F, 0.75F);
         }
+    }
+
+    @Override
+    protected float getShadowRadius(@NotNull NaturalistRenderState<Rat> state) {
+        return state.entity != null && state.entity.isBaby() ? 0.2F : 0.3F;
     }
 }
