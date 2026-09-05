@@ -1,0 +1,25 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "naturalist:snail_color",
+    "fallback": { "type": "minecraft:model", "model": "naturalist:item/snail/white" },
+    "entries": [
+      { "threshold": 0.0, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/white" } },
+      { "threshold": 0.06666667, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/orange" } },
+      { "threshold": 0.13333334, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/magenta" } },
+      { "threshold": 0.2, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/light_blue" } },
+      { "threshold": 0.26666668, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/yellow" } },
+      { "threshold": 0.33333334, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/lime" } },
+      { "threshold": 0.4, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/pink" } },
+      { "threshold": 0.46666667, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/gray" } },
+      { "threshold": 0.53333336, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/light_gray" } },
+      { "threshold": 0.6, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/cyan" } },
+      { "threshold": 0.6666667, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/purple" } },
+      { "threshold": 0.73333335, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/blue" } },
+      { "threshold": 0.8, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/brown" } },
+      { "threshold": 0.8666667, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/green" } },
+      { "threshold": 0.93333334, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/red" } },
+      { "threshold": 1.0, "model": { "type": "minecraft:model", "model": "naturalist:item/snail/black" } }
+    ]
+  }
+}
