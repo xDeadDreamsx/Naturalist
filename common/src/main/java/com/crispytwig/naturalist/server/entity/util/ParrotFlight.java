@@ -12,13 +12,17 @@ public final class ParrotFlight {
     private ParrotFlight() {
     }
 
-    public static boolean hasBirdOnHead(Player player) {
-        for (Entity passenger : player.getPassengers()) {
+    public static boolean hasBirdOnHead(Entity entity) {
+        for (Entity passenger : entity.getPassengers()) {
             if (passenger instanceof Bird) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static boolean hasBirdOnHead(Player player) {
+        return hasBirdOnHead((Entity) player);
     }
 
     public static boolean hasParrotOnBothShoulders(Player player) {
