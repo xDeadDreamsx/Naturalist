@@ -253,7 +253,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
     }
 
     @Override
-    public boolean isBaby() {
+    protected boolean canBeABaby() {
         return false;
     }
     //endregion
