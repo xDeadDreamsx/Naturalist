@@ -11,6 +11,10 @@ public abstract class AvatarRenderStateMixin implements NaturalistAvatarRenderSt
     private boolean naturalist$shoulderParrotsFlap;
     @Unique
     private boolean naturalist$skipNormalIKMountRender;
+    @Unique
+    private float naturalist$ikMountPitch;
+    @Unique
+    private float naturalist$ikMountRoll;
 
     @Override
     public boolean naturalist$shouldShoulderParrotsFlap() {
@@ -30,5 +34,25 @@ public abstract class AvatarRenderStateMixin implements NaturalistAvatarRenderSt
     @Override
     public void naturalist$setSkipNormalIKMountRender(boolean skip) {
         this.naturalist$skipNormalIKMountRender = skip;
+    }
+
+    @Override
+    public float naturalist$ikMountPitch() {
+        return this.naturalist$ikMountPitch;
+    }
+
+    @Override
+    public void naturalist$setIKMountPitch(float pitch) {
+        this.naturalist$ikMountPitch = pitch;
+    }
+
+    @Override
+    public float naturalist$ikMountRoll() {
+        return this.naturalist$ikMountRoll;
+    }
+
+    @Override
+    public void naturalist$setIKMountRoll(float roll) {
+        this.naturalist$ikMountRoll = roll;
     }
 }
