@@ -11,31 +11,14 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.17.20
 
 > Task :compileJava
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/CrabRenderer.java:16: error: constructor CrabItemLayer in class CrabItemLayer cannot be applied to given types;
-        this.addLayer(new CrabItemLayer(this, context.getItemModelResolver()));
-                      ^
-  required: RenderLayerParent<NaturalistRenderState<Crab>,CrabModel>,ItemModelResolver
-  found:    CrabRenderer,ItemModelResolver
-  reason: argument mismatch; CrabRenderer cannot be converted to RenderLayerParent<NaturalistRenderState<Crab>,CrabModel>
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/layers/AnimatedUVVertexConsumer.java:6: error: AnimatedUVVertexConsumer is not abstract and does not override abstract method setLineWidth(float) in VertexConsumer
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/layers/AnimatedUVVertexConsumer.java:6: error: AnimatedUVVertexConsumer is not abstract and does not override abstract method setColor(int) in VertexConsumer
 public class AnimatedUVVertexConsumer implements VertexConsumer {
        ^
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/layers/ClamItemLayer.java:47: error: cannot find symbol
-        poseStack.mulPose(this.dispatcher.cameraOrientation());
-                                         ^
-  symbol:   method cameraOrientation()
-  location: variable dispatcher of type EntityRenderDispatcher
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/ClamRenderer.java:17: error: constructor ClamItemLayer in class ClamItemLayer cannot be applied to given types;
-        this.addLayer(new ClamItemLayer(this, context.getItemModelResolver(), context.getEntityRenderDispatcher()));
-                      ^
-  required: RenderLayerParent<NaturalistRenderState<Clam>,ClamModel>,ItemModelResolver,EntityRenderDispatcher
-  found:    ClamRenderer,ItemModelResolver,EntityRenderDispatcher
-  reason: argument mismatch; ClamRenderer cannot be converted to RenderLayerParent<NaturalistRenderState<Clam>,ClamModel>
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-4 errors
+1 error
 
 > Task :compileJava FAILED
 
@@ -46,31 +29,14 @@ FAILURE: Build failed with an exception.
 * What went wrong:
 Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/CrabRenderer.java:16: error: constructor CrabItemLayer in class CrabItemLayer cannot be applied to given types;
-          this.addLayer(new CrabItemLayer(this, context.getItemModelResolver()));
-                        ^
-    required: RenderLayerParent<NaturalistRenderState<Crab>,CrabModel>,ItemModelResolver
-    found:    CrabRenderer,ItemModelResolver
-    reason: argument mismatch; CrabRenderer cannot be converted to RenderLayerParent<NaturalistRenderState<Crab>,CrabModel>
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/ClamRenderer.java:17: error: constructor ClamItemLayer in class ClamItemLayer cannot be applied to given types;
-          this.addLayer(new ClamItemLayer(this, context.getItemModelResolver(), context.getEntityRenderDispatcher()));
-                        ^
-    required: RenderLayerParent<NaturalistRenderState<Clam>,ClamModel>,ItemModelResolver,EntityRenderDispatcher
-    found:    ClamRenderer,ItemModelResolver,EntityRenderDispatcher
-    reason: argument mismatch; ClamRenderer cannot be converted to RenderLayerParent<NaturalistRenderState<Clam>,ClamModel>
   Note: Recompile with -Xlint:deprecation for details.
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/layers/AnimatedUVVertexConsumer.java:6: error: AnimatedUVVertexConsumer is not abstract and does not override abstract method setLineWidth(float) in VertexConsumer
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/layers/AnimatedUVVertexConsumer.java:6: error: AnimatedUVVertexConsumer is not abstract and does not override abstract method setColor(int) in VertexConsumer
   public class AnimatedUVVertexConsumer implements VertexConsumer {
          ^
   Note: Recompile with -Xlint:unchecked for details.
   Note: Some input files use or override a deprecated API.
   Note: Some input files use unchecked or unsafe operations.
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/layers/ClamItemLayer.java:47: error: cannot find symbol
-          poseStack.mulPose(this.dispatcher.cameraOrientation());
-                                           ^
-    symbol:   method cameraOrientation()
-    location: variable dispatcher of type EntityRenderDispatcher
-  4 errors
+  1 error
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
@@ -112,31 +78,14 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/CrabRenderer.java:16: error: constructor CrabItemLayer in class CrabItemLayer cannot be applied to given types;
-        this.addLayer(new CrabItemLayer(this, context.getItemModelResolver()));
-                      ^
-  required: RenderLayerParent<NaturalistRenderState<Crab>,CrabModel>,ItemModelResolver
-  found:    CrabRenderer,ItemModelResolver
-  reason: argument mismatch; CrabRenderer cannot be converted to RenderLayerParent<NaturalistRenderState<Crab>,CrabModel>
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/layers/AnimatedUVVertexConsumer.java:6: error: AnimatedUVVertexConsumer is not abstract and does not override abstract method setLineWidth(float) in VertexConsumer
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/layers/AnimatedUVVertexConsumer.java:6: error: AnimatedUVVertexConsumer is not abstract and does not override abstract method setColor(int) in VertexConsumer
 public class AnimatedUVVertexConsumer implements VertexConsumer {
        ^
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/layers/ClamItemLayer.java:47: error: cannot find symbol
-        poseStack.mulPose(this.dispatcher.cameraOrientation());
-                                         ^
-  symbol:   method cameraOrientation()
-  location: variable dispatcher of type EntityRenderDispatcher
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/client/renderer/ClamRenderer.java:17: error: constructor ClamItemLayer in class ClamItemLayer cannot be applied to given types;
-        this.addLayer(new ClamItemLayer(this, context.getItemModelResolver(), context.getEntityRenderDispatcher()));
-                      ^
-  required: RenderLayerParent<NaturalistRenderState<Clam>,ClamModel>,ItemModelResolver,EntityRenderDispatcher
-  found:    ClamRenderer,ItemModelResolver,EntityRenderDispatcher
-  reason: argument mismatch; ClamRenderer cannot be converted to RenderLayerParent<NaturalistRenderState<Clam>,ClamModel>
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-4 errors
+1 error
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
 	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
@@ -271,5 +220,5 @@ Note: Recompile with -Xlint:unchecked for details.
 	... 30 more
 
 
-BUILD FAILED in 45s
+BUILD FAILED in 46s
 1 actionable task: 1 executed
