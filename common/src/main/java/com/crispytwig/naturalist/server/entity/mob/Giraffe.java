@@ -147,28 +147,27 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
     }
 
     @Override
-    public void travel(@NotNull Vec3 travelVector) {
-        if (!this.isAlive()) {
-            return;
-        }
-        LivingEntity livingEntity = this.getControllingPassenger();
-        if (!this.isVehicle() || livingEntity == null) {
-            super.travel(travelVector);
-            return;
-        }
-        this.setYRot(livingEntity.getYRot());
+    @Override
+    protected void tickRidden(@NotNull Player controller, @NotNull Vec3 riddenInput) {
+        super.tickRidden(controller, riddenInput);
+        this.setYRot(controller.getYRot());
         this.yRotO = this.getYRot();
-        this.setXRot(livingEntity.getXRot() * 0.5f);
+        this.setXRot(controller.getXRot() * 0.5F);
         this.setRot(this.getYRot(), this.getXRot());
         this.yHeadRot = this.getYRot();
         this.yBodyRot = Mth.rotLerp(0.35F, this.yBodyRot, this.getYRot());
-        float f = livingEntity.xxa * 0.5f;
-        float g = livingEntity.zza;
-
-        this.setSpeed((float)this.getAttributeValue(Attributes.MOVEMENT_SPEED));
-        super.travel(new Vec3(f, travelVector.y, g));
-        this.calculateEntityAnimation(false);
     }
+
+    @Override
+    protected @NotNull Vec3 getRiddenInput(@NotNull Player controller, @NotNull Vec3 selfInput) {
+        return new Vec3(controller.xxa * 0.5F, 0.0D, controller.zza);
+    }
+
+    @Override
+    protected float getRiddenSpeed(@NotNull Player controller) {
+        return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED);
+    }
+
 
     @Override
     public boolean isPushable() {

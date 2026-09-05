@@ -187,6 +187,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
         VulturePathNavigation navigation = new VulturePathNavigation(this, level);
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(true);
+        navigation.getNodeEvaluator().setCanPassDoors(true);
         return navigation;
     }
 

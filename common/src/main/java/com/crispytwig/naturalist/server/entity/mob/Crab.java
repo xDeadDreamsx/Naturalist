@@ -84,6 +84,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.tags.ItemTags;
 
 @SuppressWarnings("unused")
 public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal {
@@ -410,7 +411,8 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     }
 
     private static boolean isWeapon(ItemStack stack) {
-        return stack.has(DataComponents.TOOL);
+        return stack.is(ItemTags.SWORDS) || stack.is(ItemTags.AXES) || stack.is(ItemTags.HOES)
+                || stack.is(ItemTags.PICKAXES) || stack.is(ItemTags.SHOVELS);
     }
 
     @Override

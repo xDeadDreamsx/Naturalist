@@ -224,6 +224,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
         FlyingPathNavigation navigation = new FlyingPathNavigation(this, level);
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(true);
+        navigation.getNodeEvaluator().setCanPassDoors(true);
         return navigation;
     }
 

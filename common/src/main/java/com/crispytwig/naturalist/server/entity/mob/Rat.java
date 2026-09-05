@@ -198,7 +198,13 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
 
     public void setWorkstation(@Nullable BlockPos pos) {
         this.workstationPos = pos == null ? null : pos.immutable();
+        if (this.workstationPos != null) {
+            this.setHomeTo(this.workstationPos, WORK_RADIUS);
+        } else {
+            this.clearHome();
+        }
     }
+
 
     @Override
     public void tryAssignWorkstation(BlockPos pos) {

@@ -274,6 +274,7 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
         };
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(false);
+        navigation.getNodeEvaluator().setCanPassDoors(true);
         return navigation;
     }
 
