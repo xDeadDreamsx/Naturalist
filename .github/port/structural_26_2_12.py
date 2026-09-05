@@ -123,6 +123,7 @@ if __name__ == "__main__":
     for next_pass in (
             Path(".github/port/structural_26_2_13.py"),
             Path(".github/port/structural_26_2_14.py"),
-            Path(".github/port/structural_26_2_15.py")):
+            Path(".github/port/structural_26_2_15.py"),
+            Path(".github/port/structural_26_2_16.py")):
         if next_pass.exists():
             runpy.run_path(str(next_pass), run_name="__main__")
