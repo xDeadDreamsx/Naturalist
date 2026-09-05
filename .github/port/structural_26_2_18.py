@@ -8,6 +8,7 @@ radius/predicate query. Restore both original semantics using the 26.2 ServerLev
 """
 
 from pathlib import Path
+import runpy
 
 BIRD = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java")
 
@@ -67,3 +68,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    next_pass = Path(".github/port/structural_26_2_19.py")
+    if next_pass.exists():
+        runpy.run_path(str(next_pass), run_name="__main__")
