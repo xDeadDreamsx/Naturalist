@@ -4,9 +4,12 @@ import com.crispytwig.naturalist.NaturalistClient;
 import com.crispytwig.naturalist.NaturalistClientConfig;
 import com.crispytwig.naturalist.fabric.config.FabricNaturalistClientConfig;
 import com.crispytwig.naturalist.client.particle.CaptureNetSwingParticle;
+import com.crispytwig.naturalist.client.renderer.SnailShellRenderer;
+import com.crispytwig.naturalist.registry.NaturalistBlockEntities;
 import com.crispytwig.naturalist.registry.NaturalistParticleTypes;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -20,6 +23,7 @@ public class NaturalistFabricClient implements ClientModInitializer {
         NaturalistClient.registerLayerDefinitions((location, definition) ->
                 ModelLayerRegistry.registerModelLayer(location, definition::get));
         NaturalistClient.registerRenderers(EntityRenderers::register);
+        BlockEntityRendererRegistry.register(NaturalistBlockEntities.SNAIL_SHELL.get(), SnailShellRenderer::new);
 
         NaturalistClient.registerItemProperties();
         NaturalistClient.registerMenuScreens(MenuScreens::register);
