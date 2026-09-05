@@ -8,7 +8,11 @@ import com.crispytwig.naturalist.server.entity.mob.Hippo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.BlockModelResolver;
+import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -24,6 +28,9 @@ public class HippoRenderer extends NaturalistMobRenderer<Hippo> {
     }
 
     private static class HippoJawBlockLayer extends RenderLayer<NaturalistRenderState<Hippo>, NaturalistEntityModel<Hippo>> {
+        private final BlockModelResolver blockModelResolver = new BlockModelResolver(Minecraft.getInstance().getModelManager());
+        private final BlockModelRenderState blockRenderState = new BlockModelRenderState();
+
         HippoJawBlockLayer(RenderLayerParent<NaturalistRenderState<Hippo>, NaturalistEntityModel<Hippo>> parent) {
             super(parent);
         }
@@ -35,12 +42,12 @@ public class HippoRenderer extends NaturalistMobRenderer<Hippo> {
             if (entity == null || !(entity.getMainHandItem().getItem() instanceof BlockItem blockItem)
                     || !(this.getParentModel() instanceof HippoModel hippoModel)) return;
 
+            this.blockModelResolver.update(this.blockRenderState, blockItem.getBlock().defaultBlockState(), BlockDisplayContext.create());
             poseStack.pushPose();
             hippoModel.translateToBotJaw(poseStack);
             poseStack.translate(-0.4D, 0.76D, -1.8D);
             poseStack.scale(0.675F, 0.675F, 0.675F);
-            collector.submitBlock(poseStack, blockItem.getBlock().defaultBlockState(), lightCoords,
-                    OverlayTexture.NO_OVERLAY, state.outlineColor);
+            this.blockRenderState.submit(poseStack, collector, lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
             poseStack.popPose();
         }
     }
