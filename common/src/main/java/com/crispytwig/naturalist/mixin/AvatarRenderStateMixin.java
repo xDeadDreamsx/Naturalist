@@ -9,6 +9,8 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class AvatarRenderStateMixin implements NaturalistAvatarRenderState {
     @Unique
     private boolean naturalist$shoulderParrotsFlap;
+    @Unique
+    private boolean naturalist$skipNormalIKMountRender;
 
     @Override
     public boolean naturalist$shouldShoulderParrotsFlap() {
@@ -18,5 +20,15 @@ public abstract class AvatarRenderStateMixin implements NaturalistAvatarRenderSt
     @Override
     public void naturalist$setShoulderParrotsFlap(boolean flap) {
         this.naturalist$shoulderParrotsFlap = flap;
+    }
+
+    @Override
+    public boolean naturalist$skipNormalIKMountRender() {
+        return this.naturalist$skipNormalIKMountRender;
+    }
+
+    @Override
+    public void naturalist$setSkipNormalIKMountRender(boolean skip) {
+        this.naturalist$skipNormalIKMountRender = skip;
     }
 }
