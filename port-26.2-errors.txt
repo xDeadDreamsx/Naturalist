@@ -14,9 +14,16 @@ Fabric Loom: 1.17.20
 /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:213: error: Override is not a repeatable annotation interface
     @Override
     ^
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:217: error: Override is not a repeatable annotation interface
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:215: error: Override is not a repeatable annotation interface
     @Override
     ^
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:219: error: Override is not a repeatable annotation interface
+    @Override
+    ^
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:179: error: getScale() in Caterpillar cannot override getScale() in LivingEntity
+    public float getScale() {
+                 ^
+  overridden method is final
 /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:256: error: isBaby() in Butterfly cannot override isBaby() in AgeableMob
     public boolean isBaby() {
                    ^
@@ -29,7 +36,7 @@ Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-4 errors
+6 errors
 
 > Task :compileJava FAILED
 
@@ -43,9 +50,16 @@ Execution failed for task ':compileJava' (registered by plugin class 'org.gradle
   /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:213: error: Override is not a repeatable annotation interface
       @Override
       ^
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:217: error: Override is not a repeatable annotation interface
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:215: error: Override is not a repeatable annotation interface
       @Override
       ^
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:219: error: Override is not a repeatable annotation interface
+      @Override
+      ^
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:179: error: getScale() in Caterpillar cannot override getScale() in LivingEntity
+      public float getScale() {
+                   ^
+    overridden method is final
   /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:256: error: isBaby() in Butterfly cannot override isBaby() in AgeableMob
       public boolean isBaby() {
                      ^
@@ -58,7 +72,7 @@ Execution failed for task ':compileJava' (registered by plugin class 'org.gradle
   Note: Recompile with -Xlint:unchecked for details.
   Note: Some input files use or override a deprecated API.
   Note: Some input files use unchecked or unsafe operations.
-  4 errors
+  6 errors
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
@@ -103,9 +117,16 @@ Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Com
 /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:213: error: Override is not a repeatable annotation interface
     @Override
     ^
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:217: error: Override is not a repeatable annotation interface
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:215: error: Override is not a repeatable annotation interface
     @Override
     ^
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Bird.java:219: error: Override is not a repeatable annotation interface
+    @Override
+    ^
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java:179: error: getScale() in Caterpillar cannot override getScale() in LivingEntity
+    public float getScale() {
+                 ^
+  overridden method is final
 /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java:256: error: isBaby() in Butterfly cannot override isBaby() in AgeableMob
     public boolean isBaby() {
                    ^
@@ -118,7 +139,7 @@ Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-4 errors
+6 errors
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
 	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
@@ -253,5 +274,5 @@ Note: Recompile with -Xlint:unchecked for details.
 	... 30 more
 
 
-BUILD FAILED in 31s
+BUILD FAILED in 46s
 1 actionable task: 1 executed
