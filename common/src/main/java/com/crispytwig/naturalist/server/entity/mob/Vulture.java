@@ -59,6 +59,7 @@ import com.crispytwig.naturalist.server.entity.util.SmoothAnimationState;
 import java.util.*;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.item.ItemStackTemplate;
 
 @SuppressWarnings("unused")
 public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
@@ -369,7 +370,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
             if (!itemStack.isEmpty()) {
                 for (int i = 0; i < 8; ++i) {
                     Vec3 vec3 = new Vec3(((double)this.random.nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0).xRot(-this.getXRot() * Mth.DEG_TO_RAD).yRot(-this.getYRot() * Mth.DEG_TO_RAD);
-                    this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, itemStack.getItem()), this.getX() + this.getLookAngle().x / 2.0, this.getY(), this.getZ() + this.getLookAngle().z / 2.0, vec3.x, vec3.y + 0.05, vec3.z);
+                    this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(itemStack)), this.getX() + this.getLookAngle().x / 2.0, this.getY(), this.getZ() + this.getLookAngle().z / 2.0, vec3.x, vec3.y + 0.05, vec3.z);
                 }
             }
         }

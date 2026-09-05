@@ -76,6 +76,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.item.ItemStackTemplate;
 
 @SuppressWarnings("unused")
 public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, DyeableAnimal, FollowingPet, HuntingAnimal, NocturnalHostile, DataDrivenVariantAnimal {
@@ -613,7 +614,7 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
                 Vec3 posVec = new Vec3(((double)this.random.nextFloat() - 0.5D) * 0.8D, y, 1.0D + ((double)this.random.nextFloat() - 0.5D) * 0.4D);
                 posVec = posVec.yRot(-this.yBodyRot * Mth.DEG_TO_RAD);
                 posVec = posVec.add(this.getX(), this.getEyeY() - 0.2D, this.getZ() - 0.1D);
-                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, eatingStack.getItem()), posVec.x, posVec.y, posVec.z, speedVec .x, speedVec .y + 0.05D, speedVec .z);
+                this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(eatingStack)), posVec.x, posVec.y, posVec.z, speedVec .x, speedVec .y + 0.05D, speedVec .z);
             }
         }
     }

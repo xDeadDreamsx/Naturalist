@@ -72,6 +72,7 @@ import org.jspecify.annotations.NonNull;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.ItemStackTemplate;
 
 @SuppressWarnings("unused")
 public class Bird extends ShoulderRidingEntity implements DyeableAnimal, FollowingPet, DataDrivenVariantAnimal {
@@ -652,7 +653,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
                         1.0F, 1.0F + (this.bird.random.nextFloat() - this.bird.random.nextFloat()) * 0.2F);
             }
             if (level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack.getItem()),
+                serverLevel.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(stack)),
                         this.targetSeeds.getX(), this.targetSeeds.getY() + 0.15D, this.targetSeeds.getZ(),
                         8, 0.15D, 0.1D, 0.15D, 0.02D);
             }

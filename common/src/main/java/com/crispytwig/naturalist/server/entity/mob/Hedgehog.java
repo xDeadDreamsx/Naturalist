@@ -67,6 +67,7 @@ import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.ItemStackTemplate;
 
 @SuppressWarnings("unused")
 public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingPet, HidingAnimal, Catchable, DataDrivenVariantAnimal {
@@ -354,6 +355,8 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
 
 
 
+
+
     @Override
     public void tame(@NotNull Player player) {
         super.tame(player);
@@ -467,7 +470,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
                             }
                             ItemStack particleStack = this.getCaughtItemStack();
                             this.saveToHandTag(particleStack);
-                            ((ServerLevel) this.level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, particleStack.getItem()), this.getX(), this.getY(0.5), this.getZ(), 8, 0.1, 0.1, 0.1, 0.05);
+                            ((ServerLevel) this.level()).sendParticles(new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(particleStack)), this.getX(), this.getY(0.5), this.getZ(), 8, 0.1, 0.1, 0.1, 0.05);
                             if (this.random.nextInt(this.getThrowEnchantmentLevel(Enchantments.UNBREAKING) + 1) == 0) {
                                 Holder<DamageType> throwDamage = this.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(NaturalistDamageTypes.HEDGEHOG_THROW);
                                 this.hurt(new DamageSource(throwDamage, target), 2.0F);
