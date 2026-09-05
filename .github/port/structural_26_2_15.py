@@ -65,8 +65,10 @@ def main() -> None:
         changed.append(str(rat))
 
     giraffe = ROOT / "Giraffe.java"
-    giraffe_riding = """    @Override
-    protected void tickRidden(@NotNull Player controller, @NotNull Vec3 riddenInput) {
+    # The existing @Override immediately before the old travel() method remains outside the
+    # replacement range, so the first replacement method intentionally starts without another
+    # annotation. Subsequent methods need their own annotations.
+    giraffe_riding = """    protected void tickRidden(@NotNull Player controller, @NotNull Vec3 riddenInput) {
         super.tickRidden(controller, riddenInput);
         this.setYRot(controller.getYRot());
         this.yRotO = this.getYRot();
