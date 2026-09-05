@@ -2,6 +2,7 @@ package com.crispytwig.naturalist.fabric;
 
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.NaturalistConfig;
+import com.crispytwig.naturalist.compat.FieldGuideCompat;
 import com.crispytwig.naturalist.fabric.config.FabricNaturalistConfig;
 import com.crispytwig.naturalist.registry.NaturalistTags;
 import com.crispytwig.naturalist.server.level.NaturalistSpawns;
@@ -26,6 +27,7 @@ public class NaturalistFabric implements ModInitializer {
     public void onInitialize() {
         FabricNaturalistConfig.load();
         Naturalist.bootstrap();
+        FieldGuideCompat.register();
 
         Naturalist.createAttributes((type, builder) -> {
             // TemptGoal requires minecraft:tempt_range in 26.2. Naturalist 2.0.3
