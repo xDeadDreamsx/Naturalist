@@ -16,6 +16,16 @@ import net.minecraft.world.entity.animal.Bucketable;
                                         ^
   symbol:   class Bucketable
   location: package net.minecraft.world.entity.animal
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java:266: error: cannot find symbol
+        TargetingConditions conditions = TargetingConditions.forNonCombat().range(3.0D)
+        ^
+  symbol:   class TargetingConditions
+  location: class GiantIsopod
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java:266: error: cannot find symbol
+        TargetingConditions conditions = TargetingConditions.forNonCombat().range(3.0D)
+                                         ^
+  symbol:   variable TargetingConditions
+  location: class GiantIsopod
 /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FieldGuideEntryScreenCompatMixin.java:60: error: cannot find symbol
         } else if (entity instanceof Bucketable bucketable) {
                                      ^
@@ -25,7 +35,7 @@ Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-2 errors
+4 errors
 
 > Task :compileJava FAILED
 
@@ -42,6 +52,16 @@ Execution failed for task ':compileJava' (registered by plugin class 'org.gradle
                                           ^
     symbol:   class Bucketable
     location: package net.minecraft.world.entity.animal
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java:266: error: cannot find symbol
+          TargetingConditions conditions = TargetingConditions.forNonCombat().range(3.0D)
+          ^
+    symbol:   class TargetingConditions
+    location: class GiantIsopod
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java:266: error: cannot find symbol
+          TargetingConditions conditions = TargetingConditions.forNonCombat().range(3.0D)
+                                           ^
+    symbol:   variable TargetingConditions
+    location: class GiantIsopod
   /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FieldGuideEntryScreenCompatMixin.java:60: error: cannot find symbol
           } else if (entity instanceof Bucketable bucketable) {
                                        ^
@@ -50,7 +70,7 @@ Execution failed for task ':compileJava' (registered by plugin class 'org.gradle
   Note: Recompile with -Xlint:unchecked for details.
   Note: Some input files use or override a deprecated API.
   Note: Some input files use unchecked or unsafe operations.
-  2 errors
+  4 errors
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
@@ -97,6 +117,16 @@ import net.minecraft.world.entity.animal.Bucketable;
                                         ^
   symbol:   class Bucketable
   location: package net.minecraft.world.entity.animal
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java:266: error: cannot find symbol
+        TargetingConditions conditions = TargetingConditions.forNonCombat().range(3.0D)
+        ^
+  symbol:   class TargetingConditions
+  location: class GiantIsopod
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java:266: error: cannot find symbol
+        TargetingConditions conditions = TargetingConditions.forNonCombat().range(3.0D)
+                                         ^
+  symbol:   variable TargetingConditions
+  location: class GiantIsopod
 /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/FieldGuideEntryScreenCompatMixin.java:60: error: cannot find symbol
         } else if (entity instanceof Bucketable bucketable) {
                                      ^
@@ -106,7 +136,7 @@ Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-2 errors
+4 errors
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
 	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
@@ -241,5 +271,5 @@ Note: Recompile with -Xlint:unchecked for details.
 	... 30 more
 
 
-BUILD FAILED in 43s
+BUILD FAILED in 34s
 1 actionable task: 1 executed
