@@ -13,9 +13,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.AABB;
 
@@ -55,7 +55,7 @@ final class NaturalistInteractionRegressionTest {
         snail.snapTo(-2.0D, 160.0D, 0.0D, 0.0F, 0.0F);
         require(level.addFreshEntity(snail), "Could not add snail interaction-test entity");
 
-        ItemStack redDye = new ItemStack(Items.RED_DYE);
+        ItemStack redDye = new ItemStack(DyeItem.byColor(DyeColor.RED));
         player.setItemInHand(InteractionHand.MAIN_HAND, redDye);
         snail.mobInteract(player, InteractionHand.MAIN_HAND);
         require(snail.getColor() == DyeColor.RED,
