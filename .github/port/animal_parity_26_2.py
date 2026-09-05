@@ -9,37 +9,47 @@ def replace(path: Path, old: str, new: str) -> bool:
     return True
 
 
-def ensure_import(path: Path, import_line: str, after: str) -> bool:
-    text = path.read_text(encoding="utf-8")
-    if import_line in text:
-        return False
-    if after not in text:
-        return False
-    path.write_text(text.replace(after, after + import_line), encoding="utf-8")
-    return True
-
-
 changed = []
 
+# Hiding/alert states are used by client animation code as well as server AI. During the 26.2
+# targeting API migration several of these predicates became ServerLevel-only, making the server
+# behave correctly while the client permanently saw the non-hidden/non-alert pose.
 crab = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Crab.java")
 crab_old = '''    private boolean thinkCanHide() {\n        if (this.isBaby() || this.isTame() || !this.getMainHandItem().isEmpty()\n                || !(this.level() instanceof ServerLevel serverLevel)) {\n            return false;\n        }\n        TargetingConditions conditions = TargetingConditions.forNonCombat().range(4.0D)\n                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));\n        List<Player> players = serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),\n                player -> conditions.test(serverLevel, this, player));\n'''
 crab_new = '''    private boolean thinkCanHide() {\n        if (this.isBaby() || this.isTame() || !this.getMainHandItem().isEmpty()) {\n            return false;\n        }\n        List<Player> players = this.level().getEntitiesOfClass(Player.class,\n                this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),\n                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)\n                        && this.distanceToSqr(player) <= 16.0D);\n'''
 if replace(crab, crab_old, crab_new):
-    text = crab.read_text(encoding="utf-8")
-    text = text.replace("import net.minecraft.world.entity.ai.targeting.TargetingConditions;\n", "")
-    crab.write_text(text, encoding="utf-8")
     changed.append(str(crab))
 
-# Older migration waves temporarily made Giant Isopod hiding server-only. Keep the fix
-# idempotently here so future migration replays cannot regress the client hide animation.
 isopod = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/GiantIsopod.java")
 isopod_old = '''        if (!(this.level() instanceof ServerLevel serverLevel)) {\n            return false;\n        }\n        TargetingConditions conditions = TargetingConditions.forNonCombat().range(3.0D)\n                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));\n        return !serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(3.0D, 2.0D, 3.0D),\n                player -> conditions.test(serverLevel, this, player)).isEmpty();\n'''
 isopod_new = '''        return !this.level().getEntitiesOfClass(Player.class,\n                this.getBoundingBox().inflate(3.0D, 2.0D, 3.0D),\n                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)\n                        && this.distanceToSqr(player) <= 9.0D).isEmpty();\n'''
 if replace(isopod, isopod_old, isopod_new):
-    text = isopod.read_text(encoding="utf-8")
-    text = text.replace("import net.minecraft.world.entity.ai.targeting.TargetingConditions;\n", "")
-    isopod.write_text(text, encoding="utf-8")
     changed.append(str(isopod))
+
+hedgehog = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Hedgehog.java")
+hedgehog_old = '''    private boolean thinkCanHide() {\n        if (this.isTame() || this.isRolling() || this.isSprinting() || this.isInSittingPose()\n                || !(this.level() instanceof ServerLevel serverLevel)) {\n            return false;\n        }\n        TargetingConditions conditions = TargetingConditions.forNonCombat().range(6.0D)\n                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));\n        List<Player> players = serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(6.0D, 3.0D, 6.0D),\n                player -> conditions.test(serverLevel, this, player));\n'''
+hedgehog_new = '''    private boolean thinkCanHide() {\n        if (this.isTame() || this.isRolling() || this.isSprinting() || this.isInSittingPose()) {\n            return false;\n        }\n        List<Player> players = this.level().getEntitiesOfClass(Player.class,\n                this.getBoundingBox().inflate(6.0D, 3.0D, 6.0D),\n                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)\n                        && this.distanceToSqr(player) <= 36.0D);\n'''
+if replace(hedgehog, hedgehog_old, hedgehog_new):
+    changed.append(str(hedgehog))
+
+snail = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snail.java")
+snail_old = '''    public boolean canHide() {\n        if (!(this.level() instanceof ServerLevel serverLevel)) {\n            return false;\n        }\n        TargetingConditions conditions = TargetingConditions.forNonCombat().range(5.0D)\n                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));\n        return !serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),\n                player -> conditions.test(serverLevel, this, player)).isEmpty();\n    }'''
+snail_new = '''    public boolean canHide() {\n        return !this.level().getEntitiesOfClass(Player.class,\n                this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),\n                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)\n                        && this.distanceToSqr(player) <= 25.0D).isEmpty();\n    }'''
+if replace(snail, snail_old, snail_new):
+    changed.append(str(snail))
+
+snake = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Snake.java")
+snake_old = '''    private boolean canRattle() {\n        boolean rattlesnake = this.isRattlesnake();\n        if (!(this.level() instanceof ServerLevel serverLevel)) {\n            return false;\n        }\n        TargetingConditions conditions = TargetingConditions.forNonCombat().range(4.0D);\n        List<Player> players = serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),\n                player -> conditions.test(serverLevel, this, player));\n        if (!players.isEmpty() && rattlesnake && !players.getFirst().isCreative()) {\n            this.setTarget(players.getFirst());\n        } else {\n            this.setTarget(null);\n        }\n        return !players.isEmpty() && rattlesnake;\n    }'''
+snake_new = '''    private boolean canRattle() {\n        boolean rattlesnake = this.isRattlesnake();\n        List<Player> players = this.level().getEntitiesOfClass(Player.class,\n                this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),\n                player -> player.isAlive() && !player.isSpectator() && this.distanceToSqr(player) <= 16.0D);\n        if (!this.level().isClientSide()) {\n            if (!players.isEmpty() && rattlesnake && !players.getFirst().isCreative()) {\n                this.setTarget(players.getFirst());\n            } else {\n                this.setTarget(null);\n            }\n        }\n        return !players.isEmpty() && rattlesnake;\n    }'''
+if replace(snake, snake_old, snake_new):
+    changed.append(str(snake))
+
+# Remove targeting imports only when the class no longer references the type after the patches.
+for mob_path in (crab, isopod, hedgehog, snail, snake):
+    text = mob_path.read_text(encoding="utf-8")
+    if "TargetingConditions" not in text.replace("import net.minecraft.world.entity.ai.targeting.TargetingConditions;", ""):
+        text = text.replace("import net.minecraft.world.entity.ai.targeting.TargetingConditions;\n", "")
+        mob_path.write_text(text, encoding="utf-8")
 
 # 1.21.1 used Level#getTimeOfDay to give alligator and tortoise eggs a preferred hatch
 # window. A temporary 26.2 approximation reduced time to two values (0.25/0.75), making the
