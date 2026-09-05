@@ -7,41 +7,38 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerCon
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.client.CameraType;
 
+/**
+ * Real-client regression smoke test for the 26.2 Fabric port.
+ *
+ * <p>This intentionally exercises both an integrated singleplayer world and a dedicated-server
+ * connection so CI verifies more than class loading.</p>
+ */
 @SuppressWarnings("UnstableApiUsage")
 public final class NaturalistClientGameTest implements FabricClientGameTest {
-    public static final String WORLD_JOINED_MARKER = "NATURALIST_CLIENT_GAMETEST_WORLD_JOINED";
-    public static final String BEHAVIOR_MOBS_TICKED_MARKER = "NATURALIST_CLIENT_GAMETEST_BEHAVIOR_MOBS_TICKED";
-    public static final String RENDER_PARITY_MOBS_RENDERED_MARKER = "NATURALIST_CLIENT_GAMETEST_RENDER_PARITY_MOBS_RENDERED";
-    public static final String MULTIPLAYER_JOINED_MARKER = "NATURALIST_CLIENT_GAMETEST_DEDICATED_JOINED";
+    private static final String WORLD_JOINED_MARKER = "NATURALIST_CLIENT_GAMETEST_WORLD_JOINED";
+    private static final String MULTIPLAYER_JOINED_MARKER = "NATURALIST_CLIENT_GAMETEST_DEDICATED_JOINED";
+    private static final String RENDER_PARITY_MOBS_RENDERED_MARKER = "NATURALIST_CLIENT_GAMETEST_RENDER_PARITY_MOBS_RENDERED";
+    private static final String BEHAVIOR_MOBS_TICKED_MARKER = "NATURALIST_CLIENT_GAMETEST_BEHAVIOR_MOBS_TICKED";
 
     @Override
     public void runTest(ClientGameTestContext context) {
         CameraType previousCamera = context.computeOnClient(client -> client.options.getCameraType());
         try (TestSingleplayerContext singleplayer = context.worldBuilder().create()) {
-            context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_BACK));
-
             singleplayer.getServer().runCommand("/fill -16 99 -16 16 99 16 minecraft:stone");
-            singleplayer.getServer().runCommand("/tp @a 0 100 0");
             singleplayer.getServer().runCommand("/time set 1000");
+            singleplayer.getServer().runCommand("/summon naturalist:lion -8 100 0");
+            singleplayer.getServer().runCommand("/summon naturalist:komodo_dragon -4 100 0");
+            singleplayer.getServer().runCommand("/summon naturalist:snake 0 100 0");
+            singleplayer.getServer().runCommand("/summon naturalist:alligator 4 100 0");
+            singleplayer.getServer().runCommand("/summon naturalist:elephant 8 100 0");
+            singleplayer.getServer().runCommand("/summon naturalist:mammoth -8 100 5");
+            singleplayer.getServer().runCommand("/summon naturalist:giraffe 0 100 5");
+            singleplayer.getServer().runCommand("/summon naturalist:ostrich 8 100 5");
+            singleplayer.getServer().runCommand("/tp @a 8 101 -8 0 5");
 
-            // Existing behavior/animation regression coverage.
-            singleplayer.getServer().runCommand("/summon naturalist:lion 3 100 0");
-            singleplayer.getServer().runCommand("/summon naturalist:komodo_dragon -3 100 0");
-            singleplayer.getServer().runCommand("/summon naturalist:snake 0 100 4");
-
-            // 26.2 render-layer parity coverage. Elephant/Mammoth carry real banner inventory NBT,
-            // which is synchronized to their renderer by customServerAiStep.
-            singleplayer.getServer().runCommand("/summon naturalist:alligator -7 100 8");
-            singleplayer.getServer().runCommand("/summon naturalist:elephant 0 100 7 {Items:[{Slot:26,id:\"minecraft:red_banner\",count:1}]} ");
-            singleplayer.getServer().runCommand("/summon naturalist:mammoth 5 100 9 {Items:[{Slot:26,id:\"minecraft:blue_banner\",count:1}]} ");
-            singleplayer.getServer().runCommand("/summon naturalist:giraffe -5 100 10");
-            singleplayer.getServer().runCommand("/summon naturalist:ostrich 7 100 6");
-
-            singleplayer.getConnection().waitForChunksRender();
+            context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_BACK));
             context.waitTicks(80);
-
-            // Exercise the custom animated-seat render path in third person rather than merely
-            // instantiating the layer. The rider is dismounted again before the rest of the test.
+            singleplayer.getConnection().waitForChunksRender();
             singleplayer.getServer().runCommand("/ride @a[limit=1] mount @e[type=naturalist:elephant,limit=1,sort=nearest]");
             context.waitTicks(60);
             singleplayer.getConnection().waitForChunksRender();
@@ -59,6 +56,10 @@ public final class NaturalistClientGameTest implements FabricClientGameTest {
             // Exercise real target acquisition and attacks for the main land predators, not just
             // compilation of their goal setup.
             NaturalistPredatorBehaviorTest.verifyLandPredatorsHunt(context, singleplayer);
+
+            // Repeat the same runtime check for the original aquatic predator/prey relationships.
+            NaturalistPredatorBehaviorTest.verifyWaterPredatorsHunt(context, singleplayer);
+
             NaturalistVariantItemTest.verify(context);
             NaturalistContentParity.verify(context, singleplayer);
             System.out.println(WORLD_JOINED_MARKER);
