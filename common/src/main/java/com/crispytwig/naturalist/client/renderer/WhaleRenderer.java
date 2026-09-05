@@ -20,7 +20,7 @@ public class WhaleRenderer extends NaturalistMobRenderer<Whale> {
     @Override
     protected void setupRotations(@NotNull NaturalistRenderState<Whale> state, @NotNull PoseStack poseStack, float yBodyRot, float nativeScale) {
         Whale entity = state.entity;
-        float partialTick = state.partialTick;
-        super.setupRotations(state, poseStack, yBodyRot, nativeScale);
+        float renderYaw = entity != null ? entity.getRenderYaw(state.partialTick) : yBodyRot;
+        super.setupRotations(state, poseStack, renderYaw, nativeScale);
     }
 }
