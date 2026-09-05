@@ -44,8 +44,20 @@ snake_new = '''    private boolean canRattle() {\n        boolean rattlesnake = 
 if replace(snake, snake_old, snake_new):
     changed.append(str(snake))
 
+tortoise = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Tortoise.java")
+tortoise_old = '''    public boolean canHide() {\n        if (this.isTame() || !(this.level() instanceof ServerLevel serverLevel)) {\n            return false;\n        }\n        TargetingConditions conditions = TargetingConditions.forNonCombat().range(5.0D)\n                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)\n                        && !entity.isDiscrete() && !entity.isHolding(temptItems()));\n        return !serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),\n                player -> conditions.test(serverLevel, this, player)).isEmpty();\n    }'''
+tortoise_new = '''    public boolean canHide() {\n        if (this.isTame()) {\n            return false;\n        }\n        return !this.level().getEntitiesOfClass(Player.class,\n                this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),\n                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)\n                        && !player.isDiscrete()\n                        && !player.isHolding(temptItems())\n                        && this.distanceToSqr(player) <= 25.0D).isEmpty();\n    }'''
+if replace(tortoise, tortoise_old, tortoise_new):
+    changed.append(str(tortoise))
+
+ostrich = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ostrich.java")
+ostrich_old = '''    private boolean thinkCanHide() {\n        if (this.isTame() || this.isBaby() || this.isAggressive() || this.isVehicle()\n                || !(this.level() instanceof ServerLevel serverLevel)) {\n            return false;\n        }\n        TargetingConditions conditions = TargetingConditions.forNonCombat().range(16.0D)\n                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)\n                        && !entity.isDiscrete() && !entity.isHolding(foodItems()));\n        return !serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(16.0D, 8.0D, 16.0D),\n                player -> conditions.test(serverLevel, this, player)).isEmpty();\n    }'''
+ostrich_new = '''    private boolean thinkCanHide() {\n        if (this.isTame() || this.isBaby() || this.isAggressive() || this.isVehicle()) {\n            return false;\n        }\n        return !this.level().getEntitiesOfClass(Player.class,\n                this.getBoundingBox().inflate(16.0D, 8.0D, 16.0D),\n                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)\n                        && !player.isDiscrete()\n                        && !player.isHolding(foodItems())\n                        && this.distanceToSqr(player) <= 256.0D).isEmpty();\n    }'''
+if replace(ostrich, ostrich_old, ostrich_new):
+    changed.append(str(ostrich))
+
 # Remove targeting imports only when the class no longer references the type after the patches.
-for mob_path in (crab, isopod, hedgehog, snail, snake):
+for mob_path in (crab, isopod, hedgehog, snail, snake, tortoise, ostrich):
     text = mob_path.read_text(encoding="utf-8")
     if "TargetingConditions" not in text.replace("import net.minecraft.world.entity.ai.targeting.TargetingConditions;", ""):
         text = text.replace("import net.minecraft.world.entity.ai.targeting.TargetingConditions;\n", "")
