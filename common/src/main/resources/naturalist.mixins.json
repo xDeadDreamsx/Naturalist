@@ -12,6 +12,7 @@
     "FieldGuideEntryScreenCompatMixin",
     "LocalPlayerMixin",
     "ParrotOnShoulderLayerMixin",
+    "PlayerModelMixin",
     "WolfModelMixin",
     "WolfRendererMixin",
     "WolfRenderStateMixin"
