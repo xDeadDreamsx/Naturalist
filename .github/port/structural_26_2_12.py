@@ -85,8 +85,6 @@ def main() -> None:
         }
         return dayTime > 6000 && dayTime < 13000;
     }""",
-        # Level#isDay was renamed to isBrightOutside in the current mappings, so Komodo's
-        # original behavior already has a direct 26.x equivalent.
         ROOT / "mob/KomodoDragon.java": """    public boolean canSleep() {
         return this.level().isBrightOutside() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());
     }""",
@@ -95,8 +93,6 @@ def main() -> None:
         if replace_method(path, "    public boolean canSleep() {", desired):
             changed.append(str(path))
 
-    # isDarkOutside is the direct 26.x successor of the old isNight method. Using !isBrightOutside
-    # is subtly different around transition/weather states, so restore the original distinction.
     nocturnal = ROOT / "base/NocturnalHostile.java"
     if replace_text(nocturnal,
                     "return !((LivingEntity) this).level().isBrightOutside();",
@@ -126,6 +122,7 @@ if __name__ == "__main__":
     main()
     for next_pass in (
             Path(".github/port/structural_26_2_13.py"),
-            Path(".github/port/structural_26_2_14.py")):
+            Path(".github/port/structural_26_2_14.py"),
+            Path(".github/port/structural_26_2_15.py")):
         if next_pass.exists():
             runpy.run_path(str(next_pass), run_name="__main__")
