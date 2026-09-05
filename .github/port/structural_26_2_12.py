@@ -2,9 +2,10 @@
 """Restore Naturalist 1.21.1 time-of-day behavior after the Minecraft 26.2 API port.
 
 Minecraft 26.x renamed the old Level#isDay/isNight checks to isBrightOutside/isDarkOutside,
-while getDayTime moved to the overworld WorldClock. Earlier migration waves sometimes replaced
-Naturalist's custom tick windows with a generic bright/dark check, which changes sleeping and
-activity behavior. Preserve the original Naturalist predicates and only translate the API surface.
+while getDayTime moved to the overworld WorldClock. Earlier migration waves sometimes replace
+Naturalist's custom tick windows with generic brightness checks. This final parity pass runs after
+those waves and rewrites the affected methods by structure, so it remains stable even if an older
+migration changes whitespace or formatting.
 """
 
 from pathlib import Path
@@ -13,15 +14,31 @@ import runpy
 ROOT = Path("common/src/main/java/com/crispytwig/naturalist/server/entity")
 
 
-def replace_variants(path: Path, variants: list[str], desired: str) -> bool:
+def replace_method(path: Path, signature: str, desired: str) -> bool:
     text = path.read_text(encoding="utf-8")
-    if desired in text:
+    start = text.find(signature)
+    if start < 0:
+        raise RuntimeError(f"Method signature {signature!r} not found in {path}")
+    brace = text.find("{", start)
+    if brace < 0:
+        raise RuntimeError(f"Opening brace not found for {signature!r} in {path}")
+    depth = 0
+    end = None
+    for i in range(brace, len(text)):
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                end = i + 1
+                break
+    if end is None:
+        raise RuntimeError(f"Closing brace not found for {signature!r} in {path}")
+    current = text[start:end]
+    if current == desired:
         return False
-    for old in variants:
-        if old in text:
-            path.write_text(text.replace(old, desired, 1), encoding="utf-8")
-            return True
-    raise RuntimeError(f"Expected behavior-migration pattern not found in {path}")
+    path.write_text(text[:start] + desired + text[end:], encoding="utf-8")
+    return True
 
 
 def replace_text(path: Path, old: str, new: str) -> bool:
@@ -35,115 +52,51 @@ def replace_text(path: Path, old: str, new: str) -> bool:
 def main() -> None:
     changed: list[str] = []
 
-    bear = ROOT / "mob/Bear.java"
-    bear_desired = """    @Override
-    public boolean canSleep() {
+    methods = {
+        ROOT / "mob/Bear.java": """    public boolean canSleep() {
         long dayTime = this.level().getOverworldClockTime();
         return this.wakeTicks <= 0 && (dayTime < 12000 || dayTime > 18000) && dayTime < 23000 && dayTime > 6000 && !this.isAngry() && !this.level().isWaterAt(this.blockPosition());
-    }
-"""
-    if replace_variants(bear, [
-        """    @Override
-    public boolean canSleep() {
-        return this.wakeTicks <= 0 && !this.level().isBrightOutside() && !this.isAngry() && !this.level().isWaterAt(this.blockPosition());
-    }
-""",
-        bear_desired.replace("getOverworldClockTime", "getDayTime"),
-    ], bear_desired):
-        changed.append(str(bear))
-
-    capybara = ROOT / "mob/Capybara.java"
-    capybara_desired = """    @Override
-    public boolean canSleep() {
+    }""",
+        ROOT / "mob/Capybara.java": """    public boolean canSleep() {
         long dayTime = this.level().getOverworldClockTime() % 24000;
         return dayTime > 6000 && dayTime < 13000 && this.onGround() && !this.isInWater()
                 && !this.isOrderedToSit() && !this.isInLove() && this.getLastHurtByMob() == null;
-    }
-"""
-    if replace_variants(capybara, [
-        """    @Override
-    public boolean canSleep() {
-        return this.level().isBrightOutside() && this.onGround() && !this.isInWater()
-                && !this.isOrderedToSit() && !this.isInLove() && this.getLastHurtByMob() == null;
-    }
-""",
-        capybara_desired.replace("getOverworldClockTime", "getDayTime"),
-    ], capybara_desired):
-        changed.append(str(capybara))
-
-    lion = ROOT / "mob/Lion.java"
-    lion_desired = """    @Override
-    public boolean canSleep() {
+    }""",
+        ROOT / "mob/Lion.java": """    public boolean canSleep() {
         long dayTime = this.level().getOverworldClockTime();
         if (this.isTame() || this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
             return false;
         } else {
             return dayTime > 6000 && dayTime < 13000;
         }
-    }
-"""
-    if replace_variants(lion, [
-        """    @Override
-    public boolean canSleep() {
-        if (this.isTame() || this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
-            return false;
-        } else {
-            return this.level().isBrightOutside();
-        }
-    }
-""",
-        lion_desired.replace("getOverworldClockTime", "getDayTime"),
-    ], lion_desired):
-        changed.append(str(lion))
-
-    snake = ROOT / "mob/Snake.java"
-    snake_desired = """    @Override
-    public boolean canSleep() {
+    }""",
+        ROOT / "mob/Snake.java": """    public boolean canSleep() {
         long dayTime = this.level().getOverworldClockTime();
         if (this.isAngry() || this.level().isWaterAt(this.blockPosition())) {
             return false;
         } else if (dayTime > 18000 && dayTime < 23000) {
             return false;
         } else return dayTime > 12000 && dayTime < 28000;
-    }
-"""
-    if replace_variants(snake, [
-        """    @Override
-    public boolean canSleep() {
-        if (this.isAngry() || this.level().isWaterAt(this.blockPosition())) {
-            return false;
-        }
-        return !this.level().isBrightOutside();
-    }
-""",
-        snake_desired.replace("getOverworldClockTime", "getDayTime"),
-    ], snake_desired):
-        changed.append(str(snake))
-
-    tiger = ROOT / "mob/Tiger.java"
-    tiger_desired = """    @Override
-    public boolean canSleep() {
+    }""",
+        ROOT / "mob/Tiger.java": """    public boolean canSleep() {
         long dayTime = this.level().getOverworldClockTime();
         if (this.isTame() || this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
             return false;
         }
         return dayTime > 6000 && dayTime < 13000;
+    }""",
+        # Level#isDay was renamed to isBrightOutside in the current mappings, so Komodo's
+        # original behavior already has a direct 26.x equivalent.
+        ROOT / "mob/KomodoDragon.java": """    public boolean canSleep() {
+        return this.level().isBrightOutside() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());
+    }""",
     }
-"""
-    if replace_variants(tiger, [
-        """    @Override
-    public boolean canSleep() {
-        if (this.isTame() || this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
-            return false;
-        }
-        return this.level().isBrightOutside();
-    }
-""",
-        tiger_desired.replace("getOverworldClockTime", "getDayTime"),
-    ], tiger_desired):
-        changed.append(str(tiger))
+    for path, desired in methods.items():
+        if replace_method(path, "    public boolean canSleep() {", desired):
+            changed.append(str(path))
 
-    # In Mojang/Yarn mappings these are the direct 26.x successors of the old isNight checks.
+    # isDarkOutside is the direct 26.x successor of the old isNight method. Using !isBrightOutside
+    # is subtly different around transition/weather states, so restore the original distinction.
     nocturnal = ROOT / "base/NocturnalHostile.java"
     if replace_text(nocturnal,
                     "return !((LivingEntity) this).level().isBrightOutside();",
@@ -163,14 +116,6 @@ def main() -> None:
                     "return !this.level().isBrightOutside() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;",
                     "return this.level().isDarkOutside() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;"):
         changed.append(str(firefly))
-
-    # Komodo Dragon's original isDay() is a direct API rename in 26.x; keep the existing
-    # behaviorally equivalent isBrightOutside() rather than broadening/narrowing it manually.
-    komodo = ROOT / "mob/KomodoDragon.java"
-    if replace_text(komodo,
-                    "return this.level().isDay() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());",
-                    "return this.level().isBrightOutside() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());"):
-        changed.append(str(komodo))
 
     print(f"26.2 behavior parity pass changed {len(changed)} files")
     for path in changed:
