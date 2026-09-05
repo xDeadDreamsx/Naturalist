@@ -23,7 +23,7 @@ public final class SnailColorItemModelProperty implements RangeSelectItemModelPr
         if (customData == null) {
             return 0.0F;
         }
-        CompoundTag tag = customData.getUnsafe();
+        CompoundTag tag = customData.copyTag();
         return tag.getIntOr("Color", 0) / 15.0F;
     }
 
