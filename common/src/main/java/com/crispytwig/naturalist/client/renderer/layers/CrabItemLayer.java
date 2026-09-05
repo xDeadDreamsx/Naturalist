@@ -12,12 +12,13 @@ import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import com.crispytwig.naturalist.client.model.NaturalistEntityModel;
 
-public class CrabItemLayer extends RenderLayer<NaturalistRenderState<Crab>, CrabModel> {
+public class CrabItemLayer extends RenderLayer<NaturalistRenderState<Crab>, NaturalistEntityModel<Crab>> {
     private final ItemModelResolver itemModelResolver;
     private final ItemStackRenderState itemState = new ItemStackRenderState();
 
-    public CrabItemLayer(RenderLayerParent<NaturalistRenderState<Crab>, CrabModel> parent, ItemModelResolver itemModelResolver) {
+    public CrabItemLayer(RenderLayerParent<NaturalistRenderState<Crab>, NaturalistEntityModel<Crab>> parent, ItemModelResolver itemModelResolver) {
         super(parent);
         this.itemModelResolver = itemModelResolver;
     }
@@ -28,10 +29,10 @@ public class CrabItemLayer extends RenderLayer<NaturalistRenderState<Crab>, Crab
         Crab crab = state.entity;
         if (crab == null) return;
         ItemStack held = crab.getMainHandItem();
-        if (held.isEmpty()) return;
+        if (held.isEmpty() || !(this.getParentModel() instanceof CrabModel model)) return;
         this.itemModelResolver.updateForLiving(this.itemState, held, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, crab);
         poseStack.pushPose();
-        this.getParentModel().translateToItem(poseStack);
+        model.translateToItem(poseStack);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         this.itemState.submit(poseStack, collector, lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
         poseStack.popPose();

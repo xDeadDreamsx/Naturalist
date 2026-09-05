@@ -16,14 +16,15 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
+import com.crispytwig.naturalist.client.model.NaturalistEntityModel;
 
-public class ClamItemLayer extends RenderLayer<NaturalistRenderState<Clam>, ClamModel> {
+public class ClamItemLayer extends RenderLayer<NaturalistRenderState<Clam>, NaturalistEntityModel<Clam>> {
     private final ItemModelResolver itemModelResolver;
     private final EntityRenderDispatcher dispatcher;
     private final ItemStackRenderState itemState = new ItemStackRenderState();
     private final Quaternionf scratchRotation = new Quaternionf();
 
-    public ClamItemLayer(RenderLayerParent<NaturalistRenderState<Clam>, ClamModel> parent,
+    public ClamItemLayer(RenderLayerParent<NaturalistRenderState<Clam>, NaturalistEntityModel<Clam>> parent,
                          ItemModelResolver itemModelResolver, EntityRenderDispatcher dispatcher) {
         super(parent);
         this.itemModelResolver = itemModelResolver;
@@ -36,15 +37,17 @@ public class ClamItemLayer extends RenderLayer<NaturalistRenderState<Clam>, Clam
         Clam clam = state.entity;
         if (clam == null) return;
         ItemStack held = clam.getMainHandItem();
-        if (held.isEmpty()) return;
+        if (held.isEmpty() || !(this.getParentModel() instanceof ClamModel model)) return;
         this.itemModelResolver.updateForLiving(this.itemState, held, ItemDisplayContext.FIXED, clam);
         poseStack.pushPose();
-        this.getParentModel().translateToItem(poseStack);
+        model.translateToItem(poseStack);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.scale(0.8F, 0.8F, 0.8F);
         poseStack.translate(0.0F, 0.6F + Mth.sin((clam.tickCount + state.partialTick) * 0.1F) * 0.2F, 0.0F);
         poseStack.mulPose(poseStack.last().pose().getNormalizedRotation(this.scratchRotation).conjugate());
-        poseStack.mulPose(this.dispatcher.cameraOrientation());
+        if (this.dispatcher.camera != null) {
+            poseStack.mulPose(this.dispatcher.camera.rotation());
+        }
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         this.itemState.submit(poseStack, collector, lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
         poseStack.popPose();

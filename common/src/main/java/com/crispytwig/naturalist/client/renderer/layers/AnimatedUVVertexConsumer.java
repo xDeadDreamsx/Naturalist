@@ -16,4 +16,5 @@ public class AnimatedUVVertexConsumer implements VertexConsumer {
     @Override public @NonNull VertexConsumer setUv1(int u,int v){delegate.setUv1(u,v);return this;}
     @Override public @NonNull VertexConsumer setUv2(int u,int v){delegate.setUv2(u,v);return this;}
     @Override public @NonNull VertexConsumer setNormal(float x,float y,float z){delegate.setNormal(x,y,z);return this;}
+    @Override public @NonNull VertexConsumer setLineWidth(float width){delegate.setLineWidth(width);return this;}
 }
