@@ -5,10 +5,9 @@ import com.crispytwig.naturalist.server.block.AntHillBlock;
 import com.crispytwig.naturalist.server.entity.base.PetTargeting;
 import com.crispytwig.naturalist.server.entity.mob.Ant;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -55,6 +54,14 @@ public class AntHillBlockEntity extends BlockEntity {
         ItemStack leftover = this.storage.addItem(stack);
         this.setChanged();
         return leftover;
+    }
+
+    @Override
+    public void preRemoveSideEffects(@NotNull BlockPos pos, @NotNull BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (this.level != null) {
+            Containers.dropContents(this.level, pos, this.storage);
+        }
     }
 
     @Override
