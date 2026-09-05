@@ -3,7 +3,7 @@
 
 The common Naturalist renderer exposes NaturalistEntityModel<T>, not each concrete model type;
 Clam/Crab therefore cast only where their custom translateToItem hook is required. Minecraft 26.2
-also added VertexConsumer#setLineWidth and moved camera orientation access onto Camera#rotation().
+also expanded VertexConsumer and moved camera orientation access onto Camera#rotation().
 """
 from pathlib import Path
 
@@ -27,29 +27,18 @@ def patch_clam() -> bool:
     text = path.read_text(encoding="utf-8")
     original = text
     text = add_import(text, "com.crispytwig.naturalist.client.model.NaturalistEntityModel")
-    text = text.replace(
-        "extends RenderLayer<NaturalistRenderState<Clam>, ClamModel>",
-        "extends RenderLayer<NaturalistRenderState<Clam>, NaturalistEntityModel<Clam>>",
-    )
-    text = text.replace(
-        "RenderLayerParent<NaturalistRenderState<Clam>, ClamModel> parent,",
-        "RenderLayerParent<NaturalistRenderState<Clam>, NaturalistEntityModel<Clam>> parent,",
-    )
-    old = """        ItemStack held = clam.getMainHandItem();
+    text = text.replace("extends RenderLayer<NaturalistRenderState<Clam>, ClamModel>", "extends RenderLayer<NaturalistRenderState<Clam>, NaturalistEntityModel<Clam>>")
+    text = text.replace("RenderLayerParent<NaturalistRenderState<Clam>, ClamModel> parent,", "RenderLayerParent<NaturalistRenderState<Clam>, NaturalistEntityModel<Clam>> parent,")
+    text = text.replace("""        ItemStack held = clam.getMainHandItem();
         if (held.isEmpty()) return;
         this.itemModelResolver.updateForLiving(this.itemState, held, ItemDisplayContext.FIXED, clam);
         poseStack.pushPose();
-        this.getParentModel().translateToItem(poseStack);"""
-    new = """        ItemStack held = clam.getMainHandItem();
+        this.getParentModel().translateToItem(poseStack);""", """        ItemStack held = clam.getMainHandItem();
         if (held.isEmpty() || !(this.getParentModel() instanceof ClamModel model)) return;
         this.itemModelResolver.updateForLiving(this.itemState, held, ItemDisplayContext.FIXED, clam);
         poseStack.pushPose();
-        model.translateToItem(poseStack);"""
-    text = text.replace(old, new)
-    text = text.replace(
-        "        poseStack.mulPose(this.dispatcher.cameraOrientation());",
-        "        if (this.dispatcher.camera != null) {\n            poseStack.mulPose(this.dispatcher.camera.rotation());\n        }",
-    )
+        model.translateToItem(poseStack);""")
+    text = text.replace("        poseStack.mulPose(this.dispatcher.cameraOrientation());", "        if (this.dispatcher.camera != null) {\n            poseStack.mulPose(this.dispatcher.camera.rotation());\n        }")
     if text != original:
         path.write_text(text, encoding="utf-8")
         return True
@@ -61,25 +50,17 @@ def patch_crab() -> bool:
     text = path.read_text(encoding="utf-8")
     original = text
     text = add_import(text, "com.crispytwig.naturalist.client.model.NaturalistEntityModel")
-    text = text.replace(
-        "extends RenderLayer<NaturalistRenderState<Crab>, CrabModel>",
-        "extends RenderLayer<NaturalistRenderState<Crab>, NaturalistEntityModel<Crab>>",
-    )
-    text = text.replace(
-        "RenderLayerParent<NaturalistRenderState<Crab>, CrabModel> parent,",
-        "RenderLayerParent<NaturalistRenderState<Crab>, NaturalistEntityModel<Crab>> parent,",
-    )
-    old = """        ItemStack held = crab.getMainHandItem();
+    text = text.replace("extends RenderLayer<NaturalistRenderState<Crab>, CrabModel>", "extends RenderLayer<NaturalistRenderState<Crab>, NaturalistEntityModel<Crab>>")
+    text = text.replace("RenderLayerParent<NaturalistRenderState<Crab>, CrabModel> parent,", "RenderLayerParent<NaturalistRenderState<Crab>, NaturalistEntityModel<Crab>> parent,")
+    text = text.replace("""        ItemStack held = crab.getMainHandItem();
         if (held.isEmpty()) return;
         this.itemModelResolver.updateForLiving(this.itemState, held, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, crab);
         poseStack.pushPose();
-        this.getParentModel().translateToItem(poseStack);"""
-    new = """        ItemStack held = crab.getMainHandItem();
+        this.getParentModel().translateToItem(poseStack);""", """        ItemStack held = crab.getMainHandItem();
         if (held.isEmpty() || !(this.getParentModel() instanceof CrabModel model)) return;
         this.itemModelResolver.updateForLiving(this.itemState, held, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, crab);
         poseStack.pushPose();
-        model.translateToItem(poseStack);"""
-    text = text.replace(old, new)
+        model.translateToItem(poseStack);""")
     if text != original:
         path.write_text(text, encoding="utf-8")
         return True
@@ -90,12 +71,16 @@ def patch_uv_consumer() -> bool:
     path = LAYERS / "AnimatedUVVertexConsumer.java"
     text = path.read_text(encoding="utf-8")
     original = text
-    if "setLineWidth(float width)" not in text:
-        marker = "    @Override public @NonNull VertexConsumer setNormal(float x,float y,float z){delegate.setNormal(x,y,z);return this;}\n"
-        addition = marker + "    @Override public @NonNull VertexConsumer setLineWidth(float width){delegate.setLineWidth(width);return this;}\n"
+    marker = "    @Override public @NonNull VertexConsumer setColor(int r,int g,int b,int a){delegate.setColor(r,g,b,a);return this;}\n"
+    if "setColor(int color)" not in text:
         if marker not in text:
+            raise RuntimeError("Could not locate AnimatedUVVertexConsumer setColor rgba")
+        text = text.replace(marker, marker + "    @Override public @NonNull VertexConsumer setColor(int color){delegate.setColor(color);return this;}\n", 1)
+    if "setLineWidth(float width)" not in text:
+        normal = "    @Override public @NonNull VertexConsumer setNormal(float x,float y,float z){delegate.setNormal(x,y,z);return this;}\n"
+        if normal not in text:
             raise RuntimeError("Could not locate AnimatedUVVertexConsumer setNormal")
-        text = text.replace(marker, addition, 1)
+        text = text.replace(normal, normal + "    @Override public @NonNull VertexConsumer setLineWidth(float width){delegate.setLineWidth(width);return this;}\n", 1)
     if text != original:
         path.write_text(text, encoding="utf-8")
         return True
