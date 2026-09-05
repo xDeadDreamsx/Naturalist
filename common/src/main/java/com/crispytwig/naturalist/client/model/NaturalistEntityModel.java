@@ -16,7 +16,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -36,7 +35,6 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
     public static final double LARGE_SWIMMER_LIMB_SWING = 0.5D;
 
     private final Map<AnimationDefinition, KeyframeAnimation> bakedAnimations = new IdentityHashMap<>();
-    private ModelPart animationRoot;
 
     protected NaturalistEntityModel(ModelPart root) {
         super(root);
@@ -46,22 +44,9 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
         super(root, renderType);
     }
 
-    /**
-     * Name used by legacy Naturalist animations for the model root itself.
-     *
-     * <p>Before 26.x, Naturalist's HierarchicalModel adapter special-cased this name in
-     * getAnyDescendantWithName(). Minecraft 26.x bakes animations directly against a ModelPart
-     * tree instead, so we recreate that synthetic parent level for every Naturalist model.</p>
-     */
+    /** Name used by Naturalist's legacy Blockbench animation exports for the model root itself. */
     protected String getRootPartName() {
         return "root";
-    }
-
-    private ModelPart animationRoot() {
-        if (this.animationRoot == null) {
-            this.animationRoot = new ModelPart(List.of(), Map.of(this.getRootPartName(), this.root()));
-        }
-        return this.animationRoot;
     }
 
     /**
@@ -133,8 +118,11 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
     }
 
     private KeyframeAnimation animation(AnimationDefinition definition) {
+        // 26.2's ModelPart lookup already maps the supplied model root to the legacy "root"
+        // animation name. Baking against a synthetic parent would animate that invisible parent
+        // instead of this.root(), dropping root translations/rotations from the rendered model.
         return this.bakedAnimations.computeIfAbsent(definition,
-                d -> this.compatibleDefinition(d).bake(this.animationRoot()));
+                d -> this.compatibleDefinition(d).bake(this.root()));
     }
 
     protected void animateSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks, float partialTick) {
