@@ -20,6 +20,15 @@ public abstract class AvatarRendererMixin {
         NaturalistAvatarRenderState naturalistState = (NaturalistAvatarRenderState) state;
         naturalistState.naturalist$setShoulderParrotsFlap(
                 ParrotFlight.hasBirdOnHead(entity) && !entity.onGround());
-        naturalistState.naturalist$setSkipNormalIKMountRender(entity.getVehicle() instanceof IKMount);
+
+        if (entity.getVehicle() instanceof IKMount mount) {
+            naturalistState.naturalist$setSkipNormalIKMountRender(true);
+            naturalistState.naturalist$setIKMountPitch(mount.getRenderPitch());
+            naturalistState.naturalist$setIKMountRoll(mount.getRenderRoll());
+        } else {
+            naturalistState.naturalist$setSkipNormalIKMountRender(false);
+            naturalistState.naturalist$setIKMountPitch(0.0F);
+            naturalistState.naturalist$setIKMountRoll(0.0F);
+        }
     }
 }
