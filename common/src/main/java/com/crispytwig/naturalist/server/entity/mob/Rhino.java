@@ -413,14 +413,19 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
         }
 
         protected void tryToHurt() {
-            List<LivingEntity> nearbyEntities = this.mob.level().getEntitiesOfClass(LivingEntity.class, this.mob.getBoundingBox(), entity -> entity != this.mob);
+            if (!(this.mob.level() instanceof ServerLevel serverLevel)) {
+                return;
+            }
+            TargetingConditions combatConditions = TargetingConditions.forCombat();
+            List<LivingEntity> nearbyEntities = serverLevel.getEntitiesOfClass(
+                    LivingEntity.class,
+                    this.mob.getBoundingBox(),
+                    entity -> entity != this.mob && combatConditions.test(serverLevel, this.mob, entity));
             if (!nearbyEntities.isEmpty()) {
                 LivingEntity livingEntity = nearbyEntities.getFirst();
                 if (!(livingEntity instanceof Rhino)) {
                     DamageSource attackSource = livingEntity.damageSources().mobAttack(this.mob);
-                    if (this.mob.level() instanceof ServerLevel serverLevel) {
-                        livingEntity.hurtServer(serverLevel, attackSource, (float) this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
-                    }
+                    livingEntity.hurtServer(serverLevel, attackSource, (float) this.mob.getAttributeValue(Attributes.ATTACK_DAMAGE));
                     float speed = Mth.clamp(this.mob.getSpeed() * 1.65f, 0.2f, 3.0f);
                     float shieldBlockModifier = livingEntity.getItemBlockingWith() != null ? 0.5f : 1.0f;
                     livingEntity.knockback(shieldBlockModifier * speed * 2.0D, this.chargeDirection.x(), this.chargeDirection.z(), attackSource, 0.0F);
@@ -433,6 +438,7 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
                 }
             }
         }
+
     }
 
     static class RhinoNearestAttackablePlayerTargetGoal extends NearestAttackableTargetGoal<Player> {
