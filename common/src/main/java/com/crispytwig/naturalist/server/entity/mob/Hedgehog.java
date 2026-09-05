@@ -325,7 +325,9 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         if (this.isTame() || this.isRolling() || this.isSprinting() || this.isInSittingPose()) {
             return false;
         }
-        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(6.0, 3.0, 6.0), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
+        List<Player> players = this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(6.0D, 3.0D, 6.0D),
+                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player) && this.distanceToSqr(player) <= 36.0D);
         for (Player player : players) {
             if (!player.isCrouching() && !foodItems().test(player.getMainHandItem()) && !foodItems().test(player.getOffhandItem())) {
                 return true;
@@ -333,6 +335,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         }
         return false;
     }
+
 
     @Override
     public void tame(@NotNull Player player) {

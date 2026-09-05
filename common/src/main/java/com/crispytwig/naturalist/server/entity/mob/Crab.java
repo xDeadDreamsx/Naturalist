@@ -523,7 +523,9 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         if (this.isBaby() || this.isTame() || !this.getMainHandItem().isEmpty()) {
             return false;
         }
-        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
+        List<Player> players = this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),
+                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player) && this.distanceToSqr(player) <= 16.0D);
         boolean playerNear = false;
         for (Player player : players) {
             if (!player.isCrouching() && !foodItems().test(player.getMainHandItem()) && !foodItems().test(player.getOffhandItem())) {
@@ -533,6 +535,7 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         }
         return playerNear && this.findNearbyWeapon() == null;
     }
+
 
     @Nullable
     private ItemEntity findNearbyWeapon() {

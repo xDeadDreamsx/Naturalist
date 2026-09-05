@@ -265,8 +265,9 @@ public class GiantIsopod extends Animal implements HidingAnimal, VariantBucketab
         return !this.level().getEntitiesOfClass(
                 Player.class,
                 this.getBoundingBox().inflate(3.0D, 2.0D, 3.0D),
-                EntitySelector.NO_CREATIVE_OR_SPECTATOR::test).isEmpty();
+                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player) && this.distanceToSqr(player) <= 9.0D).isEmpty();
     }
+
 
     @Override
     public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {

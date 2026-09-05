@@ -436,9 +436,14 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
         if (this.isTame() || this.isBaby() || this.isAggressive() || this.isVehicle()) {
             return false;
         }
-        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(16.0D), EntitySelector.NO_CREATIVE_OR_SPECTATOR::test);
+        List<Player> players = this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(16.0D, 8.0D, 16.0D),
+                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)
+                        && !player.isDiscrete() && !player.isHolding(foodItems())
+                        && this.distanceToSqr(player) <= 256.0D);
         return !players.isEmpty();
     }
+
 
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {

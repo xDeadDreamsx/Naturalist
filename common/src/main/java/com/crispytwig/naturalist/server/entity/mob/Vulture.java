@@ -329,6 +329,15 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
     @Override
     public void aiStep() {
         super.aiStep();
+        if (this.level() instanceof ServerLevel serverLevel && this.canPickUpLoot() && this.isAlive()
+                && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING)) {
+            for (ItemEntity itemEntity : serverLevel.getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(1.0D, 1.0D, 1.0D))) {
+                if (!itemEntity.isRemoved() && !itemEntity.getItem().isEmpty()
+                        && this.wantsToPickUp(serverLevel, itemEntity.getItem())) {
+                    this.pickUpItem(serverLevel, itemEntity);
+                }
+            }
+        }
         if (!this.level().isClientSide() && this.isAlive() && this.isEffectiveAi()) {
             ++this.ticksSinceEaten;
             if (this.perchCooldown > 0) {
@@ -349,6 +358,7 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
             }
         }
     }
+
 
     @Override
     public void handleEntityEvent(byte id) {

@@ -529,7 +529,17 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
             }
             this.setSniffing(false);
         }
+        if (this.level() instanceof ServerLevel serverLevel && this.canPickUpLoot() && this.isAlive()
+                && serverLevel.getGameRules().get(GameRules.MOB_GRIEFING)) {
+            for (ItemEntity itemEntity : serverLevel.getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(1.0D, 0.0D, 1.0D))) {
+                if (!itemEntity.isRemoved() && !itemEntity.getItem().isEmpty()
+                        && this.wantsToPickUp(serverLevel, itemEntity.getItem())) {
+                    this.pickUpItem(serverLevel, itemEntity);
+                }
+            }
+        }
     }
+
 
     @Override
     public void customServerAiStep(ServerLevel level) {

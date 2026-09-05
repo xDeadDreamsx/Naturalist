@@ -276,21 +276,20 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
 
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
-        boolean shouldHurt = super.doHurtTarget(level, target);
+        DamageSource attackSource = target.damageSources().mobAttack(this);
+        boolean shouldHurt = target.hurtServer(level, attackSource, (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         if (shouldHurt && target instanceof LivingEntity livingEntity) {
-            Vec3 knockbackDirection = livingEntity.position().subtract(this.position());
-            if (knockbackDirection.horizontalDistanceSqr() > 1.0E-6D) {
-                knockbackDirection = knockbackDirection.normalize();
-                double resistance = Math.max(0.0D, 1.0D - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-                livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(
-                        knockbackDirection.x * 1.5D * resistance,
-                        0.5D * resistance,
-                        knockbackDirection.z * 1.5D * resistance));
-            }
+            Vec3 knockbackDirection = new Vec3(this.blockPosition().getX() - target.getX(), 0.0D,
+                    this.blockPosition().getZ() - target.getZ()).normalize();
+            float shieldBlockModifier = livingEntity.getItemBlockingWith() != null ? 0.5F : 1.0F;
+            livingEntity.knockback(shieldBlockModifier * 3.0D, knockbackDirection.x(), knockbackDirection.z(), attackSource, 0.0F);
+            double knockbackResistance = Math.max(0.0D, 1.0D - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+            livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().add(0.0D, 0.5D * knockbackResistance, 0.0D));
         }
         this.playSound(SoundEvents.RAVAGER_ATTACK, 1.0F, 1.0F);
         return shouldHurt;
     }
+
 
     @Override
     public boolean canAttack(@NotNull LivingEntity target) {
