@@ -11,31 +11,14 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.17.20
 
 > Task :compileJava
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:39: error: cannot find symbol
-        model.hat.copyFrom(model.head);
-                 ^
-  symbol:   method copyFrom(ModelPart)
-  location: variable hat of type ModelPart
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:40: error: cannot find symbol
-        model.jacket.copyFrom(model.body);
-                    ^
-  symbol:   method copyFrom(ModelPart)
-  location: variable jacket of type ModelPart
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:41: error: cannot find symbol
-        model.leftSleeve.copyFrom(model.leftArm);
-                        ^
-  symbol:   method copyFrom(ModelPart)
-  location: variable leftSleeve of type ModelPart
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:42: error: cannot find symbol
-        model.rightSleeve.copyFrom(model.rightArm);
-                         ^
-  symbol:   method copyFrom(ModelPart)
-  location: variable rightSleeve of type ModelPart
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rhino.java:207: error: method does not override or implement a method from a supertype
+    @Override
+    ^
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-4 errors
+1 error
 
 > Task :compileJava FAILED
 
@@ -49,28 +32,11 @@ Execution failed for task ':compileJava' (registered by plugin class 'org.gradle
   Note: Recompile with -Xlint:deprecation for details.
   Note: Recompile with -Xlint:unchecked for details.
   Note: Some input files use or override a deprecated API.
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rhino.java:207: error: method does not override or implement a method from a supertype
+      @Override
+      ^
   Note: Some input files use unchecked or unsafe operations.
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:39: error: cannot find symbol
-          model.hat.copyFrom(model.head);
-                   ^
-    symbol:   method copyFrom(ModelPart)
-    location: variable hat of type ModelPart
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:40: error: cannot find symbol
-          model.jacket.copyFrom(model.body);
-                      ^
-    symbol:   method copyFrom(ModelPart)
-    location: variable jacket of type ModelPart
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:41: error: cannot find symbol
-          model.leftSleeve.copyFrom(model.leftArm);
-                          ^
-    symbol:   method copyFrom(ModelPart)
-    location: variable leftSleeve of type ModelPart
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:42: error: cannot find symbol
-          model.rightSleeve.copyFrom(model.rightArm);
-                           ^
-    symbol:   method copyFrom(ModelPart)
-    location: variable rightSleeve of type ModelPart
-  4 errors
+  1 error
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
@@ -112,31 +78,14 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:39: error: cannot find symbol
-        model.hat.copyFrom(model.head);
-                 ^
-  symbol:   method copyFrom(ModelPart)
-  location: variable hat of type ModelPart
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:40: error: cannot find symbol
-        model.jacket.copyFrom(model.body);
-                    ^
-  symbol:   method copyFrom(ModelPart)
-  location: variable jacket of type ModelPart
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:41: error: cannot find symbol
-        model.leftSleeve.copyFrom(model.leftArm);
-                        ^
-  symbol:   method copyFrom(ModelPart)
-  location: variable leftSleeve of type ModelPart
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/mixin/PlayerModelMixin.java:42: error: cannot find symbol
-        model.rightSleeve.copyFrom(model.rightArm);
-                         ^
-  symbol:   method copyFrom(ModelPart)
-  location: variable rightSleeve of type ModelPart
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Rhino.java:207: error: method does not override or implement a method from a supertype
+    @Override
+    ^
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-4 errors
+1 error
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
 	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
@@ -271,5 +220,5 @@ Note: Recompile with -Xlint:unchecked for details.
 	... 30 more
 
 
-BUILD FAILED in 42s
+BUILD FAILED in 44s
 1 actionable task: 1 executed
