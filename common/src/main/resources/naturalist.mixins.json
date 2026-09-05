@@ -6,7 +6,10 @@
   "client": [
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
-    "LocalPlayerMixin"
+    "LocalPlayerMixin",
+    "WolfModelMixin",
+    "WolfRendererMixin",
+    "WolfRenderStateMixin"
   ],
   "mixins": [
     "AbstractFishMixin",
