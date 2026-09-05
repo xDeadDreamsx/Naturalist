@@ -8,7 +8,7 @@
     "AvatarRenderStateMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
-    "EntityRendererMixin",
+    "EntityRenderDispatcherMixin",
     "FieldGuideEntryScreenCompatMixin",
     "LocalPlayerMixin",
     "ParrotOnShoulderLayerMixin",
