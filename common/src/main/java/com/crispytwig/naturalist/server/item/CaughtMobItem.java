@@ -5,7 +5,6 @@ import com.crispytwig.naturalist.server.entity.base.ContainerBoundWorker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
@@ -57,16 +56,14 @@ public class CaughtMobItem extends NaturalistBucketItem {
         if (entity instanceof ContainerBoundWorker worker) {
             worker.tryAssignWorkstation(pos);
         }
-
     }
 
     @Override
     public void checkExtraContent(@Nullable LivingEntity player, @NotNull Level level, @NotNull ItemStack containerStack, @NotNull BlockPos pos) {
-        if (level instanceof ServerLevel) {
-            this.spawn((ServerLevel)level, containerStack, pos);
+        if (level instanceof ServerLevel serverLevel) {
+            this.spawn(serverLevel, containerStack, pos);
             level.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
         }
-
     }
 
     @Override
@@ -84,7 +81,7 @@ public class CaughtMobItem extends NaturalistBucketItem {
                 this.checkExtraContent(player, level, itemstack, pos);
                 this.playEmptySound(player, level, pos);
                 player.awardStat(Stats.ITEM_USED.get(this));
-                return InteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS.heldItemTransformedTo(getEmptySuccessItem(itemstack, player));
             } else {
                 return InteractionResult.FAIL;
             }
