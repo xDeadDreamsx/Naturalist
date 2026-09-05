@@ -226,5 +226,5 @@ Note: Recompile with -Xlint:unchecked for details.
 	... 30 more
 
 
-BUILD FAILED in 50s
+BUILD FAILED in 36s
 1 actionable task: 1 executed
