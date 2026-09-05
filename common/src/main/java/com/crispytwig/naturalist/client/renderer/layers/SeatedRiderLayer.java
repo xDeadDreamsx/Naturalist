@@ -3,6 +3,7 @@ package com.crispytwig.naturalist.client.renderer.layers;
 import com.crispytwig.naturalist.client.model.NaturalistEntityModel;
 import com.crispytwig.naturalist.client.model.SeatedModel;
 import com.crispytwig.naturalist.client.renderer.state.NaturalistRenderState;
+import com.crispytwig.naturalist.client.renderer.state.NaturalistAvatarRenderState;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -54,7 +55,16 @@ public class SeatedRiderLayer<T extends Mob & DataDrivenVariantAnimal>
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(state.bodyRot - 180.0F));
         poseStack.translate(0.0F, -seatedModel.seatHeight(), 0.0F);
-        this.dispatcher.submit(riderState, cameraState, 0.0, 0.0, 0.0, poseStack, collector);
-        poseStack.popPose();
+        NaturalistAvatarRenderState avatarState = (NaturalistAvatarRenderState) riderState;
+        boolean skipNormalRender = avatarState.naturalist$skipNormalIKMountRender();
+        try {
+            // The dispatcher suppresses the ordinary world-space passenger submission.
+            // This seat-relative submission must be allowed through that same dispatcher.
+            avatarState.naturalist$setSkipNormalIKMountRender(false);
+            this.dispatcher.submit(riderState, cameraState, 0.0, 0.0, 0.0, poseStack, collector);
+        } finally {
+            avatarState.naturalist$setSkipNormalIKMountRender(skipNormalRender);
+            poseStack.popPose();
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.crispytwig.naturalist.fabric.client;
 import com.crispytwig.naturalist.NaturalistClient;
 import com.crispytwig.naturalist.NaturalistClientConfig;
 import com.crispytwig.naturalist.client.model.item.NaturalistItemModelProperties;
+import com.crispytwig.naturalist.client.model.item.VariantItemModels;
 import com.crispytwig.naturalist.fabric.config.FabricNaturalistClientConfig;
 import com.crispytwig.naturalist.client.particle.CaptureNetSwingParticle;
 import com.crispytwig.naturalist.client.renderer.SnailShellRenderer;
@@ -27,6 +28,7 @@ public class NaturalistFabricClient implements ClientModInitializer {
         BlockEntityRendererRegistry.register(NaturalistBlockEntities.SNAIL_SHELL.get(), SnailShellRenderer::new);
 
         NaturalistItemModelProperties.register();
+        VariantItemModels.register();
         NaturalistClient.registerItemProperties();
         NaturalistClient.registerMenuScreens(MenuScreens::register);
 

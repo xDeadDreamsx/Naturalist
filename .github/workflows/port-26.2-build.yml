@@ -93,6 +93,24 @@ jobs:
             exit 1
           fi
 
+      - name: Inspect remaining Minecraft render API signatures
+        if: always()
+        shell: bash
+        run: |
+          minecraft_jar=$(find .gradle/loom-cache -name 'minecraft-merged-*-26.2.jar' -print -quit)
+          if [ -n "$minecraft_jar" ]; then
+            javap -classpath "$minecraft_jar" -p \
+              net.minecraft.client.renderer.entity.EntityRenderer \
+              net.minecraft.client.renderer.entity.state.EntityRenderState \
+              net.minecraft.client.renderer.entity.state.HitboxRenderState \
+              net.minecraft.client.renderer.entity.state.HitboxesRenderState \
+              net.minecraft.client.resources.model.ModelManager \
+              net.minecraft.client.renderer.item.ItemModelResolver \
+              net.minecraft.client.renderer.item.ItemStackRenderState \
+              > /tmp/naturalist-render-api.log 2>&1 || true
+            cat /tmp/naturalist-render-api.log
+          fi
+
       - name: Smoke-test Naturalist dedicated server and fresh world data
         id: server_smoke
         if: steps.build.outcome == 'success' && steps.client_smoke.outcome == 'success'
