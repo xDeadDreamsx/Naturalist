@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import com.crispytwig.naturalist.client.renderer.layers.DyeLayer;
 import com.crispytwig.naturalist.client.renderer.layers.HedgehogGlintLayer;
@@ -20,11 +19,17 @@ public class HedgehogRenderer extends NaturalistSingleMobRenderer<Hedgehog> {
         this.addLayer(new DyeLayer<>(this, "hedgehog"));
         this.addLayer(new HedgehogGlintLayer(this));
     }
-@Override
+
+    @Override
     protected void scale(@NotNull NaturalistRenderState<Hedgehog> state, @NotNull PoseStack poseStack) {
         Hedgehog entity = state.entity;
-        if (entity.isBaby()) {
+        if (entity != null && entity.isBaby()) {
             poseStack.scale(0.5F, 0.5F, 0.5F);
         }
+    }
+
+    @Override
+    protected float getShadowRadius(@NotNull NaturalistRenderState<Hedgehog> state) {
+        return state.entity != null && state.entity.isBaby() ? 0.12F : 0.25F;
     }
 }
