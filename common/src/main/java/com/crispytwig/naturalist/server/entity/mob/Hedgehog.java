@@ -385,6 +385,8 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
 
 
 
+
+
     @Override
     public void tame(@NotNull Player player) {
         super.tame(player);
