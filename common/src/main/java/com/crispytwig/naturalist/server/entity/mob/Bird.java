@@ -202,6 +202,11 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         return null;
     }
+
+    @Override
+    public boolean isBaby() {
+        return false;
+    }
     //endregion
 
     //region Behavior
@@ -544,7 +549,12 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
             if (this.bird.isTame()) {
                 return false;
             }
-            this.toAvoid = this.bird.level().getNearestPlayer(this.bird.getX(), this.bird.getY(), this.bird.getZ(), MAX_DIST, entity -> entity instanceof Player player && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player) && !player.isDiscrete());
+            if (this.bird.level() instanceof ServerLevel serverLevel) {
+                this.toAvoid = serverLevel.getNearestPlayer(this.bird.getX(), this.bird.getY(), this.bird.getZ(), MAX_DIST,
+                        entity -> entity instanceof Player player && this.avoidTargeting.test(serverLevel, this.bird, player));
+            } else {
+                this.toAvoid = null;
+            }
             if (this.toAvoid == null) {
                 return false;
             }
