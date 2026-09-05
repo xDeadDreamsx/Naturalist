@@ -361,6 +361,16 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
     }
 
     @Override
+    public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
+        if (this.isBaby()) {
+            super.knockback(strength / Math.max(1.0D - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), 0.01D),
+                    x, z, source, sourceStrength);
+        } else {
+            super.knockback(strength, x, z, source, sourceStrength);
+        }
+    }
+
+    @Override
     public boolean hurtServer(ServerLevel level, @NotNull DamageSource source, float amount) {
         if (!this.getMainHandItem().isEmpty() && !this.level().isClientSide()) {
             ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + 1.0D, this.getZ() + this.getLookAngle().z, this.getMainHandItem());

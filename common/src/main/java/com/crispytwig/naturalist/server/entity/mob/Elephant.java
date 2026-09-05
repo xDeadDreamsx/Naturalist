@@ -270,6 +270,16 @@ public class Elephant extends TamableAnimal implements NeutralMob, IKMount, Data
     }
 
     @Override
+    public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
+        if (this.isBaby()) {
+            double knockbackResistance = this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+            super.knockback(strength / Math.max(1.0D - knockbackResistance, 0.01D), x, z, source, sourceStrength);
+        } else {
+            super.knockback(strength, x, z, source, sourceStrength);
+        }
+    }
+
+    @Override
     public int getMaxHeadYRot() {
         return 35;
     }
