@@ -273,7 +273,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
                 (player, level) -> this.isAngryAt(player, level)));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false,
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 1, true, false,
                 (livingEntity, level) -> this.canHunt() && (livingEntity.getType().builtInRegistryHolder().is(NaturalistTags.EntityTypes.SNAKE_HOSTILES)
                         || (livingEntity instanceof Slime slime && slime.isTiny()))));
         this.targetSelector.addGoal(6, new ResetUniversalAngerTargetGoal<>(this, false));
@@ -459,148 +459,20 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         } else return dayTime > 12000 && dayTime < 28000;
     }
 
+    /**
+     * Rattling is a warning display, not target selection. Target goals own combat targets.
+     * Mutating the target from this per-tick animation/sound helper caused prey such as chickens
+     * to be cleared immediately after NearestAttackableTargetGoal acquired them.
+     */
     private boolean canRattle() {
-        boolean rattlesnake = this.isRattlesnake();
+        if (!this.isRattlesnake()) {
+            return false;
+        }
         List<Player> players = this.level().getEntitiesOfClass(Player.class,
                 this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),
                 player -> player.isAlive() && !player.isSpectator() && this.distanceToSqr(player) <= 16.0D);
-        if (!this.level().isClientSide()) {
-            if (!players.isEmpty() && rattlesnake && !players.getFirst().isCreative()) {
-                this.setTarget(players.getFirst());
-            } else {
-                this.setTarget(null);
-            }
-        }
-        return !players.isEmpty() && rattlesnake;
+        return !players.isEmpty();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Nullable
     @Override
@@ -626,36 +498,13 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
     }
 
     static class SnakeMeleeAttackGoal extends MeleeAttackGoal {
-        private long lastCanUseCheck;
-
         public SnakeMeleeAttackGoal(@NotNull PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
             super(mob, speedModifier, followingTargetEvenIfNotSeen);
         }
 
         @Override
         public boolean canUse() {
-            return mob.getMainHandItem().isEmpty() && testUse();
-        }
-
-        boolean testUse(){
-            long l = this.mob.level().getGameTime();
-            if (l - this.lastCanUseCheck < 20L) {
-                return false;
-            } else {
-                this.lastCanUseCheck = l;
-                LivingEntity livingEntity = this.mob.getTarget();
-                if (livingEntity == null) {
-                    return false;
-                } else if (!livingEntity.isAlive()) {
-                    return false;
-                } else {
-                    if (this.mob.getNavigation().createPath(livingEntity, 0) != null) {
-                        return true;
-                    } else {
-                        return this.getAttackReachSqr(livingEntity) >= this.mob.distanceToSqr(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
-                    }
-                }
-            }
+            return mob.getMainHandItem().isEmpty() && super.canUse();
         }
 
         @Override
