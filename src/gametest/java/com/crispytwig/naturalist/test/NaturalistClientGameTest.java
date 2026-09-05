@@ -52,6 +52,10 @@ public final class NaturalistClientGameTest implements FabricClientGameTest {
             context.waitTicks(60);
             singleplayer.getConnection().waitForChunksRender();
             System.out.println(BEHAVIOR_MOBS_TICKED_MARKER);
+
+            // Regression coverage for target acquisition must execute in the real integrated
+            // world, otherwise a compile-only test would not catch the 26.2 AI timing bug.
+            NaturalistPredatorBehaviorTest.verifySnakeHuntsChicken(context, singleplayer);
             NaturalistVariantItemTest.verify(context);
             NaturalistContentParity.verify(context, singleplayer);
             System.out.println(WORLD_JOINED_MARKER);
