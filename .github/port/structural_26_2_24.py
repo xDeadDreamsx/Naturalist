@@ -8,6 +8,7 @@ new knockback(strength, x, z, DamageSource, sourceStrength) hook.
 """
 
 from pathlib import Path
+import runpy
 
 ROOT = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob")
 
@@ -60,3 +61,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    next_pass = Path(".github/port/structural_26_2_25.py")
+    if next_pass.exists():
+        runpy.run_path(str(next_pass), run_name="__main__")
