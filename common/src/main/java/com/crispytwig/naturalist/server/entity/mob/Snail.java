@@ -38,7 +38,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
@@ -363,14 +362,13 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
 
     @Override
     public boolean canHide() {
-        if (!(this.level() instanceof ServerLevel serverLevel)) {
-            return false;
-        }
-        TargetingConditions conditions = TargetingConditions.forNonCombat().range(5.0D)
-                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));
-        return !serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),
-                player -> conditions.test(serverLevel, this, player)).isEmpty();
+        return !this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),
+                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)
+                        && this.distanceToSqr(player) <= 25.0D).isEmpty();
     }
+
+
 
 
 

@@ -38,7 +38,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.entity.player.Player;
@@ -462,19 +461,20 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     private boolean canRattle() {
         boolean rattlesnake = this.isRattlesnake();
-        if (!(this.level() instanceof ServerLevel serverLevel)) {
-            return false;
-        }
-        TargetingConditions conditions = TargetingConditions.forNonCombat().range(4.0D);
-        List<Player> players = serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),
-                player -> conditions.test(serverLevel, this, player));
-        if (!players.isEmpty() && rattlesnake && !players.getFirst().isCreative()) {
-            this.setTarget(players.getFirst());
-        } else {
-            this.setTarget(null);
+        List<Player> players = this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),
+                player -> player.isAlive() && !player.isSpectator() && this.distanceToSqr(player) <= 16.0D);
+        if (!this.level().isClientSide()) {
+            if (!players.isEmpty() && rattlesnake && !players.getFirst().isCreative()) {
+                this.setTarget(players.getFirst());
+            } else {
+                this.setTarget(null);
+            }
         }
         return !players.isEmpty() && rattlesnake;
     }
+
+
 
 
 
