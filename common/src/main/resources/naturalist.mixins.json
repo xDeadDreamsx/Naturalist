@@ -27,6 +27,7 @@
     "EntityTypeMixin",
     "FoxMixin",
     "LevelMixin",
+    "LivingEntityMixin",
     "MapItemMixin",
     "MobMixin",
     "MonsterMixin",
