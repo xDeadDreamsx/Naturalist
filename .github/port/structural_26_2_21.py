@@ -7,6 +7,7 @@ Keep the old conditional behavior so legacy/partial saves do not silently reset 
 """
 
 from pathlib import Path
+import runpy
 
 PATH = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/base/DyeableAnimal.java")
 
@@ -27,12 +28,15 @@ def main() -> None:
 """
     if new in text:
         print("26.2 dye persistence parity pass changed 0 files")
-        return
-    if old not in text:
-        raise RuntimeError("Could not locate DyeableAnimal ValueInput loader")
-    PATH.write_text(text.replace(old, new, 1), encoding="utf-8")
-    print(f"26.2 dye persistence parity pass changed {PATH}")
+    else:
+        if old not in text:
+            raise RuntimeError("Could not locate DyeableAnimal ValueInput loader")
+        PATH.write_text(text.replace(old, new, 1), encoding="utf-8")
+        print(f"26.2 dye persistence parity pass changed {PATH}")
 
 
 if __name__ == "__main__":
     main()
+    next_pass = Path(".github/port/structural_26_2_22.py")
+    if next_pass.exists():
+        runpy.run_path(str(next_pass), run_name="__main__")
