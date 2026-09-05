@@ -66,6 +66,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.sounds.SoundEvents;
 
 public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVariantAnimal {
     //region Data
@@ -502,7 +503,7 @@ public class Mole extends NaturalistAnimal implements HidingAnimal, DataDrivenVa
             if (!this.level().isClientSide()) {
                 this.usePlayerItem(player, hand, stack);
                 this.heal(2.0F);
-                this.playEatingSound();
+                this.playSound(SoundEvents.GENERIC_EAT.value(), 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         }

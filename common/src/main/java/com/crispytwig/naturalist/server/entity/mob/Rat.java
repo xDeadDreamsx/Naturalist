@@ -74,6 +74,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.sounds.SoundEvents;
 
 public class Rat extends TamableClimbingAnimal implements SleepingAnimal, FollowingPet, Catchable, DataDrivenVariantAnimal, ContainerBoundWorker {
     //region Data
@@ -422,7 +423,7 @@ public class Rat extends TamableClimbingAnimal implements SleepingAnimal, Follow
                 if (!this.level().isClientSide()) {
                     this.usePlayerItem(player, hand, stack);
                     this.heal(2.0F);
-                    this.playEatingSound();
+                    this.playSound(SoundEvents.GENERIC_EAT.value(), 1.0F, 1.0F);
                 }
                 return InteractionResult.SUCCESS;
             }
