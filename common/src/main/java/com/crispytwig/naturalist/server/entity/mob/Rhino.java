@@ -204,7 +204,8 @@ public class Rhino extends NaturalistAnimal implements DataDrivenVariantAnimal {
         return super.isImmobile() || this.stunnedTick > 0;
     }
 
-    protected void blockedByShield(LivingEntity defender) {
+    @Override
+    protected void blockedByItem(LivingEntity defender) {
         this.stunnedTick = 60;
         this.resetChargeCooldownTicks();
         this.getNavigation().stop();
