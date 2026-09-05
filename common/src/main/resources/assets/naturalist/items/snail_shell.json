@@ -1,0 +1,25 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "naturalist:snail_color",
+    "fallback": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/white" },
+    "entries": [
+      { "threshold": 0.0, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/white" } },
+      { "threshold": 0.06666667, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/orange" } },
+      { "threshold": 0.13333334, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/magenta" } },
+      { "threshold": 0.2, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/light_blue" } },
+      { "threshold": 0.26666668, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/yellow" } },
+      { "threshold": 0.33333334, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/lime" } },
+      { "threshold": 0.4, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/pink" } },
+      { "threshold": 0.46666667, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/gray" } },
+      { "threshold": 0.53333336, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/light_gray" } },
+      { "threshold": 0.6, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/cyan" } },
+      { "threshold": 0.6666667, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/purple" } },
+      { "threshold": 0.73333335, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/blue" } },
+      { "threshold": 0.8, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/brown" } },
+      { "threshold": 0.8666667, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/green" } },
+      { "threshold": 0.93333334, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/red" } },
+      { "threshold": 1.0, "model": { "type": "minecraft:model", "model": "naturalist:item/snail_shell/black" } }
+    ]
+  }
+}
