@@ -36,10 +36,10 @@ public abstract class PlayerModelMixin {
         naturalist$rotateWaist(model.leftArm, pitch, roll, cosP, sinP, cosR, sinR);
         naturalist$rotateWaist(model.rightArm, pitch, roll, cosP, sinP, cosR, sinR);
 
-        model.hat.copyFrom(model.head);
-        model.jacket.copyFrom(model.body);
-        model.leftSleeve.copyFrom(model.leftArm);
-        model.rightSleeve.copyFrom(model.rightArm);
+        model.hat.loadPose(model.head.storePose());
+        model.jacket.loadPose(model.body.storePose());
+        model.leftSleeve.loadPose(model.leftArm.storePose());
+        model.rightSleeve.loadPose(model.rightArm.storePose());
     }
 
     @Unique
