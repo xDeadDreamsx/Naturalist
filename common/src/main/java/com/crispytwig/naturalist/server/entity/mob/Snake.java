@@ -582,6 +582,8 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
 
 
+
+
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
