@@ -7,11 +7,13 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import org.jetbrains.annotations.NotNull;
+import com.crispytwig.naturalist.client.renderer.layers.FireflyGlowLayer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class FireflyRenderer extends NaturalistMobRenderer<Firefly> {
     public FireflyRenderer(EntityRendererProvider.@NotNull Context context) {
         super(context, new FireflyModel(context.bakeLayer(FireflyModel.LAYER_LOCATION)), new FireflyBabyModel(context.bakeLayer(FireflyBabyModel.LAYER_LOCATION)), 0.4F);
+        this.addLayer(new FireflyGlowLayer(this));
     }
 }
