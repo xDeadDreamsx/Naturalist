@@ -9,6 +9,7 @@ anger-end-time representation by extending the end time by one tick for each eng
 """
 
 from pathlib import Path
+import runpy
 
 PATH = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Ostrich.java")
 
@@ -56,10 +57,13 @@ def main() -> None:
     current = replace_method(text, "    private void updateEggAnger() {", desired)
     if current == text:
         print("26.2 Ostrich anger parity pass changed 0 files")
-        return
-    PATH.write_text(current, encoding="utf-8")
-    print(f"26.2 Ostrich anger parity pass changed {PATH}")
+    else:
+        PATH.write_text(current, encoding="utf-8")
+        print(f"26.2 Ostrich anger parity pass changed {PATH}")
 
 
 if __name__ == "__main__":
     main()
+    next_pass = Path(".github/port/structural_26_2_23.py")
+    if next_pass.exists():
+        runpy.run_path(str(next_pass), run_name="__main__")
