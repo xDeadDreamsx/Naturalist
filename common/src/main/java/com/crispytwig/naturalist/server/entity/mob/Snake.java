@@ -337,10 +337,12 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     @Override
     public boolean canSleep() {
+        long dayTime = this.level().getOverworldClockTime();
         if (this.isAngry() || this.level().isWaterAt(this.blockPosition())) {
             return false;
-        }
-        return !this.level().isBrightOutside();
+        } else if (dayTime > 18000 && dayTime < 23000) {
+            return false;
+        } else return dayTime > 12000 && dayTime < 28000;
     }
 
     private boolean canRattle() {

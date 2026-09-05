@@ -209,7 +209,7 @@ public class KomodoDragon extends Animal implements SleepingAnimal, DataDrivenVa
 
     @Override
     public boolean canSleep() {
-        return this.level().isDay() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());
+        return this.level().isBrightOutside() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());
     }
 
     @Override

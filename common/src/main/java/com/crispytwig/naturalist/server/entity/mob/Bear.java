@@ -169,7 +169,8 @@ public class Bear extends TamableAnimal implements NeutralMob, SleepingAnimal, D
 
     @Override
     public boolean canSleep() {
-        return this.wakeTicks <= 0 && !this.level().isBrightOutside() && !this.isAngry() && !this.level().isWaterAt(this.blockPosition());
+        long dayTime = this.level().getOverworldClockTime();
+        return this.wakeTicks <= 0 && (dayTime < 12000 || dayTime > 18000) && dayTime < 23000 && dayTime > 6000 && !this.isAngry() && !this.level().isWaterAt(this.blockPosition());
     }
 
     @Override

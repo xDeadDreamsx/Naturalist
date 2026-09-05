@@ -243,7 +243,7 @@ public class Firefly extends NaturalistAnimal implements DataDrivenVariantAnimal
 
     private boolean canGlow() {
         if (!this.level().isClientSide()) {
-            return !this.level().isBrightOutside() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;
+            return this.level().isDarkOutside() || this.level().getMaxLocalRawBrightness(this.blockPosition()) < 8;
         }
         return false;
     }

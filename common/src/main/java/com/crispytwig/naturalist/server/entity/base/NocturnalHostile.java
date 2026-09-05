@@ -11,7 +11,7 @@ public interface NocturnalHostile {
     }
 
     default boolean isNightTime() {
-        return !((LivingEntity) this).level().isBrightOutside();
+        return ((LivingEntity) this).level().isDarkOutside();
     }
 
     default boolean isDarkOrNight() {

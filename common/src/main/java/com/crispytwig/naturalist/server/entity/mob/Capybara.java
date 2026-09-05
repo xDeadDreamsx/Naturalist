@@ -135,7 +135,8 @@ public class Capybara extends TamableAnimal implements DyeableAnimal, FollowingP
 
     @Override
     public boolean canSleep() {
-        return this.level().isBrightOutside() && this.onGround() && !this.isInWater()
+        long dayTime = this.level().getOverworldClockTime() % 24000;
+        return dayTime > 6000 && dayTime < 13000 && this.onGround() && !this.isInWater()
                 && !this.isOrderedToSit() && !this.isInLove() && this.getLastHurtByMob() == null;
     }
 

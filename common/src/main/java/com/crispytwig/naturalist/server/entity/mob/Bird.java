@@ -429,7 +429,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        if (!this.level().isBrightOutside()) {
+        if (this.level().isDarkOutside()) {
             return null;
         }
         return switch (this.getVariantLocation().getPath()) {
@@ -445,7 +445,7 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     @Override
     public void playAmbientSound() {
         super.playAmbientSound();
-        if (this.level() instanceof ServerLevel serverLevel && !!this.level().isBrightOutside()) {
+        if (this.level() instanceof ServerLevel serverLevel && !this.level().isDarkOutside()) {
             float f = (float)level().getRandom().nextInt(4) / 24.0f;
             serverLevel.sendParticles(ParticleTypes.NOTE, this.getX(), this.getY() + 1, this.getZ(), 0, f, 0.0, 0.0, 1.0);
         }
