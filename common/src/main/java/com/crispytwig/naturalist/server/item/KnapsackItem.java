@@ -34,6 +34,8 @@ import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.chat.ComponentSerialization;
 
 public class KnapsackItem extends Item {
     public KnapsackItem(Properties properties) {
@@ -140,11 +142,18 @@ public class KnapsackItem extends Item {
             return;
         }
         Component label = null;
-        String entityId = tag.getStringOr("id", "");
-        Identifier parsedId = Identifier.tryParse(entityId);
-        EntityType<?> type = parsedId == null ? null : BuiltInRegistries.ENTITY_TYPE.getValue(parsedId);
-        if (type != null) {
-            label = type.getDescription();
+        if (tag.get("CustomName") != null && context.registries() != null) {
+            label = ComponentSerialization.CODEC
+                    .parse(context.registries().createSerializationContext(NbtOps.INSTANCE), tag.get("CustomName"))
+                    .result().orElse(null);
+        }
+        if (label == null) {
+            String entityId = tag.getStringOr("id", "");
+            Identifier parsedId = Identifier.tryParse(entityId);
+            EntityType<?> type = parsedId == null ? null : BuiltInRegistries.ENTITY_TYPE.getValue(parsedId);
+            if (type != null) {
+                label = type.getDescription();
+            }
         }
         if (label != null) {
             tooltip.accept(label.copy().withStyle(ChatFormatting.GRAY));
