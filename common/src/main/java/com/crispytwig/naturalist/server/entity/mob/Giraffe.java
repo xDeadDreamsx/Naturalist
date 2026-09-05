@@ -147,7 +147,6 @@ public class Giraffe extends TamableAnimal implements IKMount, DataDrivenVariant
     }
 
     @Override
-    @Override
     protected void tickRidden(@NotNull Player controller, @NotNull Vec3 riddenInput) {
         super.tickRidden(controller, riddenInput);
         this.setYRot(controller.getYRot());
