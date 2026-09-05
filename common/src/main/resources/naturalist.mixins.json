@@ -4,9 +4,12 @@
   "package": "com.crispytwig.naturalist.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
+    "AvatarRendererMixin",
+    "AvatarRenderStateMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
     "LocalPlayerMixin",
+    "ParrotOnShoulderLayerMixin",
     "WolfModelMixin",
     "WolfRendererMixin",
     "WolfRenderStateMixin"
