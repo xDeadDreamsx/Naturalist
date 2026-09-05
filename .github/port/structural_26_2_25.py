@@ -8,6 +8,7 @@ itself introduced, leaving intentionally static item particles untouched.
 """
 
 from pathlib import Path
+import runpy
 
 ROOT = Path("common/src/main/java")
 VARIABLES = ("eatingStack", "itemStack", "particleStack", "stack")
@@ -46,3 +47,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    next_pass = Path(".github/port/structural_26_2_26.py")
+    if next_pass.exists():
+        runpy.run_path(str(next_pass), run_name="__main__")
