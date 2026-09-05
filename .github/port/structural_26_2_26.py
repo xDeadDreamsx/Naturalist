@@ -46,3 +46,4 @@ if __name__ == "__main__":
     runpy.run_path(".github/port/structural_26_2_27.py", run_name="__main__")
     runpy.run_path(".github/port/structural_26_2_29.py", run_name="__main__")
     runpy.run_path(".github/port/structural_26_2_30.py", run_name="__main__")
+    runpy.run_path(".github/port/structural_26_2_31.py", run_name="__main__")
