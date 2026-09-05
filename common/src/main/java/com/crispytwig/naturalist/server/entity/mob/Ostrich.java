@@ -433,16 +433,17 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     private boolean thinkCanHide() {
-        if (this.isTame() || this.isBaby() || this.isAggressive() || this.isVehicle()) {
+        if (this.isTame() || this.isBaby() || this.isAggressive() || this.isVehicle()
+                || !(this.level() instanceof ServerLevel serverLevel)) {
             return false;
         }
-        List<Player> players = this.level().getEntitiesOfClass(Player.class,
-                this.getBoundingBox().inflate(16.0D, 8.0D, 16.0D),
-                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)
-                        && !player.isDiscrete() && !player.isHolding(foodItems())
-                        && this.distanceToSqr(player) <= 256.0D);
-        return !players.isEmpty();
+        TargetingConditions conditions = TargetingConditions.forNonCombat().range(16.0D)
+                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)
+                        && !entity.isDiscrete() && !entity.isHolding(foodItems()));
+        return !serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(16.0D, 8.0D, 16.0D),
+                player -> conditions.test(serverLevel, this, player)).isEmpty();
     }
+
 
 
     @Override

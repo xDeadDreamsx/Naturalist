@@ -322,12 +322,14 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
     }
 
     private boolean thinkCanHide() {
-        if (this.isTame() || this.isRolling() || this.isSprinting() || this.isInSittingPose()) {
+        if (this.isTame() || this.isRolling() || this.isSprinting() || this.isInSittingPose()
+                || !(this.level() instanceof ServerLevel serverLevel)) {
             return false;
         }
-        List<Player> players = this.level().getEntitiesOfClass(Player.class,
-                this.getBoundingBox().inflate(6.0D, 3.0D, 6.0D),
-                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player) && this.distanceToSqr(player) <= 36.0D);
+        TargetingConditions conditions = TargetingConditions.forNonCombat().range(6.0D)
+                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));
+        List<Player> players = serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(6.0D, 3.0D, 6.0D),
+                player -> conditions.test(serverLevel, this, player));
         for (Player player : players) {
             if (!player.isCrouching() && !foodItems().test(player.getMainHandItem()) && !foodItems().test(player.getOffhandItem())) {
                 return true;
@@ -335,6 +337,7 @@ public class Hedgehog extends TamableAnimal implements DyeableAnimal, FollowingP
         }
         return false;
     }
+
 
 
     @Override

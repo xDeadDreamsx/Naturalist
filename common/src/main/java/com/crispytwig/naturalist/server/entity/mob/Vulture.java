@@ -477,9 +477,15 @@ public class Vulture extends PathfinderMob implements DataDrivenVariantAnimal {
             if (this.vulture.getTarget() != null) {
                 return false;
             }
-            this.toAvoid = this.vulture.level().getNearestPlayer(this.vulture.getX(), this.vulture.getY(), this.vulture.getZ(), 16.0D, entity -> entity instanceof Player player && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player));
+            if (this.vulture.level() instanceof ServerLevel serverLevel) {
+                this.toAvoid = serverLevel.getNearestPlayer(this.vulture.getX(), this.vulture.getY(), this.vulture.getZ(), this.detectRange,
+                        entity -> entity instanceof Player player && this.fleeConditions.test(serverLevel, this.vulture, player));
+            } else {
+                this.toAvoid = null;
+            }
             return this.toAvoid != null;
         }
+
 
         @Override
         public boolean canContinueToUse() {

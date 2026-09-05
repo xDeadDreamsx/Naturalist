@@ -262,16 +262,16 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
 
     @Override
     public boolean canHide() {
-        if (this.isTame()) {
+        if (this.isTame() || !(this.level() instanceof ServerLevel serverLevel)) {
             return false;
         }
-        List<Player> players = this.level().getEntitiesOfClass(Player.class,
-                this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),
-                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)
-                        && !player.isDiscrete() && !player.isHolding(temptItems())
-                        && this.distanceToSqr(player) <= 25.0D);
-        return !players.isEmpty();
+        TargetingConditions conditions = TargetingConditions.forNonCombat().range(5.0D)
+                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)
+                        && !entity.isDiscrete() && !entity.isHolding(temptItems()));
+        return !serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),
+                player -> conditions.test(serverLevel, this, player)).isEmpty();
     }
+
 
 
     @Override

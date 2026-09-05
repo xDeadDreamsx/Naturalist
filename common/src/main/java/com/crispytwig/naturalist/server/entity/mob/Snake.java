@@ -462,9 +462,12 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
 
     private boolean canRattle() {
         boolean rattlesnake = this.isRattlesnake();
-        List<Player> players = this.level().getEntitiesOfClass(Player.class,
-                this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),
-                player -> !player.isSpectator() && this.distanceToSqr(player) <= 16.0D);
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        TargetingConditions conditions = TargetingConditions.forNonCombat().range(4.0D);
+        List<Player> players = serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),
+                player -> conditions.test(serverLevel, this, player));
         if (!players.isEmpty() && rattlesnake && !players.getFirst().isCreative()) {
             this.setTarget(players.getFirst());
         } else {
@@ -472,6 +475,7 @@ public class Snake extends TamableClimbingAnimal implements SleepingAnimal, Neut
         }
         return !players.isEmpty() && rattlesnake;
     }
+
 
 
     @Nullable
