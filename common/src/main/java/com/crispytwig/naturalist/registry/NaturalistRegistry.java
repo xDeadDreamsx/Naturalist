@@ -106,7 +106,7 @@ public class NaturalistRegistry {
     public static final ResourceKey<JukeboxSong> DEATH_BY_HOGS_SONG = ResourceKey.create(Registries.JUKEBOX_SONG, Naturalist.location("death_by_hogs"));
     public static final DeferredHolder<Item, Item> MUSIC_DISC_DEATH_BY_HOGS = ITEMS.register("music_disc_death_by_hogs", () -> new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("music_disc_death_by_hogs"))).stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(DEATH_BY_HOGS_SONG)));
     public static final DeferredHolder<Block, ChrysalisBlock> CHRYSALIS_BLOCK = registerBlockOnly("chrysalis", () -> new ChrysalisBlock(BlockBehaviour.Properties.of().setId(ResourceKey.create(Registries.BLOCK, Naturalist.location("chrysalis"))).randomTicks().strength(0.2F, 3.0F).sound(SoundType.GRASS).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Item, BlockItem> CHRYSALIS = ITEMS.register("chrysalis", () -> new BlockItem(CHRYSALIS_BLOCK.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("chrysalis"))).stacksTo(1)));
+    public static final DeferredHolder<Item, BlockItem> CHRYSALIS = ITEMS.register("chrysalis", () -> new BlockItem(CHRYSALIS_BLOCK.get(), new Item.Properties().useBlockDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("chrysalis"))).stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobItem> CATERPILLAR = ITEMS.register("caterpillar", () -> new CaughtMobItem(NaturalistEntityTypes.CATERPILLAR, () -> Fluids.EMPTY, NaturalistSoundEvents.SNAIL_FORWARD, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("caterpillar"))).stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobWithVariantsItem> BUTTERFLY = ITEMS.register("butterfly", () -> new CaughtMobWithVariantsItem(NaturalistEntityTypes.BUTTERFLY, () -> Fluids.EMPTY, NaturalistSoundEvents.BIRD_FLY, "tooltip.naturalist.", Butterfly.VARIANT_NAMES, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("butterfly"))).stacksTo(1)));
     public static final DeferredHolder<Item, CaughtMobItem> ANT = ITEMS.register("ant", () -> new CaughtMobItem(NaturalistEntityTypes.ANT, () -> Fluids.EMPTY, NaturalistSoundEvents.ANT_AMBIENT, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("ant"))).stacksTo(1)));
@@ -117,7 +117,7 @@ public class NaturalistRegistry {
     public static final DeferredHolder<Item, QueenAntItem> QUEEN_ANT = ITEMS.register("queen_ant", () -> new QueenAntItem(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("queen_ant"))).stacksTo(1)));
     public static final DeferredHolder<Block, AntHillBlock> ANT_HILL = registerBlock("ant_hill", () -> new AntHillBlock(BlockBehaviour.Properties.of().setId(ResourceKey.create(Registries.BLOCK, Naturalist.location("ant_hill"))).strength(0.5F, 0.2F).sound(SoundType.ROOTED_DIRT).randomTicks()));
     public static final DeferredHolder<Block, SnailShellBlock> SNAIL_SHELL_BLOCK = registerBlockOnly("snail_shell", () -> new SnailShellBlock(BlockBehaviour.Properties.of().setId(ResourceKey.create(Registries.BLOCK, Naturalist.location("snail_shell"))).strength(0.5F).sound(SoundType.CORAL_BLOCK).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Item, BlockItem> SNAIL_SHELL = ITEMS.register("snail_shell", () -> new BlockItem(SNAIL_SHELL_BLOCK.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("snail_shell"))).component(DataComponents.CUSTOM_DATA, SnailShellBlock.colorData(DyeColor.BROWN))));
+    public static final DeferredHolder<Item, BlockItem> SNAIL_SHELL = ITEMS.register("snail_shell", () -> new BlockItem(SNAIL_SHELL_BLOCK.get(), new Item.Properties().useBlockDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("snail_shell"))).component(DataComponents.CUSTOM_DATA, SnailShellBlock.colorData(DyeColor.BROWN))));
     public static final DeferredHolder<Item, SnailItem> SNAIL = ITEMS.register("snail", () -> new SnailItem(NaturalistEntityTypes.SNAIL, () -> Fluids.EMPTY, NaturalistSoundEvents.SNAIL_FORWARD, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("snail"))).stacksTo(1)));
     public static final DeferredHolder<Item, NaturalistBucketItem> STARFISH_BUCKET = ITEMS.register("starfish_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.STARFISH.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("starfish_bucket"))).stacksTo(1), false, "color.minecraft.", Starfish.VARIANT_NAMES));
     public static final DeferredHolder<Item, NaturalistBucketItem> GIANT_ISOPOD_BUCKET = ITEMS.register("giant_isopod_bucket", () -> new NaturalistBucketItem(NaturalistEntityTypes.GIANT_ISOPOD.get(), Fluids.WATER, SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location("giant_isopod_bucket"))).stacksTo(1), false, "tooltip.naturalist.giant_isopod_", GiantIsopod.VARIANT_NAMES));
@@ -213,7 +213,7 @@ public class NaturalistRegistry {
 
     private static <T extends Block> DeferredHolder<Block, T> registerBlock(String name, Supplier<T> block) {
         DeferredHolder<Block, T> holder = BLOCKS.register(name, block);
-        ITEMS.register(name, () -> new BlockItem(holder.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location(name)))));
+        ITEMS.register(name, () -> new BlockItem(holder.get(), new Item.Properties().useBlockDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Naturalist.location(name)))));
         return holder;
     }
 
@@ -223,7 +223,7 @@ public class NaturalistRegistry {
 
     private static DeferredHolder<Block, StarfishBlock> registerStarfishBlock(String name) {
         DeferredHolder<Block, StarfishBlock> holder = BLOCKS.register(name, () -> new StarfishBlock(BlockBehaviour.Properties.of().setId(ResourceKey.create(Registries.BLOCK, Naturalist.location(name))).noCollision().instabreak().sound(SoundType.WET_GRASS).noOcclusion().pushReaction(PushReaction.DESTROY)));
-        ITEMS.register(name, () -> new BlockItem(holder.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Naturalist.location(name)))));
+        ITEMS.register(name, () -> new BlockItem(holder.get(), new Item.Properties().useBlockDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Naturalist.location(name)))));
         return holder;
     }
 }
