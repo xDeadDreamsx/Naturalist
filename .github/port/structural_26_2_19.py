@@ -2,12 +2,13 @@
 """Restore Butterfly/Caterpillar age and scale semantics from Naturalist 1.21.1.
 
 Butterflies breed into caterpillars rather than producing baby butterflies, so the original
-Butterfly is permanently adult. Caterpillar, meanwhile, deliberately returns a fixed scale of
-1.0 so its AgeableMob age does not also alter its physical size while it matures toward a cocoon.
-Both overrides were dropped during the 26.2 migration.
+Butterfly is permanently adult. Caterpillar deliberately keeps a physical age scale of 1.0 while
+its AgeableMob age still controls maturation toward a cocoon. Minecraft 26.2 made isBaby() and
+getScale() final; canBeABaby() and getAgeScale() are the supported replacement hooks.
 """
 
 from pathlib import Path
+import re
 import runpy
 
 BUTTERFLY = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java")
@@ -18,12 +19,19 @@ def main() -> None:
     changed: list[str] = []
 
     text = BUTTERFLY.read_text(encoding="utf-8")
-    method = """    @Override
-    public boolean isBaby() {
+    original = text
+    text = re.sub(
+        r"\n\s*@Override\s*\n\s*public boolean isBaby\(\) \{\s*return false;\s*\}\s*\n",
+        "\n",
+        text,
+        count=1,
+    )
+    adult_hook = """    @Override
+    protected boolean canBeABaby() {
         return false;
     }
 """
-    if method not in text:
+    if adult_hook not in text:
         anchor = """    @Override
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         return NaturalistEntityTypes.CATERPILLAR.get().create(serverLevel, EntitySpawnReason.BREEDING);
@@ -31,16 +39,26 @@ def main() -> None:
 """
         if anchor not in text:
             raise RuntimeError("Could not locate Butterfly breed-offspring insertion point")
-        BUTTERFLY.write_text(text.replace(anchor, anchor + "\n" + method, 1), encoding="utf-8")
+        text = text.replace(anchor, anchor + "\n" + adult_hook, 1)
+    if text != original:
+        BUTTERFLY.write_text(text, encoding="utf-8")
         changed.append(str(BUTTERFLY))
 
     text = CATERPILLAR.read_text(encoding="utf-8")
-    scale_method = """    @Override
-    public float getScale() {
+    original = text
+    # Remove the incompatible direct getScale override from the first parity attempt, if present.
+    text = re.sub(
+        r"\n\s*@Override\s*\n\s*public float getScale\(\) \{\s*return 1\.0F;\s*\}\s*\n",
+        "\n",
+        text,
+        count=1,
+    )
+    scale_hook = """    @Override
+    public float getAgeScale() {
         return 1.0F;
     }
 """
-    if scale_method not in text:
+    if scale_hook not in text:
         anchor = """    @Override
     protected float getClimbSpeedMultiplier() {
         return 0.5F;
@@ -48,7 +66,9 @@ def main() -> None:
 """
         if anchor not in text:
             raise RuntimeError("Could not locate Caterpillar scale insertion point")
-        CATERPILLAR.write_text(text.replace(anchor, anchor + "\n" + scale_method, 1), encoding="utf-8")
+        text = text.replace(anchor, anchor + "\n" + scale_hook, 1)
+    if text != original:
+        CATERPILLAR.write_text(text, encoding="utf-8")
         changed.append(str(CATERPILLAR))
 
     print(f"26.2 Butterfly/Caterpillar behavior parity pass changed {len(changed)} files")
