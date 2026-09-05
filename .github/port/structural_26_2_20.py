@@ -8,6 +8,7 @@ the original TargetingConditions through the 26.2 ServerLevel predicate API.
 """
 
 from pathlib import Path
+import runpy
 
 ROOT = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob")
 
@@ -193,7 +194,6 @@ def main() -> None:
 
     for filename, marker, replacement in replacements:
         path = ROOT / filename
-        # Vulture has multiple canUse methods; select the one after VultureFleePlayerGoal.
         if filename == "Vulture.java":
             text = path.read_text(encoding="utf-8")
             class_pos = text.find("static class VultureFleePlayerGoal")
@@ -220,3 +220,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    next_pass = Path(".github/port/structural_26_2_21.py")
+    if next_pass.exists():
+        runpy.run_path(str(next_pass), run_name="__main__")
