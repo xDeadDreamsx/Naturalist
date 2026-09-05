@@ -6,6 +6,8 @@ import com.crispytwig.naturalist.server.entity.mob.Elephant;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import com.crispytwig.naturalist.client.renderer.layers.BannerLayer;
+import com.crispytwig.naturalist.client.renderer.layers.SeatedRiderLayer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
@@ -17,5 +19,7 @@ public class ElephantRenderer extends NaturalistMobRenderer<Elephant> {
 
     public ElephantRenderer(EntityRendererProvider.Context context) {
         super(context, new ElephantModel(context.bakeLayer(ElephantModel.LAYER_LOCATION)), new ElephantBabyModel(context.bakeLayer(ElephantBabyModel.LAYER_LOCATION)), 1.5F);
+        this.addLayer(new SeatedRiderLayer<>(this, context.getEntityRenderDispatcher()));
+        this.addLayer(new BannerLayer(this, context, BANNER_X, BANNER_Y, BANNER_Z, BANNER_SCALE));
     }
 }
