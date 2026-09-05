@@ -39,16 +39,15 @@ public final class NaturalistClientGameTest implements FabricClientGameTest {
             context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_BACK));
             context.waitTicks(80);
             singleplayer.getConnection().waitForChunksRender();
-            singleplayer.getServer().runCommand("/ride @a[limit=1] mount @e[type=naturalist:elephant,limit=1,sort=nearest]");
-            context.waitTicks(60);
-            singleplayer.getConnection().waitForChunksRender();
-            context.takeScreenshot("naturalist-elephant-rider");
+            context.takeScreenshot("naturalist-render-parity-mobs");
             System.out.println(RENDER_PARITY_MOBS_RENDERED_MARKER);
-            singleplayer.getServer().runCommand("/ride @a[limit=1] dismount");
 
             context.waitTicks(60);
             singleplayer.getConnection().waitForChunksRender();
             System.out.println(BEHAVIOR_MOBS_TICKED_MARKER);
+
+            // Verify the actual Naturalist interaction path for tame, saddled elephant riding.
+            NaturalistElephantRideTest.verify(context, singleplayer);
 
             // Reproduce the user-reported lion sleeping pose and inspect both root transforms.
             NaturalistLionSleepRenderTest.verify(context, singleplayer);
