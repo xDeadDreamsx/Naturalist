@@ -4,7 +4,8 @@
 Minecraft 26.2 moved PathfinderMob's old restriction API to Mob home methods and routes ridden
 movement through LivingEntity's ridden hooks. It also keeps pass-door configuration on the
 NodeEvaluator rather than PathNavigation. Restore Naturalist's original intent using those direct
-26.2 successors, and narrow Crab weapon recognition to the original sword/digger categories.
+26.2 successors, narrow Crab weapon recognition to the original sword/digger categories, and
+restore the Vulture's original player detection distance.
 """
 
 from pathlib import Path
@@ -124,6 +125,19 @@ def main() -> None:
         text = text[:end + 1] + exact + text[end + 1:]
         path.write_text(text, encoding="utf-8")
         changed.append(str(path))
+
+    # The VultureFleePlayerGoal is created with a 16-block detection range in the original.
+    # During the getNearestPlayer API migration the port hard-coded 8 blocks, cutting its flee
+    # response radius in half. Restore the actual configured range.
+    vulture = ROOT / "Vulture.java"
+    text = vulture.read_text(encoding="utf-8")
+    old = "this.vulture.getZ(), 8.0D, entity -> entity instanceof Player player && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player))"
+    new = "this.vulture.getZ(), 16.0D, entity -> entity instanceof Player player && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player))"
+    if old in text:
+        text = text.replace(old, new, 1)
+        vulture.write_text(text, encoding="utf-8")
+        if str(vulture) not in changed:
+            changed.append(str(vulture))
 
     print(f"26.2 movement/pathing parity pass changed {len(changed)} files")
     for path in changed:
