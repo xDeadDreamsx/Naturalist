@@ -13,7 +13,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -31,6 +30,9 @@ final class NaturalistInteractionRegressionTest {
     static void verify(ClientGameTestContext context, TestSingleplayerContext world) {
         world.getServer().runCommand("/fill -6 159 -6 6 159 6 minecraft:stone");
         world.getServer().runCommand("/tp @a 0 160 0 0 10");
+        // Use Minecraft's own command parser/registry to create the actual 26.2 vanilla dye item.
+        // This avoids relying on Java constants/helpers whose names changed between versions.
+        world.getServer().runCommand("/item replace entity @a[limit=1] weapon.mainhand with minecraft:red_dye 1");
 
         world.getServer().runOnServer(server -> {
             var level = server.overworld();
@@ -55,8 +57,9 @@ final class NaturalistInteractionRegressionTest {
         snail.snapTo(-2.0D, 160.0D, 0.0D, 0.0F, 0.0F);
         require(level.addFreshEntity(snail), "Could not add snail interaction-test entity");
 
-        ItemStack redDye = new ItemStack(DyeItem.byColor(DyeColor.RED));
-        player.setItemInHand(InteractionHand.MAIN_HAND, redDye);
+        ItemStack redDye = player.getMainHandItem();
+        require(redDye.get(DataComponents.DYE) == DyeColor.RED,
+                "Minecraft 26.2 red dye stack does not expose the expected DYE component");
         snail.mobInteract(player, InteractionHand.MAIN_HAND);
         require(snail.getColor() == DyeColor.RED,
                 "Red vanilla dye did not recolor a Naturalist snail through the 26.2 interaction path");
