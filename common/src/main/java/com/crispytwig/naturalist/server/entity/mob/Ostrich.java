@@ -64,7 +64,6 @@ import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -433,16 +432,18 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     private boolean thinkCanHide() {
-        if (this.isTame() || this.isBaby() || this.isAggressive() || this.isVehicle()
-                || !(this.level() instanceof ServerLevel serverLevel)) {
+        if (this.isTame() || this.isBaby() || this.isAggressive() || this.isVehicle()) {
             return false;
         }
-        TargetingConditions conditions = TargetingConditions.forNonCombat().range(16.0D)
-                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)
-                        && !entity.isDiscrete() && !entity.isHolding(foodItems()));
-        return !serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(16.0D, 8.0D, 16.0D),
-                player -> conditions.test(serverLevel, this, player)).isEmpty();
+        return !this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(16.0D, 8.0D, 16.0D),
+                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)
+                        && !player.isDiscrete()
+                        && !player.isHolding(foodItems())
+                        && this.distanceToSqr(player) <= 256.0D).isEmpty();
     }
+
+
 
 
 
@@ -789,6 +790,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
             this.stopBeingAngry();
         }
     }
+
 
 
 

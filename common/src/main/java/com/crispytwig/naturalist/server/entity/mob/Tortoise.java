@@ -35,7 +35,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -262,15 +261,18 @@ public class Tortoise extends TamableAnimal implements HidingAnimal, EggLayingAn
 
     @Override
     public boolean canHide() {
-        if (this.isTame() || !(this.level() instanceof ServerLevel serverLevel)) {
+        if (this.isTame()) {
             return false;
         }
-        TargetingConditions conditions = TargetingConditions.forNonCombat().range(5.0D)
-                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)
-                        && !entity.isDiscrete() && !entity.isHolding(temptItems()));
-        return !serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),
-                player -> conditions.test(serverLevel, this, player)).isEmpty();
+        return !this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),
+                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)
+                        && !player.isDiscrete()
+                        && !player.isHolding(temptItems())
+                        && this.distanceToSqr(player) <= 25.0D).isEmpty();
     }
+
+
 
 
 
