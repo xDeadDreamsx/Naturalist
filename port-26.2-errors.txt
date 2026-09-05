@@ -11,21 +11,14 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.17.20
 
 > Task :compileJava
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:212: error: cannot find symbol
-        return this.level().isDay() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());
-                           ^
-  symbol:   method isDay()
-  location: class Level
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lion.java:376: error: cannot find symbol
-        long dayTime = this.level().getDayTime();
-                                   ^
-  symbol:   method getDayTime()
-  location: class Level
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Giraffe.java:150: error: Override is not a repeatable annotation interface
+    @Override
+    ^
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-2 errors
+1 error
 
 > Task :compileJava FAILED
 
@@ -36,21 +29,14 @@ FAILURE: Build failed with an exception.
 * What went wrong:
 Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
+  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Giraffe.java:150: error: Override is not a repeatable annotation interface
+      @Override
+      ^
   Note: Recompile with -Xlint:deprecation for details.
   Note: Recompile with -Xlint:unchecked for details.
   Note: Some input files use or override a deprecated API.
   Note: Some input files use unchecked or unsafe operations.
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:212: error: cannot find symbol
-          return this.level().isDay() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());
-                             ^
-    symbol:   method isDay()
-    location: class Level
-  /home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lion.java:376: error: cannot find symbol
-          long dayTime = this.level().getDayTime();
-                                     ^
-    symbol:   method getDayTime()
-    location: class Level
-  2 errors
+  1 error
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
@@ -92,21 +78,14 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/KomodoDragon.java:212: error: cannot find symbol
-        return this.level().isDay() && this.getTarget() == null && !this.level().isWaterAt(this.blockPosition());
-                           ^
-  symbol:   method isDay()
-  location: class Level
-/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Lion.java:376: error: cannot find symbol
-        long dayTime = this.level().getDayTime();
-                                   ^
-  symbol:   method getDayTime()
-  location: class Level
+/home/runner/work/Naturalist/Naturalist/common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Giraffe.java:150: error: Override is not a repeatable annotation interface
+    @Override
+    ^
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-2 errors
+1 error
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
 	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
@@ -241,5 +220,5 @@ Note: Recompile with -Xlint:unchecked for details.
 	... 30 more
 
 
-BUILD FAILED in 36s
+BUILD FAILED in 47s
 1 actionable task: 1 executed
