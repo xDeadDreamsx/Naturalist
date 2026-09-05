@@ -373,10 +373,11 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
 
     @Override
     public boolean canSleep() {
+        long dayTime = this.level().getDayTime();
         if (this.isTame() || this.getTarget() != null || this.level().isWaterAt(this.blockPosition())) {
             return false;
         } else {
-            return this.level().isBrightOutside();
+            return dayTime > 6000 && dayTime < 13000;
         }
     }
 
