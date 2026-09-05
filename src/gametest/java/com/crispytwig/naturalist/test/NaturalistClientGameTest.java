@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerCon
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestDedicatedServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.client.CameraType;
-import net.minecraft.client.Minecraft;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class NaturalistClientGameTest implements FabricClientGameTest {
@@ -17,9 +16,9 @@ public final class NaturalistClientGameTest implements FabricClientGameTest {
 
     @Override
     public void runTest(ClientGameTestContext context) {
-        CameraType previousCamera = Minecraft.getInstance().options.getCameraType();
+        CameraType previousCamera = context.computeOnClient(client -> client.options.getCameraType());
         try (TestSingleplayerContext singleplayer = context.worldBuilder().create()) {
-            Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
+            context.runOnClient(client -> client.options.setCameraType(CameraType.THIRD_PERSON_BACK));
 
             singleplayer.getServer().runCommand("/fill -16 99 -16 16 99 16 minecraft:stone");
             singleplayer.getServer().runCommand("/tp @a 0 100 0");
@@ -54,7 +53,7 @@ public final class NaturalistClientGameTest implements FabricClientGameTest {
             System.out.println(BEHAVIOR_MOBS_TICKED_MARKER);
             System.out.println(WORLD_JOINED_MARKER);
         } finally {
-            Minecraft.getInstance().options.setCameraType(previousCamera);
+            context.runOnClient(client -> client.options.setCameraType(previousCamera));
         }
 
         try (TestDedicatedServerContext server = context.worldBuilder().createServer()) {
