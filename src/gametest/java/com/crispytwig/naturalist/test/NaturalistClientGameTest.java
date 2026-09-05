@@ -59,6 +59,10 @@ public final class NaturalistClientGameTest implements FabricClientGameTest {
             // Repeat the same runtime check for the original aquatic predator/prey relationships.
             NaturalistPredatorBehaviorTest.verifyWaterPredatorsHunt(context, singleplayer);
 
+            // Exercise 26.2's data-component and state-serialization migrations through real
+            // Naturalist interactions, including dyeing and capture/release state restoration.
+            NaturalistInteractionRegressionTest.verify(context, singleplayer);
+
             NaturalistVariantItemTest.verify(context);
             NaturalistContentParity.verify(context, singleplayer);
             System.out.println(WORLD_JOINED_MARKER);
