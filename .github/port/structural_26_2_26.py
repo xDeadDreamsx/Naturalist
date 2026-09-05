@@ -6,8 +6,8 @@ call sites. An early migration replaced every playSound(getEatingSound(...), 1, 
 Animal#playEatingSound(), but that base 26.2 method is intentionally empty. Replace only the exact
 no-argument calls introduced by that migration with the equivalent generic eating sound.
 """
-
 from pathlib import Path
+import runpy
 
 ROOT = Path("common/src/main/java/com/crispytwig/naturalist")
 OLD = "this.playEatingSound();"
@@ -43,3 +43,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    runpy.run_path(".github/port/structural_26_2_27.py", run_name="__main__")
