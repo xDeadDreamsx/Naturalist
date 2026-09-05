@@ -8,6 +8,7 @@ ComponentSerialization codec and registry-aware NBT ops instead.
 """
 
 from pathlib import Path
+import runpy
 
 PATH = Path("common/src/main/java/com/crispytwig/naturalist/server/item/KnapsackItem.java")
 
@@ -51,15 +52,18 @@ def main() -> None:
 """
     if new in text:
         print("26.2 Knapsack tooltip parity pass changed 0 files")
-        return
-    if old not in text:
-        raise RuntimeError("Could not locate Knapsack tooltip label block")
-    text = text.replace(old, new, 1)
-    text = add_import(text, "net.minecraft.nbt.NbtOps")
-    text = add_import(text, "net.minecraft.network.chat.ComponentSerialization")
-    PATH.write_text(text, encoding="utf-8")
-    print(f"26.2 Knapsack tooltip parity pass changed {PATH}")
+    else:
+        if old not in text:
+            raise RuntimeError("Could not locate Knapsack tooltip label block")
+        text = text.replace(old, new, 1)
+        text = add_import(text, "net.minecraft.nbt.NbtOps")
+        text = add_import(text, "net.minecraft.network.chat.ComponentSerialization")
+        PATH.write_text(text, encoding="utf-8")
+        print(f"26.2 Knapsack tooltip parity pass changed {PATH}")
 
 
 if __name__ == "__main__":
     main()
+    next_pass = Path(".github/port/structural_26_2_24.py")
+    if next_pass.exists():
+        runpy.run_path(str(next_pass), run_name="__main__")
