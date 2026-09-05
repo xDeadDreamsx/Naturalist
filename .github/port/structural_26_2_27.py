@@ -6,6 +6,7 @@ RenderLayer#submit API: generic dye overlays, Capybara/Ostrich baby dye variants
 and the named Tortoise masks. It also re-attaches those layers to the migrated renderers.
 """
 from pathlib import Path
+import runpy
 
 ROOT = Path("common/src/main/java/com/crispytwig/naturalist/client/renderer")
 LAYERS = ROOT / "layers"
@@ -240,3 +241,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    runpy.run_path(".github/port/structural_26_2_28.py", run_name="__main__")
