@@ -398,6 +398,8 @@ public class Snail extends NaturalistAnimal implements Catchable, HidingAnimal, 
 
 
 
+
+
     @Override
     public void knockback(double strength, double x, double z, DamageSource source, float sourceStrength) {
         super.knockback(this.canHide() ? strength / 4 : strength, x, z, source, sourceStrength);
