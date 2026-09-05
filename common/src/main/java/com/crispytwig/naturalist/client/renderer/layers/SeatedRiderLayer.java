@@ -2,6 +2,7 @@ package com.crispytwig.naturalist.client.renderer.layers;
 
 import com.crispytwig.naturalist.client.model.NaturalistEntityModel;
 import com.crispytwig.naturalist.client.model.SeatedModel;
+import com.crispytwig.naturalist.client.renderer.state.NaturalistAvatarRenderState;
 import com.crispytwig.naturalist.client.renderer.state.NaturalistRenderState;
 import com.crispytwig.naturalist.server.entity.variant.DataDrivenVariantAnimal;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -38,8 +39,11 @@ public class SeatedRiderLayer<T extends Mob & DataDrivenVariantAnimal>
         if (this.dispatcher.camera == null) return;
 
         EntityRenderState riderState = this.dispatcher.extractEntity(player, state.partialTick);
-        // The normal passenger render already owns name tags and shadows. This submission exists only
-        // to follow Naturalist's animated seat transform, matching the 1.21.1 SeatedRiderLayer.
+        // The normal passenger render is suppressed for IK mounts. This custom submission follows
+        // Naturalist's animated seat transform and must therefore explicitly opt back into rendering.
+        if (riderState instanceof NaturalistAvatarRenderState naturalistState) {
+            naturalistState.naturalist$setSkipNormalIKMountRender(false);
+        }
         riderState.nameTag = null;
         riderState.scoreText = null;
         riderState.shadowPieces.clear();
