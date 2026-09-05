@@ -44,8 +44,6 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    // Optional integration: compile against LambDynamicLights and load its published runtime
-    // mod only in the development/runtime classpath. It is not bundled into Naturalist's JAR.
     compileOnly "dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:4.12.4+26.2"
     runtimeOnly "dev.lambdaurora.lambdynamiclights:lambdynamiclights-runtime:4.12.4+26.2"
 
@@ -57,9 +55,6 @@ loom {
     accessWidenerPath = file('common/src/main/resources/naturalist.accesswidener')
 }
 
-// Keep the strict in-world CI check in a separate test-only mod/source set.
-// Fabric's 26.2 Client GameTest API creates a real integrated-server world and
-// waits for the client level/chunks, without shipping this harness in Naturalist.
 fabricApi {
     configureTests {
         createSourceSet = true
@@ -70,9 +65,6 @@ fabricApi {
     }
 }
 
-// Minecraft 26.2 requires a client item definition under assets/<namespace>/items for every
-// custom item. It also moved spawn eggs away from the old template_spawn_egg + runtime tint
-// arrangement to ordinary generated item models backed by concrete textures.
 def generated26_2ClientResourcesDir = layout.buildDirectory.dir('generated/26.2-client-resources')
 
 tasks.register('generate26_2ClientResources') {
@@ -96,9 +88,6 @@ tasks.register('generate26_2ClientResources') {
         generatedModelDir.mkdirs()
         generatedTextureDir.mkdirs()
 
-        // Four newer Naturalist animals were never given an icon in the optional custom egg
-        // resource pack. Use a close vanilla 26.2 egg texture for those until Naturalist gains
-        // dedicated artwork; all other eggs reuse Naturalist's own bundled custom egg icons.
         def vanillaEggFallbacks = [
                 capybara_spawn_egg: 'minecraft:item/pig_spawn_egg',
                 hedgehog_spawn_egg: 'minecraft:item/armadillo_spawn_egg',
@@ -106,15 +95,50 @@ tasks.register('generate26_2ClientResources') {
                 whale_spawn_egg   : 'minecraft:item/dolphin_spawn_egg'
         ]
 
+        def snailColors = ['white', 'orange', 'magenta', 'light_blue', 'yellow', 'lime', 'pink', 'gray',
+                           'light_gray', 'cyan', 'purple', 'blue', 'brown', 'green', 'red', 'black']
+
         itemModelDir.asFile.eachFileMatch(~/.*\.json/) { File modelFile ->
             def itemName = modelFile.name.substring(0, modelFile.name.length() - 5)
 
-            def clientItem = [
-                    model: [
-                            type : 'minecraft:model',
-                            model: "naturalist:item/${itemName}"
+            def clientItem
+            if (itemName == 'snail' || itemName == 'snail_shell') {
+                def entries = []
+                snailColors.eachWithIndex { color, index ->
+                    entries << [
+                            threshold: index / 15.0F,
+                            model: [
+                                    type : 'minecraft:model',
+                                    model: "naturalist:item/${itemName}/${color}"
+                            ]
                     ]
-            ]
+                }
+                clientItem = [
+                        model: [
+                                type    : 'minecraft:range_dispatch',
+                                property: 'naturalist:snail_color',
+                                fallback: [type: 'minecraft:model', model: "naturalist:item/${itemName}/white"],
+                                entries : entries
+                        ]
+                ]
+            } else if (itemName == 'knapsack') {
+                clientItem = [
+                        model: [
+                                type    : 'minecraft:condition',
+                                property: 'naturalist:knapsack_filled',
+                                on_true : [type: 'minecraft:model', model: 'naturalist:item/knapsack_filled'],
+                                on_false: [type: 'minecraft:model', model: 'naturalist:item/knapsack']
+                        ]
+                ]
+            } else {
+                clientItem = [
+                        model: [
+                                type : 'minecraft:model',
+                                model: "naturalist:item/${itemName}"
+                        ]
+                ]
+            }
+
             new File(clientItemDir, "${itemName}.json").text =
                     JsonOutput.prettyPrint(JsonOutput.toJson(clientItem)) + '\n'
 
@@ -180,7 +204,6 @@ processResources {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release = 25
-    // Keep the porting CI useful while many 26.2 API breaks are being migrated.
     options.compilerArgs += ['-Xmaxerrs', '1000', '-Xdiags:verbose']
 }
 
@@ -196,9 +219,6 @@ jar {
     }
 }
 
-// Guard against the exact packaging regression found by the manual 26.2 tests. A green CI run
-// must now prove that the user-facing root JAR actually contains the new client-item files
-// and a non-legacy spawn-egg model, rather than only proving that the source compiled.
 tasks.register('verify26_2PackagedClientResources') {
     dependsOn tasks.named('jar')
 
@@ -216,7 +236,10 @@ tasks.register('verify26_2PackagedClientResources') {
             def required = [
                     'assets/naturalist/items/elephant_spawn_egg.json',
                     'assets/naturalist/models/item/elephant_spawn_egg.json',
-                    'assets/naturalist/textures/item/elephant_spawn_egg.png'
+                    'assets/naturalist/textures/item/elephant_spawn_egg.png',
+                    'assets/naturalist/items/snail.json',
+                    'assets/naturalist/items/snail_shell.json',
+                    'assets/naturalist/items/knapsack.json'
             ]
             required.each { path ->
                 if (zip.getEntry(path) == null) {
@@ -228,6 +251,15 @@ tasks.register('verify26_2PackagedClientResources') {
             def modelText = zip.getInputStream(modelEntry).getText('UTF-8')
             if (modelText.contains('template_spawn_egg') || !modelText.contains('minecraft:item/generated')) {
                 throw new GradleException('Elephant spawn egg still uses the pre-26.2 item model format')
+            }
+
+            def snailItemText = zip.getInputStream(zip.getEntry('assets/naturalist/items/snail.json')).getText('UTF-8')
+            if (!snailItemText.contains('naturalist:snail_color')) {
+                throw new GradleException('Snail color client-item parity definition was not packaged')
+            }
+            def knapsackItemText = zip.getInputStream(zip.getEntry('assets/naturalist/items/knapsack.json')).getText('UTF-8')
+            if (!knapsackItemText.contains('naturalist:knapsack_filled')) {
+                throw new GradleException('Knapsack filled client-item parity definition was not packaged')
             }
         } finally {
             zip.close()
