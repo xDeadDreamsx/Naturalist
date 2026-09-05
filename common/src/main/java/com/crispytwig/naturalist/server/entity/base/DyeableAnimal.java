@@ -45,8 +45,10 @@ public interface DyeableAnimal {
     }
 
     static void loadDye(DyeableAnimal animal, ValueInput input) {
-        int id = input.getIntOr("DyeColor", -1);
-        animal.setDyeColor(id < 0 ? null : DyeColor.byId(id));
+        if (input.contains("DyeColor")) {
+            int id = input.getIntOr("DyeColor", -1);
+            animal.setDyeColor(id < 0 ? null : DyeColor.byId(id));
+        }
     }
 
     static <T extends LivingEntity & DyeableAnimal> Optional<InteractionResult> tryDye(T animal, Player player, InteractionHand hand) {
