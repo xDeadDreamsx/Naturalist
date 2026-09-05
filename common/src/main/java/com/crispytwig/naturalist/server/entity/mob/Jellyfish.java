@@ -183,8 +183,17 @@ public class Jellyfish extends AbstractFish implements DataDrivenVariantAnimal {
     }
 
     @Override
+    public boolean canAttack(@NotNull LivingEntity target) {
+        return !(target instanceof AbstractFish) && super.canAttack(target);
+    }
+
+    @Override
     public void aiStep() {
         super.aiStep();
+        if (!this.level().isClientSide() && this.getTarget() instanceof AbstractFish) {
+            this.setTarget(null);
+            this.getNavigation().stop();
+        }
         if (!this.level().isClientSide() && this.isAlive()) {
             List<LivingEntity> touching = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(0.2D),
                     entity -> entity.isAlive() && !(entity instanceof Jellyfish));
