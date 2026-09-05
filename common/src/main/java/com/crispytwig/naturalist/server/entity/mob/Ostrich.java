@@ -452,6 +452,8 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
 
 
 
+
+
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -670,10 +672,24 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
     }
 
     private void updateEggAnger() {
-        if (this.level() instanceof ServerLevel serverLevel) {
-            this.updatePersistentAnger(serverLevel, true);
+        long angerEndTime = this.getPersistentAngerEndTime();
+        if (angerEndTime <= 0L) {
+            return;
+        }
+        LivingEntity target = this.getTarget();
+        EntityReference<LivingEntity> angerTarget = this.getPersistentAngerTarget();
+        boolean engaged = target != null && target.isAlive()
+                && angerTarget != null && angerTarget.matches(target)
+                && this.closerThan(target, this.getAttributeValue(Attributes.FOLLOW_RANGE));
+        if (engaged) {
+            // 1.21.1 did not decrement RemainingPersistentAngerTime while actively engaged.
+            // Since 26.2 stores an absolute end time, move it forward one tick to pause it.
+            this.setPersistentAngerEndTime(angerEndTime + 1L);
+        } else if (angerEndTime <= this.level().getGameTime()) {
+            this.stopBeingAngry();
         }
     }
+
 
     @Override
     public void customServerAiStep(ServerLevel level) {
