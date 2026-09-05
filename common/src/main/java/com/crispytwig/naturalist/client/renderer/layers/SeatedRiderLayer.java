@@ -35,6 +35,7 @@ public class SeatedRiderLayer<T extends Mob & DataDrivenVariantAnimal>
 
         Minecraft minecraft = Minecraft.getInstance();
         if (player == minecraft.player && minecraft.options.getCameraType().isFirstPerson()) return;
+        if (this.dispatcher.camera == null) return;
 
         EntityRenderState riderState = this.dispatcher.extractEntity(player, state.partialTick);
         // The normal passenger render already owns name tags and shadows. This submission exists only
@@ -45,7 +46,7 @@ public class SeatedRiderLayer<T extends Mob & DataDrivenVariantAnimal>
         riderState.shadowRadius = 0.0F;
 
         CameraRenderState cameraState = new CameraRenderState();
-        minecraft.gameRenderer.getMainCamera().extractRenderState(cameraState, state.partialTick);
+        this.dispatcher.camera.extractRenderState(cameraState, state.partialTick);
 
         poseStack.pushPose();
         seatedModel.translateToSeat(poseStack);
