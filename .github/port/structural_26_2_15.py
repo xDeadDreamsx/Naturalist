@@ -65,6 +65,15 @@ def main() -> None:
         changed.append(str(rat))
 
     giraffe = ROOT / "Giraffe.java"
+    # A failed earlier run committed a generated file containing duplicate @Override annotations.
+    # Repair that state first so the pass is idempotent on both pre- and post-migration branches.
+    giraffe_text = giraffe.read_text(encoding="utf-8")
+    duplicate_override = "    @Override\n    @Override\n    protected void tickRidden"
+    if duplicate_override in giraffe_text:
+        giraffe_text = giraffe_text.replace(duplicate_override, "    @Override\n    protected void tickRidden", 1)
+        giraffe.write_text(giraffe_text, encoding="utf-8")
+        changed.append(str(giraffe))
+
     # The existing @Override immediately before the old travel() method remains outside the
     # replacement range, so the first replacement method intentionally starts without another
     # annotation. Subsequent methods need their own annotations.
@@ -88,8 +97,10 @@ def main() -> None:
         return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED);
     }
 """
-    if replace_method(giraffe, "    public void travel(@NotNull Vec3 travelVector) {", giraffe_riding):
-        changed.append(str(giraffe))
+    if "protected void tickRidden(@NotNull Player controller" not in giraffe.read_text(encoding="utf-8"):
+        if replace_method(giraffe, "    public void travel(@NotNull Vec3 travelVector) {", giraffe_riding):
+            if str(giraffe) not in changed:
+                changed.append(str(giraffe))
 
     crab = ROOT / "Crab.java"
     crab_text = crab.read_text(encoding="utf-8")
@@ -110,9 +121,6 @@ def main() -> None:
         crab.write_text(crab_text, encoding="utf-8")
         changed.append(str(crab))
 
-    # Naturalist 1.21.1 explicitly allowed its flying mobs to path through doors without opening
-    # them. PathNavigation#setCanPassDoors disappeared, but the 26.2 NodeEvaluator retains the
-    # exact flag, so restore it there after navigation construction.
     for name in ("Bird.java", "Butterfly.java", "Firefly.java", "Vulture.java"):
         path = ROOT / name
         text = path.read_text(encoding="utf-8")
@@ -128,9 +136,6 @@ def main() -> None:
         path.write_text(text, encoding="utf-8")
         changed.append(str(path))
 
-    # The VultureFleePlayerGoal is created with a 16-block detection range in the original.
-    # During the getNearestPlayer API migration the port hard-coded 8 blocks, cutting its flee
-    # response radius in half. Restore the actual configured range.
     vulture = ROOT / "Vulture.java"
     text = vulture.read_text(encoding="utf-8")
     old = "this.vulture.getZ(), 8.0D, entity -> entity instanceof Player player && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player))"
