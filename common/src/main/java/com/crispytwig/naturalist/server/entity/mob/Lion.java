@@ -185,11 +185,12 @@ public class Lion extends TamableAnimal implements SleepingAnimal, FollowingPet,
         this.selectVariantForSpawn(level);
         super.finalizeSpawn(level, difficulty, reason, spawnData);
         AgeableMobGroupData ageableMobGroupData;
-        boolean prideLeader = spawnData == null;
-        if (prideLeader) {
+        boolean spawnedFromSpawnEgg = reason == EntitySpawnReason.SPAWN_ITEM_USE;
+        boolean prideLeader = spawnData == null && !spawnedFromSpawnEgg;
+        if (spawnData == null) {
             spawnData = new AgeableMobGroupData(true);
         }
-        this.setHasMane(!prideLeader && this.getRandom().nextBoolean());
+        this.setHasMane(spawnedFromSpawnEgg ? this.getRandom().nextBoolean() : !prideLeader && this.getRandom().nextBoolean());
         if ((ageableMobGroupData = (AgeableMobGroupData)spawnData).getGroupSize() > 2 && this.getRandom().nextFloat() < 0.7F) {
             this.setAge(-24000);
         }
