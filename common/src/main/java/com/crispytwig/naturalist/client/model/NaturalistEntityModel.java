@@ -54,9 +54,16 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
      * model part. AnimationDefinition#bake in 26.2 throws instead. Several Naturalist animation
      * files contain stale Blockbench bone names (for example Lion tail1/tail3), so retain the
      * old forgiving behaviour by removing only unresolved channels before baking.
+     *
+     * <p>Some old models also gave their actual root a model-specific name. Vulture, for example,
+     * passes its body part as the model root and returns "body" from getRootPartName(). The 1.21.1
+     * HierarchicalModel adapter explicitly resolved that alias back to root(). Minecraft 26.2's
+     * baked animation lookup always names the supplied model root "root", so remap the legacy
+     * alias before baking. This keeps model-specific roots working without reintroducing the
+     * synthetic parent that previously swallowed Lion root translations.</p>
      */
     private boolean hasAnimationPart(String name) {
-        if (name.equals(this.getRootPartName())) {
+        if (name.equals("root") || name.equals(this.getRootPartName())) {
             return true;
         }
         return this.root().getAllParts().stream().anyMatch(part -> part.hasChild(name));
@@ -64,8 +71,24 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
 
     private AnimationDefinition compatibleDefinition(AnimationDefinition definition) {
         var filtered = new LinkedHashMap<>(definition.boneAnimations());
+        boolean changed = false;
+
+        String legacyRootName = this.getRootPartName();
+        if (!"root".equals(legacyRootName) && filtered.containsKey(legacyRootName)) {
+            // Both names would refer to the same actual ModelPart. Prefer an explicit modern root
+            // channel if one exists; otherwise move the legacy alias onto the 26.2 root key.
+            if (!filtered.containsKey("root")) {
+                filtered.put("root", filtered.get(legacyRootName));
+            }
+            filtered.remove(legacyRootName);
+            changed = true;
+        }
+
+        int beforeFilter = filtered.size();
         filtered.entrySet().removeIf(entry -> !this.hasAnimationPart(entry.getKey()));
-        if (filtered.size() == definition.boneAnimations().size()) {
+        changed |= filtered.size() != beforeFilter;
+
+        if (!changed) {
             return definition;
         }
         return new AnimationDefinition(definition.lengthInSeconds(), definition.looping(), filtered);
@@ -118,9 +141,8 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
     }
 
     private KeyframeAnimation animation(AnimationDefinition definition) {
-        // 26.2's ModelPart lookup already maps the supplied model root to the legacy "root"
-        // animation name. Baking against a synthetic parent would animate that invisible parent
-        // instead of this.root(), dropping root translations/rotations from the rendered model.
+        // Bake directly against the rendered model root. A synthetic parent causes 26.2 to apply
+        // "root" channels to that invisible parent instead, dropping translations and rotations.
         return this.bakedAnimations.computeIfAbsent(definition,
                 d -> this.compatibleDefinition(d).bake(this.root()));
     }
