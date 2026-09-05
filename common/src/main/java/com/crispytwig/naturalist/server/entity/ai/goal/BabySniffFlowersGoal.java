@@ -57,7 +57,7 @@ public class BabySniffFlowersGoal extends MoveToBlockGoal {
             for (int x = -this.horizontalRange; x <= this.horizontalRange; x++) {
                 for (int z = -this.horizontalRange; z <= this.horizontalRange; z++) {
                     mutable.setWithOffset(origin, x, y - 1, z);
-                    if (this.isValidTarget(this.mob.level(), mutable)) {
+                    if (this.mob.isWithinHome(mutable) && this.isValidTarget(this.mob.level(), mutable)) {
                         candidates.add(mutable.immutable());
                     }
                 }

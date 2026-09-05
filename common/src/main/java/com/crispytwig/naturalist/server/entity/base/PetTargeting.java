@@ -1,5 +1,6 @@
 package com.crispytwig.naturalist.server.entity.base;
 
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.TamableAnimal;
@@ -14,11 +15,12 @@ public final class PetTargeting {
     }
 
     public static boolean protectsOwnedPet(TamableAnimal self, LivingEntity target) {
-        if (!self.isTame()) {
+        EntityReference<LivingEntity> owner = self.getOwnerReference();
+        if (!self.isTame() || owner == null || !(target instanceof OwnableEntity ownable)) {
             return true;
         }
-        LivingEntity owner = self.getOwner();
-        return owner == null || !(target instanceof OwnableEntity ownable) || ownable.getOwner() != owner;
+        EntityReference<LivingEntity> targetOwner = ownable.getOwnerReference();
+        return targetOwner == null || !owner.getUUID().equals(targetOwner.getUUID());
     }
 
     public static boolean wantsToAttack(LivingEntity target, LivingEntity owner) {

@@ -35,7 +35,9 @@ public interface FollowingPet {
     }
 
     static void loadPet(FollowingPet pet, ValueInput input) {
-        pet.setFollowingOwner(input.getBooleanOr("FollowingOwner", false));
+        if (input.contains("FollowingOwner")) {
+            pet.setFollowingOwner(input.getBooleanOr("FollowingOwner", false));
+        }
     }
 
     @Nullable
