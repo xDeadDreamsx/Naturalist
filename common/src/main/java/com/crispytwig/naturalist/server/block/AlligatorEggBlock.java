@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.zombie.Zombie;
@@ -28,7 +29,7 @@ public class AlligatorEggBlock extends TurtleEggBlock {
 
     @Override
     public void randomTick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
-        if (this.shouldUpdateHatchLevel(level)) {
+        if (this.shouldUpdateHatchLevel(level, pos)) {
             int i = state.getValue(HATCH);
             if (i < 2) {
                 level.playSound(null, pos, NaturalistSoundEvents.GATOR_EGG_CRACK.get(), SoundSource.BLOCKS, 0.7f, 0.9f + random.nextFloat() * 0.2f);
@@ -55,8 +56,8 @@ public class AlligatorEggBlock extends TurtleEggBlock {
         }
     }
 
-    private boolean shouldUpdateHatchLevel(Level level) {
-        float timeOfDay = level.isBrightOutside() ? 0.25F : 0.75F;
+    private boolean shouldUpdateHatchLevel(Level level, BlockPos pos) {
+        float timeOfDay = level.environmentAttributes().getValue(EnvironmentAttributes.SUN_ANGLE, pos) / 360.0F;
         return timeOfDay < 0.69F && timeOfDay > 0.65F || level.getRandom().nextInt(500) == 0;
     }
 
