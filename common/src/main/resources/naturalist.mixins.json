@@ -8,6 +8,7 @@
     "AvatarRenderStateMixin",
     "ClientLevelMixin",
     "ClientPacketListenerMixin",
+    "FieldGuideEntryScreenCompatMixin",
     "LocalPlayerMixin",
     "ParrotOnShoulderLayerMixin",
     "WolfModelMixin",
