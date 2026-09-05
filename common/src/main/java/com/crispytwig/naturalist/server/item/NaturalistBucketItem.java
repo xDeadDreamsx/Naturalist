@@ -15,7 +15,6 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -33,7 +32,6 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Optional;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.entity.Mob;
@@ -112,7 +110,7 @@ public class NaturalistBucketItem extends MobBucketItem {
         this.checkExtraContent(player, level, stack, pos);
         this.playEmptySound(player, level, pos);
         player.awardStat(Stats.ITEM_USED.get(this));
-        return InteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS.heldItemTransformedTo(getEmptySuccessItem(stack, player));
     }
 
     @Override
