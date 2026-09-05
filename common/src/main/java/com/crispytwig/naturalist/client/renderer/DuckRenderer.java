@@ -4,6 +4,7 @@ import com.crispytwig.naturalist.client.renderer.state.NaturalistRenderState;
 import com.crispytwig.naturalist.Naturalist;
 import com.crispytwig.naturalist.client.model.DuckBabyModel;
 import com.crispytwig.naturalist.client.model.DuckModel;
+import com.crispytwig.naturalist.client.renderer.layers.DyeLayer;
 import com.crispytwig.naturalist.server.entity.mob.Duck;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,11 +21,15 @@ public class DuckRenderer extends NaturalistMobRenderer<Duck> {
 
     public DuckRenderer(EntityRendererProvider.Context context) {
         super(context, new DuckModel(context.bakeLayer(DuckModel.LAYER_LOCATION)), new DuckBabyModel(context.bakeLayer(DuckBabyModel.LAYER_LOCATION)), 0.3F);
+        this.addLayer(new DyeLayer<>(this, "duck"));
     }
 
     @Override
     public @NotNull Identifier getTextureLocation(@NotNull NaturalistRenderState<Duck> state) {
         Duck entity = state.entity;
+        if (entity == null) {
+            return DUCK;
+        }
         if (entity.hasNonDefaultVariant()) {
             return entity.isBaby() ? entity.getVariantBabyTexture() : entity.getVariantTexture();
         }
