@@ -35,6 +35,9 @@ public class SnailRenderer extends NaturalistSingleMobRenderer<Snail> {
     @Override
     public @NotNull Identifier getTextureLocation(@NotNull NaturalistRenderState<Snail> state) {
         Snail entity = state.entity;
+        if (entity == null) {
+            return TEXTURES_BY_COLOR[Snail.Color.BY_ID[0].getId()];
+        }
         if (entity.hasNonDefaultVariant()) {
             return entity.getVariantTexture();
         }
@@ -44,6 +47,10 @@ public class SnailRenderer extends NaturalistSingleMobRenderer<Snail> {
     @Override
     protected void setupRotations(@NotNull NaturalistRenderState<Snail> state, @NotNull PoseStack poseStack, float yBodyRot, float nativeScale) {
         Snail entity = state.entity;
+        if (entity == null) {
+            super.setupRotations(state, poseStack, 180.0F, nativeScale);
+            return;
+        }
         float partialTick = state.partialTick;
         Vec3 normal = entity.getClimbing().getRenderNormal(partialTick);
         Vec3 back = entity.getClimbing().getRenderForwardFlattened(partialTick, normal).scale(-1.0D);
@@ -61,6 +68,6 @@ public class SnailRenderer extends NaturalistSingleMobRenderer<Snail> {
             poseStack.scale(0.5F, 0.5F, 0.5F);
         }
 
-        super.setupRotations(state, poseStack, yBodyRot, nativeScale);
+        super.setupRotations(state, poseStack, 180.0F, nativeScale);
     }
 }
