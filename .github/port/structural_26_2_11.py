@@ -7,6 +7,7 @@ and without its special-recipe marker, so enforce both after all legacy Java pas
 """
 
 from pathlib import Path
+import runpy
 
 RECIPE = Path("common/src/main/java/com/crispytwig/naturalist/server/recipe/BugNetInteractionRecipe.java")
 BUG_NET_ITEM = Path("common/src/main/java/com/crispytwig/naturalist/server/item/BugNetItem.java")
@@ -50,3 +51,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    runpy.run_path(".github/port/structural_26_2_12.py", run_name="__main__")
