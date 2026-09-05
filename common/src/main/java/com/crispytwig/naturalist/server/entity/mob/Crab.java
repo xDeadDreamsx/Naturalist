@@ -58,7 +58,6 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -522,14 +521,13 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
     }
 
     private boolean thinkCanHide() {
-        if (this.isBaby() || this.isTame() || !this.getMainHandItem().isEmpty()
-                || !(this.level() instanceof ServerLevel serverLevel)) {
+        if (this.isBaby() || this.isTame() || !this.getMainHandItem().isEmpty()) {
             return false;
         }
-        TargetingConditions conditions = TargetingConditions.forNonCombat().range(4.0D)
-                .selector((entity, level) -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity));
-        List<Player> players = serverLevel.getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),
-                player -> conditions.test(serverLevel, this, player));
+        List<Player> players = this.level().getEntitiesOfClass(Player.class,
+                this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D),
+                player -> EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)
+                        && this.distanceToSqr(player) <= 16.0D);
         boolean playerNear = false;
         for (Player player : players) {
             if (!player.isCrouching() && !foodItems().test(player.getMainHandItem()) && !foodItems().test(player.getOffhandItem())) {
@@ -539,6 +537,8 @@ public class Crab extends TamableAnimal implements HidingAnimal, FollowingPet, C
         }
         return playerNear && this.findNearbyWeapon() == null;
     }
+
+
 
 
 
