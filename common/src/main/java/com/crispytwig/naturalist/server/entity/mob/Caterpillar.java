@@ -176,6 +176,11 @@ public class Caterpillar extends ClimbingAnimal implements Catchable, DataDriven
     }
 
     @Override
+    public float getScale() {
+        return 1.0F;
+    }
+
+    @Override
     public boolean causeFallDamage(double fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
