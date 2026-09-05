@@ -53,6 +53,9 @@ public final class NaturalistClientGameTest implements FabricClientGameTest {
             singleplayer.getConnection().waitForChunksRender();
             System.out.println(BEHAVIOR_MOBS_TICKED_MARKER);
 
+            // Reproduce the user-reported lion sleeping pose and inspect both root transforms.
+            NaturalistLionSleepRenderTest.verify(context, singleplayer);
+
             // Regression coverage for target acquisition must execute in the real integrated
             // world, otherwise a compile-only test would not catch the 26.2 AI timing bug.
             NaturalistPredatorBehaviorTest.verifySnakeHuntsChicken(context, singleplayer);
