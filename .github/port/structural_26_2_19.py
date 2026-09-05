@@ -8,6 +8,7 @@ Both overrides were dropped during the 26.2 migration.
 """
 
 from pathlib import Path
+import runpy
 
 BUTTERFLY = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Butterfly.java")
 CATERPILLAR = Path("common/src/main/java/com/crispytwig/naturalist/server/entity/mob/Caterpillar.java")
@@ -57,3 +58,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    next_pass = Path(".github/port/structural_26_2_20.py")
+    if next_pass.exists():
+        runpy.run_path(str(next_pass), run_name="__main__")
