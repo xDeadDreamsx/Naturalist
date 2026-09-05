@@ -251,6 +251,11 @@ public class Butterfly extends NaturalistAnimal implements Catchable, DataDriven
     public AgeableMob getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob ageableMob) {
         return NaturalistEntityTypes.CATERPILLAR.get().create(serverLevel, EntitySpawnReason.BREEDING);
     }
+
+    @Override
+    public boolean isBaby() {
+        return false;
+    }
     //endregion
 
     //region Behavior
