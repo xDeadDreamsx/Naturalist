@@ -11,7 +11,6 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import org.jspecify.annotations.NonNull;
 
 public class LionModel extends NaturalistEntityModel<Lion> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
@@ -86,9 +85,10 @@ public static LayerDefinition createBodyLayer() {
 		this.mane.visible = entity.hasMane();
 
 		boolean angry = entity.isAggressive();
-		boolean sleeping = entity.isSleeping() && !angry;
-		this.awake.visible = !sleeping && !angry;
-		this.asleep.visible = sleeping;
+        float sleepBlend = Math.max(entity.sleepAnimationState.factor(partialTick), entity.sleep2AnimationState.factor(partialTick));
+        boolean sleepingVisual = !angry && sleepBlend > 0.5F;
+		this.awake.visible = !sleepingVisual && !angry;
+		this.asleep.visible = sleepingVisual;
 		this.angry.visible = angry;
 
 		this.animateSmooth(entity.attackAnimationState, LionAnimations.LION_ATTACK, ageInTicks, partialTick);
@@ -100,7 +100,7 @@ public static LayerDefinition createBodyLayer() {
 		this.animateSmooth(entity.preyAnimationState, LionAnimations.LION_PREY, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 0.8F));
 		this.animateSmooth(entity.runAnimationState, LionAnimations.LION_RUN, ageInTicks, partialTick, movementAnimationSpeed(entity, limbSwingAmount, 2.5F));
 
-		if (!entity.isSleeping()) {
+		if (sleepBlend <= 0.5F) {
 			applyHeadLook(this.neck, netHeadYaw, headPitch);
 		}
 	}
