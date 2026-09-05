@@ -10,6 +10,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
+import com.crispytwig.naturalist.client.renderer.layers.CapybaraDyeLayer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
@@ -19,6 +20,7 @@ public class CapybaraRenderer extends NaturalistMobRenderer<Capybara> {
 
     public CapybaraRenderer(EntityRendererProvider.Context context) {
         super(context, new CapybaraModel(context.bakeLayer(CapybaraModel.LAYER_LOCATION)), new CapybaraBabyModel(context.bakeLayer(CapybaraBabyModel.LAYER_LOCATION)), 0.5F);
+        this.addLayer(new CapybaraDyeLayer(this));
     }
 
     @Override

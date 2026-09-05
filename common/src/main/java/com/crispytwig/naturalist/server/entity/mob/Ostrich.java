@@ -466,6 +466,8 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
 
 
 
+
+
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -701,6 +703,7 @@ public class Ostrich extends TamableAnimal implements EggLayingAnimal, HidingAni
             this.stopBeingAngry();
         }
     }
+
 
 
 

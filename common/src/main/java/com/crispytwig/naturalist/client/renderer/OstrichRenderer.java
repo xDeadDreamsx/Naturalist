@@ -6,11 +6,13 @@ import com.crispytwig.naturalist.server.entity.mob.Ostrich;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import com.crispytwig.naturalist.client.renderer.layers.OstrichDyeLayer;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class OstrichRenderer extends NaturalistMobRenderer<Ostrich> {
     public OstrichRenderer(EntityRendererProvider.Context context) {
         super(context, new OstrichModel(context.bakeLayer(OstrichModel.LAYER_LOCATION)), new OstrichBabyModel(context.bakeLayer(OstrichBabyModel.LAYER_LOCATION)), 0.7F);
+        this.addLayer(new OstrichDyeLayer(this));
     }
 }
