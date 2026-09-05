@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -16,10 +15,11 @@ public class GreatWhiteSharkRenderer extends NaturalistSingleMobRenderer<GreatWh
     public GreatWhiteSharkRenderer(EntityRendererProvider.Context context) {
         super(context, new GreatWhiteSharkModel(context.bakeLayer(GreatWhiteSharkModel.LAYER_LOCATION)), 0.0F);
     }
-@Override
+
+    @Override
     protected void setupRotations(@NotNull NaturalistRenderState<GreatWhiteShark> state, @NotNull PoseStack poseStack, float yBodyRot, float nativeScale) {
         GreatWhiteShark entity = state.entity;
-        float partialTick = state.partialTick;
-        super.setupRotations(state, poseStack, yBodyRot, nativeScale);
+        float renderYaw = entity != null ? entity.getRenderYaw(state.partialTick) : yBodyRot;
+        super.setupRotations(state, poseStack, renderYaw, nativeScale);
     }
 }
