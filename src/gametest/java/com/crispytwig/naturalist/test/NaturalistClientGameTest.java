@@ -45,12 +45,15 @@ public final class NaturalistClientGameTest implements FabricClientGameTest {
             singleplayer.getServer().runCommand("/ride @a[limit=1] mount @e[type=naturalist:elephant,limit=1,sort=nearest]");
             context.waitTicks(60);
             singleplayer.getConnection().waitForChunksRender();
+            context.takeScreenshot("naturalist-elephant-rider");
             System.out.println(RENDER_PARITY_MOBS_RENDERED_MARKER);
             singleplayer.getServer().runCommand("/ride @a[limit=1] dismount");
 
             context.waitTicks(60);
             singleplayer.getConnection().waitForChunksRender();
             System.out.println(BEHAVIOR_MOBS_TICKED_MARKER);
+            NaturalistVariantItemTest.verify(context);
+            NaturalistContentParity.verify(context, singleplayer);
             System.out.println(WORLD_JOINED_MARKER);
         } finally {
             context.runOnClient(client -> client.options.setCameraType(previousCamera));

@@ -104,11 +104,13 @@ jobs:
               net.minecraft.client.renderer.entity.state.EntityRenderState \
               net.minecraft.client.renderer.entity.state.HitboxRenderState \
               net.minecraft.client.renderer.entity.state.HitboxesRenderState \
+              net.minecraft.client.renderer.debug.EntityHitboxDebugRenderer \
               net.minecraft.client.resources.model.ModelManager \
               net.minecraft.client.renderer.item.ItemModelResolver \
               net.minecraft.client.renderer.item.ItemStackRenderState \
               > /tmp/naturalist-render-api.log 2>&1 || true
             cat /tmp/naturalist-render-api.log
+            jar tf "$minecraft_jar" | grep -i hitbox || true
           fi
 
       - name: Smoke-test Naturalist dedicated server and fresh world data
@@ -262,6 +264,14 @@ jobs:
         with:
           name: naturalist-26.2-test-logs
           path: /tmp/naturalist-*.log
+          if-no-files-found: warn
+
+      - name: Upload in-world screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: naturalist-26.2-world-screenshots
+          path: build/run/clientGameTest/**/screenshots/*.png
           if-no-files-found: warn
 
       - name: Fail workflow if build failed
