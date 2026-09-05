@@ -204,19 +204,9 @@ public class Bird extends ShoulderRidingEntity implements DyeableAnimal, Followi
     }
 
     @Override
-    public boolean isBaby() {
+    protected boolean canBeABaby() {
         return false;
     }
-
-    @Override
-
-    @Override
-
-    @Override
-
-    @Override
-
-    @Override
     //endregion
 
     //region Behavior
