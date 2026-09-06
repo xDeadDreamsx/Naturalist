@@ -157,14 +157,15 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
         if (factor <= SmoothAnimationState.ACTIVE_THRESHOLD || !state.isStarted()) {
             return;
         }
-        long timeMs = (long) (state.getTimeInMillis(ageInTicks) * speed);
-        this.animation(definition).apply(timeMs, factor);
+        state.updateTime(ageInTicks, speed);
+        this.animation(definition).apply(state.getAccumulatedTime(), factor);
     }
 
     protected void animateUnblended(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks) {
         if (state.isStarted()) {
-            this.animation(definition).apply(state.getTimeInMillis(ageInTicks), 1.0F);
+            state.updateTime(ageInTicks, 1.0F);
         }
+        this.animation(definition).apply(state.getAccumulatedTime(), 1.0F);
     }
 
     protected void animateIdleSmooth(SmoothAnimationState state, AnimationDefinition definition, float ageInTicks,
@@ -178,7 +179,7 @@ public abstract class NaturalistEntityModel<E extends Entity> extends EntityMode
         if (factor <= SmoothAnimationState.ACTIVE_THRESHOLD || !state.isStarted()) {
             return;
         }
-        long timeMs = (long) (state.getTimeInMillis(ageInTicks) * speed);
-        this.animation(definition).apply(timeMs, factor);
+        state.updateTime(ageInTicks, speed);
+        this.animation(definition).apply(state.getAccumulatedTime(), factor);
     }
 }
