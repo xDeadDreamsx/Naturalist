@@ -14,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 
 /** Regression coverage for Naturalist predator target acquisition on Minecraft 26.2. */
 @SuppressWarnings("UnstableApiUsage")
@@ -28,10 +29,18 @@ final class NaturalistPredatorBehaviorTest {
     private static final double WATER_Y = 101.0D;
     private static final double WATER_Z = -9.0D;
 
+    private static final AABB TEST_ACTOR_AREA = new AABB(-64.0D, 80.0D, -64.0D, 64.0D, 120.0D, 64.0D);
+
     private NaturalistPredatorBehaviorTest() {
     }
 
     static void verifyLandPredatorsHunt(ClientGameTestContext context, TestSingleplayerContext world) {
+        // The render-parity and lion-sleep checks intentionally leave their mobs alive. If one of
+        // those mobs wanders into this arena it can kill or distract the predator under test and
+        // make the result depend on random AI movement. Discard them directly so no loot or death
+        // events can interfere with the first hunting scenario.
+        clearExistingTestMobs(world);
+
         // A predator that finishes its prey early may otherwise acquire the GameTest player before
         // the fixed observation window ends. That killed Player0 in run #269 and shut down the
         // singleplayer server before the next predator could be checked. Creative mode keeps the
@@ -75,6 +84,11 @@ final class NaturalistPredatorBehaviorTest {
                 WATER_PREDATOR_X, WATER_PREY_X, WATER_Y, WATER_Z);
 
         System.out.println("NATURALIST_PREDATOR_BEHAVIOR: water predator hunting verified");
+    }
+
+    private static void clearExistingTestMobs(TestSingleplayerContext world) {
+        world.getServer().runOnServer(server ->
+                server.overworld().getEntitiesOfClass(Mob.class, TEST_ACTOR_AREA).forEach(Entity::discard));
     }
 
     private static void verifyHunt(ClientGameTestContext context, TestSingleplayerContext world,
