@@ -10,7 +10,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
@@ -28,15 +30,16 @@ public class BassRenderer extends NaturalistSingleMobRenderer<Bass> {
     }
 
     @Override
-    public void extractRenderState(Bass entity, NaturalistRenderState<Bass> state, float partialTick) {
-        if (entity.isLargeVariant()) {
+    public void submit(NaturalistRenderState<Bass> state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+        Bass entity = state.entity;
+        if (entity != null && entity.isLargeVariant()) {
             this.model = this.largeModel;
-        } else if (entity.isMediumVariant()) {
+        } else if (entity != null && entity.isMediumVariant()) {
             this.model = this.mediumModel;
         } else {
             this.model = this.normalModel;
         }
-        super.extractRenderState(entity, state, partialTick);
+        super.submit(state, poseStack, submitNodeCollector, camera);
     }
 
     @Override
